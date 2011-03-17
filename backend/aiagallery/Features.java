@@ -20,7 +20,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import aiagallery.objdb.ApkData;
+import aiagallery.objdb.AIApplication;
 import aiagallery.objdb.Permission;
 import aiagallery.objdb.Tag;
 import aiagallery.objdb.UniquePersistenceManagerFactory;
@@ -386,7 +386,7 @@ public class Features
      *         if the user does not have permission to delete tags
      * 
      * @throws WouldCorruptError
-     *         if there is an ApkData object with only this tagName in its tags
+     *         if there is an AIApplication object with only this tagName in its tags
      *         list.
      */
     @SuppressWarnings("unchecked")
@@ -395,8 +395,8 @@ public class Features
     {
         boolean ret;
         Tag tag;
-        Iterator<ApkData> iterator;
-        ApkData apkData;
+        Iterator<AIApplication> iterator;
+        AIApplication application;
 
         log.logp(Level.WARNING, "Features", "deleteTag", "Entering");
 
@@ -410,27 +410,27 @@ public class Features
             // Begin a transaction
             tx.begin();
 
-            // Maintain referential integrity. Find all ApkData objects that
+            // Maintain referential integrity. Find all AIApplication objects that
             // reference this tag and remove this tag from
-            // their tags list. If this was that ApkData's only tag, roll
+            // their tags list. If this was that AIApplication's only tag, roll
             // back the transaction, do not allow the deletion of this tag,
             // and throw a WouldCorruptError.
             Object parameters[] = { tagName.toLowerCase() };
-            List<ApkData> results = (List<ApkData>) this.query(ApkData.class,
+            List<AIApplication> results = (List<AIApplication>) this.query(AIApplication.class,
                     "_tagName IN tags", "String _tagName", parameters);
 
             // Did we get any results?
             iterator = results.iterator();
             while (iterator.hasNext())
             {
-                // Yup. Retrieve the ApkData object
-                apkData = iterator.next();
+                // Yup. Retrieve the AIApplication object
+                application = iterator.next();
 
                 // Remove this tag from its tags list
-                apkData.getTags().remove(tagName);
+                application.getTags().remove(tagName);
 
                 // Was this the last tag in the list?
-                if (apkData.getTags().isEmpty())
+                if (application.getTags().isEmpty())
                 {
                     // Yup. Throw an error. That Apk would no longer be
                     // accessible.

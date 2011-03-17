@@ -12,7 +12,7 @@ package aiagallery.objdb;
 public enum Status
 {
     //
-    // generally applicable to ApkData, Visitor, etc. objects
+    // generally applicable to AIApplication, Visitor, etc. objects
     //
 
     /** Removed from use, but not deleted */
@@ -25,7 +25,7 @@ public enum Status
     Active,
 
     //
-    // specific to ApkData objects
+    // specific to AIApplication objects
     //
 
     /** Application or thumbnail is uploading; not yet fully available */

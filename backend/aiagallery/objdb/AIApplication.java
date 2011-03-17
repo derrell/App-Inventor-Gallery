@@ -21,7 +21,7 @@ import com.google.appengine.api.datastore.Key;
  * by an object of this type.
  */
 @PersistenceCapable
-public class ApkData
+public class AIApplication
 {
     /** primary key for this application, auto-generated */
     @SuppressWarnings("unused")
@@ -44,14 +44,14 @@ public class ApkData
     @Persistent
     private Visitor      owner;
 
-    /** List of administrator-provided tags associated with this application */
+    /** List of tags associated with this application */
     @Persistent
     private List<Tag>    tags;
 
-    /** List of user-provided keywords associated with this application */
+    /** The uploaded source .zip file */
     @Persistent
-    private List<String> keywords;
-
+    private BlobKey      sourceZip;
+    
     /** The uploaded .apk file */
     @Persistent
     private BlobKey      apk;
@@ -181,49 +181,31 @@ public class ApkData
     }
 
     /**
-     * Add a keyword to this apk object
+     * Set the blob key of the uploaded source zip file
      * 
-     * @param keywordName
-     *        The name of the keyword to be added
+     * @param sourceZip
+     *   The blob key of the uploaded source zip file
      */
-    public void addKeyword(String keywordName, String description)
+    public void setSourceZip(BlobKey sourceZip)
     {
-        // We want only one copy of each keyword. If the list doesn't
-        // already contain this keyword...
-        if (this.keywords.indexOf(keywordName) == -1)
-        {
-            // ... then add this keyword to the list.
-            this.keywords.add(keywordName);
-        }
+        this.sourceZip = sourceZip;
     }
 
     /**
-     * Determine if an apk object has a particular keyword
+     * Retrieve the blob key of the uploaded source zip file
      * 
-     * @param keywordName
-     *        The name of the keyword to be tested
-     * 
-     * @return true if the object has said keyword; false otherwise
+     * @return the blob key of the uploaded source zip file
      */
-    public Boolean hasKeyword(String keywordName)
+    public BlobKey getSourceZip()
     {
-        return this.keywords.indexOf(keywordName) >= 0;
-    }
-
-    /**
-     * Get the keyword list for this object
-     * 
-     * @return keywordName The list of currently-assigned keywords
-     */
-    public List<String> getKeywords()
-    {
-        return this.keywords;
+        return sourceZip;
     }
 
     /**
      * Set the blob key of this object's apk file
      *  
      * @param apk
+     *   The blob key of the uploaded binary apk file
      */
     public void setApk(BlobKey apk)
     {
