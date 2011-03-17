@@ -1,10 +1,9 @@
 /*
  * Copyright (c) 2011 Derrell Lipman
  * 
- * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html
- *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
-*/
+ * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
+ * http://www.eclipse.org/org/documents/epl-v10.php
+ */
 package aiagallery;
 
 import java.io.IOException;
@@ -31,9 +30,8 @@ public class LogoutServlet extends HttpServlet
      * Override the doGet method to serve up the logout interface
      */
     @Override
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
-        throws ServletException, IOException
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
     {
         // Get a user service instance, to determine signed-in user data
         UserService userService = UserServiceFactory.getUserService();
@@ -44,9 +42,9 @@ public class LogoutServlet extends HttpServlet
             // Make 'em log out.
             // Pass our URL so they're redirected back to here.
             response.getWriter().println(
-                    "<p>Please <a href=\"" +
-                    userService.createLogoutURL(request.getRequestURI()) +
-                    "\">sign in</a>.</p>");
+                    "<p>Please <a href=\""
+                            + userService.createLogoutURL(request
+                                    .getRequestURI()) + "\">sign in</a>.</p>");
         }
     }
 }

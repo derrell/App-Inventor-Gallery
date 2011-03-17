@@ -24,10 +24,10 @@ public class Visitor
     @PrimaryKey
     @Persistent
     private String       userId;
-    
+
     /** User's name */
     @Persistent
-    private String        name;
+    private String       name;
 
     /** A list of permissions this user has been issued */
     @Persistent
@@ -42,7 +42,7 @@ public class Visitor
      * 
      * @param userId
      *        The user id identifying this user
-     *        
+     * 
      * @param name
      *        The free-text name of this user
      */
@@ -50,7 +50,7 @@ public class Visitor
     {
         // Save the primary key (user id)
         this.userId = userId.toLowerCase();
-        
+
         // Save the user's name
         this.name = name;
 
@@ -61,8 +61,7 @@ public class Visitor
     /**
      * Get the user id associated with this user
      * 
-     * @return
-     *        The Google user account id associated with this user
+     * @return The Google user account id associated with this user
      */
     public String getUserId()
     {
@@ -92,8 +91,7 @@ public class Visitor
      * @param permissionName
      *        The name of the permission to be tested
      * 
-     * @return
-     *        true if the user has the said permission; false otherwise
+     * @return true if the user has the said permission; false otherwise
      */
     public Boolean hasPermission(String permissionName)
     {
@@ -103,8 +101,7 @@ public class Visitor
     /**
      * Get the permission list for this user
      * 
-     * @return permissionName
-     *        The list of currently-assigned permissions
+     * @return permissionName The list of currently-assigned permissions
      */
     public List<String> getPermissions()
     {
@@ -125,8 +122,7 @@ public class Visitor
     /**
      * Get this visitor's name
      * 
-     * @return
-     *        The visitor's name
+     * @return The visitor's name
      */
     public String getName()
     {
@@ -147,8 +143,7 @@ public class Visitor
     /**
      * Get this visitor's status
      * 
-     * @return
-     *        The visitor's current status
+     * @return The visitor's current status
      */
     public Status getStatus()
     {

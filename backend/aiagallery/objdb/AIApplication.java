@@ -27,38 +27,38 @@ public class AIApplication
     @SuppressWarnings("unused")
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key          key;
-    
+    private Key       key;
+
     /** Title of this application */
     @Persistent
-    private String       title;
-    
+    private String    title;
+
     /** Description of this application */
-    private String       description;
-    
+    private String    description;
+
     /** Status of this application */
     @Persistent
-    private Status       status;
+    private Status    status;
 
     /** Which visitor owns this application */
     @Persistent
-    private Visitor      owner;
+    private Visitor   owner;
 
     /** List of tags associated with this application */
     @Persistent
-    private List<Tag>    tags;
+    private List<Tag> tags;
 
     /** The uploaded source .zip file */
     @Persistent
-    private BlobKey      sourceZip;
-    
+    private BlobKey   sourceZip;
+
     /** The uploaded .apk file */
     @Persistent
-    private BlobKey      apk;
+    private BlobKey   apk;
 
     /** The uploaded thumbnail shown for this application */
     @Persistent
-    private BlobKey      thumbnail;
+    private BlobKey   thumbnail;
 
     /**
      * Set the title of this object
@@ -184,7 +184,7 @@ public class AIApplication
      * Set the blob key of the uploaded source zip file
      * 
      * @param sourceZip
-     *   The blob key of the uploaded source zip file
+     *        The blob key of the uploaded source zip file
      */
     public void setSourceZip(BlobKey sourceZip)
     {
@@ -203,9 +203,9 @@ public class AIApplication
 
     /**
      * Set the blob key of this object's apk file
-     *  
+     * 
      * @param apk
-     *   The blob key of the uploaded binary apk file
+     *        The blob key of the uploaded binary apk file
      */
     public void setApk(BlobKey apk)
     {

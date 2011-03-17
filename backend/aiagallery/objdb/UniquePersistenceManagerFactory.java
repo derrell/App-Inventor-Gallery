@@ -17,8 +17,8 @@ public final class UniquePersistenceManagerFactory
 {
     // Instantiate our one and only persistence manager factory
     // FIXME! Why are transactions optional?
-    private static final PersistenceManagerFactory      pmf =
-        JDOHelper.getPersistenceManagerFactory("transactions-optional");
+    private static final PersistenceManagerFactory pmf = JDOHelper
+                                                               .getPersistenceManagerFactory("transactions-optional");
 
     // No one should instantiate this class. This is a singleton.
     private UniquePersistenceManagerFactory()
@@ -28,9 +28,8 @@ public final class UniquePersistenceManagerFactory
     /**
      * Static method to get the one and only persistence manager factory
      * instance.
-     *
-     * @return
-     *   The single persistence manager factory instance
+     * 
+     * @return The single persistence manager factory instance
      */
     public static PersistenceManagerFactory getInstance()
     {

@@ -1,13 +1,12 @@
 /*
  * Copyright (c) 2010-2011 Derrell Lipman
  * 
- * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html
- *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
-*/
+ * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
+ * http://www.eclipse.org/org/documents/epl-v10.php
+ */
 package aiagallery;
 
-//import java.util.logging.Logger;
+// import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,83 +25,74 @@ import jsonrpc.*;
  * Servlet for an RPC Server running on App Engine
  */
 @SuppressWarnings("serial")
-public class AppEngineRpcServlet extends HttpServlet 
+public class AppEngineRpcServlet extends HttpServlet
 {
     /**
      * Get a logger object. With the logger object (log), one can call
      * log.info(), log.warning(), log.severe().
      */
-//    private static final Logger log = Logger.getLogger(App_Inventor_GalleryServlet.class.getName());
-
+    // private static final Logger log =
+    // Logger.getLogger(App_Inventor_GalleryServlet.class.getName());
 
     /*************************************************************
      * Method Accessibility values (not yet used)
      *************************************************************/
 
     /*
-     *   public accessibility -
-     *     The method may be called from any session, and without any checking
-     *     of who the Referer is.
+     * public accessibility - The method may be called from any session, and
+     * without any checking of who the Referer is.
      */
-    public static int     Accessibility_Public    = 1;
+    public static int Accessibility_Public  = 1;
 
     /**
-     *   domain accessibility -
-     *     The method may only be called by a script obtained via a web page
-     *     loaded from this server.  The Referer must match the request URI,
-     *     through the domain part.
+     * domain accessibility - The method may only be called by a script obtained
+     * via a web page loaded from this server. The Referer must match the
+     * request URI, through the domain part.
      */
-    public static int     Accessibility_Domain    = 2;
+    public static int Accessibility_Domain  = 2;
 
     /**
-     *   "session" -
-     *     The Referer must match the Referer of the very first RPC request
-     *     issued during the session.
+     * "session" - The Referer must match the Referer of the very first RPC
+     * request issued during the session.
      */
-    public static int     Accessibility_Session   = 3;
+    public static int Accessibility_Session = 3;
 
     /**
-     *   "fail" -
-     *     Access is denied
+     * "fail" - Access is denied
      */
-    public static int     Accessibility_Fail      = 4;
-
+    public static int Accessibility_Fail    = 4;
 
     @Override
-	public void doGet(HttpServletRequest request,
-            HttpServletResponse response)
-    	throws ServletException, IOException
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
     {
-        PrintWriter     out = response.getWriter();
+        PrintWriter out = response.getWriter();
         out.write("hello world");
     }
 
-    
     @Override
-	public void doPost(HttpServletRequest request,
-                       HttpServletResponse response)
-        throws ServletException, IOException
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
     {
-        PrintWriter     out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
         // Determine the request method. We currently support only POST.
-        if (! request.getMethod().equals("POST"))
+        if (!request.getMethod().equals("POST"))
         {
-            out.println("JSON-RPC request expected; " +
-                        "unexpected data received (not POST)");
+            out.println("JSON-RPC request expected; "
+                    + "unexpected data received (not POST)");
             return;
         }
 
         // The size of the read buffer
-        final int         BUFFER_SIZE = 8192;
+        final int BUFFER_SIZE = 8192;
 
         // Confirm that the requester is signed in
         if (request.getUserPrincipal() == null)
         {
             // The user is not signed in. Let 'em know.
-            JsonRpcError eJson =
-                new JsonRpcError(JsonRpcError.Error_PermissionDenied,
-                                 "Not logged in");
+            JsonRpcError eJson = new JsonRpcError(
+                    JsonRpcError.Error_PermissionDenied, "Not logged in");
             eJson.setOrigin(JsonRpcError.Origin_Server);
             out.println(eJson.toString());
             return;
@@ -111,14 +101,14 @@ public class AppEngineRpcServlet extends HttpServlet
         // Retrieve the JSON input from the POST data
         try
         {
-            int             length;
-            char[]          readBuffer = new char[BUFFER_SIZE];
-            String          result;
-            String          requestString;
-            StringBuffer    requestBuffer = new StringBuffer();
-            InputStream     inputStream = null;
-            Reader          reader = null;
-            AppEngineApplication	application;
+            int length;
+            char[] readBuffer = new char[BUFFER_SIZE];
+            String result;
+            String requestString;
+            StringBuffer requestBuffer = new StringBuffer();
+            InputStream inputStream = null;
+            Reader reader = null;
+            AppEngineApplication application;
 
             // Get the input stream (the POST data)
             inputStream = request.getInputStream();
@@ -137,14 +127,12 @@ public class AppEngineRpcServlet extends HttpServlet
             requestString = requestBuffer.toString();
 
             // Get an application object
-//            application = new AppEngineApplication(this.getServletContext());
+            // application = new AppEngineApplication(this.getServletContext());
             application = null;
-            
+
             // Handle the JSON-RPC request and retrieve the result
-            result = JsonRpc.handleRequest(requestString, 
-            							   request,
-                                           request.getSession(),
-                                           application);
+            result = JsonRpc.handleRequest(requestString, request,
+                    request.getSession(), application);
 
             // Output the result
             out.println(result.trim());

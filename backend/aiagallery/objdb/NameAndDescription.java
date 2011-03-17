@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
  * 
- * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html
- *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
+ * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
+ * http://www.eclipse.org/org/documents/epl-v10.php
  */
 package aiagallery.objdb;
 
@@ -19,11 +18,11 @@ public abstract class NameAndDescription
     /** Name of this item */
     @PrimaryKey
     @Persistent
-    private String  name;
+    private String name;
 
     /** Description of this item */
     @Persistent
-    private String  description;
+    private String description;
 
     public NameAndDescription(String name, String description)
     {
@@ -31,23 +30,23 @@ public abstract class NameAndDescription
         this.setDescription(new String(description));
     }
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
-	public String getName()
-	{
-		return name;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
-	public String getDescription()
-	{
-		return description;
-	}
+    public String getDescription()
+    {
+        return description;
+    }
 }

@@ -106,9 +106,9 @@ public class features extends AbstractRpcClass
     @SuppressWarnings("unchecked")
     public JSONArray getVisitorList() throws JsonRpcError
     {
-        List<Visitor>   visitors;
-        JSONObject      o;
-        
+        List<Visitor> visitors;
+        JSONObject o;
+
         try
         {
             // Get a features object
@@ -126,13 +126,13 @@ public class features extends AbstractRpcClass
             {
                 // Instantiate a JSON object for this visitor
                 o = new JSONObject();
-                
+
                 // Add this visitor's attributes
                 o.put("userId", visitor.getUserId());
                 o.put("name", visitor.getName());
                 o.put("permissions", visitor.getPermissions());
                 o.put("status", visitor.getStatus());
-                
+
                 // Add this visitor to the return array
                 retval.add(o);
             }
@@ -153,7 +153,7 @@ public class features extends AbstractRpcClass
      * 
      * @param tagName
      *        The name of the tag to be added
-     *        
+     * 
      * @param description
      *        A description of this tag
      * 
@@ -163,7 +163,8 @@ public class features extends AbstractRpcClass
      *         with code = Error_PermissionDenied if the current user does not
      *         have permission to add a new tag.
      */
-    public boolean addTag(String tagName, String description) throws JsonRpcError
+    public boolean addTag(String tagName, String description)
+            throws JsonRpcError
     {
         try
         {
@@ -193,8 +194,7 @@ public class features extends AbstractRpcClass
      * @param tagName
      *        The name of the tag to be removed
      * 
-     * @return true if the tag was deleted; false if the tag was not
-     *         found
+     * @return true if the tag was deleted; false if the tag was not found
      * 
      * @throws JsonRpcError
      *         with code = Error_PermissionDenied if the current user does not
@@ -241,8 +241,8 @@ public class features extends AbstractRpcClass
     @SuppressWarnings("unchecked")
     public JSONArray getTagList() throws JsonRpcError
     {
-        List<Tag>       tags;
-        
+        List<Tag> tags;
+
         try
         {
             // Get a features object

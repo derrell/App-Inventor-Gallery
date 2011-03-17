@@ -35,8 +35,7 @@ public class Features
      * Get a logger object. With the logger object (log), one can call
      * log.info(), log.warning(), log.severe().
      */
-    private static final Logger log = Logger
-                                            .getLogger(Features.class.getName());
+    private static final Logger log = Logger.getLogger(Features.class.getName());
 
     /** Keep track of a visitor's user id */
     String                      userId;
@@ -386,8 +385,8 @@ public class Features
      *         if the user does not have permission to delete tags
      * 
      * @throws WouldCorruptError
-     *         if there is an AIApplication object with only this tagName in its tags
-     *         list.
+     *         if there is an AIApplication object with only this tagName in its
+     *         tags list.
      */
     @SuppressWarnings("unchecked")
     public boolean deleteTag(String tagName) throws PermissionDeniedError,
@@ -410,14 +409,16 @@ public class Features
             // Begin a transaction
             tx.begin();
 
-            // Maintain referential integrity. Find all AIApplication objects that
+            // Maintain referential integrity. Find all AIApplication objects
+            // that
             // reference this tag and remove this tag from
             // their tags list. If this was that AIApplication's only tag, roll
             // back the transaction, do not allow the deletion of this tag,
             // and throw a WouldCorruptError.
             Object parameters[] = { tagName.toLowerCase() };
-            List<AIApplication> results = (List<AIApplication>) this.query(AIApplication.class,
-                    "_tagName IN tags", "String _tagName", parameters);
+            List<AIApplication> results = (List<AIApplication>) this.query(
+                    AIApplication.class, "_tagName IN tags", "String _tagName",
+                    parameters);
 
             // Did we get any results?
             iterator = results.iterator();
