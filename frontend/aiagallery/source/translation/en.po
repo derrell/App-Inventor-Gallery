@@ -1,0 +1,129 @@
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: you@your.org\n"
+"POT-Creation-Date: 2011-02-14 09:07-0500\n"
+"PO-Revision-Date: 2011-02-14 09:07-0500\n"
+"Last-Translator: you <you@your.org>\n"
+"Language-Team: Team <yourteam@your.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: aiagallery/Application.js:88
+msgid "App Inventor Gallery: Management"
+msgstr ""
+
+#: aiagallery/Application.js:97
+msgid "Language:"
+msgstr ""
+
+#: aiagallery/Application.js:109
+msgid "English"
+msgstr ""
+
+#: aiagallery/Application.js:110
+msgid "Spanish"
+msgstr ""
+
+#: aiagallery/Application.js:136
+msgid "Theme:"
+msgstr ""
+
+#: aiagallery/Application.js:212
+msgid "Test Mode"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:24
+msgid "Applications"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:39 aiagallery/mgmt/Users.js:39
+msgid "Banned"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:41 aiagallery/mgmt/Users.js:41
+msgid "Pending"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:42 aiagallery/mgmt/Users.js:42
+msgid "Active"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:74 aiagallery/mgmt/Users.js:71
+msgid "Edit"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:87 aiagallery/mgmt/Users.js:93
+msgid "Delete"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:105
+msgid "Thumbnail"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:106
+msgid "Title"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:107 aiagallery/mgmt/Users.js:113
+msgid "Status"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:108
+msgid "Owner"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:109 aiagallery/mgmt/Tags.js:22
+msgid "Tags"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:110
+msgid "Keywords"
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:184
+msgid "Really delete application "
+msgstr ""
+
+#: aiagallery/mgmt/Apks.js:187 aiagallery/mgmt/Users.js:195
+msgid "Your answer was: "
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:24
+msgid "Users"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:46
+msgid "User #"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:81
+msgid "Add New User"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:110
+msgid "Name"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:111
+msgid "Email"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:112 aiagallery/mgmt/Permissions.js:22
+msgid "Permissions"
+msgstr ""
+
+#: aiagallery/mgmt/Users.js:192
+msgid "Really delete user "
+msgstr ""
+
+#~ msgid "Language"
+#~ msgstr ""
+
+#~ msgid "Theme"
+#~ msgstr ""
+
+#~ msgid "Theme: "
+#~ msgstr ""
