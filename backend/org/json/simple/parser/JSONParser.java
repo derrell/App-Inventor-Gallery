@@ -19,7 +19,7 @@ import org.json.simple.JSONObject;
  * 
  * @author FangYidong<fangyidong@yahoo.com.cn>
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JSONParser
 {
     public static final int S_INIT              = 0;

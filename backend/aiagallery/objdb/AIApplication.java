@@ -153,6 +153,7 @@ public class AIApplication
         if (this.tags.indexOf(tagName) == -1)
         {
             // ... then add this tag to the list.
+            // FIXME -- doesn't Tag need to be made persistent?
             this.tags.add(new Tag(tagName, description));
         }
     }
@@ -198,7 +199,7 @@ public class AIApplication
      */
     public BlobKey getSourceZip()
     {
-        return sourceZip;
+        return this.sourceZip;
     }
 
     /**
@@ -219,7 +220,7 @@ public class AIApplication
      */
     public BlobKey getApk()
     {
-        return apk;
+        return this.apk;
     }
 
     /**

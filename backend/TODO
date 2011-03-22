@@ -1,0 +1,15 @@
+- ensure all objects are persisted. see FIXME in AIApplication.java
+  - likely need to call a function in Features instead of simply adding new tag
+- "Like" projects
+- comment on projects
+- flag content as inappropriate
+- authorship chain?
+- timestamps
+  - each "Like"
+  - each download
+  - each upload
+  - each view?
+  - each flagging of inappropriateness (limit one flag per project per visitor)
+- tags
+  - permanent (for the browse ones)
+  - admin-assignable only (e.g. "_featured")
