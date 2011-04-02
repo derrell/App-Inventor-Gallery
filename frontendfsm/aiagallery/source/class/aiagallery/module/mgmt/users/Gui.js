@@ -58,6 +58,26 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           width     : 100
         });
       hBox.add(addUser);
+      addUser.addListener(
+        "execute",
+        function(e)
+        {
+          // Get the cell editor factory for all columns of the table
+          var cellEditorFactory =
+            table.getTableColumnModel().getCellEditorFactory(0);
+          
+          // Get a cell editor
+          var cellEditor = cellEditorFactory.createCellEditor(null);
+          
+          // Make it modal
+          cellEditor.setModal(true);
+          
+          // Disallow the window's close button
+          cellEditor.setShowClose(false);
+          
+          // Open the cell editor
+          cellEditor.open();
+        });
 
       // Now right-justify the Delete button
       hBox.add(new qx.ui.core.Widget(), { flex : 1 });
@@ -102,13 +122,12 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         }
       };
 
-      // Now that we have a model, we can use it to create our table.
+      // Now that we have a data model, we can use it to create our table.
       var table = new qx.ui.table.Table(model, custom);
 
       // Get the table column model in order to set cell editer factories
       var tcm = table.getTableColumnModel();
 
-      //
       // Specify the resize behavior. Obtain the behavior object to manipulate
       var resizeBehavior = tcm.getBehavior();
 
@@ -146,22 +165,6 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         },
         table);
 
-      // Listen for dataEdited events so we can write changes to the backend
-      table.addListener(
-        "dataEdited",
-        function(e)
-        {
-          var data = e.getData();
-  /*
-          alert("Cell edited:"
-                " row=" + data.row +
-                " col=" + data.col + 
-                " old=" + data.oldValue + 
-                " new=" + data.value);
-  */
-        },
-        canvas);
-
       // Add a confirmation for deletions
       deleteUser.addListener(
         "execute",
@@ -187,7 +190,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
 
 
     /**
-     * Populate the graphical user interface with the specified data
+     * Handle the response to a remote procedure call
      *
      * @param module {aiagallery.main.Module}
      *   The module descriptor for the module.
@@ -196,7 +199,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
      *   The request object used for issuing the remote procedure call. From
      *   this, we can retrieve the response and the request type.
      */
-    displayData : function(module, rpcRequest)
+    handleResponse : function(module, rpcRequest)
     {
       var fsm = module.fsm;
       var response = rpcRequest.getUserData("rpc_response");

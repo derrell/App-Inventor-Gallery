@@ -25,10 +25,18 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       var             i;
       var             o;
       var             cellEditor;
+      var             dataModel;
+      var             rowData;
+      var             selectedUser;
 
-      // Get the row data
-      var dataModel = cellInfo.table.getTableModel();
-      var rowData = dataModel.getRowData(cellInfo.row);
+      // If there's a cellInfo object provided, we're editing an existing
+      // user. Get the row data. Otherwise, we're adding a new user.
+      if (cellInfo)
+      {
+        dataModel = cellInfo.table.getTableModel();
+        rowData = dataModel.getRowData(cellInfo.row);
+        selectedUser = rowData[0];
+      }
       
       var layout = new qx.ui.layout.Grid(9, 2);
       layout.setColumnAlign(0, "right", "top");
@@ -37,7 +45,6 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       layout.setSpacing(10);
 
       // Create the cell editor window, since we need to return it immediately
-      var selectedUser = rowData[0];
       cellEditor =
         new qx.ui.window.Window(this.tr("Edit User: ") + selectedUser);
       cellEditor.setLayout(layout);
@@ -81,12 +88,12 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
 
       // Create the editor field for the user name
       var name = new qx.ui.form.TextField(this.tr("Name"));
-      name.setValue(rowData[0]);
+      rowData && name.setValue(rowData[0]);
       cellEditor.add(name, { row : 0, column : 1 });
       
       // Create the editor field for the email address
       var email = new qx.ui.form.TextField(this.tr("Email"));
-      email.setValue(rowData[1]);
+      rowData && email.setValue(rowData[1]);
       cellEditor.add(email, { row : 1, column : 1 });
       
       // Create the editor field for permissions
@@ -123,7 +130,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
           status.add(item);
           
           // Is this the current status?
-          if (stat.internal == rowData[3])
+          if (rowData && stat.internal == rowData[3])
           {
             status.setSelection( [ item ] );
           }
@@ -181,8 +188,8 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
           var statusSel = this.getUserData("status");
           newData.push(statusSel.getSelection()[0].getLabel());
 
-          // Set this row's new data
-          dataModel.setRows( [ newData ], cellInfo.row, false);
+          // Set this row's new data, if we're editing an existing row
+          dataModel && dataModel.setRows( [ newData ], cellInfo.row, false);
           
           // Save the data for the getCellEditorValue() method
           this.setUserData("newData", newData);
@@ -199,7 +206,8 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
           "execute",
           function(e)
           {
-            this.getUserData("cellInfo").table.cancelEditing();
+            var cellInfo = this.getUserData("cellInfo");
+            cellInfo && cellInfo.table.cancelEditing();
             this.close();
           },
           cellEditor);
