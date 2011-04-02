@@ -232,7 +232,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
         "ontransition" : function(fsm, event)
         {
           _module.visible = false;
-          aiagallery.module.mgmt.users.Fsm._stopTimer(fsm);
+//          aiagallery.module.mgmt.users.Fsm._stopTimer(fsm);
         }
       });
 
