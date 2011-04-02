@@ -13,3 +13,8 @@
 - tags
   - permanent (for the browse ones)
   - admin-assignable only (e.g. "_featured")
+
+
+- authentication
+  - make use of OpenID so that login is part of Gallery app instead of google
+    http://code.google.com/apis/accounts/
