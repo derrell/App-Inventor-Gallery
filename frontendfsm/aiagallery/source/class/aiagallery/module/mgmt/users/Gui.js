@@ -202,9 +202,11 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
      */
     handleResponse : function(module, rpcRequest)
     {
-      var fsm = module.fsm;
-      var response = rpcRequest.getUserData("rpc_response");
-      var requestType = rpcRequest.getUserData("requestType");
+      var             fsm = module.fsm;
+      var             response = rpcRequest.getUserData("rpc_response");
+      var             requestType = rpcRequest.getUserData("requestType");
+      var             cellEditor;
+      var             table;
 
       if (response.type == "failed")
       {
@@ -217,9 +219,16 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
+      case "getVisitorList":
+        table = fsm.getObject("table");
+        
+        // Set the entire data model given the result array
+        table.getTableModel().setData(response.data);
+        break;
+
       case "addOrEditUser":
         // Nothing to do but close the cell editor
-        var cellEditor = rpcRequest.getUserData("cellEditor");
+        cellEditor = rpcRequest.getUserData("cellEditor");
         cellEditor.close();
         break;
 

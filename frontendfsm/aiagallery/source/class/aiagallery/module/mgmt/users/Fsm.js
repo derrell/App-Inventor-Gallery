@@ -86,10 +86,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // the event data.
           "callRpc" : "Transition_Idle_to_AwaitRpcResult_via_generic_rpc_call",
 
-          // When we get an appear event, start our timer
+          // When we get an appear event, retrieve the visitor list
           "appear"    :
           {
-            "main.canvas" : "Transition_Idle_to_Idle_via_appear"
+            "main.canvas" : "Transition_Idle_to_AwaitRpcResult_via_appear"
           },
 
           // When we get a disappear event, stop our timer
@@ -270,16 +270,25 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_Idle_via_appear",
+        "Transition_Idle_to_AwaitRpcResult_via_appear",
       {
-        "nextState" : "State_Idle",
+        "nextState" : "State_AwaitRpcResult",
 
         "context" : this,
 
         "ontransition" : function(fsm, event)
         {
-          // Redisplay immediately
-//          aiagallery.module.mgmt.users.Fsm._startTimer(fsm, 0);
+          // Issue the remote procedure call to get the visitor list. Request
+          // that the permissions and status be converted to strings for us.
+          var request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "getVisitorList",
+                         [ true ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "getVisitorList");
         }
       });
 

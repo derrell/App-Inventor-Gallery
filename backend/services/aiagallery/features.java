@@ -25,19 +25,23 @@ public class features extends AbstractRpcClass
      * 
      * @param userId
      *        The user id of the visitor to be added
-     *        
-     * @param attributes
-     *   A map of attributes for this user. Possible values include "name" (String), permissions (Array of Strings), and Status (String)
      * 
-     * @return true if a new user was created; false if an existing user was edited
+     * @param attributes
+     *        A map of attributes for this user. Possible values include "name"
+     *        (String), permissions (Array of Strings), and Status (String)
+     * 
+     * @return true if a new user was created; false if an existing user was
+     *         edited
      * 
      * @throws JsonRpcError
      *         with code = Error_PermissionDenied if the current user does not
      *         have permission to add a new visitor.
-     *         
-     *         with code = Error_Unknown if the data could not be saved for some reason
+     * 
+     *         with code = Error_Unknown if the data could not be saved for some
+     *         reason
      */
-    public boolean addOrEditVisitor(String userId, JSONObject attributes) throws JsonRpcError
+    public boolean addOrEditVisitor(String userId, JSONObject attributes)
+            throws JsonRpcError
     {
         try
         {
@@ -47,10 +51,11 @@ public class features extends AbstractRpcClass
             // Retrieve the known attributes
             String name = (String) attributes.get("name");
             @SuppressWarnings("unchecked")
-            List<String> permissions = (List<String>) attributes.get("permissions");
+            List<String> permissions = (List<String>) attributes
+                    .get("permissions");
             String s = (String) attributes.get("status");
             Status status;
-            
+
             // If status wasn't specified, set it to Active
             if (s == null)
             {
@@ -75,22 +80,23 @@ public class features extends AbstractRpcClass
                     throw new JsonRpcError(0, "Unrecognized status: " + s);
                 }
             }
-            
+
             // Try to add the visitor. Returns true or throws an error.
-            int ret = features.addOrEditVisitor(userId, name, permissions, status);
+            int ret = features.addOrEditVisitor(userId, name, permissions,
+                    status);
 
             // Flush visitor to persistent storage
             features.flush();
 
-            // Let 'em know it worked. 
-            switch(ret)
+            // Let 'em know it worked.
+            switch (ret)
             {
-            case 0 : // The user already existed. Edited the record.
+            case 0: // The user already existed. Edited the record.
                 return false;
-                
+
             case 1: // A new user was created.
                 return true;
-                
+
             default: // Something bad happened
                 throw new JsonRpcError(JsonRpcError.Error_Unknown,
                         "Internal error: failed to save user data");
@@ -145,6 +151,11 @@ public class features extends AbstractRpcClass
     /**
      * Get the list of visitors
      * 
+     * @param bStringize
+     *        Whether to convert the list of permissions into a comma-separated
+     *        string, and the status integer to a corresponding string
+     *        interpretation.
+     * 
      * @return List of all Visitor, including their name, permission list, and
      *         current status.
      * 
@@ -153,7 +164,7 @@ public class features extends AbstractRpcClass
      *         list.
      */
     @SuppressWarnings("unchecked")
-    public JSONArray getVisitorList() throws JsonRpcError
+    public JSONArray getVisitorList(Boolean bStringize) throws JsonRpcError
     {
         List<Visitor> visitors;
         JSONObject o;
@@ -179,8 +190,43 @@ public class features extends AbstractRpcClass
                 // Add this visitor's attributes
                 o.put("userId", visitor.getUserId());
                 o.put("name", visitor.getName());
-                o.put("permissions", visitor.getPermissions());
-                o.put("status", visitor.getStatus());
+
+                if (bStringize)
+                {
+                    String permissions = "";
+                    String comma = "";
+                    for (String permission : visitor.getPermissions())
+                    {
+                        permissions += comma + permission;
+                        comma = ", ";
+                    }
+                    o.put("permissions", permissions);
+
+                    Status status = visitor.getStatus();
+                    switch (status)
+                    {
+                    case Banned:
+                        o.put("status", "Banned");
+                        break;
+
+                    case PendingApproval:
+                        o.put("status", "Pending");
+                        break;
+
+                    case Active:
+                        o.put("status", "Active");
+                        break;
+
+                    default:
+                        throw new JsonRpcError(0, "Unrecognized status value"
+                                + status);
+                    }
+                }
+                else
+                {
+                    o.put("permissions", visitor.getPermissions());
+                    o.put("status", visitor.getStatus());
+                }
 
                 // Add this visitor to the return array
                 retval.add(o);
