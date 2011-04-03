@@ -49,6 +49,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           enabled   : false
         });
       hBox.add(edit);
+      fsm.addObject("edit", edit);
 
       // Create an Add User button
       var addUser = new qx.ui.form.Button(canvas.tr("Add New User"));
@@ -58,26 +59,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           width     : 100
         });
       hBox.add(addUser);
-      addUser.addListener(
-        "execute",
-        function(e)
-        {
-          // Get the cell editor factory for all columns of the table
-          var cellEditorFactory =
-            table.getTableColumnModel().getCellEditorFactory(0);
-          
-          // Get a cell editor
-          var cellEditor = cellEditorFactory.createCellEditor(null);
-          
-          // Make it modal
-          cellEditor.setModal(true);
-          
-          // Disallow the window's close button
-          cellEditor.setShowClose(false);
-          
-          // Open the cell editor
-          cellEditor.open();
-        });
+      addUser.addListener("execute", fsm.eventListener, fsm);
+      
+      // We'll be receiving events on the object so save its friendly name
+      fsm.addObject("addUser", addUser, "main.fsmUtils.disable_during_rpc");
 
       // Now right-justify the Delete button
       hBox.add(new qx.ui.core.Widget(), { flex : 1 });
@@ -91,6 +76,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           enabled   : false
         });
       hBox.add(deleteUser);
+      fsm.addObject("deleteUser", deleteUser);
 
       // Add the button row to the page
       canvas.add(hBox);
@@ -123,7 +109,14 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       };
 
       // Now that we have a data model, we can use it to create our table.
-      var table = new qx.ui.table.Table(model, custom);
+      var table = new aiagallery.widget.Table(model, custom);
+      table.addListener("cellEditorOpening", fsm.eventListener, fsm);
+      
+      // We'll be receiving events on the object so save its friendly name
+      fsm.addObject("table", table, "main.fsmUtils.disable_during_rpc");
+      
+      // Also save the FSM in the table, for access by cell editors
+      table.setUserData("fsm", fsm);
 
       // Get the table column model in order to set cell editer factories
       var tcm = table.getTableColumnModel();
@@ -157,6 +150,8 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           deleteUser.setEnabled(bHasSelection);
         });
 
+      // Begin editing when the Edit button is pressed. This will cause a
+      // "cellEditorOpening" event to be issued to the FSM
       edit.addListener(
         "execute",
         function(e)
@@ -177,13 +172,19 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           var data = model.getData()[selection];
 
           dialog.Dialog.confirm(
-            canvas.tr("Really delete user ") + data[1] + 
+            this.tr("Really delete user ") + data[1] + 
               " (" + data[0] + ")" + "?",
             function(result)
             {
-              dialog.Dialog.alert(canvas.tr("Your answer was: ") + result );
+              // If they confirmed the deletion...
+              if (result)
+              {
+                // ... then pass this event to the fsm
+                fsm.eventListener(e);
+              }
             });
         });
+      
       // Add the table to the page
       canvas.add(table, { flex : 1 });
     },
@@ -207,6 +208,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
 
       if (response.type == "failed")
       {
+        // FIXME: Add the failure to the cell editor window rather than alert
         alert("Async(" + response.id + ") exception: " + response.data);
         return;
       }
@@ -215,61 +217,19 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-        case "hideSubtree":
-          // Nothing to do but close the cell editor
-          var cellEditor = rpcRequest.getUserData("cellEditor");
-          cellEditor.close();
-          break;
+      case "addOrEditUser":
+        // Nothing to do but close the cell editor
+        var cellEditor = rpcRequest.getUserData("cellEditor");
+        cellEditor.close();
+        break;
 
-        default:
-          throw new Error("Unexpected request type: " + requestType);
+      case "deleteUser":
+        // Nothing to do
+        break;
+        
+      default:
+        throw new Error("Unexpected request type: " + requestType);
       }
-    },
-
-    /**
-     * TODOC
-     *
-     * @type member
-     * @param module {var} TODOC
-     * @param rpcRequest {var} TODOC
-     * @return {void}
-     */
-    __displayPrepopulateResults : function(module, rpcRequest)
-    {
-      var             t;
-      var             child;
-      var             fsm = module.fsm;
-
-      // Get the tree object
-      var tree = fsm.getObject("tree");
-      var dataModel = tree.getDataModel();
-
-      // Obtain the result object
-      var result = rpcRequest.getUserData("rpc_response").data.result;
-
-      // The result of a prepopulate request is a map which looks like this:
-      //
-      //   now  : <time_t current timestamp>
-      //   data : <array of prepopulate elements>
-      //
-      // A prepopulate element contains these properties:
-      //
-      //   fspath
-      //   wgpath
-      //   displayname
-      //   comment
-      //   type
-      //   network_type
-      //   accessible_p
-      //   scan_time_start
-      //   scan_time_end
-      //   invisible_p
-      //   timestamp
-      //   sort_order
-      //   priority
-      //   backup_time
-      //   username
-      //   password_length
     }
   }
 });

@@ -28,10 +28,11 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       var             dataModel;
       var             rowData;
       var             selectedUser;
+      var             fsm;
 
       // If there's a cellInfo object provided, we're editing an existing
       // user. Get the row data. Otherwise, we're adding a new user.
-      if (cellInfo)
+      if (cellInfo && cellInfo.row)
       {
         dataModel = cellInfo.table.getTableModel();
         rowData = dataModel.getRowData(cellInfo.row);
@@ -138,7 +139,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       
       cellEditor.add(status, { row : 3, column : 1 });
       
-      // Save the input field for access by getCellEditorValue()
+      // Save the input fields for access by getCellEditorValue() and the FSM
       cellEditor.setUserData("name", name);
       cellEditor.setUserData("email", email);
       cellEditor.setUserData("permissions", permissions);
@@ -158,59 +159,20 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
         });
       cellEditor.add(buttonPane, {row:5, column: 0, colSpan: 2});
 
+      // Retrieve the finite state machine
+      fsm = cellInfo.table.getUserData("fsm");
+
       var okButton =
         new qx.ui.form.Button("Ok", "icon/22/actions/dialog-apply.png");
       okButton.addState("default");
-      okButton.addListener(
-        "execute",
-        function(e)
-        {
-          var selection;
-          var columnData;
-
-          var newData =
-            [
-              this.getUserData("name").getValue(),
-              this.getUserData("email").getValue()
-            ];
-
-          // Add a joining of the selected permission names
-          selection = this.getUserData("permissions").getSelection();
-          columnData = [];
-          selection.forEach(
-            function(item)
-            {
-              columnData.push(item.getLabel());
-            });
-          newData.push(columnData.join(", "));
-
-          // Add the status selection
-          var statusSel = this.getUserData("status");
-          newData.push(statusSel.getSelection()[0].getLabel());
-
-          // Set this row's new data, if we're editing an existing row
-          dataModel && dataModel.setRows( [ newData ], cellInfo.row, false);
-          
-          // Save the data for the getCellEditorValue() method
-          this.setUserData("newData", newData);
-
-          // We can close the modal window now
-          this.close();
-        },
-        cellEditor);
+      fsm.addObject("ok", okButton);
+      okButton.addListener("execute", fsm.eventListener, fsm);
       buttonPane.add(okButton);
 
       var cancelButton =
         new qx.ui.form.Button("Cancel", "icon/22/actions/dialog-cancel.png");
-        cancelButton.addListener(
-          "execute",
-          function(e)
-          {
-            var cellInfo = this.getUserData("cellInfo");
-            cellInfo && cellInfo.table.cancelEditing();
-            this.close();
-          },
-          cellEditor);
+      fsm.addObject("cancel", cancelButton);
+      cancelButton.addListener("execute", fsm.eventListener, fsm);
       buttonPane.add(cancelButton);
 
       return cellEditor;

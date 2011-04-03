@@ -52,7 +52,8 @@ public class GuiServlet extends HttpServlet
             {
                 scriptToLoad = "    <title>aiagallery</title>"
                         + "    <script type=\"text/javascript\" "
-                        + "            src=\"script/helper.js\">";
+                        + "              src=\"script/aiagallery.js\">";
+//                        + "            src=\"script/helper.js\">";
 
             }
 

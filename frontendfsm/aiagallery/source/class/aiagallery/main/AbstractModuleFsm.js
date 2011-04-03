@@ -82,7 +82,6 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
        * Transition on:
        *  "completed" (on RPC)
        *  "failed" (on RPC)
-       *  "execute" on main.fsmUtils.abort_rpc
        */
 
       stateInfo =
@@ -150,32 +149,15 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
 
         "onentry" : function(fsm, event)
         {
-/*
-          var bAuthCompleted = false;
-*/
-
           // Change the cursor to indicate RPC in progress
           qx.core.Init.getApplication().constructor.progressCursor(true);
 
-/*
-          // See if we just completed an authentication
-          if (fsm.getPreviousState() == "State_Authenticate" &&
-              event.getType() == "complete") {
-            bAuthCompleted = true;
-          }
-*/
-
-          // If we didn't just complete an authentication and we're coming
-          // from some other state...
-          if (
-/*
-            !bAuthCompleted &&
-*/
-            fsm.getPreviousState() != "State_AwaitRpcResult")
+          // If we're coming from some other state...
+          if (fsm.getPreviousState() != "State_AwaitRpcResult")
           {
             // ... then push the designated state, or if no designated state,
             // the previous state onto the state stack
-            var nextState =
+            var nextState = 
               this.getCurrentRpcRequest().getUserData("nextState");
             fsm.pushState(nextState || false);
           }
@@ -188,11 +170,7 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
           // Authenticate state)...
           var nextState = fsm.getNextState();
 
-          if (
-/*
-            nextState != "State_Authenticate" &&
-*/
-            nextState != "State_AwaitRpcResult")
+          if (nextState != "State_AwaitRpcResult")
           {
             // ... then set the cursor back to normal
             qx.core.Init.getApplication().constructor.progressCursor(false);
@@ -201,16 +179,8 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
 
         "events" :
         {
-/*
-          "execute"   :
-          {
-            "main.fsmUtils.abort_rpc" :
-              "Transition_AwaitRpcResult_to_AwaitRpcResult_via_button_abort"
-          },
-*/
-
           "completed" :
-            "Transition_AwaitRpcResult_to_PopStack_via_complete",
+            "Transition_AwaitRpcResult_to_PopStack_via_completed",
 
           "failed"    :
             qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
@@ -239,74 +209,6 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
       fsm.addState(state);
 
       /*** Transitions that use a PREDICATE appear first ***/
-      /*
-       * Transition: AwaitRpcResult to GetAuthInfo
-       *
-       * Cause: "failed" (on RPC) where reason is PermissionDenied
-       */
-
-/*
-      trans = new qx.util.fsm.Transition(
-        "Transition_AwaitRpcResult_to_Authenticate",
-        {
-          "context" : this,
-
-          "nextState" : "State_Authenticate",
-
-          "predicate" : function(fsm, event)
-          {
-            // Get the request object
-            var rpcRequest = this.getCurrentRpcRequest();
-
-            // This isn't the correct transition for response to authenticate.
-            if (rpcRequest.service == "util.authenticate")
-            {
-              return false;
-            }
-
-            var error = event.getData(); // retrieve the JSON-RPC error
-
-            // Did we get get origin=Server, and either
-            // code=NotLoggedIn or code=SessionExpired ?
-            var origins = aiagallery.main.AbstractModuleFsm.JsonRpc_Origin;
-            var serverErrors =
-              aiagallery.main.AbstractModuleFsm.JsonRpc_ServerError;
-
-            if (error.origin == origins.Server &&
-                error.code == serverErrors.PermissionDenied)
-            {
-              return true;
-            }
-
-            // fall through to next transition, also for "failed"
-            return false;
-          },
-
-          "ontransition" : function(fsm, event)
-          {
-            var caption;
-
-            var error = event.getData(); // retrieve the JSON-RPC error
-            var serverErrors =
-              aiagallery.main.AbstractModuleFsm.JsonRpc_ServerError;
-
-            // Retrieve the modal authentication window.
-            var loginWin = aiagallery.main.Authenticate.getInstance();
-
-            // Ensure that it's saved in the current finite state machine
-            loginWin.addToFsm(fsm);
-
-            // Set the caption
-            loginWin.setCaption("Please log in");
-
-            // Open the authentication window
-            loginWin.open();
-          }
-        });
-
-      state.addTransition(trans);
-*/
-
 
       /*
        * Transition: AwaitRpcResult to PopStack
@@ -337,44 +239,17 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
 
       state.addTransition(trans);
 
+
       /*** Remaining transitions are accessed via the jump table ***/
-
-
-      /*
-       * Transition: AwaitRpcResult to AwaitRpcResult
-       *
-       * Cause: "execute" on main.fsmUtils.abort_rpc
-       */
-/*
-      trans = new qx.util.fsm.Transition(
-        "Transition_AwaitRpcResult_to_AwaitRpcResult_via_button_abort",
-        {
-          "context" : this,
-
-          "nextState" : "State_AwaitRpcResult",
-
-          "ontransition" : function(fsm, event)
-          {
-            // Get the request object
-            var rpcRequest = this.getCurrentRpcRequest();
-
-            // Issue an abort for the pending request
-            rpcRequest.request.abort();
-          }
-        });
-
-      state.addTransition(trans);
-*/
-
 
       /*
        * Transition: AwaitRpcResult to PopStack
        *
-       * Cause: "complete" (on RPC)
+       * Cause: "completed" (on RPC)
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_AwaitRpcResult_to_PopStack_via_complete",
+        "Transition_AwaitRpcResult_to_PopStack_via_completed",
         {
           "context" : this,
 
@@ -389,163 +264,13 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
             // Generate the result for a completed request
             rpcRequest.setUserData("rpc_response",
                                    {
-                                     type : "complete",
+                                     type : "completed",
                                      data : event.getData()
                                    });
           }
         });
 
       state.addTransition(trans);
-
-
-      /*
-       * State: Authenticate
-       *
-       * Transition on:
-       *  "execute" on login_button
-       */
-/*
-      state = new qx.util.fsm.State("State_Authenticate",
-      {
-        "context" : this,
-
-        "onentry" : function(fsm, event)
-        {
-          // Retrieve the login window object
-          var win = fsm.getObject("login_window");
-
-          // Clear the password field
-          win.getUserData("password").setValue("");
-
-          // Retrieve the current RPC request
-          var rpcRequest = this.getCurrentRpcRequest();
-
-          // Did we just return from an RPC request and was it a login request?
-          if (fsm.getPreviousState() == "State_AwaitRpcResult" &&
-              rpcRequest.service == "util.authenticate" &&
-              rpcRequest.params.length > 1 &&
-              rpcRequest.params[1] == "login")
-          {
-            // Yup.  Display the result.  Pop the old request off the stack
-            var loginRequest = this.popRpcRequest();
-
-            // Retrieve the result
-            var rpc_response = loginRequest.getUserData("rpc_response");
-
-            // Did we succeed?
-            if (rpc_response.type == "failed")
-            {
-              // Nope.  Just reset the caption, and remain in this state.
-              win.setCaption("Login Failed.  Try again.");
-            }
-            else
-            {
-              // Login was successful.  Generate an event that will transition
-              // us back to the AwaitRpcResult state to again await the result
-              // of the original RPC request.
-              win.fireEvent("complete");
-
-              // Reissue the original request.  (We already popped the login
-              // request off the stack, so the current request is the original
-              // one.)
-              var origRequest = this.getCurrentRpcRequest();
-
-              // Retrieve the RPC object
-              var rpc = fsm.getObject("main.rpc");
-
-              // Set the service name
-              rpc.setServiceName(origRequest.service);
-
-              // Reissue the request
-              var f = qx.io.remote.Rpc.prototype.callAsyncListeners;
-              origRequest.request = f.apply(rpc, origRequest.params);
-
-              // Clear the password field. This window will be reused.
-              win.getUserData("password").setValue("");
-
-              // Close the login window
-              win.close();
-            }
-
-            // Dispose of the login request
-            loginRequest.request.dispose();
-            loginRequest.request = null;
-          }
-        },
-
-        "events" :
-        {
-          "execute"  :
-          {
-            "login_button" :
-              "Transition_Authenticate_to_AwaitRpcResult_via_button_login"
-          },
-
-          "complete" :
-          {
-            "login_window" :
-              "Transition_Authenticate_to_AwaitRpcResult_via_complete"
-          }
-        }
-      });
-
-      fsm.addState(state);
-*/
-
-
-      /*
-       * Transition: Authenticate to AwaitRpcResult
-       *
-       * Cause: "execute" on login_button
-       */
-/*
-      trans = new qx.util.fsm.Transition(
-        "Transition_Authenticate_to_AwaitRpcResult_via_button_login",
-        {
-          "context" : this,
-
-          "nextState" : "State_AwaitRpcResult",
-
-          "ontransition" : function(fsm, event)
-          {
-            // Retrieve the login window object
-            var win = fsm.getObject("login_window");
-
-            // Issue a Login call
-            this.callRpc(fsm,
-                          "util.authenticate",
-                          "login",
-                          [
-                            win.getUserData("userName").getValue(),
-                            win.getUserData("password").getValue()
-                          ]);
-          }
-        });
-
-      state.addTransition(trans);
-*/
-
-
-      /*
-       * Transition: Authenticate to AwaitRpcResult
-       *
-       * Cause: "complete" on login_window
-       *
-       * We've already re-issued the original request, so we have nothing to
-       * do here but transition back to the AwaitRpcResult state to again
-       * await the result of the original request.
-       */
-/*
-      trans = new qx.util.fsm.Transition(
-        "Transition_Authenticate_to_AwaitRpcResult_via_complete",
-        {
-          "context" : this,
-
-          "nextState" : "State_AwaitRpcResult"
-        });
-
-      state.addTransition(trans);
-*/
     },
 
 

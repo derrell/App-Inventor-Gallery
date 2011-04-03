@@ -22,6 +22,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 import aiagallery.objdb.AIApplication;
 import aiagallery.objdb.Permission;
+import aiagallery.objdb.Status;
 import aiagallery.objdb.Tag;
 import aiagallery.objdb.UniquePersistenceManagerFactory;
 import aiagallery.objdb.Visitor;
@@ -98,16 +99,18 @@ public class Features
      *         if the current user does not have permission to add visitors.
      */
     @SuppressWarnings("unchecked")
-    public boolean addVisitor(String userId, String name)
+    public int addOrEditVisitor(String userId, String name,
+            List<String> permissions, Status status)
             throws PermissionDeniedError
     {
-        boolean ret;
+        int ret;
         Visitor visitor;
         List<Visitor> results;
+        Iterator<String> permIterator; 
         log.logp(Level.WARNING, "Features", "addVisitor", "Entering");
 
         // Ensure that this user has appropriate permission
-        this.checkPermissions("VISITOR ADD");
+        this.checkPermissions("VISITOR EDIT");
 
         // Get a handle to the transaction
         Transaction tx = this.pm.currentTransaction();
@@ -132,9 +135,9 @@ public class Features
 
                 // Yup. Get the first (and only) visitor object with this name
                 visitor = (Visitor) results.get(0);
-
+                
                 // The visitor already existed.
-                ret = false;
+                ret = 0;
             }
             else
             {
@@ -151,8 +154,25 @@ public class Features
 
                 // Unless there's a commit failure, we successfully added the
                 // visitor.
-                ret = true;
+                ret = 1;
             }
+
+            // Set the provided parameters for this visitor
+            if (name != null)
+            {
+                visitor.setName(name);
+            }
+            
+            if (permissions != null)
+            {
+                permIterator = permissions.iterator();
+                while (permIterator.hasNext())
+                {
+                    visitor.addPermission(permIterator.next());
+                }
+            }
+            
+            visitor.setStatus(status);
 
             // Complete the transaction
             log.logp(Level.WARNING, "Features", "addVisitor",
@@ -166,7 +186,7 @@ public class Features
             {
                 // ... then roll it back.
                 tx.rollback();
-                ret = false;
+                ret = 2;
             }
         }
 

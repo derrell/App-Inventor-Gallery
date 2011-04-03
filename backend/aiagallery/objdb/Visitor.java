@@ -76,6 +76,9 @@ public class Visitor
      */
     public void addPermission(String permissionName)
     {
+        // FIXME: Verify that the permission name is one of the known permissions
+        // (or do it in services.aiagallery.features, to validate user input)
+        
         // We want only one copy of each permission. If the list doesn't
         // already contain this permission...
         if (this.permissions.indexOf(permissionName) == -1)

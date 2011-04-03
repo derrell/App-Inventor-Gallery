@@ -14,38 +14,87 @@ import org.json.simple.*;
 import aiagallery.PermissionDeniedError;
 import aiagallery.Features;
 import aiagallery.WouldCorruptError;
+import aiagallery.objdb.Status;
 import aiagallery.objdb.Tag;
 import aiagallery.objdb.Visitor;
 
 public class features extends AbstractRpcClass
 {
     /**
-     * Add a new visitor
+     * Add a new visitor, or edit an existing visitor
      * 
      * @param userId
      *        The user id of the visitor to be added
+     *        
+     * @param attributes
+     *   A map of attributes for this user. Possible values include "name" (String), permissions (Array of Strings), and Status (String)
      * 
-     * @return true upon success
+     * @return true if a new user was created; false if an existing user was edited
      * 
      * @throws JsonRpcError
      *         with code = Error_PermissionDenied if the current user does not
      *         have permission to add a new visitor.
+     *         
+     *         with code = Error_Unknown if the data could not be saved for some reason
      */
-    public boolean addVisitor(String userId, String name) throws JsonRpcError
+    public boolean addOrEditVisitor(String userId, JSONObject attributes) throws JsonRpcError
     {
         try
         {
             // Get a features object
             Features features = new Features();
 
+            // Retrieve the known attributes
+            String name = (String) attributes.get("name");
+            @SuppressWarnings("unchecked")
+            List<String> permissions = (List<String>) attributes.get("permissions");
+            String s = (String) attributes.get("status");
+            Status status;
+            
+            // If status wasn't specified, set it to Active
+            if (s == null)
+            {
+                status = Status.Active;
+            }
+            else
+            {
+                if (s.equals("Banned"))
+                {
+                    status = Status.Banned;
+                }
+                else if (s.equals("Pending"))
+                {
+                    status = Status.PendingApproval;
+                }
+                else if (s.equals("Active"))
+                {
+                    status = Status.Active;
+                }
+                else
+                {
+                    throw new JsonRpcError(0, "Unrecognized status: " + s);
+                }
+            }
+            
             // Try to add the visitor. Returns true or throws an error.
-            boolean ret = features.addVisitor(userId, name);
+            int ret = features.addOrEditVisitor(userId, name, permissions, status);
 
             // Flush visitor to persistent storage
             features.flush();
 
-            // Let 'em know it worked.
-            return ret;
+            // Let 'em know it worked. 
+            switch(ret)
+            {
+            case 0 : // The user already existed. Edited the record.
+                return false;
+                
+            case 1: // A new user was created.
+                return true;
+                
+            default: // Something bad happened
+                throw new JsonRpcError(JsonRpcError.Error_Unknown,
+                        "Internal error: failed to save user data");
+            }
         }
         catch (PermissionDeniedError e)
         {

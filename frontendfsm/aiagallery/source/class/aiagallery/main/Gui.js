@@ -97,7 +97,7 @@ qx.Class.define("aiagallery.main.Gui",
         }
 
         var DebugFlags = qx.util.fsm.FiniteStateMachine.DebugFlags;
-        var bInitialDebug = false;
+        var bInitialDebug = true;
         if (bInitialDebug)
         {
           var initialDebugFlags =

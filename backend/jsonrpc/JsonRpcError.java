@@ -79,7 +79,7 @@ public class JsonRpcError extends Exception
      * 
      * The requested service does not exist at the JSON-RPC server.
      */
-    public static final int   Error_ServiceNotFounc   = 2;
+    public static final int   Error_ServiceNotFound   = 2;
 
     /**
      * Error code, value 3: Class Not Found
