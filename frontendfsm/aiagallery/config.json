@@ -57,8 +57,22 @@
       [
         {
           "manifest" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/Dialog/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/Manifest.json"
         }
       ]
+    },
+
+    "source-hybrid" :
+    {
+      "compile-options" :
+      {
+        "code" :
+        {
+          "=except" : [ ]
+        }
+      }
     },
 
     "build" :

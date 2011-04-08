@@ -448,19 +448,19 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // Save the request data
           var requestData = 
             {
-              email : email,
+              name        : name,
               permissions : internal.permissions,
-              status : internal.status 
+              status      : internal.status 
             };
 
           // Issue a Add Or Edit Visitor call.
           request = this.callRpc(fsm,
                      "aiagallery.features",
                      "addOrEditVisitor",
-                     [ name, requestData ]);
+                     [ email, requestData ]);
 
-          // Save the name in the request data too
-          requestData.name = name;
+          // Save the user id in the request data too
+          requestData.email = email;
 
           // Save the request data
           request.setUserData("requestData", requestData);

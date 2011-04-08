@@ -109,11 +109,9 @@ qx.Class.define("aiagallery.Application",
           module.buildInitialGui(moduleList[menuItem][moduleName]);
         }
       }
-    },
-
-    _applyShowHidden : function(newValue, oldValue, config)
-    {
-      this.fireDataEvent("showHidden", newValue);
+      
+      // Start the RPC simulator by instantiating the service methods class
+      new aiagallery.rpcsim.RpcSim();
     }
   }
 });
