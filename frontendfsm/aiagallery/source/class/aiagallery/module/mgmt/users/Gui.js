@@ -223,7 +223,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         table = fsm.getObject("table");
         
         // Set the entire data model given the result array
-        table.getTableModel().setData(response.data);
+        table.getTableModel().setData(response.data.result);
         break;
 
       case "addOrEditUser":

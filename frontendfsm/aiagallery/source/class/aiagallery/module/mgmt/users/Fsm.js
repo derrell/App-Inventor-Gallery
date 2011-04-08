@@ -369,13 +369,6 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
               // the next transition.
               this.pushRpcRequest(rpcRequest);
             }
-
-            // Dispose of the request
-            if (rpcRequest.request)
-            {
-              rpcRequest.request.dispose();
-              rpcRequest.request = null;
-            }
           }
         },
 
@@ -443,7 +436,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
             });
           selection = cellEditor.getUserData("status").getSelection()[0];
           internal.status = selection.getUserData("internal");
-          i8n.status = selection.getLabel();
+          
+          // Get the status string. It's a localized string, so call its
+          // toString method so we don't end up with an object.
+          i8n.status = selection.getLabel().toString();
           
           // Save the request data
           var requestData = 
@@ -586,14 +582,14 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           if (cellInfo && cellInfo.row)
           {
             // ... then save the data in the row being edited.
-            dataModel.setRows(rowData, cellInfo.row, false);
+            dataModel.setRows( [ rowData ], cellInfo.row, false);
           }
           else
           {
             // Otherwise, add a new row. Do not clear sorting.
-            dataModel.addRows(rowData, null, false);
+            dataModel.addRows( [ rowData ], null, false);
           }
-
+          
           // close the cell editor
           cellEditor.close();
           
