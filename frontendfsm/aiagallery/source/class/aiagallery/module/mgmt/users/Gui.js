@@ -176,6 +176,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
           // selection array.
           var selection = selectionModel.getSelectedRanges()[0].minIndex;
           var data = model.getData()[selection];
+          var origEvent = e.clone();
 
           dialog.Dialog.confirm(
             this.tr("Really delete user ") + data[1] + 
@@ -186,7 +187,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
               if (result)
               {
                 // ... then pass this event to the fsm
-                fsm.eventListener(e);
+                fsm.eventListener(origEvent);
               }
             });
         });
@@ -213,6 +214,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       var             requestType = rpcRequest.getUserData("requestType");
       var             cellEditor;
       var             table;
+      var             deletedRow;
 
       if (response.type == "failed")
       {
@@ -232,14 +234,15 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         table.getTableModel().setDataAsMapArray(response.data.result);
         break;
 
-      case "addOrEditUser":
-        // Nothing to do but close the cell editor
-        cellEditor = rpcRequest.getUserData("cellEditor");
-        cellEditor.close();
+      case "addOrEditVisitor":
+        // Nothing more to do but close the cell editor
         break;
 
-      case "deleteUser":
-        // Nothing to do
+      case "deleteVisitor":
+        // Delete the row from the table
+        table = fsm.getObject("table");
+        deletedRow = rpcRequest.getUserData("deletedRow");
+        table.getTableModel().removeRows(deletedRow, 1, false);
         break;
         
       default:

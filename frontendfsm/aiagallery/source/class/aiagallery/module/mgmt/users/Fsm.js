@@ -113,7 +113,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_AwaitRpcResult_via_delete",
+        "Transition_Idle_to_AwaitRpcResult_via_deleteUser",
       {
         "nextState" : "State_AwaitRpcResult",
 
@@ -141,6 +141,9 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "deleteVisitor");
+          
+          // We also need to know what row got deleted
+          request.setUserData("deletedRow", selection);
         }
       });
 
