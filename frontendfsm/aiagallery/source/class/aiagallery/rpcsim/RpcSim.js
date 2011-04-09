@@ -15,12 +15,52 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
     // Call the superclass constructor
     this.base(arguments);
 
-    // Initialize the database
-    this.__db = 
-      {
-        visitors : {},
-        tags     : {}
-      };
+    // Gain access to local storage
+    var Storage = qx.bom.Cookie;
+    
+/*
+    // See if there's an existing database
+    var s = Storage.get("aiagallery.db");
+    
+    // Did we find anything there?
+    if (s)
+    {
+      // Yup. It's a JSON representation of our database. Parse it.
+      this.__db = qx.lang.Json.parse(s);
+    }
+    else
+*/
+    {
+      // There's no database. Initialize a new one.
+      this.__db = 
+        {
+          visitors : 
+          {
+            "joe@blow.com" :
+            {
+              userId      : "joe@blow.com",
+              name        : "Joe Blow",
+              permissions : [ "VISITOR EDIT" ],
+              status      : 2
+            }
+          },
+          tags     : {}
+        };
+    }
+    
+    // Prepare to store the database periodically
+/*
+    var timer = qx.util.TimerManager.getInstance();
+    timer.start(function(userData, timerId)
+                {
+                  Storage.set("aiagallery.db",
+                              qx.lang.Json.stringify(this.__db));
+                },
+                5000,
+                this,
+                null,
+                5000);
+*/
 
     // Initialize the service jump table
     this.__services =
@@ -118,7 +158,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       for (var visitor in this.__db.visitors)
       {
         // Clone the visitor entry for this visitor
-        clonedVisitor = qx.lang.Object.clone(visitor);
+        clonedVisitor = qx.lang.Object.clone(this.__db.visitors[visitor]);
         
         // If we were asked to stringize the values...
         if (bStringize)

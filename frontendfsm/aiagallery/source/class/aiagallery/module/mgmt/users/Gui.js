@@ -90,6 +90,12 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
                          canvas.tr("Email"),
                          canvas.tr("Permissions"),
                          canvas.tr("Status")
+                       ],
+                       [
+                         "name",
+                         "userId",
+                         "permissions",
+                         "status"
                        ]);
 
       // Set all columns editable
@@ -223,7 +229,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         table = fsm.getObject("table");
         
         // Set the entire data model given the result array
-        table.getTableModel().setData(response.data.result);
+        table.getTableModel().setDataAsMapArray(response.data.result);
         break;
 
       case "addOrEditUser":
