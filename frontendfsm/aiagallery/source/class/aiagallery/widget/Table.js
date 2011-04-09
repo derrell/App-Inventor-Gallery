@@ -17,14 +17,16 @@ qx.Class.define("aiagallery.widget.Table",
     // Arrange to be have the cellEditorOpening event fired when a modal cell
     // editor opens.
     this.setModalCellEditorPreOpenFunction(
-      function(cellEditor, cellInfo)
-      {
-        this.fireDataEvent("cellEditorOpening",
-                           {
-                             cellEditor : cellEditor,
-                             cellInfo   : cellInfo
-                           });
-      });
+      qx.lang.Function.bind(
+        function(cellEditor, cellInfo)
+        {
+          this.fireDataEvent("cellEditorOpening",
+                             {
+                               cellEditor : cellEditor,
+                               cellInfo   : cellInfo
+                             });
+        },
+        this));
   },
 
   events : 

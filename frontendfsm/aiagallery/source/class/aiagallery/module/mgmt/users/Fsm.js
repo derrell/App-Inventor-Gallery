@@ -465,9 +465,6 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // we made.
           request.setUserData("requestType", "AddOrEditVisitor");
 
-          // Save the cell editor so it can be closed upon success
-          request.setUserData("cellEditor", cellEditor);
-          
           // Save the translated permissions and status too
           request.setUserData("i8n", i8n);
         }
@@ -503,6 +500,9 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // Retrieve the table object
           var table = fsm.getObject("table");
           
+          // Tell the table we're no longer editing
+          table.cancelEditing();
+
           // close the cell editor
           cellEditor.close();
           
@@ -555,8 +555,8 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           rpcRequest = this.popRpcRequest();
           
           // Get the cell editor and the request data from the RPC request
-          cellEditor = rpcRequest.getUserData("cellEditor");
-          cellInfo = rpcRequest.getUserData("cellInfo");
+          cellEditor = this.getUserData("cellEditor");
+          cellInfo = this.getUserData("cellInfo");
           requestData = rpcRequest.getUserData("requestData");
           i8n = rpcRequest.getUserData("i8n");
           
@@ -579,10 +579,14 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           rowData.push(i8n.status);
 
           // If there's cell info available (they're editing), ...
-          if (cellInfo && cellInfo.row)
+          if (cellInfo && cellInfo.row !== undefined)
           {
             // ... then save the data in the row being edited.
             dataModel.setRows( [ rowData ], cellInfo.row, false);
+            
+            // Save the data so that the cell editor's getCellEditorValue()
+            // method can retrieve it.
+            cellEditor.setUserData("newData", rowData);
           }
           else
           {

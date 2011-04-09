@@ -40,7 +40,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
             {
               userId      : "joe@blow.com",
               name        : "Joe Blow",
-              permissions : [ "VISITOR EDIT" ],
+              permissions : [ "VISITOR VIEW" ],
               status      : 2
             }
           },
