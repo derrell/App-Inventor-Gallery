@@ -241,7 +241,7 @@ public class test extends AbstractRpcClass
         return param;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public Map getCurrentTimestamp()
     {
         Map ret = new HashMap();

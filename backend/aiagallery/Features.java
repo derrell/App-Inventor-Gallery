@@ -774,7 +774,7 @@ public class Features
      * 
      * @return A list of matching results
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked" })
     private List query(java.lang.Class clazz, String filter,
             String parameterDeclarations, Object[] parameters)
     {

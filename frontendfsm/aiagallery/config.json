@@ -96,8 +96,9 @@
           "rsync -av ./build/ ../../war/"
         ]
       }
-    },
+    }
 
+/*
     "build-script" :
     {
       "variants" : 
@@ -105,5 +106,6 @@
         "=qx.debug" : [ "on" ]
       }
     }
+*/
   }
 }
