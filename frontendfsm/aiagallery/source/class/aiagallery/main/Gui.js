@@ -69,6 +69,22 @@ qx.Class.define("aiagallery.main.Gui",
       o = new qx.ui.basic.Label(this.tr("App Inventor for Android Gallery"));
       o.setFont(new qx.bom.Font(18, [ "sans-serif" ]));
       header.add(o);
+      
+      // Add a flexible spacer to take up the whole middle
+      o = new qx.ui.core.Widget();
+      header.add(o, { flex : 1 });
+      
+      // Add a checkbox to enable/disable RPC simulation.
+      var simulate = new qx.ui.form.CheckBox(this.tr("Simulate"));
+      simulate.setValue(true);
+      simulate.addListener("changeValue",
+                           function(e)
+                           {
+                             rpcjs.sim.remote.MRpc.SIMULATE = e.getData();
+                           },
+                           this);
+      header.add(simulate);
+      
 
       // Add the header to the application
       application.add(header);
