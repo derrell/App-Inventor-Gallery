@@ -626,7 +626,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
 
 
       // ------------------------------------------------------------ //
-      // Prolog
+      // Epilog
       // ------------------------------------------------------------ //
 
       // Listen for our generic remote procedure call event

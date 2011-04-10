@@ -61,7 +61,7 @@ qx.Class.define("aiagallery.Application",
       this.base(arguments);
 
       // Enable logging in debug variant
-      if (qx.core.Variant.isSet("qx.debug", "on"))
+      if (qx.core.Environment.get("qx.debug"))
       {
         var appender;
 
@@ -124,34 +124,38 @@ qx.Class.define("aiagallery.Application",
  * as a previous one. (
  */
 
-/*
 new aiagallery.main.Module(
   "Gallery",
   "aiagallery/test.png",
-  "Browse and Search",
+  "Home",
   aiagallery.module.gallery.home.Home);
 
 new aiagallery.main.Module(
   "Gallery",
   "aiagallery/test.png",
-  "My Applications",
-  aiagallery.module.gallery.myapplications.MyApplications);
-*/
+  "Find Apps",
+  aiagallery.module.gallery.findapps.FindApps);
 
 new aiagallery.main.Module(
-  "Users",
+  "Gallery",
   "aiagallery/test.png",
-  "Users",
-  aiagallery.module.mgmt.users.Users);
+  "My Stuff",
+  aiagallery.module.gallery.mystuff.MyStuff);
 
 new aiagallery.main.Module(
-  "Management",
+  "Gallery",
   "aiagallery/test.png",
-  "Users",
-  aiagallery.module.mgmt.users.Users);
+  "Learn",
+  aiagallery.module.gallery.learn.Learn);
 
 new aiagallery.main.Module(
   "Management",
   null,
-  "Application",
+  "Applications",
+  aiagallery.module.mgmt.users.Users);
+
+new aiagallery.main.Module(
+  "Management",
+  "aiagallery/test.png",
+  "Users",
   aiagallery.module.mgmt.users.Users);

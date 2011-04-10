@@ -6,10 +6,6 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-/*
-#use(aiagallery.module.mgmt.users.Gui)
-*/
-
 /**
  * User management
  */
