@@ -308,7 +308,7 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
       rpcRequest.service = service;
 
       // Copy the parameters; we'll prefix our copy with additional params
-      rpcRequest.params = params.slice(0);
+      rpcRequest.params = params ? params.slice(0) : [];
 
       // Prepend the method
       rpcRequest.params.unshift(method);

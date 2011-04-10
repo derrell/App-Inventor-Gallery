@@ -12,7 +12,7 @@
 qx.Class.define("aiagallery.module.mgmt.users.Gui",
 {
   type : "singleton",
-  extend : qx.core.Object,
+  extend : qx.ui.core.Widget,
 
   members :
   {
@@ -41,7 +41,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       var hBox = new qx.ui.container.Composite(layout);
 
       // Create an Edit button
-      var edit = new qx.ui.form.Button(canvas.tr("Edit"));
+      var edit = new qx.ui.form.Button(this.tr("Edit"));
       edit.set(
         {
           maxHeight : 24,
@@ -52,7 +52,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       fsm.addObject("edit", edit);
 
       // Create an Add User button
-      var addUser = new qx.ui.form.Button(canvas.tr("Add New User"));
+      var addUser = new qx.ui.form.Button(this.tr("Add New User"));
       addUser.set(
         {
           maxHeight : 24,
@@ -68,7 +68,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       hBox.add(new qx.ui.core.Widget(), { flex : 1 });
 
       // Create a Delete button
-      var deleteUser = new qx.ui.form.Button(canvas.tr("Delete"));
+      var deleteUser = new qx.ui.form.Button(this.tr("Delete"));
       deleteUser.set(
         {
           maxHeight : 24,
@@ -86,10 +86,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
 
       // Define the table columns
       model.setColumns([ 
-                         canvas.tr("Name"),
-                         canvas.tr("Email"),
-                         canvas.tr("Permissions"),
-                         canvas.tr("Status")
+                         this.tr("Name"),
+                         this.tr("Email"),
+                         this.tr("Permissions"),
+                         this.tr("Status")
                        ],
                        [
                          "name",

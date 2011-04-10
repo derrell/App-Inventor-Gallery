@@ -44,7 +44,10 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
               status      : 2
             }
           },
-          tags     : {}
+
+          tags     : {},
+          
+          applications : {}
         };
     }
     
@@ -175,6 +178,23 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       
       // We've built the whole list. Return it.
       return visitorList;
+    },
+    
+    getMyApplicationList : function()
+    {
+      var ret = [];
+      for (var name in this.__db.applications)
+      {
+        ret.push(name);
+      }
+
+      return ret;
+    },
+
+    uploadApplication : function(fileData)
+    {
+      this.__db.applications["xyz"] = fileData;
+      return true;
     },
 
     /** The whole database */

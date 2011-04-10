@@ -12,7 +12,7 @@
 qx.Class.define("aiagallery.module.gallery.mystuff.Gui",
 {
   type : "singleton",
-  extend : qx.core.Object,
+  extend : qx.ui.core.Widget,
 
   members :
   {
@@ -27,7 +27,34 @@ qx.Class.define("aiagallery.module.gallery.mystuff.Gui",
       var             o;
       var             fsm = module.fsm;
       var             canvas = module.canvas;
+      var             uploadButton;
+      
+      // Create a layout for this page
+      canvas.setLayout(new qx.ui.layout.VBox());
 
+      // Create a button row
+      var layout = new qx.ui.layout.HBox();
+      layout.setSpacing(10);
+      var hBox = new qx.ui.container.Composite(layout);
+
+      // Right-justify the Upload button
+      hBox.add(new qx.ui.core.Widget(), { flex : 1 });
+
+      // Create an Upload button
+      uploadButton = new uploadwidget.UploadButton("uploadButton", 
+                                                   this.tr("Upload"),
+                                                   "aiagallery/test.png");
+      uploadButton.set(
+        {
+          maxHeight : 24,
+          width     : 100
+        });
+      hBox.add(uploadButton);
+      fsm.addObject("uploadButton", uploadButton);
+      uploadButton.addListener("changeFileName", fsm.eventListener, fsm);
+
+      // Add the button row to the page
+      canvas.add(hBox);
     },
 
 
@@ -58,7 +85,10 @@ qx.Class.define("aiagallery.module.gallery.mystuff.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "getVisitorList":
+      case "getMyApplicationList":
+        break;
+        
+      case "uploadApplication":
         break;
         
       default:

@@ -391,7 +391,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
       });
 
       // Replace the initial Idle state with this one
-      fsm.addState(state, true);
+      fsm.addState(state);
 
       /*
        * Transition: Idle to AwaitRpcResult

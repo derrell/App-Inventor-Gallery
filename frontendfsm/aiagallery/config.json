@@ -60,6 +60,9 @@
         },
         {
           "manifest" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/UploadWidget/trunk/Manifest.json"
         }
       ]
     },
