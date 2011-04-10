@@ -132,25 +132,25 @@ new aiagallery.main.Module(
 
 new aiagallery.main.Module(
   "Gallery",
-  "aiagallery/test.png",
+  null,
   "Find Apps",
   aiagallery.module.gallery.findapps.FindApps);
 
 new aiagallery.main.Module(
   "Gallery",
-  "aiagallery/test.png",
+  null,
   "My Stuff",
   aiagallery.module.gallery.mystuff.MyStuff);
 
 new aiagallery.main.Module(
   "Gallery",
-  "aiagallery/test.png",
+  null,
   "Learn",
   aiagallery.module.gallery.learn.Learn);
 
 new aiagallery.main.Module(
   "Management",
-  null,
+  "aiagallery/test.png",
   "Applications",
   aiagallery.module.mgmt.users.Users);
 

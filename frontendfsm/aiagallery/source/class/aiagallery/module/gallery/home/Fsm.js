@@ -76,7 +76,6 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
             // either of which open a cell editor for the row data
             "table" : "Transition_Idle_to_AddOrEditUser_via_cellEditorOpening"
           },
-*/
 
           // Request to call some remote procedure call which is specified by
           // the event data.
@@ -93,6 +92,7 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
           {
             "main.canvas" : "Transition_Idle_to_Idle_via_disappear"
           }
+*/
         }
       });
 
