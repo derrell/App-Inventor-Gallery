@@ -121,7 +121,7 @@ qx.Class.define("aiagallery.Application",
  * Register our supported modules.  The order listed here is the order they
  * will appear in the Modules menu. Additionally, for a two-level menu, the
  * first parameter to the aiagallery.main.Module constructor may be the same
- * as a previous one. (
+ * as a previous one.
  */
 
 new aiagallery.main.Module(
