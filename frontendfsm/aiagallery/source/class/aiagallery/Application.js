@@ -124,6 +124,32 @@ qx.Class.define("aiagallery.Application",
  * as a previous one.
  */
 
+/*  Temporary work gallery */
+new aiagallery.main.Module(
+  "Test Gallery",
+  "aiagallery/test.png",
+  "Home",
+  aiagallery.module.dgallery.home.Home);
+
+new aiagallery.main.Module(
+  "Test Gallery",
+  null,
+  "Find Apps",
+  aiagallery.module.dgallery.findapps.FindApps);
+
+new aiagallery.main.Module(
+  "Test Gallery",
+  null,
+  "My Stuff",
+  aiagallery.module.dgallery.mystuff.MyStuff);
+
+new aiagallery.main.Module(
+  "Test Gallery",
+  null,
+  "Learn",
+  aiagallery.module.dgallery.learn.Learn);
+
+/* The main gallery */
 new aiagallery.main.Module(
   "Gallery",
   "aiagallery/test.png",
@@ -148,6 +174,7 @@ new aiagallery.main.Module(
   "Learn",
   aiagallery.module.gallery.learn.Learn);
 
+/* Management */
 new aiagallery.main.Module(
   "Management",
   "aiagallery/test.png",
