@@ -72,7 +72,8 @@ public class Features
         this.bAdministrator = (this.userId != null && userService.isUserAdmin());
 
         log.logp(Level.WARNING, "Features", "constructor", "userId="
-                + this.userId);
+                + this.userId 
+                + ", displayName=" + currentUser.getUserId());
     }
 
     /**
