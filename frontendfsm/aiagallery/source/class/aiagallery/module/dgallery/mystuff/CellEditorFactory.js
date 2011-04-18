@@ -34,7 +34,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       var             image;
       var             images = [];
       var             imageData;
-      var             mandatoryTagList;
+      var             categoryList;
 
       // If there's a cellInfo object provided, we're editing an existing
       // user. Get the row data. Otherwise, we're adding a new user.
@@ -73,8 +73,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       
       var layout = new qx.ui.layout.Grid(9, 2);
       layout.setColumnAlign(0, "right", "top");
-      layout.setColumnWidth(0, 80);
-      layout.setColumnWidth(1, 400);
+      layout.setColumnWidth(0, 100);
+      layout.setColumnWidth(1, 300);
       layout.setSpacing(10);
 
       // Create the cell editor window, since we need to return it immediately
@@ -110,12 +110,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         this.tr("Image 2"),
         this.tr("Image 3"),
         this.tr("Previous Authors"),
-        this.tr("Tags"),
-        this.tr("Upload Time"),
-        this.tr("Likes"),
-        this.tr("Downloads"),
-        this.tr("Viewed"),
-        this.tr("Status")
+        this.tr("Categories"),
+        this.tr("Tags")
       ].forEach(function(label)
         {
           o = new qx.ui.basic.Label(label);
@@ -127,19 +123,18 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
           cellEditor.add(o, {row: row++, column : 0});
         });
 
-
       // Reset the row number
       row = 0;
 
       // Create the editor field for the title
       var appTitle = new qx.ui.form.TextField("");
       appTitle.setValue(rowData.title);
-      cellEditor.add(appTitle, { row : row++, column : 1 });
+      cellEditor.add(appTitle, { row : row++, column : 1, colSpan : 2 });
       
       // Create the editor field for the description
       var description = new qx.ui.form.TextField("");
       description.setValue(rowData.description);
-      cellEditor.add(description, { row : row++, column : 1 });
+      cellEditor.add(description, { row : row++, column : 1, colSpan : 2 });
       
       // Add upload buttons for each of the three images
       for (i = 1; i <= 3; i++)
@@ -148,19 +143,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         imageData = rowData["image" + i];
         if (imageData)
         {
-          cellEditor.add(new qx.ui.basic.Image(imageData),
-                         { row : row, column : 1 });
+          image = new qx.ui.basic.Image(imageData);
+          image.setHeight(60);
+          cellEditor.add(image, { row : row, column : 1 });
         }
 
         // Create an Upload button
-        image = new uploadwidget.UploadButton("image" + i, 
-                                               this.tr("Change"),
-                                               "aiagallery/test.png");
-        image.set(
-        {
-          maxHeight : 24,
-          width     : 100
-        });
+        image = new uploadwidget.UploadButton("image" + i, this.tr("Change"));
+        image.setWidth(100);
 
         // Add upload button in rows 3, 4, and 5
         cellEditor.add(image, { row : row++, column : 2 });
@@ -169,80 +159,97 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         images[i] = image;
       }
 
+      // Create the editor field for previous authors
+      var prevAuthors = new qx.ui.form.TextField("");
+      prevAuthors.setValue(rowData.description);
+      cellEditor.add(prevAuthors, { row : row++, column : 1, colSpan : 2 });
+      
       // Create the editor field for "category" (required) tags which have
       // been stored in the table's user data.
       
-      // First, get the list of possible tags, at least one of which must be
-      // selected.
-      mandatoryTagList = this.getRoot().getUserData("mandatoryTagList");
-      
       // Get the list of currently-selected tags
-      var currentTags = rowData.tags.split(/, */);
+      var currentTags = rowData.tags.split(new RegExp(", *"));
       
-      // Create a multi-selection list and add the mandatory tags to it.
-      var mandatoryTags = new qx.ui.form.List();
-      mandatoryTags.setMode("multi"); // allow multiple selections
-      mandatoryTagList.forEach(function(tagName) 
+      // Get the list of possible tags, at least one of which must be selected.
+      categoryList =
+        qx.core.Init.getApplication().getRoot().getUserData("categories");
+
+      // Create a multi-selection list and add the categories to it.
+      var categories = new qx.ui.form.List();
+      categories.setHeight(50);
+      categories.setSelectionMode("multi"); // allow multiple selections
+      categoryList.forEach(function(tagName) 
         {
           var item = new qx.ui.form.ListItem(tagName);
-          mandatoryTags.add(item);
+          categories.add(item);
           
-          // Is this one currently selected?
+          // Is this a current tag of the app being edited?
           if (qx.lang.Array.contains(currentTags, tagName))
           {
-            mandatoryTags.addToSelection(item);
+            // Yup. Select it.
+            categories.addToSelection(item);
           }
         });
       
-      cellEditor.add(mandatoryTags, { row : row++, column : 1 });
+      cellEditor.add(categories, { row : row++, column : 1, colSpan : 2 });
 
       //
       // Add a list for editing additional tags
       //
       
       // Create a grid layout for it
-      layout = new qx.ui.layout.Grid(11, 5);
+      layout = new qx.ui.layout.Grid(4, 4);
       layout.setColumnWidth(0, 80);
       layout.setColumnWidth(1, 30);
       layout.setColumnWidth(2, 200);
       layout.setColumnWidth(3, 80);
       var grid = new qx.ui.container.Composite(layout);
+      cellEditor.add(grid, { row : row++, column : 1, colSpan : 1 });
       
       // We'll want a list of tags
       var additionalTags = new qx.ui.form.List();
-      grid.add(list, { row : 0, column : 0, colSpan : 4 });
+      grid.add(additionalTags, { row : 0, column : 0, colSpan : 4 });
       
+      // Add those tags that are not also categories
+      currentTags.forEach(function(tag)
+        {
+          if (! qx.lang.Array.contains(categoryList, tag))
+          {
+            additionalTags.add(new qx.ui.form.ListItem(tag));
+          }
+        });
+
       // Create the button to delete the selected tag
-      var tagDelete = new qx.ui.form.Button("Delete");
+      var tagDelete = new qx.ui.form.Button(this.tr("Delete"));
       grid.add(tagDelete, { row : 1, column : 0 });
       
       // Create an input field and button to add a new tag
       var newTag = new qx.ui.form.TextField();
-      newTag.setFilter(/[a-zA-Z0-9]/); // only allow these characters in tags
+      newTag.setFilter(/[ a-zA-Z0-9]/); // only allow these characters in tags
       grid.add(newTag, { row : 1, column : 2 });
-      var tagAdd = new qx.ui.form.Button("Add");
+      var tagAdd = new qx.ui.form.Button(this.tr("Add"));
       grid.add(tagAdd, { row : 1, column : 3 });
 
       // When the selection changes, determine whether to enable the delete.
       additionalTags.addListener("changeSelection",
         function(e)
         {
-          deleteButton.setEnabled(additionalTags.getSelection().length !== 0);
+          tagDelete.setEnabled(additionalTags.getSelection().length !== 0);
         });
 
       // Enable the Add button whenever there's data in the text field
       newTag.addListener("input",
         function(e)
         {
-          addButton.setEnabled(e.getData().length !== 0);
+          tagAdd.setEnabled(e.getData().length !== 0);
         });
 
       // When the Add button is pressed, add the item to the list
       tagAdd.addListener("execute",
         function(e)
         {
-          additionalTags.add(new qx.ui.form.ListItem(newItem.getValue()));
-          newItem.setValue(""); // clear the entered text
+          additionalTags.add(new qx.ui.form.ListItem(newTag.getValue()));
+          newTag.setValue(""); // clear the entered text
         });
 
       // When the delete button is pressed, delete selection from the list
@@ -257,8 +264,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       cellEditor.setUserData("appTitle", appTitle);
       cellEditor.setUserData("description", description);
       cellEditor.setUserData("images", images);
-      cellEditor.setUserData("mandatoryTags", mandatoryTags);
+      cellEditor.setUserData("prevAuthors", prevAuthors);
+      cellEditor.setUserData("categories", categories);
       cellEditor.setUserData("additionalTags", additionalTags);
+      
+      // Save the uid
+      cellEditor.setUserData("uid", rowData.uid);
 
       // buttons
       var paneLayout = new qx.ui.layout.HBox();
@@ -272,7 +283,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         {
           paddingTop: 11
         });
-      cellEditor.add(buttonPane, {row: row++, column: 0, colSpan: 2});
+      cellEditor.add(buttonPane, {row: row++, column: 0, colSpan: 3});
 
       // Retrieve the finite state machine
       fsm = cellInfo.table.getUserData("fsm");

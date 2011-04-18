@@ -91,12 +91,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
                          this.tr("Image 1"),
                          this.tr("Image 2"),
                          this.tr("Image 3"),
-                         this.tr("Previous Authors"),
+                         this.tr("Author Chain"),
                          this.tr("Tags"),
                          this.tr("Upload Time"),
-                         this.tr("# Likes"),
-                         this.tr("# Downloads"),
-                         this.tr("# Viewed"),
+                         this.tr("Likes"),
+                         this.tr("Downloads"),
+                         this.tr("Viewed"),
                          this.tr("Status")
                        ],
                        [
@@ -132,6 +132,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       // Now that we have a data model, we can use it to create our table.
       var table = new aiagallery.widget.Table(model, custom);
+      table.setRowHeight(60);
       table.addListener("cellEditorOpening", fsm.eventListener, fsm);
       
       // We'll be receiving events on the object so save its friendly name
@@ -148,16 +149,22 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       // Set the Permissions and Status fields to nearly fixed widths, and then
       // let the Name and Email fields take up the remaining space.
-      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
-      resizeBehavior.set(1, { width:"1*", minWidth:200 }); // Email
-      resizeBehavior.set(2, { width:200                }); // Permissions
-      resizeBehavior.set(3, { width:60                 }); // Status
+//      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
 
-      var editor = new aiagallery.module.mgmt.users.CellEditorFactory();
-      tcm.setCellEditorFactory(0, editor);
-      tcm.setCellEditorFactory(1, editor);
-      tcm.setCellEditorFactory(2, editor);
-      tcm.setCellEditorFactory(3, editor);
+      resizeBehavior.set(0,  { width:100 });                // Title
+      resizeBehavior.set(1,  { width:150 });                // Description
+      resizeBehavior.set(2,  { width:60  });                // Image 1
+      resizeBehavior.set(3,  { width:60  });                // Image 2
+      resizeBehavior.set(4,  { width:60  });                // Image 3
+      resizeBehavior.set(8,  { width:70  });                // # Likes
+      resizeBehavior.set(9,  { width:70  });                // # Downloads
+      resizeBehavior.set(10, { width:70  });                // # Viewed
+
+      var editor = new aiagallery.module.dgallery.mystuff.CellEditorFactory();
+      for (var i = 0; i < 12; i++)
+      {
+        tcm.setCellEditorFactory(i, editor);
+      }
 
       // Listen for changeSelection events so we can enable/disable buttons
       var selectionModel = table.getSelectionModel();
@@ -283,7 +290,11 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
         model = table.getTableModel();
         
         // Set the entire data model given the result array
-        model.setDataAsMapArray(response.data.result, true, false);
+        model.setDataAsMapArray(response.data.result.apps, true, false);
+        
+        // Save the category list in a known place, for later access
+        this.getApplicationRoot().setUserData("categories",
+                                              response.data.result.categories);
         break;
         
       case "addOrEditApp":

@@ -86,7 +86,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           // the event data.
           "callRpc" : "Transition_Idle_to_AwaitRpcResult_via_generic_rpc_call",
 
-          // When we get an appear event, retrieve the visitor list
+          // When we get an appear event, retrieve the app list
           "appear"    :
           {
             "main.canvas" : "Transition_Idle_to_AwaitRpcResult_via_appear"
@@ -129,18 +129,18 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var selection = selectionModel.getSelectedRanges()[0].minIndex;
           var data = table.getTableModel().getDataAsMapArray()[selection];
 
-          // Issue a Delete Visitor call
+          // Issue a Delete App call
           var request =
             this.callRpc(fsm,
                           "aiagallery.features",
-                          "deleteVisitor",
+                          "deleteApp",
                           [
                             data.uid
                           ]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "deleteVisitor");
+          request.setUserData("requestType", "deleteApp");
           
           // We also need to know what row got deleted
           request.setUserData("deletedRow", selection);
@@ -413,11 +413,15 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
         {
           var             cellEditor;
           var             cellInfo;
-          var             name;
-          var             email;
+          var             uid;
+          var             appTitle;
+          var             description;
+          var             images;
+          var             prevAuthors;
+          var             categories;
+          var             additionalTags;
+          var             tags;
           var             selection;
-          var             internal = { permissions : [], status : null };
-          var             i8n = { permissions : [], status : null };
           var             request;
 
           // Retrieve the cell editor and cell info
@@ -425,38 +429,49 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           cellInfo = this.getUserData("cellInfo");
 
           // Retrieve the values from the cell editor
-          name = cellEditor.getUserData("name").getValue();
-          email = cellEditor.getUserData("email").getValue();
-          selection = cellEditor.getUserData("permissions").getSelection();
+          uid            = cellEditor.getUserData("uid").getValue();
+          appTitle       = cellEditor.getUserData("appTitle").getValue();
+          description    = cellEditor.getUserData("description").getValue();
+//          images         = cellEditor.getUserData("images").getValue();
+images = [];
+          prevAuthors    = cellEditor.getUserData("prevAuthors").getValue();
+          categories     = cellEditor.getUserData("categories").getValue();
+          additionalTags = cellEditor.getUserData("additionalTags").getValue();
+
+          // Create the tags list out of a combination of the categories and
+          // additionalTags lists.
+          tags = [];
+
+          // Add the selected categories
+          selection = categories.getSelection();
           selection.forEach(
             function(item)
             {
-              // Add to our permission list the "internal" (English) permission
-              internal.permissions.push(item.getUserData("internal"));
-              
-              // Also track the translated string
-              i8n.permissions.push(item.getLabel());
+              // Add this selection to the tags list
+              tags.push(item.getLabel());
             });
-          selection = cellEditor.getUserData("status").getSelection()[0];
-          internal.status = selection.getUserData("internal");
-          
-          // Get the status string. It's a localized string, so call its
-          // toString method so we don't end up with an object.
-          i8n.status = selection.getLabel().toString();
+
+          // Add the selected additional tags
+          selection = additionalTags.getSelection();
+          selection.forEach(
+            function(item)
+            {
+              // Add this selection to the tags list
+              tags.push(item.getLabel());
+            });
+
           
           // Save the request data
           var requestData = 
             {
-              name        : name,
-              permissions : internal.permissions,
-              status      : internal.status 
+              
             };
 
-          // Issue a Add Or Edit Visitor call.
+          // Issue a Add Or Edit App call.
           request = this.callRpc(fsm,
                      "aiagallery.features",
-                     "addOrEditVisitor",
-                     [ email, requestData ]);
+                     "addOrEditApp",
+                     [ uid, requestData ]);
 
           // Save the app id in the request data too
           requestData.email = email;
@@ -466,7 +481,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "AddOrEditVisitor");
+          request.setUserData("requestType", "AddOrEditApp");
 
           // Save the translated permissions and status too
           request.setUserData("i8n", i8n);
