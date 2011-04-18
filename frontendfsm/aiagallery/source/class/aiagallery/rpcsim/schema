@@ -1,0 +1,60 @@
+["uid" means unique id as primary key, never displayed to user]
+
+Visitors
+  id (PK, the email address)
+  displayName
+  permissions
+  status
+  recentSearches (list)
+  recentViews (list, sorted in timestamp order, limited to length N)
+
+Tags
+  value (PK)
+  type (category, invisible [e.g. "featured"], normal)
+
+AppData
+  uid (PK)
+  owner (id of Visitor record)
+  title
+  description
+  image1
+  image2
+  image3
+  previousAuthors (list of id of Visitor record)
+  source (.zip)
+  exe (.apk)
+  tags
+  uploadTime
+  numLiked
+  numDownloads
+  numViewed
+  numComments
+  status (active, pending, banned)
+
+Downloads
+  uid (PK)
+  app (id of AppData record)
+  visitor (id of Visitor record)
+  timestamp
+  
+Comments
+  uid (PK)
+  app (id of AppData record)
+  treeId (hierarchical thread tracking)
+  visitor (id of Visitor record)
+  timestamp
+  text
+
+Likes
+  uid (PK)
+  app (id of AppData record)
+  visitor (id of Visitor record)
+  timestamp
+
+Flags
+  uid (PK)
+  type (app or comment)
+  app (id of AppData record)
+  visitor (id of Visitor record)
+  timestamp
+  explanation
