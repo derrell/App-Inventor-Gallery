@@ -9,7 +9,7 @@
  */
 
 /*
-#use(aiagallery.module.mgmt.users.Gui)
+#require(aiagallery.rpcsim.RpcSim)
 #use(aiagallery.main.AbstractModule)
 */
 
@@ -110,8 +110,8 @@ qx.Class.define("aiagallery.Application",
         }
       }
       
-      // Start the RPC simulator by instantiating the service methods class
-      new aiagallery.rpcsim.RpcSim();
+      // Start the RPC simulator by getting its singleton instance
+      aiagallery.rpcsim.RpcSim.getInstance();
     }
   }
 });
