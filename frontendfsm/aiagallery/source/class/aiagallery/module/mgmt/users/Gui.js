@@ -52,7 +52,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
       fsm.addObject("edit", edit);
 
       // Create an Add User button
-      var addUser = new qx.ui.form.Button(this.tr("Add New User"));
+      var addUser = new qx.ui.form.Button(this.tr("Add User"));
       addUser.set(
         {
           maxHeight : 24,
@@ -86,13 +86,13 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
 
       // Define the table columns
       model.setColumns([ 
-                         this.tr("Name"),
+                         this.tr("Display Name"),
                          this.tr("Email"),
                          this.tr("Permissions"),
                          this.tr("Status")
                        ],
                        [
-                         "name",
+                         "displayName",
                          "userId",
                          "permissions",
                          "status"
@@ -132,7 +132,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
 
       // Set the Permissions and Status fields to nearly fixed widths, and then
       // let the Name and Email fields take up the remaining space.
-      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
+      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Display Name
       resizeBehavior.set(1, { width:"1*", minWidth:200 }); // Email
       resizeBehavior.set(2, { width:200                }); // Permissions
       resizeBehavior.set(3, { width:60                 }); // Status

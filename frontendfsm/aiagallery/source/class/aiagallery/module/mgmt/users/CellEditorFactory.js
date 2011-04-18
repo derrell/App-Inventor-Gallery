@@ -81,7 +81,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       i = 0;
 
       [
-        this.tr("Name"),
+        this.tr("DisplayName"),
         this.tr("Email"),
         this.tr("Permissions"),
         this.tr("Status")
@@ -97,9 +97,9 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
         });
 
       // Create the editor field for the user name
-      var name = new qx.ui.form.TextField("");
-      name.setValue(rowData[0]);
-      cellEditor.add(name, { row : 0, column : 1 });
+      var displayName = new qx.ui.form.TextField("");
+      displayName.setValue(rowData[0]);
+      cellEditor.add(displayName, { row : 0, column : 1 });
       
       // Create the editor field for the email address
       var email = new qx.ui.form.TextField("");
@@ -143,6 +143,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
 
       var status = new qx.ui.form.SelectBox();
 
+      // Add each of the status values
       [
         { i8n: this.tr("Active"),  internal: "Active" },
         { i8n: this.tr("Pending"), internal: "Pending" },
@@ -163,7 +164,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       cellEditor.add(status, { row : 3, column : 1 });
       
       // Save the input fields for access by getCellEditorValue() and the FSM
-      cellEditor.setUserData("name", name);
+      cellEditor.setUserData("displayName", displayName);
       cellEditor.setUserData("email", email);
       cellEditor.setUserData("permissions", permissions);
       cellEditor.setUserData("status", status);
@@ -186,7 +187,7 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       fsm = cellInfo.table.getUserData("fsm");
 
       var okButton =
-        new qx.ui.form.Button("Ok", "icon/22/actions/dialog-apply.png");
+        new qx.ui.form.Button("Ok", "icon/22/actions/dialog-ok.png");
       okButton.addState("default");
       fsm.addObject("ok", okButton);
       okButton.addListener("execute", fsm.eventListener, fsm);

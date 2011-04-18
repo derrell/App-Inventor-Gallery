@@ -413,7 +413,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
         {
           var             cellEditor;
           var             cellInfo;
-          var             name;
+          var             displayName;
           var             email;
           var             selection;
           var             internal = { permissions : [], status : null };
@@ -425,7 +425,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           cellInfo = this.getUserData("cellInfo");
 
           // Retrieve the values from the cell editor
-          name = cellEditor.getUserData("name").getValue();
+          displayName = cellEditor.getUserData("displayName").getValue();
           email = cellEditor.getUserData("email").getValue();
           selection = cellEditor.getUserData("permissions").getSelection();
           selection.forEach(
@@ -447,7 +447,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // Save the request data
           var requestData = 
             {
-              name        : name,
+              displayName : displayName,
               permissions : internal.permissions,
               status      : internal.status 
             };
@@ -570,7 +570,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           dataModel = table.getTableModel();
           
           // Create the row data for the table
-          rowData.push(requestData.name);
+          rowData.push(requestData.displayName);
           rowData.push(requestData.email);
 
           // Munge the permissions from an array into a comma-separated string,
