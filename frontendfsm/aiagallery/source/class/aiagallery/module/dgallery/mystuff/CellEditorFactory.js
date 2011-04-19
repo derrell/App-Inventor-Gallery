@@ -301,6 +301,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       cancelButton.addListener("execute", fsm.eventListener, fsm);
       buttonPane.add(cancelButton);
 
+      // We'll need the table object in getCellEditorValue()
+      cellEditor.setUserData("table", cellInfo.table);
+
       return cellEditor;
     },
 
@@ -310,8 +313,15 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // The new row data was saved by the FSM. Retrieve it.
       var newData = cellEditor.getUserData("newData");
       
+      // Retrieve the table object and the data model
+      var table = cellEditor.getUserData("table");
+      var model = table.getTableModel();
+
+      // Determine the column id associated with the edited column
+      var id = model.getColumnId(cellEditor.getUserData("cellInfo").col);
+      
       // Return the appropriate column data.
-      return newData[cellEditor.getUserData("cellInfo").col];
+      return newData[id];
     }
   }
 });
