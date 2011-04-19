@@ -25,7 +25,6 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
   {
     addOrEditApp : function(uid, attributes, error)
     {
-      var             uid;
       var             title;
       var             description;
       var             image1;
@@ -75,22 +74,45 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       // Don't let the caller override the owner
       delete attributes["owner"];
 
-      // Get the old app entry
-      app = this._db.apps[uid];
-
       // Determine who the logged-in user is
       whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
 
-      // Did it already exist?
-      if (! app)
+      // If we were given a record identifier...
+      if (uid !== null)
       {
-        // Nope. We're creating it new.
-        bNew = true;
+        // ... then get the old app entry
+        app = this._db.apps[uid];
         
+        // It must have already existed or it's an error
+        if (! app)
+        {
+          // It didn't!
+          error.setCode(1);
+          error.setMessage("Unrecognized UID");
+          return error;
+        }
+
+        // Ensure that the logged-in user owns this application.
+        if (app.owner != whoami)
+        {
+          // He doesn't. Someone's doing something nasty!
+          error.setCode(2);
+          error.setMessage("Not owner");
+          return error;
+        }
+
+        bNew = false;
+      }
+      else
+      {
+        // Otherwise we create a new record
+        uid = aiagallery.rpcsim.MApps.nextAppId;
+        bNew = true;
+
         // Initialize field names for this new record
         app =
           {
-            uid             : MApps.nextAppId,
+            uid             : uid,
             owner           : whoami,
             title           : null,
             description     : null,
@@ -109,20 +131,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
             status          : aiagallery.rpcsim.RpcSim.Status.Active
           };
       }
-      else
-      {
-        // It already existed
-        bNew = false;
-        
-        // Ensure that the logged-in user owns this application
-        if (app.owner != whoami)
-        {
-          // He doesn't. Someone's doing something nasty!
-          error.setCode(1);
-          error.setMessage("Not owner");
-        }
-      }
-      
+
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
         function(field)
@@ -146,7 +155,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       if (missing.length > 0)
       {
         // Yup. Let 'em know.
-        error.setCode(2);
+        error.setCode(3);
         error.setMessage("Missing required attributes: " + missing.join(", "));
         return error;
       }
@@ -165,9 +174,10 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       if (bNew)
       {
         // Yup. Update to the next uid.
-        ++MApps.nextAppId;
+        ++aiagallery.rpcsim.MApps.nextAppId;
       }
-      return app;
+
+      return qx.lang.Object.clone(app);
     },
     
     deleteApp : function(uid, error)

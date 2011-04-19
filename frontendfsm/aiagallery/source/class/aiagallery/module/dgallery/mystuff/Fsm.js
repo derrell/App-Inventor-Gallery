@@ -418,6 +418,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var             appTitle;
           var             description;
           var             images;
+          var             imageData;
           var             prevAuthors;
           var             categories;
           var             additionalTags;
@@ -435,9 +436,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           description    = cellEditor.getUserData("description").getValue();
 
           images = cellEditor.getUserData("images");
+          imageData = [];
           for (i = 0; i < 3; i++)
           {
-            images[i] = images[i].getFileName();
+            imageData[i] = images[i].getFileName();
           }
 
           prevAuthors    = cellEditor.getUserData("prevAuthors").getValue();
@@ -472,9 +474,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
             {
               title           : appTitle,
               description     : description,
-              image1          : images[0],
-              image2          : images[1],
-              image3          : images[2],
+              image1          : imageData[0],
+              image2          : imageData[1],
+              image3          : imageData[2],
               previousAuthors : prevAuthors,
               source          : null,
               executable      : null,
@@ -580,7 +582,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var             table;
           var             dataModel;
           var             permissions;
-          var             rowData = [];
+          var             rowData = {};
           var             statusCodes = [ "Banned", "Pending", "Active" ];
 
           // Retrieve the RPC request
@@ -600,24 +602,25 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           dataModel = table.getTableModel();
           
           // Create the row data for the table
-          rowData.push(result.title);
-          rowData.push(result.description);
-          rowData.push(result.image1);
-          rowData.push(result.image2);
-          rowData.push(result.image3);
-          rowData.push(result.prevAuthors);
-          rowData.push(result.tags.join(", "));
-          rowData.push(result.uploadTime);
-          rowData.push(result.numLikes);
-          rowData.push(result.numDownloads);
-          rowData.push(result.numViewed);
-          rowData.push(statusCodes[result.status]);
+          rowData.uid          = result.uid;
+          rowData.title        = result.title;
+          rowData.description  = result.description;
+          rowData.image1       = result.image1;
+          rowData.image2       = result.image2;
+          rowData.image3       = result.image3;
+          rowData.prevAuthors  = result.prevAuthors;
+          rowData.tags         = result.tags.join(", ");
+          rowData.uploadTime   = result.uploadTime;
+          rowData.numLikes     = result.numLikes;
+          rowData.numDownloads = result.numDownloads;
+          rowData.numViewed    = result.numViewed;
+          rowData.status       = statusCodes[result.status];
 
           // If there's cell info available (they're editing), ...
           if (cellInfo && cellInfo.row !== undefined)
           {
             // ... then save the data in the row being edited.
-            dataModel.setRows( [ rowData ], cellInfo.row, false);
+            dataModel.setRowsAsMapArray([ rowData ], cellInfo.row, true, false);
             
             // Save the data so that the cell editor's getCellEditorValue()
             // method can retrieve it.
@@ -625,8 +628,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           }
           else
           {
-            // Otherwise, add a new row. Do not clear sorting.
-            dataModel.addRows( [ rowData ], null, false);
+            // Otherwise, add a new row. Remember map data. Don't clear sorting.
+            dataModel.addRowsAsMapArray([ rowData ], null, true, false);
           }
           
           // close the cell editor
