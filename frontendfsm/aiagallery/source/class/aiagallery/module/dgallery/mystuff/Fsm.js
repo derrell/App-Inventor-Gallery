@@ -411,6 +411,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "ontransition" : function(fsm, event)
         {
+          var             i;
           var             cellEditor;
           var             cellInfo;
           var             uid;
@@ -429,14 +430,19 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           cellInfo = this.getUserData("cellInfo");
 
           // Retrieve the values from the cell editor
-          uid            = cellEditor.getUserData("uid").getValue();
+          uid            = cellEditor.getUserData("uid");
           appTitle       = cellEditor.getUserData("appTitle").getValue();
           description    = cellEditor.getUserData("description").getValue();
-//          images         = cellEditor.getUserData("images").getValue();
-images = [];
+
+          images = cellEditor.getUserData("images");
+          for (i = 0; i < 3; i++)
+          {
+            images[i] = images[i].getFileName();
+          }
+
           prevAuthors    = cellEditor.getUserData("prevAuthors").getValue();
-          categories     = cellEditor.getUserData("categories").getValue();
-          additionalTags = cellEditor.getUserData("additionalTags").getValue();
+          categories     = cellEditor.getUserData("categories");
+          additionalTags = cellEditor.getUserData("additionalTags");
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
@@ -452,7 +458,7 @@ images = [];
             });
 
           // Add the selected additional tags
-          selection = additionalTags.getSelection();
+          selection = additionalTags.getSelectables();
           selection.forEach(
             function(item)
             {
@@ -464,7 +470,15 @@ images = [];
           // Save the request data
           var requestData = 
             {
-              
+              title           : appTitle,
+              description     : description,
+              image1          : images[0],
+              image2          : images[1],
+              image3          : images[2],
+              previousAuthors : prevAuthors,
+              source          : null,
+              executable      : null,
+              tags            : tags
             };
 
           // Issue a Add Or Edit App call.
@@ -474,7 +488,7 @@ images = [];
                      [ uid, requestData ]);
 
           // Save the app id in the request data too
-          requestData.email = email;
+          requestData.uid = uid;
 
           // Save the request data
           request.setUserData("requestData", requestData);
@@ -482,9 +496,6 @@ images = [];
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "AddOrEditApp");
-
-          // Save the translated permissions and status too
-          request.setUserData("i8n", i8n);
         }
       });
 
@@ -563,11 +574,14 @@ images = [];
           var             cellInfo;
           var             rpcRequest;
           var             requestData;
+          var             response;
+          var             result;
           var             i8n;
           var             table;
           var             dataModel;
           var             permissions;
           var             rowData = [];
+          var             statusCodes = [ "Banned", "Pending", "Active" ];
 
           // Retrieve the RPC request
           rpcRequest = this.popRpcRequest();
@@ -576,7 +590,8 @@ images = [];
           cellEditor = this.getUserData("cellEditor");
           cellInfo = this.getUserData("cellInfo");
           requestData = rpcRequest.getUserData("requestData");
-          i8n = rpcRequest.getUserData("i8n");
+          response = rpcRequest.getUserData("rpc_response");
+          result = response.data.result;
           
           // We'll also need the Table object, from the FSM
           table = fsm.getObject("table");
@@ -585,16 +600,18 @@ images = [];
           dataModel = table.getTableModel();
           
           // Create the row data for the table
-          rowData.push(requestData.name);
-          rowData.push(requestData.email);
-
-          // Munge the permissions from an array into a comma-separated string,
-          // and add it it to the row data
-          permissions = i8n.permissions.join(", ");
-          rowData.push(permissions);
-          
-          // Add the translated status to the row data
-          rowData.push(i8n.status);
+          rowData.push(result.title);
+          rowData.push(result.description);
+          rowData.push(result.image1);
+          rowData.push(result.image2);
+          rowData.push(result.image3);
+          rowData.push(result.prevAuthors);
+          rowData.push(result.tags.join(", "));
+          rowData.push(result.uploadTime);
+          rowData.push(result.numLikes);
+          rowData.push(result.numDownloads);
+          rowData.push(result.numViewed);
+          rowData.push(statusCodes[result.status]);
 
           // If there's cell info available (they're editing), ...
           if (cellInfo && cellInfo.row !== undefined)

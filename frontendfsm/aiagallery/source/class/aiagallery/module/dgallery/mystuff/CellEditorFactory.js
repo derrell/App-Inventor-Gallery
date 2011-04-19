@@ -156,12 +156,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         cellEditor.add(image, { row : row++, column : 2 });
 
         // Save a reference to this image
-        images[i] = image;
+        images[i-1] = image;
       }
 
       // Create the editor field for previous authors
       var prevAuthors = new qx.ui.form.TextField("");
-      prevAuthors.setValue(rowData.description);
+      prevAuthors.setValue(rowData.prevAuthors || "");
       cellEditor.add(prevAuthors, { row : row++, column : 1, colSpan : 2 });
       
       // Create the editor field for "category" (required) tags which have

@@ -22,6 +22,11 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
     // Call the superclass constructor
     this.base(arguments);
 
+        
+    // Simulate the logged-in user
+    var root = qx.core.Init.getApplication().getRoot();
+    root.setUserData("whoami", "joe@blow.com");
+
 /*
     // Gain access to local storage
     var Storage = qx.bom.Cookie;

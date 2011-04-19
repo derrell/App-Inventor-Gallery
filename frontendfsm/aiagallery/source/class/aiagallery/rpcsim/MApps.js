@@ -39,7 +39,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             status;
       var             statusIndex;
       var             app;
-      var             ret;
+      var             bNew;
       var             whoami;
       var             missing = [];
       var             allowableFields =
@@ -78,15 +78,15 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       // Get the old app entry
       app = this._db.apps[uid];
 
+      // Determine who the logged-in user is
+      whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
+
       // Did it already exist?
       if (! app)
       {
         // Nope. We're creating it new.
-        ret = true;
+        bNew = true;
         
-        // Determine who the logged-in user is
-        whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
-
         // Initialize field names for this new record
         app =
           {
@@ -112,7 +112,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       else
       {
         // It already existed
-        ret = false;
+        bNew = false;
         
         // Ensure that the logged-in user owns this application
         if (app.owner != whoami)
@@ -124,22 +124,23 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       }
       
       // Copy fields from the attributes parameter into this db record
-      for (var field in allowableFields)
-      {
-        // Was this field provided in the parameter attributes?
-        if (attributes[field])
+      allowableFields.forEach(
+        function(field)
         {
-          // Yup. Replace what's in the db entry
-          app[field] = attributes[field];
-        }
-          
-        // If this field is required and not available...
-        if (qx.lang.Array.contains(requiredFields, field) && ! app[field])
-        {
-          // then mark it as missing
-          missing.push(field);
-        }
-      }
+          // Was this field provided in the parameter attributes?
+          if (attributes[field])
+          {
+            // Yup. Replace what's in the db entry
+            app[field] = attributes[field];
+          }
+
+          // If this field is required and not available...
+          if (qx.lang.Array.contains(requiredFields, field) && ! app[field])
+          {
+            // then mark it as missing
+            missing.push(field);
+          }
+        });
 
       // Were there any missing, required fields?
       if (missing.length > 0)
@@ -150,16 +151,23 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         return error;
       }
       
+      // If a new source file was uploaded...
+      if (attributes.source)
+      {
+        // ... then update the upload time to now
+        app.uploadTime = new Date();
+      }
+
       // Save this record in the database
       this._db.apps[uid] = app;
       
       // Did we generate a new uid?
-      if (ret)
+      if (bNew)
       {
         // Yup. Update to the next uid.
         ++MApps.nextAppId;
       }
-      return ret;
+      return app;
     },
     
     deleteApp : function(uid, error)
