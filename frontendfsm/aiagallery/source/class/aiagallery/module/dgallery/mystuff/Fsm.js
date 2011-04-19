@@ -321,6 +321,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
       state.addTransition(trans);
 
+
+
       // ------------------------------------------------------------ //
       // State: AddOrEditApp
       // ------------------------------------------------------------ //
@@ -377,11 +379,16 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "events" :
         {
+          // When an image is selected for upload.
+          "changeFileName" : 
+            "Transition_Idle_to_ReadyingUpload_via_changeFileName",
+
           "execute" :
           {
             // When the Ok button is pressed in the cell editor
             "ok" : "Transition_AddOrEditApp_to_AwaitRpcResult_via_ok",
             
+            // When the Cancel button is pressed in the cell editor
             "cancel" : "Transition_AddOrEditApp_to_Idle_via_cancel"
           },
           
@@ -392,6 +399,54 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
       // Replace the initial Idle state with this one
       fsm.addState(state);
+
+      /*
+       * Transition: Idle to ReadyingUpload
+       *
+       * Cause: "changeFileName" on one of the upload buttons
+       *
+       * Action:
+       *  Begin retrieval of the file contents
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_ReadyingUpload_via_changeFileName",
+      {
+        "nextState" : "State_ReadyingUpload",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          var             uploadButton;
+          var             uploadReader;
+          var             uploadElement;
+          var             selection;
+
+          // Obtain and save a file reader object
+          uploadReader = new qx.bom.FileReader();
+          fsm.addObject("uploadReader", uploadReader);
+          
+          // Arrange to be told when the file is fully loaded
+          uploadReader.addListener("load", fsm.eventListener, fsm);
+          uploadReader.addListener("error", fsm.eventListener, fsm);
+          
+          // Obtain the uploadButton so we can retrieve its selection
+          uploadButton = event.getTarget();
+          
+          // Save the upload in progress, for use upon "load" or "error"
+          fsm.addObject("uploadButton", uploadButton);
+
+          // Get the selected File object
+          uploadElement = uploadButton.getInputElement().getDomElement();
+          selection = uploadElement.files[0];
+
+          // Begin reading the file. Request that it be data-URL-encoded.
+          uploadReader.readAsDataURL(selection);
+        }
+      });
+
+      state.addTransition(trans);
 
       /*
        * Transition: Idle to AwaitRpcResult
@@ -439,7 +494,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           imageData = [];
           for (i = 0; i < 3; i++)
           {
-            imageData[i] = images[i].getFileName();
+            // Retrieve this upload button's file data
+            imageData[i] = images[i].getUserData("fileData");
           }
 
           prevAuthors    = cellEditor.getUserData("prevAuthors").getValue();
@@ -650,6 +706,117 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
       });
 
       state.addTransition(trans);
+
+
+      // ------------------------------------------------------------ //
+      // State: State_ReadyingUpload
+      // ------------------------------------------------------------ //
+
+      state = new qx.util.fsm.State("State_ReadyingUpload",
+      {
+        "context" : this,
+
+        "events" :
+        {
+          "load" :
+          {
+            // When a file to be upload is available to retrieve its content
+            "uploadReader" :
+              "Transition_ReadyingUpload_to_AddOrEditApp_via_load"
+          },
+
+          "error" :
+          {
+            // When an error occurred retrieving upload file content
+            "uploadReader" : 
+              "Transition_ReadyingUpload_to_AddOrEditApp_via_error"
+          },
+          
+          // Block (enqueue) other file retrieval while this one is in progress
+          "changeFileName" : 
+            qx.util.fsm.FiniteStateMachine.EventHandling.BLOCKED,
+
+          // Block (enqueue) clicks on Ok or Cancel while in this state
+          "execute" :
+            qx.util.fsm.FiniteStateMachine.EventHandling.BLOCKED
+        }
+      });
+
+      fsm.addState(state);
+
+      /*
+       * Transition: ReadyingUpload to AddOrEditApp
+       *
+       * Cause: "load" on UploadReader
+       *
+       * Action:
+       *  Save the file contents as user data of the UploadButton object
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_ReadyingUpload_to_AddOrEditApp_via_load",
+      {
+        "nextState" : "State_AddOrEditApp",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the UploadReader object
+          var uploadReader = fsm.getObject("uploadReader");
+
+          // Get the currently-in-use upload button
+          var uploadButton = fsm.getObject("uploadButton");
+
+          // Retrieve the data URL from the upload button, and save it.
+          var content = event.getData().content;
+          uploadButton.setUserData("fileData", content);
+          
+          // Update the image too
+          uploadButton.getUserData("image").setSource(content);
+          
+          // We no longer have a currently-in-use upload button or reader
+          fsm.removeObject("uploadButton");
+          fsm.removeObject("uploadReader");
+        }
+      });
+
+      state.addTransition(trans);
+
+      /*
+       * Transition: ReadyingUpload to AddOrEditApp
+       *
+       * Cause: "error" on UploadReader
+       *
+       * Action:
+       *  Display the error
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_ReadyingUpload_to_AddOrEditApp_via_error",
+      {
+        "nextState" : "State_AddOrEditApp",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the UploadReader object
+          var uploadReader = fsm.getObject("uploadReader");
+
+          // FIXME: Find a better mechanism for displaying the error
+          alert("ERROR: " + event.progress +
+                " (" + event.progress.getMessage() + ")");
+
+          
+          // We no longer have a currently-in-use upload button or reader
+          fsm.removeObject("uploadButton");
+          fsm.removeObject("uploadReader");
+        }
+      });
+
+      state.addTransition(trans);
+
 
 
       // ------------------------------------------------------------ //

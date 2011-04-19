@@ -32,9 +32,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       var             fsm;
       var             bEditing;
       var             image;
-      var             images = [];
+      var             imageButton;
+      var             imageButtons = [];
       var             imageData;
       var             categoryList;
+      var             uploadReader;
+
+      // Retrieve the finite state machine
+      fsm = cellInfo.table.getUserData("fsm");
 
       // If there's a cellInfo object provided, we're editing an existing
       // user. Get the row data. Otherwise, we're adding a new user.
@@ -149,14 +154,22 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         }
 
         // Create an Upload button
-        image = new uploadwidget.UploadButton("image" + i, this.tr("Change"));
-        image.setWidth(100);
+        imageButton =
+          new uploadwidget.UploadButton("image" + i, this.tr("Change"));
+        imageButton.setWidth(100);
+        
+        // Save the image object with this upload button so we can update it
+        // when new image data is loaded.
+        imageButton.setUserData("image", image);
+
+        // When the file name changes, begin retrieving the file data
+        imageButton.addListener("changeFileName", fsm.eventListener, fsm);
 
         // Add upload button in rows 3, 4, and 5
-        cellEditor.add(image, { row : row++, column : 2 });
+        cellEditor.add(imageButton, { row : row++, column : 2 });
 
-        // Save a reference to this image
-        images[i-1] = image;
+        // Save a reference to this image upload button
+        imageButtons.push(imageButton);
       }
 
       // Create the editor field for previous authors
@@ -263,7 +276,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Save the input fields for access by getCellEditorValue() and the FSM
       cellEditor.setUserData("appTitle", appTitle);
       cellEditor.setUserData("description", description);
-      cellEditor.setUserData("images", images);
+      cellEditor.setUserData("images", imageButtons);
       cellEditor.setUserData("prevAuthors", prevAuthors);
       cellEditor.setUserData("categories", categories);
       cellEditor.setUserData("additionalTags", additionalTags);

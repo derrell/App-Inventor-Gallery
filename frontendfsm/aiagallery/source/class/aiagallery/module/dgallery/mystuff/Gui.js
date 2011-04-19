@@ -132,7 +132,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       // Now that we have a data model, we can use it to create our table.
       var table = new aiagallery.widget.Table(model, custom);
-      table.setRowHeight(60);
+      table.setRowHeight(64);
       table.addListener("cellEditorOpening", fsm.eventListener, fsm);
       
       // We'll be receiving events on the object so save its friendly name
@@ -141,8 +141,15 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       // Also save the FSM in the table, for access by cell editors
       table.setUserData("fsm", fsm);
 
-      // Get the table column model in order to set cell editer factories
+      // Get the table column model in order to set cell renderers and cell
+      // editer factories.
       var tcm = table.getTableColumnModel();
+      
+      // The image columns require an image cell renderer
+      for (var i = 2; i <= 4; i++)
+      {
+        tcm.setDataCellRenderer(i, new qx.ui.table.cellrenderer.Image(60, 60));
+      }
 
       // Specify the resize behavior. Obtain the behavior object to manipulate
       var resizeBehavior = tcm.getBehavior();
@@ -153,9 +160,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       resizeBehavior.set(0,  { width:100 });                // Title
       resizeBehavior.set(1,  { width:150 });                // Description
-      resizeBehavior.set(2,  { width:60  });                // Image 1
-      resizeBehavior.set(3,  { width:60  });                // Image 2
-      resizeBehavior.set(4,  { width:60  });                // Image 3
+      resizeBehavior.set(2,  { width:70  });                // Image 1
+      resizeBehavior.set(3,  { width:70  });                // Image 2
+      resizeBehavior.set(4,  { width:70  });                // Image 3
       resizeBehavior.set(8,  { width:70  });                // # Likes
       resizeBehavior.set(9,  { width:70  });                // # Downloads
       resizeBehavior.set(10, { width:70  });                // # Viewed
