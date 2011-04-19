@@ -32,7 +32,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             image3;
       var             previousAuthors;
       var             source;
-      var             executable;
+      var             apk;
       var             tags;
       var             uploadTime;
       var             status;
@@ -52,7 +52,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
           "image3",
           "previousAuthors",
           "source",
-          "executable",
+          "apk",
           "tags",
           "uploadTime",
           "numLikes",
@@ -121,7 +121,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
             image3          : null,
             previousAuthors : [],
             source          : null,
-            executable      : null,
+            apk             : null,
             tags            : null,
             uploadTime      : null,
             numLikes        : 0,

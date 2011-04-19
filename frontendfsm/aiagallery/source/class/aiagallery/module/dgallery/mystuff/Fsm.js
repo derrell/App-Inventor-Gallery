@@ -478,6 +478,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var             categories;
           var             additionalTags;
           var             tags;
+          var             source;
+          var             apk;
           var             selection;
           var             request;
 
@@ -501,6 +503,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           prevAuthors    = cellEditor.getUserData("prevAuthors").getValue();
           categories     = cellEditor.getUserData("categories");
           additionalTags = cellEditor.getUserData("additionalTags");
+
+          // Retrieve any source and apk upload file data
+          source = cellEditor.getUserData("source").getUserData("fileData");
+          apk    = cellEditor.getUserData("apk").getUserData("fileData");
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
@@ -534,8 +540,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
               image2          : imageData[1],
               image3          : imageData[2],
               previousAuthors : prevAuthors,
-              source          : null,
-              executable      : null,
+              source          : source,
+              apk             : apk,
               tags            : tags
             };
 
@@ -772,8 +778,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var content = event.getData().content;
           uploadButton.setUserData("fileData", content);
           
-          // Update the image too
-          uploadButton.getUserData("image").setSource(content);
+          // Update the image too (if this was an image upload)
+          var image = uploadButton.getUserData("image");
+          if (image) 
+          {
+            image.setSource(content);
+          }
           
           // We no longer have a currently-in-use upload button or reader
           fsm.removeObject("uploadButton");

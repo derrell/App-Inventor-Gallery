@@ -116,7 +116,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         this.tr("Image 3"),
         this.tr("Previous Authors"),
         this.tr("Categories"),
-        this.tr("Tags")
+        this.tr("Tags"),
+        this.tr("Uploads")
       ].forEach(function(label)
         {
           o = new qx.ui.basic.Label(label);
@@ -156,6 +157,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         // Create an Upload button
         imageButton =
           new uploadwidget.UploadButton("image" + i, this.tr("Change"));
+        fsm.addObject("image" + i, imageButton);
         imageButton.setWidth(100);
         
         // Save the image object with this upload button so we can update it
@@ -273,6 +275,41 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         });
       
 
+      // Create a box where we'll put the two upload buttons
+      var hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
+      cellEditor.add(hBox, { row : row++, column : 1, colSpan : 2 });
+      
+      //
+      // Create the Source upload button. 
+      //
+      // BUG ALERT: We wrap it in its own container because not doing so
+      // causes the 'apk' UploadButton to receive the changeFileName events
+      // which actually occur on 'source'.
+      //
+      var bugWrapper = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+      var source = 
+        new uploadwidget.UploadButton("source", this.tr("Source .zip File"));
+      fsm.addObject("source", source);
+      bugWrapper.add(source);
+      hBox.add(bugWrapper);
+        
+      // When the file name changes, begin retrieving the file data
+      source.addListener("changeFileName", fsm.eventListener, fsm);
+
+      //
+      // Create the Apk upload button.
+      // See BUG ALERT, above.
+      bugWrapper = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+      var apk = 
+        new uploadwidget.UploadButton("apk", this.tr("Application .apk File"));
+      fsm.addObject("apk", apk);
+      bugWrapper.add(apk);
+      hBox.add(bugWrapper);
+        
+      // When the file name changes, begin retrieving the file data
+      apk.addListener("changeFileName", fsm.eventListener, fsm);
+
+
       // Save the input fields for access by getCellEditorValue() and the FSM
       cellEditor.setUserData("appTitle", appTitle);
       cellEditor.setUserData("description", description);
@@ -280,6 +317,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       cellEditor.setUserData("prevAuthors", prevAuthors);
       cellEditor.setUserData("categories", categories);
       cellEditor.setUserData("additionalTags", additionalTags);
+      cellEditor.setUserData("source", source);
+      cellEditor.setUserData("apk", apk);
       
       // Save the uid
       cellEditor.setUserData("uid", rowData.uid);
