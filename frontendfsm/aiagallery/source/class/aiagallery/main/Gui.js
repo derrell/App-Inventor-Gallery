@@ -76,23 +76,19 @@ qx.Class.define("aiagallery.main.Gui",
       
       // Add a checkbox to enable/disable RPC simulation.
       var simulate = new qx.ui.form.CheckBox(this.tr("Simulate"));
-      
-      if (qx.core.Environment.get("qx.debug"))
-      {
-        simulate.setValue(true);
-        rpcjs.sim.remote.MRpc.SIMULATE = true;
-      }
-      else
-      {
-        rpcjs.sim.remote.MRpc.SIMULATE = false;        
-      }
-
       simulate.addListener("changeValue",
                            function(e)
                            {
                              rpcjs.sim.remote.MRpc.SIMULATE = e.getData();
                            },
                            this);
+
+      // Enable simulation by default in the source version
+      if (qx.core.Environment.get("qx.debug"))
+      {
+        simulate.setValue(true);
+      }
+
       header.add(simulate);
       
 
