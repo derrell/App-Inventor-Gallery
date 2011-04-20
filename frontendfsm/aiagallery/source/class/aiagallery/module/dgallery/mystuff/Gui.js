@@ -205,12 +205,11 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
           // single-selection mode, so we can easily reference into the
           // selection array.
           var selection = selectionModel.getSelectedRanges()[0].minIndex;
-          var data = model.getData()[selection];
+          var data = model.getDataAsMapArray()[selection];
           var origEvent = e.clone();
 
           dialog.Dialog.confirm(
-            this.tr("Really delete user ") + data[1] + 
-              " (" + data[0] + ")" + "?",
+            this.tr("Really delete application") + " '" + data.title + "'?",
             function(result)
             {
               // If they confirmed the deletion...
@@ -224,40 +223,6 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       
       // Add the table to the page
       canvas.add(table, { flex : 1 });
-
-/*
-      var             o;
-      var             fsm = module.fsm;
-      var             canvas = module.canvas;
-      var             uploadButton;
-      
-      // Create a layout for this page
-      canvas.setLayout(new qx.ui.layout.VBox());
-
-      // Create a button row
-      var layout = new qx.ui.layout.HBox();
-      layout.setSpacing(10);
-      var hBox = new qx.ui.container.Composite(layout);
-
-      // Right-justify the Upload button
-      hBox.add(new qx.ui.core.Widget(), { flex : 1 });
-
-      // Create an Upload button
-      uploadButton = new uploadwidget.UploadButton("uploadButton", 
-                                                   this.tr("Upload"),
-                                                   "aiagallery/test.png");
-      uploadButton.set(
-        {
-          maxHeight : 24,
-          width     : 100
-        });
-      hBox.add(uploadButton);
-      fsm.addObject("uploadButton", uploadButton);
-      uploadButton.addListener("changeFileName", fsm.eventListener, fsm);
-
-      // Add the button row to the page
-      canvas.add(hBox);
-*/
     },
 
 

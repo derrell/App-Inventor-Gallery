@@ -340,6 +340,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Retrieve the finite state machine
       fsm = cellInfo.table.getUserData("fsm");
 
+      //
+      // FIXME: Validate data prior to submission
+      //
+
       var okButton =
         new qx.ui.form.Button("Ok", "icon/22/actions/dialog-ok.png");
       okButton.addState("default");
