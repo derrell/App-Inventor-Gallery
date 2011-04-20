@@ -148,7 +148,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       // The image columns require an image cell renderer
       for (var i = 2; i <= 4; i++)
       {
-        tcm.setDataCellRenderer(i, new qx.ui.table.cellrenderer.Image(60, 60));
+        tcm.setDataCellRenderer(
+          i,
+          new aiagallery.widget.ScaledImageCellRenderer(60, 60));
       }
 
       // Specify the resize behavior. Obtain the behavior object to manipulate
