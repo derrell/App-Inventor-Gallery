@@ -13,7 +13,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -29,36 +28,89 @@ public class AIApplication
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key       key;
 
+    /** Which visitor owns this application */
+    @Persistent
+    private Visitor   owner;
+
     /** Title of this application */
     @Persistent
     private String    title;
 
     /** Description of this application */
+    @Persistent
     private String    description;
+    
+    /** Image 1 of this application */
+    @Persistent
+    private String    image1;
+
+    /** Image 2 of this application */
+    @Persistent
+    private String    image2;
+
+    /** Image 3 of this application */
+    @Persistent
+    private String    image3;
+
+    /** List of previous authors (display names, since they're public) */
+    @Persistent
+    private List<String> previousAuthors;
+    
+    /** The uploaded source .zip file */
+    @Persistent
+    private String   source;
+    
+    /** The uploaded .apk file */
+    @Persistent
+    private String   apk;
+    
+    /** Time of last APK upload */
+    @Persistent
+    private String   uploadTime;
+    
+    /** Number of "Likes" */
+    @Persistent
+    private int      numLikes;
+    
+    /** Number of downloads */
+    @Persistent
+    private int      numDownloads;
+    
+    /** Number of times viewed */
+    @Persistent
+    private int      numViewed;
+    
+    /** Number of comments */
+    @Persistent
+    private int      numComments;
+    
+    /** List of tags associated with this application */
+    @Persistent
+    private List<Tag> tags;
 
     /** Status of this application */
     @Persistent
     private Status    status;
 
-    /** Which visitor owns this application */
-    @Persistent
-    private Visitor   owner;
+    /**
+     * Set the owner of this object
+     * 
+     * @param owner
+     */
+    public void setOwner(Visitor owner)
+    {
+        this.owner = owner;
+    }
 
-    /** List of tags associated with this application */
-    @Persistent
-    private List<Tag> tags;
-
-    /** The uploaded source .zip file */
-    @Persistent
-    private BlobKey   sourceZip;
-
-    /** The uploaded .apk file */
-    @Persistent
-    private BlobKey   apk;
-
-    /** The uploaded thumbnail shown for this application */
-    @Persistent
-    private BlobKey   thumbnail;
+    /**
+     * Retrieve the owner of this object
+     * 
+     * @return the object's owner
+     */
+    public Visitor getOwner()
+    {
+        return owner;
+    }
 
     /**
      * Set the title of this object
@@ -101,6 +153,243 @@ public class AIApplication
     }
 
     /**
+     * Set the first image for this application.
+     * 
+     * @param image1
+     */
+    public void setImage1(String image1)
+    {
+        this.image1 = image1;
+    }
+
+    /**
+     * Retrieve the first image for this application
+     * 
+     * @return the image1
+     */
+    public String getImage1()
+    {
+        return image1;
+    }
+
+    /**
+     * Set the second image for this application
+     * 
+     * @param image2
+     */
+    public void setImage2(String image2)
+    {
+        this.image2 = image2;
+    }
+
+    /**
+     * Retrieve the second image for this applicaiton
+     * 
+     * @return the image2
+     */
+    public String getImage2()
+    {
+        return image2;
+    }
+
+    /**
+     * Set the third image for this application
+     * 
+     * @param image3
+     */
+    public void setImage3(String image3)
+    {
+        this.image3 = image3;
+    }
+
+    /**
+     * Retrieve the third image for this application
+     * 
+     * @return the image3
+     */
+    public String getImage3()
+    {
+        return image3;
+    }
+
+    /**
+     * Set the list of previous authors
+     * 
+     * @param previousAuthors
+     */
+    public void setPreviousAuthors(List<String> previousAuthors)
+    {
+        this.previousAuthors = previousAuthors;
+    }
+
+    /**
+     * Retrieve the list of previous authors
+     * 
+     * @return the previousAuthors
+     */
+    public List<String> getPreviousAuthors()
+    {
+        return previousAuthors;
+    }
+
+    /**
+     * Save the source file data, encoded as Base64
+     * 
+     * @param source
+     */
+    public void setSource(String source)
+    {
+        this.source = source;
+    }
+
+    /**
+     * Retrieve the Base64-encoded source file data
+     * 
+     * @return the source
+     */
+    public String getSource()
+    {
+        return source;
+    }
+
+    /**
+     * Save the executable APK file data, encoded as Base64
+     * 
+     * @param apk
+     */
+    public void setApk(String apk)
+    {
+        this.apk = apk;
+    }
+
+    /**
+     * Retrieve the Base64-encoded APK file data
+     * 
+     * @return the apk
+     */
+    public String getApk()
+    {
+        return apk;
+    }
+
+    /**
+     * Set the time the current source file was uploaded
+     * 
+     * @param uploadTime
+     */
+    public void setUploadTime(String uploadTime)
+    {
+        this.uploadTime = uploadTime;
+    }
+
+    /**
+     * Retrieve the time the current source file was uploaded
+     * 
+     * @return the uploadTime
+     */
+    public String getUploadTime()
+    {
+        return uploadTime;
+    }
+
+    /**
+     * Increment the number of likes
+     */
+    public void incrLikes()
+    {
+        ++this.numLikes;
+    }
+
+    /**
+     * Decrement the number of likes
+     */
+    public void decrLikes()
+    {
+        --this.numLikes;
+    }
+
+    /**
+     * Retrieve the number of likes
+     * @return the numLikes
+     */
+    public int getNumLikes()
+    {
+        return numLikes;
+    }
+
+    /**
+     * Increment the number of downloads
+     */
+    public void incrDownloads()
+    {
+        ++this.numDownloads;
+    }
+
+    /**
+     * Decrement the number of downloads
+     */
+    public void decrDownloads()
+    {
+        --this.numDownloads;
+    }
+
+    /**
+     * @return the numDownloads
+     */
+    public int getNumDownloads()
+    {
+        return numDownloads;
+    }
+
+    /**
+     * Increment the number of views
+     */
+    public void incrViewed()
+    {
+        ++this.numViewed;
+    }
+
+    /**
+     * Decrement the number of views
+     */
+    public void decrViewed()
+    {
+        --this.numViewed;
+    }
+
+    /**
+     * @return the numViewed
+     */
+    public int getNumViewed()
+    {
+        return numViewed;
+    }
+
+    /**
+     * Increment the number of comments
+     */
+    public void incrComments()
+    {
+        ++this.numViewed;
+    }
+
+    /**
+     * Decrement the number of comments
+     */
+    public void decrComments()
+    {
+        --this.numComments;
+    }
+
+    /**
+     * @return the numComments
+     */
+    public int getNumComments()
+    {
+        return numComments;
+    }
+
+    /**
      * Set the status value of this object
      * 
      * @param status
@@ -118,26 +407,6 @@ public class AIApplication
     public Status getStatus()
     {
         return status;
-    }
-
-    /**
-     * Set the owner of this object
-     * 
-     * @param owner
-     */
-    public void setOwner(Visitor owner)
-    {
-        this.owner = owner;
-    }
-
-    /**
-     * Retrieve the owner of this object
-     * 
-     * @return the object's owner
-     */
-    public Visitor getOwner()
-    {
-        return owner;
     }
 
     /**
@@ -179,67 +448,5 @@ public class AIApplication
     public List<Tag> getTags()
     {
         return this.tags;
-    }
-
-    /**
-     * Set the blob key of the uploaded source zip file
-     * 
-     * @param sourceZip
-     *        The blob key of the uploaded source zip file
-     */
-    public void setSourceZip(BlobKey sourceZip)
-    {
-        this.sourceZip = sourceZip;
-    }
-
-    /**
-     * Retrieve the blob key of the uploaded source zip file
-     * 
-     * @return the blob key of the uploaded source zip file
-     */
-    public BlobKey getSourceZip()
-    {
-        return this.sourceZip;
-    }
-
-    /**
-     * Set the blob key of this object's apk file
-     * 
-     * @param apk
-     *        The blob key of the uploaded binary apk file
-     */
-    public void setApk(BlobKey apk)
-    {
-        this.apk = apk;
-    }
-
-    /**
-     * Retrieve the blob key of this object's apk file
-     * 
-     * @return this object's apk file blob key
-     */
-    public BlobKey getApk()
-    {
-        return this.apk;
-    }
-
-    /**
-     * Set the blob key of this object's thumbnail file
-     * 
-     * @param thumbnail
-     */
-    public void setThumbnail(BlobKey thumbnail)
-    {
-        this.thumbnail = thumbnail;
-    }
-
-    /**
-     * Retrieve the blob key of this object's thumbnail file
-     * 
-     * @return this object's thumbnail file blob key
-     */
-    public BlobKey getThumbnail()
-    {
-        return thumbnail;
     }
 }
