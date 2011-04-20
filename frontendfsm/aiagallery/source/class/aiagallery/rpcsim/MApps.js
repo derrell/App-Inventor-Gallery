@@ -294,15 +294,25 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       return true;
     },
     
-    getAppList : function(bStringize)
+    getAppList : function(bStringize, bAll)
     {
       var             clonedApp;
       var             categories;
       var             appList = [];
+      var             whoami;
       
+      whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
+
       // For each app...
       for (var app in this._db.apps)
       {
+        // Reject apps that don't belong to the currently-logged-in user
+        if (! bAll && this._db.apps[app].owner != whoami)
+        {
+          // It's not his. Skip this one.
+          continue;
+        }
+
         // Clone the app entry for this app
         clonedApp = qx.lang.Object.clone(this._db.apps[app]);
         
