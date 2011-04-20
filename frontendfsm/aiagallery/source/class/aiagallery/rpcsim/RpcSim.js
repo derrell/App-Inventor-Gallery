@@ -24,8 +24,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
 
         
     // Simulate the logged-in user
-    var root = qx.core.Init.getApplication().getRoot();
-    root.setUserData("whoami", "joe@blow.com");
+    this.setUserData("whoami", "joe@blow.com");
 
 /*
     // Gain access to local storage
@@ -130,7 +129,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
         {
           userId         : "joe@blow.com",
           displayName    : "Joe Blow",
-          permissions    : [ "VISITOR VIEW" ],
+          permissions    : [ "VISITOR EDIT" ],
           status         : aiagallery.rpcsim.RpcSim.Status.Active,
           recentSearches : [],
           recentViews    : []
@@ -139,7 +138,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
 
       tags     : 
       {
-        "_Featured"   : { type : "special",   count : 1 },
+        "*Featured*"  : { type : "special",   count : 1 },
         "Games"       : { type : "category",  count : 1 },
         "Educational" : { type : "category",  count : 1 },
         "Word Games"  : { type : "normal",    count : 1 },

@@ -77,7 +77,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       delete attributes["owner"];
 
       // Determine who the logged-in user is
-      whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
+      whoami = this.getUserData("whoami");
 
       // If we were given a record identifier...
       if (uid !== null)
@@ -251,7 +251,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       }
       
       // Determine who the logged-in user is
-      whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
+      whoami = this.getUserData("whoami");
 
       // Ensure that the logged-in user owns this application
       if (app.owner != whoami)
@@ -301,7 +301,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             appList = [];
       var             whoami;
       
-      whoami = qx.core.Init.getApplication().getRoot().getUserData("whoami");
+      whoami = this.getUserData("whoami");
 
       // For each app...
       for (var app in this._db.apps)

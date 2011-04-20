@@ -66,8 +66,8 @@ qx.Class.define("aiagallery.main.Gui",
       header.add(o);
       
       // Add a label to the header
-      o = new qx.ui.basic.Label(this.tr("App Inventor for Android Gallery"));
-      o.setFont(new qx.bom.Font(18, [ "sans-serif" ]));
+      o = new qx.ui.basic.Label(this.tr("App Inventor Gallery"));
+      o.setFont(new qx.bom.Font(22, [ "sans-serif" ]));
       header.add(o);
       
       // Add a flexible spacer to take up the whole middle
