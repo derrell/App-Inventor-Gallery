@@ -145,18 +145,22 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Add upload buttons for each of the three images
       for (i = 1; i <= 3; i++)
       {
-        // Is there already an image?
+        // Create the image placeholder
+        image = new qx.ui.basic.Image();
+        image.setHeight(60);
+        cellEditor.add(image, { row : row, column : 1 });
+
+        // Is there already an image specified?
         imageData = rowData["image" + i];
         if (imageData)
         {
-          image = new qx.ui.basic.Image(imageData);
-          image.setHeight(60);
-          cellEditor.add(image, { row : row, column : 1 });
+          // Yup.
+          image.setSource(rowData["image" + i]);
         }
 
         // Create an Upload button
         imageButton =
-          new uploadwidget.UploadButton("image" + i, this.tr("Change"));
+          new uploadwidget.UploadButton("image" + i, this.tr("Browse"));
         fsm.addObject("image" + i, imageButton);
         imageButton.setWidth(100);
         
@@ -240,7 +244,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       
       // Create an input field and button to add a new tag
       var newTag = new qx.ui.form.TextField();
-      newTag.setFilter(/[ a-zA-Z0-9]/); // only allow these characters in tags
+      newTag.setFilter(/[- a-zA-Z0-9]/); // only allow these characters in tags
       grid.add(newTag, { row : 1, column : 2 });
       var tagAdd = new qx.ui.form.Button(this.tr("Add"));
       grid.add(tagAdd, { row : 1, column : 3 });
