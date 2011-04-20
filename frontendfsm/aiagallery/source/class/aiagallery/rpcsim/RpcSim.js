@@ -139,11 +139,11 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
 
       tags     : 
       {
-        "_Featured"   : { type : "invisible" },
-        "Games"       : { type : "category" },
-        "Educational" : { type : "category" },
-        "Word Games"  : { type : "normal" },
-        "K-12"        : { type : "normal" }
+        "_Featured"   : { type : "special",   count : 1 },
+        "Games"       : { type : "category",  count : 1 },
+        "Educational" : { type : "category",  count : 1 },
+        "Word Games"  : { type : "normal",    count : 1 },
+        "K-12"        : { type : "normal",    count : 1 }
       },
 
       apps :

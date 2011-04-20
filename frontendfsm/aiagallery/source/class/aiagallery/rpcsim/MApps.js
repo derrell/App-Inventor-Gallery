@@ -34,13 +34,15 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             source;
       var             apk;
       var             tags;
+      var             oldTags;
+      var             tagTable;
       var             uploadTime;
       var             status;
       var             statusIndex;
       var             app;
       var             bNew;
       var             whoami;
-      var             missing = [];
+  var             missing = [];
       var             allowableFields =
         [
           "uid",
@@ -122,7 +124,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
             previousAuthors : [],
             source          : null,
             apk             : null,
-            tags            : null,
+            tags            : [],
             uploadTime      : null,
             numLikes        : 0,
             numDownloads    : 0,
@@ -131,6 +133,9 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
             status          : aiagallery.rpcsim.RpcSim.Status.Active
           };
       }
+
+      // Save the existing tags list
+      oldTags = app.tags;
 
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
@@ -170,6 +175,57 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       // Save this record in the database
       this._db.apps[uid] = app;
       
+      // Gain easy access to the tags "table" of the database
+      tagTable = this._db.tags;
+
+      // Add new tags to the database, and update counts of formerly-existing
+      // tags. Remove "normal" tags with a count of 0.
+      app.tags.forEach(
+        function(tag)
+        {
+          // If the tag existed previously, ignore it.
+          if (qx.lang.Array.contains(oldTags, tag))
+          {
+            // Remove it from oldTags
+            qx.lang.Array.remove(oldTags, tag);
+            return;
+          }
+          
+          // It didn't exist. See if there's already such a tag
+          if (! tagTable[tag])
+          {
+            // There isn't. Create a new tag with a count of 1
+            tagTable[tag] = { type  : "normal", count : 1 };
+          }
+          else
+          {
+            // It existed. Increment its count
+            ++tagTable[tag].count;
+          }
+        });
+      
+      // Anything left in oldTags are those which were removed.
+      oldTags.forEach(
+        function(tag)
+        {
+          // The record has to exist already. Decrement this tag's count.
+          --tagTable[tag].count;
+
+          // Ensure it's a "normal" tag
+          if (tagTable[tag].type != "normal")
+          {
+            // It's not, so we have nothing more we need to do.
+            return;
+          }
+          
+          // If the count is less than 1...
+          if (tagTable[tag].count < 1)
+          {
+            // ... then we can remove the tag
+            delete tagTable[tag];
+          }
+        });
+
       // Did we generate a new uid?
       if (bNew)
       {
@@ -184,6 +240,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
     {
       var             app;
       var             whoami;
+      var             tagTable;
 
       // See if this app exists.
       app = this._db.apps[uid];
@@ -204,6 +261,31 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         error.setMessage("Not owner");
         return error;
       }
+
+      // Gain easy access to the tags "table" of the database
+      tagTable = this._db.tags;
+
+      // Decrement counts for tags used by this application.
+      app.tags.forEach(
+        function(tag)
+        {
+          // The record has to exist already. Decrement this tag's count.
+          --tagTable[tag].count;
+
+          // Ensure it's a "normal" tag
+          if (tagTable[tag].type != "normal")
+          {
+            // It's not, so we have nothing more we need to do.
+            return;
+          }
+          
+          // If the count is less than 1...
+          if (tagTable[tag].count < 1)
+          {
+            // ... then we can remove the tag
+            delete tagTable[tag];
+          }
+        });
 
       // Delete the app
       delete this._db.apps[uid];
