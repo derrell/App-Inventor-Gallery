@@ -27,7 +27,73 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             o;
       var             fsm = module.fsm;
       var             canvas = module.canvas;
+      var             splitpane;
+      var             hBox;
+      var             vBox;
+      var             groupbox;
+      var             browse1;
+      var             browse2;
+      var             browse3;
 
+      // Create a splitpane. Top: browse and search; bottom: results
+      splitpane = new qx.ui.splitpane.Pane("vertical");
+      canvas.add(splitpane, { flex : 1 });
+
+      // Create a horizontal box layout for the top pane
+      hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+      splitpane.add(hBox, 1);
+      
+      // Provide a bit of space at the left
+      hBox.add(new qx.ui.core.Spacer(10));
+
+      // Create a set of finder-style multi-level browsing lists
+      groupbox = new qx.ui.groupbox.GroupBox("Browse");
+      groupbox.setLayout(new qx.ui.layout.HBox());
+      groupbox.setContentPadding(0);
+      hBox.add(groupbox);
+
+      // create and add the lists
+      browse1 = new qx.ui.form.List();
+      groupbox.add(browse1);
+      fsm.addObject("browse1", browse1);
+
+      browse2 = new qx.ui.form.List();
+      groupbox.add(browse2);
+      fsm.addObject("browse2", browse2);
+
+      browse3 = new qx.ui.form.List();
+      groupbox.add(browse3);
+      fsm.addObject("browse3", browse3);
+
+      // Create the search criteria
+      groupbox = new qx.ui.groupbox.GroupBox("Search");
+      groupbox.set(
+        {
+          layout         : new qx.ui.layout.HBox(),
+          contentPadding : 0
+        });
+      groupbox.getChildControl("frame").setBackgroundColor("white");
+      hBox.add(groupbox, { flex : 1 });
+
+      groupbox.add(new qx.ui.basic.Label("Something to search for"));
+
+      // Provide a bit of space at the right
+      hBox.add(new qx.ui.core.Spacer(10));
+
+      // Create a vertical box layout for the bottom pane
+      vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
+      splitpane.add(vBox, 1);
+      
+
+      // Create the search results for the bottom
+      groupbox = new qx.ui.groupbox.GroupBox("Search Results");
+      groupbox.set(
+        {
+          layout         : new qx.ui.layout.HBox(),
+          contentPadding : 0
+        });
+      groupbox.getChildControl("frame").setBackgroundColor("white");
+      vBox.add(groupbox, { flex : 1 });
     },
 
 
