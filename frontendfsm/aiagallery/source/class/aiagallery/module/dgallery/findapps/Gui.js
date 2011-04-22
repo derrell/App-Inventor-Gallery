@@ -34,6 +34,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             browse1;
       var             browse2;
       var             browse3;
+      var             gallery;
 
       // Create a splitpane. Top: browse and search; bottom: results
       splitpane = new qx.ui.splitpane.Pane("vertical");
@@ -54,14 +55,17 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
 
       // create and add the lists
       browse1 = new qx.ui.form.List();
+      browse1.setWidth(150);
       groupbox.add(browse1);
       fsm.addObject("browse1", browse1);
 
       browse2 = new qx.ui.form.List();
+      browse2.setWidth(150);
       groupbox.add(browse2);
       fsm.addObject("browse2", browse2);
 
       browse3 = new qx.ui.form.List();
+      browse3.setWidth(150);
       groupbox.add(browse3);
       fsm.addObject("browse3", browse3);
 
@@ -84,16 +88,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
       splitpane.add(vBox, 1);
       
-
-      // Create the search results for the bottom
-      groupbox = new qx.ui.groupbox.GroupBox("Search Results");
-      groupbox.set(
-        {
-          layout         : new qx.ui.layout.HBox(),
-          contentPadding : 0
-        });
-      groupbox.getChildControl("frame").setBackgroundColor("white");
-      vBox.add(groupbox, { flex : 1 });
+      // Display 
+      gallery = new aiagallery.widget.virtual.Gallery();
+      vBox.add(gallery, { flex : 1 });
     },
 
 
@@ -112,6 +109,13 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             fsm = module.fsm;
       var             response = rpcRequest.getUserData("rpc_response");
       var             requestType = rpcRequest.getUserData("requestType");
+      var             browse1;
+
+      // We can ignore aborted requests.
+      if (response.type == "aborted")
+      {
+          return;
+      }
 
       if (response.type == "failed")
       {
@@ -124,7 +128,15 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "getVisitorList":
+      case "getCategoryTags":
+        // Get the first list, where we'll put the list of category tags
+        browse1 = fsm.getObject("browse1");
+        response.data.result.forEach(
+          function(tag)
+          {
+            // Add this tag to the list.
+            browse1.add(new qx.ui.form.ListItem(tag));
+          });
         break;
         
       default:
