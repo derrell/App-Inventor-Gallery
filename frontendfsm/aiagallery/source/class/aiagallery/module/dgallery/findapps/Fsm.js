@@ -272,6 +272,23 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "appQuery");
+          
+          // Keep track of which list will get the new tags list
+          switch(friendly)
+          {
+          case "browse0":
+            request.setUserData("tagResultsTo", "browse1");
+            break;
+            
+          case "browse1":
+            request.setUserData("tagResultsTo", "browse2");
+            break;
+            
+          case "browse2":
+            request.setUserData("tagResultsTo", null);
+            break;
+          }
+
         }
       });
 
