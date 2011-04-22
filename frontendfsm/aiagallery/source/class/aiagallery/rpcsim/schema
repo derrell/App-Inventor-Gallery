@@ -20,9 +20,9 @@ AppData
   image1
   image2
   image3
-  previousAuthors (list of id of Visitor record)
+  previousAuthors (list of display name of Visitor record)
   source (.zip)
-  exe (.apk)
+  apk (.apk)
   tags
   uploadTime
   numLiked
