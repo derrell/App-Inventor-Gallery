@@ -60,6 +60,18 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
 
         "events" :
         {
+          "changeSelection" :
+          {
+            // When a finder selection is made in the first list
+            "browse0" : "Transition_Idle_to_AwaitRpcResult_via_browse",
+
+            // When a finder selection is made in the second list
+            "browse1" : "Transition_Idle_to_AwaitRpcResult_via_browse",
+
+            // When a finder selection is made in the third list
+            "browse2" : "Transition_Idle_to_AwaitRpcResult_via_browse"
+          },
+          
 /*
           "execute" :
           {
@@ -102,13 +114,16 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
       // Replace the initial Idle state with this one
       fsm.replaceState(state, true);
 
+
+      // The following transitions have a predicate, so must be listed first
+
       /*
        * Transition: Idle to Idle
        *
        * Cause: "appear" on canvas
        *
        * Action:
-       *  Start our timer
+       *  If this is the very first appear, retrieve the category list.
        */
 
       trans = new qx.util.fsm.Transition(
@@ -146,6 +161,117 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "getCategoryTags");
+        }
+      });
+
+      state.addTransition(trans);
+
+
+      // Remaining transitions are accessed via the jump table
+
+      /*
+       * Transition: Idle to Idle
+       *
+       * Cause: "changeSelection" on one of the Browse finder's lists
+       *
+       * Action:
+       *  Initiate a request for the list of  matching applications.
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_browse",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          var             i;
+          var             browse;
+          var             browse0;
+          var             browse1;
+          var             browse2;
+          var             criteria;
+          var             criterium;
+          var             and;
+          var             request;
+          var             selection;
+
+          // Create an array of the lists
+          browse0 = fsm.getObject("browse0");
+          browse1 = fsm.getObject("browse1");
+          browse2 = fsm.getObject("browse2");
+          browse = [ browse0, browse1, browse2 ];
+
+          // Determine on which browse list we received the event
+          var friendly = fsm.getFriendlyName(event.getTarget());
+          
+          // Clear lists beyond this one
+          switch(friendly)
+          {
+          case "browse0":
+            browse1.removeAll();
+            // fall through
+            
+          case "browse1":
+            browse2.removeAll();
+            // fall through
+            
+          case "browse2":
+            // nothing to do
+          }
+
+          // We're building a series of AND criteria
+          criteria =
+            {
+              type     : "op",
+              method   : "and",
+              children : []
+            };
+          
+          // Find the selection in each list and generate a criterium
+          for (i = 0; i < browse.length; i++)
+          {
+            // Get this list's selection
+            selection = browse[i].getSelection();
+            
+            // If there's a selection...
+            if (selection.length > 0)
+            {
+              // Create a criterum element
+              criterium = 
+                {
+                  type  : "element", 
+                  field : "tags", 
+                  value : selection[0].getLabel()
+                };
+              
+              // Add it to the list of criteria being ANDed
+              criteria.children.push(criterium);
+            }
+          }
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "appQuery",
+                         [
+                           // Root of the criteria tree
+                           criteria,
+                           
+                           // Requested fields and the return field name
+                           {
+                             title  : "label",
+                             image1 : "icon",
+                             tags   : "tags"
+                           }
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "appQuery");
         }
       });
 

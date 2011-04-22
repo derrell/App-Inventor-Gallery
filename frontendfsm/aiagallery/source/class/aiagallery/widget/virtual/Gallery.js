@@ -23,16 +23,31 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
 {
   extend : qx.ui.container.Composite,
 
-  construct : function()
+  construct : function(data)
   {
     this.base(arguments);
     this.setLayout(new qx.ui.layout.Grow());
 
     this.itemHeight = 160;
     this.itemWidth = 160;
-    this.itemCount = 431;
     this.itemPerLine = 1;
-    this.items = this._generateItems(this.itemCount);
+
+    var bDummyData = false;
+    if (bDummyData)
+    {
+      this.itemCount = 431;
+      this.setItems(this._generateItems(this.itemCount));
+    }
+    else if (data)
+    {
+      this.itemCount = data.length;
+      this.setItems(data);
+    }
+    else
+    {
+      this.itemCount = 0;
+      this.setItems([]);
+    }
 
     var scroller = this._createScroller();
     scroller.set(
@@ -57,11 +72,21 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
   },
 
 
+  properties :
+  {
+    items :
+    {
+      check : "Array",
+      init  : null
+    }
+  },
+
+
   members :
   {
     getItemData : function(row, column) 
     {
-      return this.items[row * this.itemPerLine + column];
+      return this.getItems()[row * this.itemPerLine + column];
     },
 
 
@@ -166,7 +191,7 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
       var width = e.getData().width;
 
       var colCount = Math.floor(width/this.itemWidth);
-      if (colCount == this.itemsPerLine) 
+      if (colCount == this.itemPerLine) 
       {
         return;
       }
@@ -195,17 +220,14 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
 
       for (var i=0; i<count; i++)
       {
-        var icon =
+        var image =
           "icon/128/places/" +
           iconImages[Math.floor(Math.random() * iconImages.length)];
-        var resolved = aliasManager.resolve(icon);
-        var url = resourceManager.toUri(resolved);
 
         items[i] = 
           {
-            label: "Icon #" + (i+1),
-            icon: icon,
-            resolvedIcon: url
+            label : "Icon #" + (i+1),
+            icon  : image
           };
       }
 
