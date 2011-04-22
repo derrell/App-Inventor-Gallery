@@ -69,31 +69,12 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
             "browse1" : "Transition_Idle_to_AwaitRpcResult_via_browse",
 
             // When a finder selection is made in the third list
-            "browse2" : "Transition_Idle_to_AwaitRpcResult_via_browse"
+            "browse2" : "Transition_Idle_to_AwaitRpcResult_via_browse",
+            
+            "gallery" : "Transition_Idle_to_Idle_via_gallerySelection"
+
           },
           
-/*
-          "execute" :
-          {
-            // When the Delete User button is pressed
-            "deleteUser" : "Transition_Idle_to_AwaitRpcResult_via_deleteUser",
-
-            // When the Add User button is pressed
-            "addUser" : "Transition_Idle_to_AddOrEditUser_via_addUser"
-          },
-
-          "cellEditorOpening" :
-          {
-            // When a cell is double-clicked, or the Edit button is pressed,
-            // either of which open a cell editor for the row data
-            "table" : "Transition_Idle_to_AddOrEditUser_via_cellEditorOpening"
-          },
-
-          // Request to call some remote procedure call which is specified by
-          // the event data.
-          "callRpc" : "Transition_Idle_to_AwaitRpcResult_via_generic_rpc_call",
-*/
-
           // When we get an appear event, retrieve the category tags list. We
           // only want to do it the first time, though, so we use a predicate
           // to determine if it's necessary.
@@ -263,8 +244,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                            
                            // Requested fields and the return field name
                            {
-                             title  : "label",
-                             image1 : "icon",
+                             uid    : "uid",
+                             title  : "label", // remap name for Gallery
+                             image1 : "icon",  // remap name for Gallery
                              tags   : "tags"
                            }
                          ]);
@@ -293,6 +275,66 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
       });
 
       state.addTransition(trans);
+
+          
+      /*
+       * Transition: Idle to Idle
+       *
+       * Cause: "changeSelection" on the search results gallery
+       *
+       * Action:
+       *  Create (if necessary) and switch to an application-specific tab
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_Idle_via_gallerySelection",
+      {
+        "nextState" : "State_Idle",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+          var eventData = event.getData();
+          var item = eventData.item;
+
+          // Get the main tab view
+          var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
+          
+          // See if there's already a tab for this application
+          var page = null;
+          mainTabs.getChildren().forEach(
+            function(thisPage)
+            {
+              var uid = thisPage.getUserData("app_uid");
+              if (uid == item.uid)
+              {
+                page = thisPage;
+              }
+            });
+          
+          // If we didn't find an existing tab, create a new one.
+          if (! page)
+          {
+            //
+            // FIXME: This should be a module creation rather than a simple
+            // page creation. Eventually, there will be dynamic activity on
+            // the page, such as adding comments, likes, etc., so the page
+            // should have its own finite state machine.
+            page = new qx.ui.tabview.Page(item.label);
+            page.setUserData("app_uid", item.uid);
+            page.setShowCloseButton(true);
+            mainTabs.add(page);
+          }
+          
+          // Select the application page
+          mainTabs.setSelection([ page ]);
+        }
+      });
+
+      state.addTransition(trans);
+
 
       /*
        * Transition: Idle to Idle

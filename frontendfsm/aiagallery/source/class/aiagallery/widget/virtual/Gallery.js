@@ -32,21 +32,15 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
     this.itemWidth = 160;
     this.itemPerLine = 1;
 
-    var bDummyData = false;
-    if (bDummyData)
-    {
-      this.itemCount = 431;
-      this.setItems(this._generateItems(this.itemCount));
-    }
-    else if (data)
+    if (data)
     {
       this.itemCount = data.length;
-      this.setItems(data);
+      this.items = data;
     }
     else
     {
       this.itemCount = 0;
-      this.setItems([]);
+      this.items = [];
     }
 
     var scroller = this._createScroller();
@@ -72,21 +66,22 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
   },
 
 
-  properties :
+  events :
   {
-    items :
-    {
-      check : "Array",
-      init  : null
-    }
+    changeSelection : "qx.event.type.Data"
   },
 
 
   members :
   {
+    items       : null,
+    itemHeight  : 0,
+    itemWidth   : 0,
+    itemPerLine : 0,
+
     getItemData : function(row, column) 
     {
-      return this.getItems()[row * this.itemPerLine + column];
+      return this.items[row * this.itemPerLine + column];
     },
 
 
@@ -109,7 +104,7 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
         var widget = widgets[i];
         var cell = widget.getUserData("cell");
 
-        if (item.row !== cell.row || item.column !== cell.column) 
+        if (! cell || item.row !== cell.row || item.column !== cell.column) 
         {
           continue;
         }
@@ -122,6 +117,16 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
         {
           this.__cell.updateStates(widget, {});
         }
+
+        // Let listeners know about the change of selection
+        this.fireDataEvent(
+          "changeSelection",
+          {
+            bAdded   : wasAdded,
+            widget   : widget,
+            item     : this.getItemData(item.row, item.column)
+          });
+
       }
     },
 
@@ -200,38 +205,6 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
 
       pane.getColumnConfig().setItemCount(colCount);
       pane.getRowConfig().setItemCount(rowCount);
-    },
-
-
-    _generateItems : function(count)
-    {
-      var items = [];
-      var iconImages = 
-        [
-          "folder.png",
-          "user-trash.png",
-          "network-server.png",
-          "network-workgroup.png",
-          "user-desktop.png"
-        ];
-
-      var aliasManager = qx.util.AliasManager.getInstance();
-      var resourceManager = qx.util.ResourceManager.getInstance();
-
-      for (var i=0; i<count; i++)
-      {
-        var image =
-          "icon/128/places/" +
-          iconImages[Math.floor(Math.random() * iconImages.length)];
-
-        items[i] = 
-          {
-            label : "Icon #" + (i+1),
-            icon  : image
-          };
-      }
-
-      return items;
     }
   },
   

@@ -81,8 +81,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       groupbox.getChildControl("frame").setBackgroundColor("white");
       hBox.add(groupbox, { flex : 1 });
 
-      groupbox.add(new qx.ui.basic.Label("Something to search for"));
-
       // Provide a bit of space at the right
       hBox.add(new qx.ui.core.Spacer(10));
 
@@ -92,6 +90,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       
       // Display 
       gallery = new aiagallery.widget.virtual.Gallery();
+      gallery.addListener("changeSelection", fsm.eventListener, fsm);
       fsm.addObject("gallery", gallery);
       vBox.add(gallery, { flex : 1 });
     },
@@ -162,6 +161,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
         var parent = gallery.getLayoutParent();
         parent.remove(gallery);
         gallery = new aiagallery.widget.virtual.Gallery(apps);
+        gallery.addListener("changeSelection", fsm.eventListener, fsm);
         fsm.addObject("gallery", gallery);
         parent.add(gallery);
 
