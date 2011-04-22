@@ -126,7 +126,6 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
             widget   : widget,
             item     : this.getItemData(item.row, item.column)
           });
-
       }
     },
 
