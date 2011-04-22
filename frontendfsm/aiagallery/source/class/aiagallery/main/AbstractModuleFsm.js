@@ -183,7 +183,10 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
             "Transition_AwaitRpcResult_to_PopStack_via_completed",
 
           "failed"    :
-            qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
+            "Transition_AwaitRpcResult_to_PopStack_via_failed",
+
+          "aborted"    :
+            "Transition_AwaitRpcResult_to_PopStack_via_aborted"
         }
       };
 
@@ -208,7 +211,6 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
       state = new qx.util.fsm.State("State_AwaitRpcResult", stateInfo);
       fsm.addState(state);
 
-      /*** Transitions that use a PREDICATE appear first ***/
 
       /*
        * Transition: AwaitRpcResult to PopStack
@@ -239,8 +241,35 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
 
       state.addTransition(trans);
 
+      /*
+       * Transition: AwaitRpcResult to PopStack
+       *
+       * Cause: "aborted" (on RPC)
+       */
+      trans = new qx.util.fsm.Transition(
+        "Transition_AwaitRpcResult_to_PopStack_via_aborted",
+        {
+          "context" : this,
 
-      /*** Remaining transitions are accessed via the jump table ***/
+          "nextState" :
+            qx.util.fsm.FiniteStateMachine.StateChange.POP_STATE_STACK,
+
+          "ontransition" : function(fsm, event)
+          {
+            // Get the request object
+            var rpcRequest = this.getCurrentRpcRequest();
+
+            // Generate the result for a completed request
+            rpcRequest.setUserData("rpc_response",
+                                   {
+                                     type : "aborted",
+                                     data : event.getData()
+                                   });
+          }
+        });
+
+      state.addTransition(trans);
+
 
       /*
        * Transition: AwaitRpcResult to PopStack
