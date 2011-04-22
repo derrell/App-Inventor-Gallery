@@ -299,13 +299,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           var eventData = event.getData();
           var item = eventData.item;
 
-          // Was something just selected?
-          if (! eventData.bAdded)
-          {
-            // Nope. Nothing for us to do right now.
-            return;
-          }
-
           // Get the main tab view
           var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
           

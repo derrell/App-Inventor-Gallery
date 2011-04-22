@@ -56,8 +56,8 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
                                                              this);
     this.manager.set(
       {
-        mode: "multi",
-        drag: true
+        mode: "single",
+        drag: false
       });
     this.manager.attachMouseEvents();
     this.manager.attachKeyEvents(scroller);
@@ -112,20 +112,22 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
         if (wasAdded) 
         {
           this.__cell.updateStates(widget, {selected: 1});
+
+          // Let listeners know about the change of selection
+          this.fireDataEvent(
+            "changeSelection",
+            {
+              widget   : widget,
+              item     : this.getItemData(item.row, item.column)
+            });
+
+          // Remove the selection now
+          this.manager.clearSelection();
         }
         else
         {
           this.__cell.updateStates(widget, {});
         }
-
-        // Let listeners know about the change of selection
-        this.fireDataEvent(
-          "changeSelection",
-          {
-            bAdded   : wasAdded,
-            widget   : widget,
-            item     : this.getItemData(item.row, item.column)
-          });
       }
     },
 
