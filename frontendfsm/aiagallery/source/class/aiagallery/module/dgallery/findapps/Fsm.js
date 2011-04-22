@@ -46,7 +46,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
             var rpcRequest = this.popRpcRequest();
 
             // Otherewise, call the standard result handler
-            var gui = aiagallery.module.mgmt.users.Gui.getInstance();
+            var gui = aiagallery.module.dgallery.findapps.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
 
             // Dispose of the request
@@ -80,19 +80,19 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           // Request to call some remote procedure call which is specified by
           // the event data.
           "callRpc" : "Transition_Idle_to_AwaitRpcResult_via_generic_rpc_call",
+*/
 
-          // When we get an appear event, retrieve the visitor list
+          // When we get an appear event, retrieve the category tags list
           "appear"    :
           {
             "main.canvas" : "Transition_Idle_to_AwaitRpcResult_via_appear"
           },
 
-          // When we get a disappear event, stop our timer
+          // When we get a disappear event
           "disappear" :
           {
             "main.canvas" : "Transition_Idle_to_Idle_via_disappear"
           }
-*/
         }
       });
 
@@ -117,19 +117,16 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-/*
-          // Issue the remote procedure call to get the visitor list. Request
-          // that the permissions and status be converted to strings for us.
+          // Issue the remote procedure call to get the list of category tags.
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
-                         "getVisitorList",
-                         [ true ]);
+                         "getCategoryTags",
+                         []);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "getVisitorList");
-*/
+          request.setUserData("requestType", "getCategoryTags");
         }
       });
 

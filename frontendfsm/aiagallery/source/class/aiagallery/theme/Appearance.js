@@ -90,6 +90,21 @@ qx.Theme.define("aiagallery.theme.Appearance",
           icon: "decoration/form/" + icon + ".png"
         };
       }
+    },
+    
+    //
+    // Splitpane
+    //
+    "splitpane/splitter" :
+    {
+      style : function(states)
+      {
+        return {
+          width : states.horizontal ? 6 : undefined,
+          height : states.vertical ? 6 : undefined,
+          backgroundColor : "background-splitpane"
+        };
+      }
     }
   }
 });
