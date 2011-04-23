@@ -26,17 +26,22 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
     {
       var             o;
       var             fsm = module.fsm;
-      var             canvas = module.canvas;
+      var             outerCanvas = module.canvas;
+      
+      outerCanvas.setLayout(new qx.ui.layout.VBox());
+      var scrollContainer = new qx.ui.container.Scroll();
+      outerCanvas.add(scrollContainer, { flex : 1 });
       
       // Specify overall page layout
-      var layout = new qx.ui.layout.VBox();
-      canvas.setLayout(layout);
+      var layout = new qx.ui.layout.VBox(30);
+      var canvas = new qx.ui.container.Composite(layout);
+      canvas.setPadding(20);
+      scrollContainer.add(canvas, { flex : 1 });
       
       // Create the top row (welcome and general info about AIA/Gallery)
       var welcomeLayout = new qx.ui.layout.HBox();
       welcomeLayout.setSpacing(20);
       var welcomeRow = new qx.ui.container.Composite(welcomeLayout);
-      welcomeRow.setPadding(20);
       
       // Create an image (temporary one for now)
       var homeImage = new qx.ui.basic.Image("aiagallery/homepage.png");
@@ -49,9 +54,10 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
           value         : "<h2>Welcome to the App Inventor for Android Community Gallery!</h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus. Phasellus leo mi, dignissim non consectetur sed, eleifend ut lacus. Vestibulum ac ante sed diam blandit tempus commodo eu erat. Vestibulum malesuada molestie sodales. Vivamus gravida congue ultricies. Vivamus imperdiet dignissim viverra. Praesent eget leo vitae quam suscipit imperdiet quis eget turpis. Curabitur lorem quam, dapibus at vestibulum at, malesuada eu justo. Proin mi quam, sagittis sit amet ornare ac, tempus quis erat. Vestibulum non orci at orci ultricies consectetur. Cras est augue, ornare quis condimentum eu, fringilla elementum tortor. Nulla pharetra faucibus luctus.",
           rich          : true,
           minWidth      : 150,
-          allowStretchX : true,
+          allowStretchX : true
         });
       welcomeRow.add(message, { flex : 1 });
+      
       // Add the welcome row to the page
       canvas.add(welcomeRow);
       
@@ -59,7 +65,6 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var linkRowLayout = new qx.ui.layout.HBox();
       linkRowLayout.setSpacing(20);
       var linkRow = new qx.ui.container.Composite(linkRowLayout);
-      linkRow.setPadding(20);
 
       var findAppsLayout = new qx.ui.layout.HBox();
       findAppsLayout.set(
@@ -143,18 +148,22 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       canvas.add(linkRow);
       
       // Featured Apps section
+      var featuredAppsLayout = new qx.ui.layout.VBox();
+      var featuredApps = new qx.ui.container.Composite(featuredAppsLayout);
+
+      // Featured Apps heading
       var featuredAppsHeader = new qx.ui.basic.Label();
       featuredAppsHeader.set(
         {
           value      : "<h3>Featured Apps</h3>",
           rich       : true,
-          marginLeft : 20
         });
-      canvas.add(featuredAppsHeader);
-      var featuredApps = new qx.ui.container.SlideBar();
-      featuredApps.set(
+      featuredApps.add(featuredAppsHeader);
+      
+      // slide bar of Featured Apps
+      var featuredAppsSlideBar = new qx.ui.container.SlideBar();
+      featuredAppsSlideBar.set(
         {
-          marginLeft : 20,
           height : 150
         });
         
@@ -165,17 +174,17 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
         {
           backgroundColor : "#eee9e9",
           marginRight     : 20,
-          padding         : 10,
+          padding         : 10
         });
       var tempAppImage = new qx.ui.basic.Image("aiagallery/test.png");
       tempAppImage.set(
         {
-          width  : 100,
+          width  : 100
         });
       appThumb.add(tempAppImage);
       appThumb.add(new qx.ui.basic.Label("My App"));
       appThumb.add(new qx.ui.basic.Label("by John Doe"));
-      featuredApps.add(appThumb);
+      featuredAppsSlideBar.add(appThumb);
       
       var appThumbLayout2 = new qx.ui.layout.VBox();
       var appThumb2 = new qx.ui.container.Composite(appThumbLayout2);
@@ -188,12 +197,12 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var tempAppImage2 = new qx.ui.basic.Image("aiagallery/test.png");
       tempAppImage2.set(
         {
-          width  : 100,
+          width  : 100
         });
       appThumb2.add(tempAppImage2);
       appThumb2.add(new qx.ui.basic.Label("My App"));
       appThumb2.add(new qx.ui.basic.Label("by John Doe"));
-      featuredApps.add(appThumb2);
+      featuredAppsSlideBar.add(appThumb2);
 
       var appThumbLayout3 = new qx.ui.layout.VBox();
       var appThumb3 = new qx.ui.container.Composite(appThumbLayout3);
@@ -206,12 +215,12 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var tempAppImage3 = new qx.ui.basic.Image("aiagallery/test.png");
       tempAppImage3.set(
         {
-          width  : 100,
+          width  : 100
         });
       appThumb3.add(tempAppImage3);
       appThumb3.add(new qx.ui.basic.Label("My App"));
       appThumb3.add(new qx.ui.basic.Label("by John Doe"));
-      featuredApps.add(appThumb3);
+      featuredAppsSlideBar.add(appThumb3);
       
       var appThumbLayout4 = new qx.ui.layout.VBox();
       var appThumb4 = new qx.ui.container.Composite(appThumbLayout4);
@@ -224,13 +233,14 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var tempAppImage4 = new qx.ui.basic.Image("aiagallery/test.png");
       tempAppImage4.set(
         {
-          width  : 100,
+          width  : 100
         });
       appThumb4.add(tempAppImage4);
       appThumb4.add(new qx.ui.basic.Label("My App"));
       appThumb4.add(new qx.ui.basic.Label("by John Doe"));
-      featuredApps.add(appThumb4);
+      featuredAppsSlideBar.add(appThumb4);
       
+      featuredApps.add(featuredAppsSlideBar);
       canvas.add(featuredApps);
     },
 
