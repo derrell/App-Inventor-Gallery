@@ -371,7 +371,7 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
     },
 
 
-    /**
+   /**
      * Push an RPC request onto the request stack.
      *
      * @param rpcRequest {var}
@@ -422,8 +422,7 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
     {
       if (this._requests.length == 0)
       {
-        throw new Error("Attempt to retrieve an RPC " +
-                        "request when list is empty.");
+        return null;
       }
 
       return this._requests[this._requests.length - 1];

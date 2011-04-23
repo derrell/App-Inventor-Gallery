@@ -98,6 +98,9 @@ qx.Class.define("aiagallery.main.Gui",
       // Create the top-level tab view
       var mainTabs = new qx.ui.tabview.TabView();
       application.add(mainTabs, { flex : 1 });
+      
+      // Make the tab view globally accessible
+      qx.core.Init.getApplication().setUserData("mainTabs", mainTabs);
 
       // for each menu button...
       for (menuItem in moduleList)

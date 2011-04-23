@@ -23,16 +23,25 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
 {
   extend : qx.ui.container.Composite,
 
-  construct : function()
+  construct : function(data)
   {
     this.base(arguments);
     this.setLayout(new qx.ui.layout.Grow());
 
     this.itemHeight = 160;
     this.itemWidth = 160;
-    this.itemCount = 431;
     this.itemPerLine = 1;
-    this.items = this._generateItems(this.itemCount);
+
+    if (data)
+    {
+      this.itemCount = data.length;
+      this.items = data;
+    }
+    else
+    {
+      this.itemCount = 0;
+      this.items = [];
+    }
 
     var scroller = this._createScroller();
     scroller.set(
@@ -47,8 +56,8 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
                                                              this);
     this.manager.set(
       {
-        mode: "multi",
-        drag: true
+        mode: "single",
+        drag: false
       });
     this.manager.attachMouseEvents();
     this.manager.attachKeyEvents(scroller);
@@ -57,8 +66,19 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
   },
 
 
+  events :
+  {
+    changeSelection : "qx.event.type.Data"
+  },
+
+
   members :
   {
+    items       : null,
+    itemHeight  : 0,
+    itemWidth   : 0,
+    itemPerLine : 0,
+
     getItemData : function(row, column) 
     {
       return this.items[row * this.itemPerLine + column];
@@ -84,7 +104,7 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
         var widget = widgets[i];
         var cell = widget.getUserData("cell");
 
-        if (item.row !== cell.row || item.column !== cell.column) 
+        if (! cell || item.row !== cell.row || item.column !== cell.column) 
         {
           continue;
         }
@@ -92,6 +112,17 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
         if (wasAdded) 
         {
           this.__cell.updateStates(widget, {selected: 1});
+
+          // Let listeners know about the change of selection
+          this.fireDataEvent(
+            "changeSelection",
+            {
+              widget   : widget,
+              item     : this.getItemData(item.row, item.column)
+            });
+
+          // Remove the selection now
+          this.manager.clearSelection();
         }
         else
         {
@@ -166,7 +197,7 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
       var width = e.getData().width;
 
       var colCount = Math.floor(width/this.itemWidth);
-      if (colCount == this.itemsPerLine) 
+      if (colCount == this.itemPerLine) 
       {
         return;
       }
@@ -175,41 +206,6 @@ qx.Class.define("aiagallery.widget.virtual.Gallery",
 
       pane.getColumnConfig().setItemCount(colCount);
       pane.getRowConfig().setItemCount(rowCount);
-    },
-
-
-    _generateItems : function(count)
-    {
-      var items = [];
-      var iconImages = 
-        [
-          "folder.png",
-          "user-trash.png",
-          "network-server.png",
-          "network-workgroup.png",
-          "user-desktop.png"
-        ];
-
-      var aliasManager = qx.util.AliasManager.getInstance();
-      var resourceManager = qx.util.ResourceManager.getInstance();
-
-      for (var i=0; i<count; i++)
-      {
-        var icon =
-          "icon/128/places/" +
-          iconImages[Math.floor(Math.random() * iconImages.length)];
-        var resolved = aliasManager.resolve(icon);
-        var url = resourceManager.toUri(resolved);
-
-        items[i] = 
-          {
-            label: "Icon #" + (i+1),
-            icon: icon,
-            resolvedIcon: url
-          };
-      }
-
-      return items;
     }
   },
   

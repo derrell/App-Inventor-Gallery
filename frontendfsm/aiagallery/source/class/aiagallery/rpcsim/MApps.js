@@ -13,6 +13,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
     this.registerService("addOrEditApp", this.addOrEditApp);
     this.registerService("deleteApp",    this.deleteApp);
     this.registerService("getAppList", this.getAppList);
+    this.registerService("appQuery", this.appQuery);
   },
 
   statics :
@@ -348,6 +349,93 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       }
       
       // We've built the whole list. Return it.
+      return { apps : appList, categories : categories };
+    },
+    
+    appQuery : function(criteria, requestedFields)
+    {
+      var             appList = [];
+      var             categories;
+
+      var builtCriteria =
+        (function(criterium)
+          {
+            var             i;
+            var             ret = "";
+
+            switch(criterium.type)
+            {
+            case "op":
+              switch(criterium.method)
+              {
+              case "and":
+                // Generate the conditions
+                ret += "(";
+                for (i = 0; i < criterium.children.length; i++)
+                {
+                  ret += arguments.callee(criterium.children[i]);
+                  if (i < criterium.children.length - 1)
+                  {
+                    ret += " && ";
+                  }
+                }
+                ret += ")";
+                break;
+
+              default:
+                throw new Error("Unrecognized criterium method: " +
+                                criterium.method);
+              }
+              break;
+
+            case "element":
+              switch(criterium.field)
+              {
+              case "tags" :
+                ret +=
+                "qx.lang.Array.contains(app.tags, \"" +
+                  criterium.value + "\")";
+              }
+              break;
+
+            default:
+              throw new Error("Unrceognized criterium type: " +
+                              criterium.type);
+            }
+
+            return ret;
+          })(criteria);
+
+      this.debug("builtCriteria=" + builtCriteria);
+
+      // Create a function that implements the specified criteria
+      // The function will accept
+      //  "
+      var qualifies = new Function( "app", "return (" + builtCriteria + ");");
+      for (var app in this._db.apps)
+      {
+        if (qualifies(this._db.apps[app]))
+        {
+          var result = {};
+          var clone = qx.lang.Object.clone(this._db.apps[app]);
+          for (var requestedField in requestedFields)
+          {
+            result[requestedFields[requestedField]] = clone[requestedField];
+          }
+          appList.push(result);
+        }
+      }
+
+      // Retrieve the list of "category" tags
+      categories = [];
+      for (var tag in this._db.tags)
+      {
+        if (this._db.tags[tag].type == "category")
+        {
+          categories.push(tag);
+        }
+      }
+      
       return { apps : appList, categories : categories };
     }
   }

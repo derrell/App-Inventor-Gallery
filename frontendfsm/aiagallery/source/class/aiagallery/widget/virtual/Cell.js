@@ -45,8 +45,8 @@ qx.Class.define("aiagallery.widget.virtual.Cell",
     {
       widget.set(
         {
-          icon: data.icon,
-          label: data.label
+          icon  : data.icon,
+          label : data.label
         });
     },
 

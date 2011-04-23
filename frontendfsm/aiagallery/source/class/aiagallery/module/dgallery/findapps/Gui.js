@@ -31,9 +31,8 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             hBox;
       var             vBox;
       var             groupbox;
-      var             browse1;
-      var             browse2;
-      var             browse3;
+      var             list;
+      var             browse;
       var             gallery;
 
       // Create a splitpane. Top: browse and search; bottom: results
@@ -53,21 +52,24 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       groupbox.setContentPadding(0);
       hBox.add(groupbox);
 
-      // create and add the lists
-      browse1 = new qx.ui.form.List();
-      browse1.setWidth(150);
-      groupbox.add(browse1);
-      fsm.addObject("browse1", browse1);
+      // create and add the lists. Store them in an array.
+      list = new qx.ui.form.List();
+      list.setWidth(150);
+      list.addListener("changeSelection", fsm.eventListener, fsm);
+      groupbox.add(list);
+      fsm.addObject("browse0", list);
 
-      browse2 = new qx.ui.form.List();
-      browse2.setWidth(150);
-      groupbox.add(browse2);
-      fsm.addObject("browse2", browse2);
+      list = new qx.ui.form.List();
+      list.setWidth(150);
+      list.addListener("changeSelection", fsm.eventListener, fsm);
+      groupbox.add(list);
+      fsm.addObject("browse1", list);
 
-      browse3 = new qx.ui.form.List();
-      browse3.setWidth(150);
-      groupbox.add(browse3);
-      fsm.addObject("browse3", browse3);
+      list = new qx.ui.form.List();
+      list.setWidth(150);
+      list.addListener("changeSelection", fsm.eventListener, fsm);
+      groupbox.add(list);
+      fsm.addObject("browse2", list);
 
       // Create the search criteria
       groupbox = new qx.ui.groupbox.GroupBox("Search");
@@ -79,8 +81,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       groupbox.getChildControl("frame").setBackgroundColor("white");
       hBox.add(groupbox, { flex : 1 });
 
-      groupbox.add(new qx.ui.basic.Label("Something to search for"));
-
       // Provide a bit of space at the right
       hBox.add(new qx.ui.core.Spacer(10));
 
@@ -90,6 +90,8 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       
       // Display 
       gallery = new aiagallery.widget.virtual.Gallery();
+      gallery.addListener("changeSelection", fsm.eventListener, fsm);
+      fsm.addObject("gallery", gallery);
       vBox.add(gallery, { flex : 1 });
     },
 
@@ -109,7 +111,17 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             fsm = module.fsm;
       var             response = rpcRequest.getUserData("rpc_response");
       var             requestType = rpcRequest.getUserData("requestType");
-      var             browse1;
+      var             gallery;
+      var             apps;
+      var             categories;
+      var             tagMap;
+      var             tagList;
+      var             excludeTags;
+      var             browse0 = fsm.getObject("browse0");
+      var             browse1 = fsm.getObject("browse1");
+      var             browse2 = fsm.getObject("browse2");
+      var             nextList;
+      var             selection;
 
       // We can ignore aborted requests.
       if (response.type == "aborted")
@@ -129,16 +141,96 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       switch(requestType)
       {
       case "getCategoryTags":
-        // Get the first list, where we'll put the list of category tags
-        browse1 = fsm.getObject("browse1");
         response.data.result.forEach(
           function(tag)
           {
             // Add this tag to the list.
-            browse1.add(new qx.ui.form.ListItem(tag));
+            browse0.add(new qx.ui.form.ListItem(tag));
           });
         break;
         
+      case "appQuery":
+        // Get the gallery object
+        gallery = fsm.getObject("gallery");
+        
+        // Retrieve the app list and list of categories
+        apps = response.data.result.apps;
+        categories = response.data.result.categories;
+
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        var parent = gallery.getLayoutParent();
+        parent.remove(gallery);
+        gallery = new aiagallery.widget.virtual.Gallery(apps);
+        gallery.addListener("changeSelection", fsm.eventListener, fsm);
+        fsm.addObject("gallery", gallery);
+        parent.add(gallery);
+
+        // Create a list of tags to exclude from this next level
+        excludeTags = [];
+
+        // Get the previous selections
+        switch(rpcRequest.getUserData("tagResultsTo"))
+        {
+        case "browse2":
+          nextList = browse2;
+
+          // Retrieve the selection from browse1
+          selection = browse1.getSelection();
+          if (selection.length > 0)
+          {
+            excludeTags.push(selection[0].getLabel());
+          }
+          // fall through
+
+        case "browse1":
+          selection = browse0.getSelection();
+          if (selection.length > 0)
+          {
+            excludeTags.push(selection[0].getLabel());
+          }
+          // fall through
+          
+        case "browse0":
+          // nothing to do
+          break;
+        }
+        
+        // Create a single list of all of the resulting tags
+        tagMap = {};
+        for (var app in apps)
+        {
+          apps[app].tags.forEach(
+            function(tag)
+            {
+              // If this tag is not a category
+              tagMap[tag] = true;
+            });
+        }
+        
+        // Remove any items from the tag list that are already selected
+        excludeTags.forEach(
+          function(tag)
+          {
+            delete tagMap[tag];
+          });
+
+        // Convert the map into a tag list, and sort it.
+        tagList = qx.lang.Object.getKeys(tagMap).sort();
+        
+        // Get the list to which we'll add each of these new tags
+        nextList = fsm.getObject(rpcRequest.getUserData("tagResultsTo"));
+        if (nextList)
+        {
+          // Add each tag to the next list
+          tagList.forEach(
+            function(tag)
+            {
+              nextList.add(new qx.ui.form.ListItem(tag));
+            });
+        }
+
+        break;
+
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
