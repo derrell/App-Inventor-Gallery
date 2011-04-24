@@ -38,70 +38,80 @@ qx.Class.define("aiagallery.main.Gui",
       var             canvas;
       var             numModules;
 
-      // Save a reference to the module list
-      this.moduleList = moduleList;
+      // Retrieve the previously-created top-level tab view
+      var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
+      
+      // Did it exist?
+      if (! mainTabs)
+      {
+        //
+        // Nope. This is the first time in, and we're creating the whole gui.
+        //
 
-      // Create the VBox layout for the application structure
-      o = new qx.ui.layout.VBox();
-      o.set(
+        // Save a reference to the module list
+        this.moduleList = moduleList;
+
+        // Create the VBox layout for the application structure
+        o = new qx.ui.layout.VBox();
+        o.set(
+          {
+            spacing       : 10
+          });
+        var application = new qx.ui.container.Composite(o);
+        this.getApplicationRoot().add(application, { edge : 0 });
+
+        // Create a horizontal box layout for the title
+        header = new qx.ui.container.Composite(new qx.ui.layout.HBox(6));
+        header.set(
         {
-          spacing       : 10
+          height          : 40
         });
-      var application = new qx.ui.container.Composite(o);
-      this.getApplicationRoot().add(application, { edge : 0 });
 
-      // Create a horizontal box layout for the title
-      header = new qx.ui.container.Composite(new qx.ui.layout.HBox(6));
-      header.set(
-      {
-        height          : 40
-      });
+        // Add the logo to the header
+        o = new qx.ui.basic.Image("aiagallery/test.png");
+        header.add(o);
 
-      // Add the logo to the header
-      o = new qx.ui.basic.Image("aiagallery/test.png");
-      header.add(o);
-      
-      // Create a small spacer after the logo
-      o = new qx.ui.core.Spacer(20);
-      header.add(o);
-      
-      // Add a label to the header
-      o = new qx.ui.basic.Label(this.tr("App Inventor Gallery"));
-      o.setFont(new qx.bom.Font(22, [ "sans-serif" ]));
-      header.add(o);
-      
-      // Add a flexible spacer to take up the whole middle
-      o = new qx.ui.core.Widget();
-      header.add(o, { flex : 1 });
-      
-      // Add a checkbox to enable/disable RPC simulation.
-      var simulate = new qx.ui.form.CheckBox(this.tr("Simulate"));
-      simulate.addListener("changeValue",
-                           function(e)
-                           {
-                             rpcjs.sim.remote.MRpc.SIMULATE = e.getData();
-                           },
-                           this);
+        // Create a small spacer after the logo
+        o = new qx.ui.core.Spacer(20);
+        header.add(o);
 
-      // Enable simulation by default in the source version
-      if (qx.core.Environment.get("qx.debug"))
-      {
-        simulate.setValue(true);
+        // Add a label to the header
+        o = new qx.ui.basic.Label(this.tr("App Inventor Gallery"));
+        o.setFont(new qx.bom.Font(22, [ "sans-serif" ]));
+        header.add(o);
+
+        // Add a flexible spacer to take up the whole middle
+        o = new qx.ui.core.Widget();
+        header.add(o, { flex : 1 });
+
+        // Add a checkbox to enable/disable RPC simulation.
+        var simulate = new qx.ui.form.CheckBox(this.tr("Simulate"));
+        simulate.addListener("changeValue",
+                             function(e)
+                             {
+                               rpcjs.sim.remote.MRpc.SIMULATE = e.getData();
+                             },
+                             this);
+
+        // Enable simulation by default in the source version
+        if (qx.core.Environment.get("qx.debug"))
+        {
+          simulate.setValue(true);
+        }
+
+        header.add(simulate);
+
+
+        // Add the header to the application
+        application.add(header);
+
+        mainTabs = new qx.ui.tabview.TabView();
+        application.add(mainTabs, { flex : 1 });
+
+        // Make the tab view globally accessible
+        qx.core.Init.getApplication().setUserData("mainTabs", mainTabs);
       }
-
-      header.add(simulate);
       
-
-      // Add the header to the application
-      application.add(header);
-
-      // Create the top-level tab view
-      var mainTabs = new qx.ui.tabview.TabView();
-      application.add(mainTabs, { flex : 1 });
-      
-      // Make the tab view globally accessible
-      qx.core.Init.getApplication().setUserData("mainTabs", mainTabs);
-
       // for each menu button...
       for (menuItem in moduleList)
       {
@@ -185,6 +195,17 @@ qx.Class.define("aiagallery.main.Gui",
           fsm.addObject("main.canvas", canvas);
           canvas.addListener("appear", fsm.eventListener, fsm);
           canvas.addListener("disappear", fsm.eventListener, fsm);
+
+          // See if there are any functions to be called
+          var thisFunctionList = functionList[menuItem];
+          if (thisFunctionList)
+          {
+            for (var i = 0; i < thisFunctionList.length; i++)
+            {
+              thisFunctionList[i](menuItem, page, null);
+            }
+          }
+
         }
       }
     },
