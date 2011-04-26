@@ -147,7 +147,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       {
         // Create the image placeholder
         image = new qx.ui.basic.Image();
-        image.setHeight(60);
+        image.set(
+          {
+            minHeight : 60,
+            minWidth  : 60,
+            maxHeight : 60,
+            maxWidth  : 60,
+            scale     : true
+          });
         cellEditor.add(image, { row : row, column : 1 });
 
         // Is there already an image specified?
@@ -195,7 +202,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
 
       // Create a multi-selection list and add the categories to it.
       var categories = new qx.ui.form.List();
-      categories.setHeight(50);
+      categories.setHeight(100);
       categories.setSelectionMode("multi"); // allow multiple selections
       categoryList.forEach(function(tagName) 
         {
@@ -227,6 +234,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       
       // We'll want a list of tags
       var additionalTags = new qx.ui.form.List();
+      additionalTags.setHeight(100);
       grid.add(additionalTags, { row : 0, column : 0, colSpan : 4 });
       
       // Add those tags that are not also categories
