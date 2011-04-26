@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Derrell Lipman and Helen Tompkins
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -65,84 +65,27 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var linkRowLayout = new qx.ui.layout.HBox();
       linkRowLayout.setSpacing(20);
       var linkRow = new qx.ui.container.Composite(linkRowLayout);
-
-      var findAppsLayout = new qx.ui.layout.HBox();
-      findAppsLayout.set(
-        {
-          spacing : 20,
-          alignY  : "middle"
-        });
-      var findApps = new qx.ui.container.Composite(findAppsLayout);
       
-      // description of Find Apps page
-      var findAppsLabel = new qx.ui.basic.Label();
-      findAppsLabel.set(
-        {
-          value      : "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-          rich       : true,
-          width      : 200
-        });
-        
-      // temporary icon for Find Apps page until we make a real one
-      var findAppsImage = new qx.ui.basic.Image("aiagallery/test.png");
-      
-      findApps.add(findAppsLabel);
-      findApps.add(findAppsImage);
-      linkRow.add(findApps);
+      // Add "Find Apps" box to link row
+      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+        "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        "aiagallery/test.png"));
 
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
-      var learnLayout = new qx.ui.layout.HBox();
-      learnLayout.set(
-        {
-          spacing : 20,
-          alignY  : "middle"
-        });
-      var learn = new qx.ui.container.Composite(learnLayout);
-      
-      // description of Learn page
-      var learnLabel = new qx.ui.basic.Label();
-      learnLabel.set(
-        {
-          value : "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-          rich  : true,
-          width : 200
-        });
-        
-      // temporary icon for Learn page until we make a real one
-      var learnImage = new qx.ui.basic.Image("aiagallery/test.png");
-      
-      learn.add(learnLabel);
-      learn.add(learnImage);
-      linkRow.add(learn);
+      // Add "Learn" box to link row
+      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+        "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        "aiagallery/test.png"));
       
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
       
-      var myStuffLayout = new qx.ui.layout.HBox();
-      myStuffLayout.set(
-        {
-          spacing : 20,
-          alignY  : "middle"
-        });
-      var myStuff = new qx.ui.container.Composite(myStuffLayout);
-      
-      // description of myStuff page
-      var myStuffLabel = new qx.ui.basic.Label();
-      myStuffLabel.set(
-        {
-          value : "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-          rich  : true,
-          width : 200
-        });
-        
-      // temporary icon for myStuff page until we make a real one
-      var myStuffImage = new qx.ui.basic.Image("aiagallery/test.png");
-      
-      myStuff.add(myStuffLabel);
-      myStuff.add(myStuffImage);
-      linkRow.add(myStuff);
+      // Add "My Stuff" box to link row
+      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+        "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        "aiagallery/test.png"));
 
       // Add the link row to the page
       canvas.add(linkRow);
@@ -156,7 +99,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       featuredAppsHeader.set(
         {
           value      : "<h3>Featured Apps</h3>",
-          rich       : true,
+          rich       : true
         });
       featuredApps.add(featuredAppsHeader);
       
@@ -168,79 +111,32 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
         });
         
       // fill it with junk for now just to get an idea of the look
-      var appThumbLayout = new qx.ui.layout.VBox();
-      var appThumb = new qx.ui.container.Composite(appThumbLayout);
-      appThumb.set(
-        {
-          backgroundColor : "#eee9e9",
-          marginRight     : 20,
-          padding         : 10
-        });
-      var tempAppImage = new qx.ui.basic.Image("aiagallery/test.png");
-      tempAppImage.set(
-        {
-          width  : 100
-        });
-      appThumb.add(tempAppImage);
-      appThumb.add(new qx.ui.basic.Label("My App"));
-      appThumb.add(new qx.ui.basic.Label("by John Doe"));
-      featuredAppsSlideBar.add(appThumb);
-      
-      var appThumbLayout2 = new qx.ui.layout.VBox();
-      var appThumb2 = new qx.ui.container.Composite(appThumbLayout2);
-      appThumb2.set(
-        {
-          backgroundColor : "#eee9e9",
-          marginRight     : 20,
-          padding         : 10
-        });
-      var tempAppImage2 = new qx.ui.basic.Image("aiagallery/test.png");
-      tempAppImage2.set(
-        {
-          width  : 100
-        });
-      appThumb2.add(tempAppImage2);
-      appThumb2.add(new qx.ui.basic.Label("My App"));
-      appThumb2.add(new qx.ui.basic.Label("by John Doe"));
-      featuredAppsSlideBar.add(appThumb2);
-
-      var appThumbLayout3 = new qx.ui.layout.VBox();
-      var appThumb3 = new qx.ui.container.Composite(appThumbLayout3);
-      appThumb3.set(
-        {
-          backgroundColor : "#eee9e9",
-          marginRight     : 20,
-          padding         : 10
-        });
-      var tempAppImage3 = new qx.ui.basic.Image("aiagallery/test.png");
-      tempAppImage3.set(
-        {
-          width  : 100
-        });
-      appThumb3.add(tempAppImage3);
-      appThumb3.add(new qx.ui.basic.Label("My App"));
-      appThumb3.add(new qx.ui.basic.Label("by John Doe"));
-      featuredAppsSlideBar.add(appThumb3);
-      
-      var appThumbLayout4 = new qx.ui.layout.VBox();
-      var appThumb4 = new qx.ui.container.Composite(appThumbLayout4);
-      appThumb4.set(
-        {
-          backgroundColor : "#eee9e9",
-          marginRight     : 20,
-          padding         : 10
-        });
-      var tempAppImage4 = new qx.ui.basic.Image("aiagallery/test.png");
-      tempAppImage4.set(
-        {
-          width  : 100
-        });
-      appThumb4.add(tempAppImage4);
-      appThumb4.add(new qx.ui.basic.Label("My App"));
-      appThumb4.add(new qx.ui.basic.Label("by John Doe"));
-      featuredAppsSlideBar.add(appThumb4);
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "It's a Bird", "Sue Permann", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "On the Fence", "Barb Dwyer", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Breakfast Time", "Hammond Aigs", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Be Prepared", "Justin Case", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "What's Your Sign?", "Horace Cope", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Salute", "Stan Dupp", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "At Ease", "Sid Down", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Great Books", "Warren Piece", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Criminal Minds", "Robin Banks", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Don't Cross Me", "Yul Besari", "aiagallery/test.png"));
+      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
+        "Tired of This", "Hadda Nuff", "aiagallery/test.png"));
       
       featuredApps.add(featuredAppsSlideBar);
+      
+      // add Featured Apps section to the page
       canvas.add(featuredApps);
     },
 
