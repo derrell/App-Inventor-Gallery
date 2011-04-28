@@ -197,7 +197,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
         
         // Create a single list of all of the resulting tags
         tagMap = {};
-        for (var app in apps)
+        for (var app = 0; app < apps.length; app++)
         {
           apps[app].tags.forEach(
             function(tag)

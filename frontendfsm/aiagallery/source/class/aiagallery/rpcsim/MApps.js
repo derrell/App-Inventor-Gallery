@@ -43,7 +43,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             app;
       var             bNew;
       var             whoami;
-  var             missing = [];
+      var             missing = [];
       var             allowableFields =
         [
           "uid",

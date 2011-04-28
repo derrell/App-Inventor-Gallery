@@ -43,6 +43,45 @@ qx.Class.define("aiagallery.Application",
       {
         root.resetGlobalCursor();
       }
+    },
+    
+    addModules : function(moduleList)
+    {
+      var             menuItem;
+      var             moduleName;
+      var             module;
+      var             iconList;
+      var             functionList;
+      
+      // For each module...
+      for (menuItem in moduleList)
+      {
+        // ... there can be multiple available items in top-level menu item
+        for (moduleName in moduleList[menuItem])
+        {
+          // ... call the module's buildInitialFsm() function
+          module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+         module.buildInitialFsm(moduleList[menuItem][moduleName]);
+        }
+      }
+
+      // Initialize the gui for the main menu
+      iconList = aiagallery.main.Module.getIconList();
+      functionList = aiagallery.main.Module.getFunctionList();
+      aiagallery.main.Gui.getInstance().buildGui(moduleList,
+                                                 iconList,
+                                                 functionList);
+
+      // Similarly, now that we have a canvas for each module, ...
+      for (menuItem in moduleList)
+      {
+        for (moduleName in moduleList[menuItem])
+        {
+          // ... call the module's buildInitialGui() function
+          module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+          module.buildInitialGui(moduleList[menuItem][moduleName]);
+        }
+      }
     }
   },
 
@@ -79,37 +118,12 @@ qx.Class.define("aiagallery.Application",
       // Use the progress cursor now, until we're fully initialized
       qx.core.Init.getApplication().constructor.progressCursor(true);
 
-      // For each module...
+      // Get the module list
       var moduleList = aiagallery.main.Module.getList();
-      for (menuItem in moduleList)
-      {
-        // ... there can be multiple available items in top-level menu item
-        for (moduleName in moduleList[menuItem])
-        {
-          // ... call the module's buildInitialFsm() function
-          var module = moduleList[menuItem][moduleName]["clazz"].getInstance();
-          module.buildInitialFsm(moduleList[menuItem][moduleName]);
-        }
-      }
 
-      // Initialize the gui for the main menu
-      var iconList = aiagallery.main.Module.getIconList();
-      var functionList = aiagallery.main.Module.getFunctionList();
-      aiagallery.main.Gui.getInstance().buildGui(moduleList,
-                                                 iconList,
-                                                 functionList);
+      // Add the modules in the module list
+      aiagallery.Application.addModules(moduleList);
 
-      // Similarly, now that we have a canvas for each module, ...
-      for (menuItem in moduleList)
-      {
-        for (moduleName in moduleList[menuItem])
-        {
-          // ... call the module's buildInitialGui() function
-          var module = moduleList[menuItem][moduleName]["clazz"].getInstance();
-          module.buildInitialGui(moduleList[menuItem][moduleName]);
-        }
-      }
-      
       // Start the RPC simulator by getting its singleton instance
       aiagallery.rpcsim.RpcSim.getInstance();
     }

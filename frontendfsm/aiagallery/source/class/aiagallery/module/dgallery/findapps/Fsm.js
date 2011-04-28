@@ -6,6 +6,10 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
+/*
+require(aiagallery.module.dgallery.appinfo.AppInfo)
+ */
+
 /**
  * Gallery "find apps" page finite state machine
  */
@@ -296,8 +300,10 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
         "ontransition" : function(fsm, event)
         {
           // Get the event data
-          var eventData = event.getData();
-          var item = eventData.item;
+          var             eventData = event.getData();
+          var             item = eventData.item;
+          var             app;
+          var             moduleList;
 
           // Get the main tab view
           var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
@@ -311,12 +317,42 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
               if (uid == item.uid)
               {
                 page = thisPage;
+          
+                // Select the existing application page
+                mainTabs.setSelection([ page ]);
               }
             });
           
           // If we didn't find an existing tab, create a new one.
           if (! page)
           {
+            // Create a new module (tab) for this application
+            app = new aiagallery.main.Module(
+                    item.label,
+                    null,
+                    item.label,
+                    aiagallery.module.dgallery.appinfo.AppInfo,
+                    [
+                      function(menuItem, page, subTabs)
+                      {
+                        // Keep track of which UID this tab applies to
+                        page.setUserData("app_uid", item.uid);
+
+                        // Allow the user to close this tab
+                        page.setShowCloseButton(true);
+
+                        // Select the new application page
+                        mainTabs.setSelection([ page ]);
+                      }
+                    ]);
+            
+            // Start up the new module
+            moduleList = {};
+            moduleList[item.label] = {};
+            moduleList[item.label][item.label] = app;
+            aiagallery.Application.addModules(moduleList);
+
+/*
             //
             // FIXME: This should be a module creation rather than a simple
             // page creation. Eventually, there will be dynamic activity on
@@ -326,10 +362,8 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
             page.setUserData("app_uid", item.uid);
             page.setShowCloseButton(true);
             mainTabs.add(page);
+*/
           }
-          
-          // Select the application page
-          mainTabs.setSelection([ page ]);
         }
       });
 
