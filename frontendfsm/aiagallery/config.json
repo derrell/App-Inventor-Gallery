@@ -71,6 +71,9 @@
         },
         {
           "manifest" : "${CONTRIB_PATH}/UploadWidget/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "${CONTRIB_PATH}/CollapsablePanel/trunk/Manifest.json"
         }
       ]
     },

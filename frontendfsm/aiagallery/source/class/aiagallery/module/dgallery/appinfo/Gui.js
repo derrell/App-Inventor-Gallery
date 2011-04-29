@@ -62,13 +62,27 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       {
       case "getAppInfo":
         var             o;
+        var             groupbox;
         var             appInfoContainer;
         var             commentContainer;
-        var             splitter;
+        var             scrollContainer;
+        var             vbox;
+        var             splitpane;
+        var             radiogroup;
+        var             cpanel;
+        var             text;
+        var             label;
 
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
         
+
+        // Add a groupbox with the application title
+        groupbox = new qx.ui.groupbox.GroupBox(result.title);
+        groupbox.setLayout(new qx.ui.layout.Canvas());
+        canvas.setLayout(new qx.ui.layout.Canvas());
+        canvas.add(groupbox, { edge : 10 });
+
         // Create a grid layout for the application info
         var layout = new qx.ui.layout.Grid(10, 10);
         layout.setColumnAlign(0, "right", "middle");
@@ -87,21 +101,97 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Do we have any comments?
         if (result.numComments > 0)
         {
-          // Yes. We'll create a splitter, with the application info on the
+          // Yes. We'll create a splitpane, with the application info on the
           // left, and comment viewing on the right.
+          splitpane = new qx.ui.splitpane.Pane("horizontal");
+          groupbox.add(splitpane, { edge : 10 });
+          
+          // Add the application info container to the splitter
+          splitpane.add(appInfoContainer, 1);
+
+          // Create a group for the comment collapsable pannel
+          radiogroup = new qx.ui.form.RadioGroup();
+          radiogroup.setAllowEmptySelection(true);
+          
+          // We'll put all of the collapsable panels in a scroll container
+          scrollContainer = new qx.ui.container.Scroll();
+          splitpane.add(scrollContainer, 1);
+          
+          // Put a vbox container in the scroll container
+          vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+          scrollContainer.add(vbox);
+          
+          //
+          // Dummy data, for the moment...
+          //
+          [
+            {
+              author : "Joe",
+              text :
+                "qooxdoo is a comprehensive and innovative framework for " +
+                "creating rich internet applications (RIAs). Leveraging " +
+                "object-oriented JavaScript allows developers to build " +
+                "impressive cross-browser applications. No HTML, CSS nor " +
+                "DOM knowledge is needed.It includes a platform-independent " +
+                "development tool chain, a state-of-the-art GUI toolkit and " +
+                "an advanced client-server communication layer. It is open " +
+                "source under an LGPL/EPL dual license."
+            },
+
+            {
+              author : "Billy",
+              text : "qooxdoo sucks!"
+            },
+                                                                 
+            {
+              author : "Joe",
+              text : "No it doesn't!"
+            },
+                                                                 
+            {
+              author : "Billy",
+              text : "Yes it does!"
+            },
+                                                                 
+            {
+              author : "Joe",
+              text : "nah ah!"
+            },
+                                                                 
+            {
+              author : "Billy",
+              text : "uh huh!"
+            },
+                                                                 
+            {
+              author : "Jane",
+              text :
+                "Billy, you're a dips***. Stop trolling." +
+                "And Joe, you should know better than to bother responding " +
+                "to the likes of him."
+            }
+          ].forEach(
+            function(comment)
+            {
+              cpanel = new collapsablepanel.Panel(
+                comment.author + ": " + comment.text);
+              cpanel.setGroup(radiogroup);
+              label = new qx.ui.basic.Label(comment.text);
+              label.set(
+                {
+                  rich : true,
+                  wrap : true
+                });
+              cpanel.add(label);
+              vbox.add(cpanel);
+            });
         }
         else
         {
           // No comments, so put the application info directly into the canvas.
-          canvas.setLayout(new qx.ui.layout.Canvas());
-          canvas.add(appInfoContainer, { edge : 10 });
+          groupbox.add(appInfoContainer, { edge : 10 });
         }
 
-        o = new qx.ui.basic.Label(result.title);
-        o.setWrap(true);
-        appInfoContainer.add(o,
-                   { row : 0, column : 1 });
-        
         appInfoContainer.add(new qx.ui.basic.Image(result.image1),
                              { row : 1, column : 1 });
         appInfoContainer.add(new qx.ui.basic.Image(result.image2),
@@ -112,7 +202,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         appInfoContainer.add(new qx.ui.basic.Label("Description: "),
                              { row : 2, column : 0 });
         o = new qx.ui.basic.Label(result.description);
-        o.setWrap(true);
+        o.set(
+          {
+            rich : true,
+            wrap : true
+          });
         appInfoContainer.add(o,
                              { row : 2, column : 1, colSpan : 3 });
         
