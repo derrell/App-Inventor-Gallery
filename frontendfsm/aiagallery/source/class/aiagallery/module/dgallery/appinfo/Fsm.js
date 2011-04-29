@@ -60,44 +60,22 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "events" :
         {
-/*
-          "execute" :
-          {
-            // When the Delete User button is pressed
-            "deleteUser" : "Transition_Idle_to_AwaitRpcResult_via_deleteUser",
-
-            // When the Add User button is pressed
-            "addUser" : "Transition_Idle_to_AddOrEditUser_via_addUser"
-          },
-
-          "cellEditorOpening" :
-          {
-            // When a cell is double-clicked, or the Edit button is pressed,
-            // either of which open a cell editor for the row data
-            "table" : "Transition_Idle_to_AddOrEditUser_via_cellEditorOpening"
-          },
-
-          // Request to call some remote procedure call which is specified by
-          // the event data.
-          "callRpc" : "Transition_Idle_to_AwaitRpcResult_via_generic_rpc_call",
-
-          // When we get an appear event, retrieve the visitor list
+          // When we get an appear event, retrieve the application info. We
+          // only want to do it the first time, though, so we use a predicate
+          // to determine if it's necessary.
           "appear"    :
           {
-            "main.canvas" : "Transition_Idle_to_AwaitRpcResult_via_appear"
-          },
-
-          // When we get a disappear event, stop our timer
-          "disappear" :
-          {
-            "main.canvas" : "Transition_Idle_to_Idle_via_disappear"
+            "main.canvas" : 
+              qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
           }
-*/
         }
       });
 
       // Replace the initial Idle state with this one
       fsm.replaceState(state, true);
+
+
+      // The following transitions have a predicate, so must be listed first
 
       /*
        * Transition: Idle to Idle
@@ -115,21 +93,36 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "context" : this,
 
+        "predicate" : function(fsm, event)
+        {
+          // Have we already been here before?
+          if (fsm.getUserData("noUpdate"))
+          {
+            // Yup. Don't accept this transition and no need to check further.
+            return null;
+          }
+          
+          // Prevent this transition from being taken next time.
+          fsm.setUserData("noUpdate", true);
+          
+          // Accept this transition
+          return true;
+        },
+
         "ontransition" : function(fsm, event)
         {
-/*
-          // Issue the remote procedure call to get the visitor list. Request
-          // that the permissions and status be converted to strings for us.
+          // Issue the remote procedure call to get the application
+          // data. Request that the tags, previous authors, and status be
+          // converted to strings for us.
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
-                         "getVisitorList",
-                         [ true ]);
+                         "getAppInfo",
+                         [ module.getUserData("app_uid"), true ]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "getVisitorList");
-*/
+          request.setUserData("requestType", "getAppInfo");
         }
       });
 
@@ -159,15 +152,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       state.addTransition(trans);
 
       
-      // ------------------------------------------------------------ //
-      // State: <some other state>
-      // ------------------------------------------------------------ //
-
-      // put state and transitions here
-
-
-
-
       // ------------------------------------------------------------ //
       // State: AwaitRpcResult
       // ------------------------------------------------------------ //

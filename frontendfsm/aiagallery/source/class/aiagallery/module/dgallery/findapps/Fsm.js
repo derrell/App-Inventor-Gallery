@@ -336,7 +336,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                       function(menuItem, page, subTabs)
                       {
                         // Keep track of which UID this tab applies to
-                        page.setUserData("app_uid", item.uid);
+//                        page.setUserData("app_uid", item.uid);
 
                         // Allow the user to close this tab
                         page.setShowCloseButton(true);
@@ -346,23 +346,14 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                       }
                     ]);
             
+            // Transmit the UID of this module */
+            app.setUserData("app_uid", item.uid);
+            
             // Start up the new module
             moduleList = {};
             moduleList[item.label] = {};
             moduleList[item.label][item.label] = app;
             aiagallery.Application.addModules(moduleList);
-
-/*
-            //
-            // FIXME: This should be a module creation rather than a simple
-            // page creation. Eventually, there will be dynamic activity on
-            // the page, such as adding comments, likes, etc., so the page
-            // should have its own finite state machine.
-            page = new qx.ui.tabview.Page(item.label);
-            page.setUserData("app_uid", item.uid);
-            page.setShowCloseButton(true);
-            mainTabs.add(page);
-*/
           }
         }
       });

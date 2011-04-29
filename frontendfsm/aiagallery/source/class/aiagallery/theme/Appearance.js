@@ -105,6 +105,42 @@ qx.Theme.define("aiagallery.theme.Appearance",
           backgroundColor : "background-splitpane"
         };
       }
+    },
+
+    "collapsable-panel" :
+    {
+      style : function(states)
+      {
+        return {
+          decorator  : "pane",
+          padding    : 5,
+          allowGrowY : !!states.opened || !!states.horizontal,
+          allowGrowX : !!states.opened ||  !states.horizontal
+        };
+      }
+    },
+
+    "collapsable-panel/bar" :
+    {
+      include : "groupbox/legend",
+      alias   : "groupbox/legend",
+      style   : function(states)
+      {
+        return {
+          icon       :  states.opened ? "decoration/tree/open.png" : "decoration/tree/closed.png",
+          allowGrowY : !states.opened && !!states.horizontal,
+          allowGrowX :  states.opened ||  !states.horizontal,
+          maxWidth   : !states.opened && !!states.horizontal ? 16 : null
+        };
+      }
+    },
+
+    "collapsable-panel/container" :
+    {
+      style : function(states)
+      {
+        return { padding : [0, 5] };
+      }
     }
   }
 });

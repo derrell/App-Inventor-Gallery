@@ -93,11 +93,18 @@ qx.Class.define("aiagallery.main.Gui",
                              },
                              this);
 
-        // Enable simulation by default in the source version
+        // Enable simulation by default in the source version, disabled in the
+        // build version (unless qx.debug is specifically set in the config
+        // file). Set value to true then false initially, to ensure that
+        // changeValue handler gets called.
+        simulate.setValue(true);
+/* For the time being, always use simulate mode...
+        simulate.setValue(false);
         if (qx.core.Environment.get("qx.debug"))
         {
           simulate.setValue(true);
         }
+*/
 
         header.add(simulate);
 
