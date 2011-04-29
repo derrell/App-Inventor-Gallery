@@ -14,6 +14,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
     this.registerService("deleteApp",    this.deleteApp);
     this.registerService("getAppList", this.getAppList);
     this.registerService("appQuery", this.appQuery);
+    this.registerService("getAppInfo", this.getAppInfo);
   },
 
   statics :
@@ -437,6 +438,62 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       }
       
       return { apps : appList, categories : categories };
-    }
+    },
+    
+    getAppInfo : function(uid, bStringize, error)
+    {
+      var             app;
+      var             tagTable;
+      var             whoami;
+      var             clonedApp;
+
+      whoami = this.getUserData("whoami");
+
+      // See if this app exists. Also, if the application status is not
+      // Active, only the owner can view it.
+      app = this._db.apps[uid];
+      if (! app || (app.owner != whoami && app.status != 2))
+      {
+        // It doesn't. Let 'em know that the application has just been removed
+        // (or there's a programmer error)
+        error.setCode(1);
+        error.setMessage("Application is not available. " +
+                         "It may have been removed recently.");
+        return error;
+      }
+
+      // Clone the app entry for this app
+      clonedApp = qx.lang.Object.clone(app);
+
+      // Delete the owner field. User doesn't get to see that.
+      delete clonedApp.owner;
+      
+      // Delete the apk and source fields. Not needed here, and could be large.
+      delete clonedApp.apk;
+      delete clonedApp.source;
+
+      // Instead, add a display name field
+      clonedApp.ownerName = this._db.visitors[app.owner].displayName;
+
+      // If we were asked to stringize the values...
+      if (bStringize)
+      {
+        // ... then do so
+        [
+          "tags",
+          "previousAuthors"
+        ].forEach(function(field)
+          {
+            clonedApp[field] = clonedApp[field].join(", ");
+          });
+
+        // Convert from numeric to string status
+        clonedApp.status =
+          [ "Banned", "Pending", "Active" ][clonedApp.status];
+      }
+
+      // Give 'em what they came for
+      return clonedApp;
+    }    
   }
 });
