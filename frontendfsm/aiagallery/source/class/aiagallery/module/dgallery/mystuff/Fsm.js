@@ -427,14 +427,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           // Obtain and save a file reader object
           uploadReader = new qx.bom.FileReader();
           fsm.addObject("uploadReader", uploadReader);
-          
+
           // Arrange to be told when the file is fully loaded
           uploadReader.addListener("load", fsm.eventListener, fsm);
           uploadReader.addListener("error", fsm.eventListener, fsm);
-          
+
           // Obtain the uploadButton so we can retrieve its selection
           uploadButton = event.getTarget();
-          
+
           // Save the upload in progress, for use upon "load" or "error"
           fsm.addObject("uploadButton", uploadButton);
 

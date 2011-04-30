@@ -310,7 +310,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       aiagallery.rpcsim.RpcSim.DefaultDatabase = data;
 
       // Display the data
-      console.log(qx.lang.Json.stringify(data));
+      window.console && window.console.log(qx.lang.Json.stringify(data));
     }
     else
     {
