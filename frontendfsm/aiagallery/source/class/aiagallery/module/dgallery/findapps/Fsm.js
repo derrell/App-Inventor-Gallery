@@ -284,7 +284,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
       /*
        * Transition: Idle to Idle
        *
-       * Cause: "changeSelection" on the search results gallery
+       * Cause: An item is selected from the gallery
        *
        * Action:
        *  Create (if necessary) and switch to an application-specific tab
