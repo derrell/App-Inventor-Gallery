@@ -382,7 +382,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
         {
           // When an image is selected for upload.
           "changeFileName" : 
-            "Transition_Idle_to_ReadyingUpload_via_changeFileName",
+            qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE,
 
           "execute" :
           {
@@ -401,6 +401,11 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
       // Replace the initial Idle state with this one
       fsm.addState(state);
 
+
+
+      // The following transitions have a predicate, so must be listed first
+
+
       /*
        * Transition: Idle to ReadyingUpload
        *
@@ -416,6 +421,27 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
         "nextState" : "State_ReadyingUpload",
 
         "context" : this,
+
+        "predicate" : function(fsm, event)
+        {
+          // Determine if an upload reader is available
+          try
+          {
+            var uploadReader = new qx.bom.FileReader();
+            uploadReader.dispose();
+            uploadReader = null;
+            
+            // It is. Accept this transition.
+            return true;
+          }
+          catch(e)
+          {
+            // There's no upload reader. Tell 'em they're screwed.
+            alert("Your browser does not support the required functionality. " +
+                  "Please use a recent version of Chrome, Firefox, or Safari.");
+            return null;
+          }
+        },
 
         "ontransition" : function(fsm, event)
         {
@@ -789,6 +815,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           // We no longer have a currently-in-use upload button or reader
           fsm.removeObject("uploadButton");
           fsm.removeObject("uploadReader");
+
+          // Clean up
+          uploadReader.dispose();
+          uploadReader = null;
         }
       });
 
