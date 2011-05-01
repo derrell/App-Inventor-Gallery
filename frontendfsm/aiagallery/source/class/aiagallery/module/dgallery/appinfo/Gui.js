@@ -169,6 +169,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                 "Billy, you're a dips***. Stop trolling." +
                 "And Joe, you should know better than to bother responding " +
                 "to the likes of him."
+            },
+                                                                 
+            {
+              author : "Billy",
+              text :
+                "Jane, you ignorant slut..."
             }
           ].forEach(
             function(comment)
@@ -185,6 +191,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               cpanel.add(label);
               vbox.add(cpanel);
             });
+          
+          // Have nothing selected, initially
+          radiogroup.setSelection([]);
         }
         else
         {
