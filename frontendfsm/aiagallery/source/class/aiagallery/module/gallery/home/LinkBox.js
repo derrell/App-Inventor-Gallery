@@ -8,38 +8,19 @@
 
 qx.Class.define("aiagallery.module.gallery.home.LinkBox",
 {
-  extend : qx.ui.container.Composite,
+  extend : qx.ui.basic.Atom,
 
   construct : function(labelText, imagePath)
   {
-    // create the layout
-    var layout = new qx.ui.layout.HBox();
-    layout.set(
-      {
-        spacing : 20,
-        alignY  : "middle"
-      });
-      
-    this.base(arguments, layout);
+    this.base(arguments, this.tr(labelText), imagePath);
     
-    // add the description
-    var label = new qx.ui.basic.Label();
-    label.set(
+    this.set(
       {
-        value      : this.tr(labelText),
-        rich       : true,
-        width      : 200
+        rich         : true,
+        width        : 250,
+        gap          : 20,
+        center       : true,
+        iconPosition : "right"
       });
-      
-    // add the image
-    var image = new qx.ui.basic.Image(imagePath);
-    
-    this.add(label);
-    this.add(image);
-  },
-  
-  events :
-  {
-    click : "qx.event.type.Mouse"
   }
 });

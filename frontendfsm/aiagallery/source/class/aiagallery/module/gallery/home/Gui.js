@@ -44,7 +44,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var welcomeRow = new qx.ui.container.Composite(welcomeLayout);
       
       // Create an image (temporary one for now)
-      var homeImage = new qx.ui.basic.Image("aiagallery/homepage.png");
+      var homeImage = new qx.ui.basic.Image("aiagallery/homepage2.png");
       welcomeRow.add(homeImage);
 
       // Create a welcome message      
@@ -69,18 +69,18 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       // Add "Find Apps" box to link row
       var findApps = new aiagallery.module.gallery.home.LinkBox(
         "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        "aiagallery/findApps.png");
       findApps.addListener("click", fsm.eventListener, fsm);
       linkRow.add(findApps);
       fsm.addObject("Find Apps", findApps);
-
+      
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
       // Add "Learn" box to link row
       var learn = new aiagallery.module.gallery.home.LinkBox(
         "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        "aiagallery/learn.png");
       learn.addListener("click", fsm.eventListener, fsm);
       linkRow.add(learn);
       fsm.addObject("Learn", learn);
@@ -91,7 +91,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       // Add "My Stuff" box to link row
       var myStuff = new aiagallery.module.gallery.home.LinkBox(
         "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        "aiagallery/myStuff.png");
       myStuff.addListener("click", fsm.eventListener, fsm);
       linkRow.add(myStuff);
       fsm.addObject("My Stuff", myStuff);

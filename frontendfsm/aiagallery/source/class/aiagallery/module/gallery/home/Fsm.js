@@ -112,12 +112,16 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
           
           // Get the subtabs
           var subTabs = qx.core.Init.getApplication().getUserData("subTabs");
-          
-          // Get the page
-          var chosenPage = qx.core.Init.getApplication().getUserData(friendly);
-          
-          // Switch to correct subtab
-          subTabs.setSelection(chosenPage);
+
+          subTabs.getChildren().forEach(
+            function(thisPage)
+            {
+              if (thisPage.getLabel() == friendly)
+              {          
+                // Select the existing application page
+                subTabs.setSelection([ thisPage ]);
+              }
+            });
         }
       });
 

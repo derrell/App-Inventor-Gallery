@@ -181,12 +181,6 @@ qx.Class.define("aiagallery.main.Gui",
             var layout=new qx.ui.layout.VBox(4);
             subPage.setLayout(layout);
             subTabs.add(subPage, { flex : 1 });
-            
-            // Make the page globally accessible
-            if (menuItem == "Gallery")
-            {
-              qx.core.Init.getApplication().setUserData(moduleName, subPage);
-            }
 
             // Save the canvas
             moduleList[menuItem][moduleName].canvas = canvas = subPage;
@@ -198,8 +192,11 @@ qx.Class.define("aiagallery.main.Gui",
             canvas.addListener("disappear", fsm.eventListener, fsm);
           }
           
-          // Make the subtabs globally accessible
-          qx.core.Init.getApplication().setUserData("subTabs", subTabs);
+          // Make the main gallery subtabs globally accessible
+          if (menuItem == "Gallery") 
+          {
+            qx.core.Init.getApplication().setUserData("subTabs", subTabs);
+          }
         }
         else
         {
