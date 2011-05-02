@@ -51,7 +51,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var message = new qx.ui.basic.Label();
       message.set(
         {
-          value         : "<h2>Welcome to the App Inventor for Android Community Gallery!</h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus. Phasellus leo mi, dignissim non consectetur sed, eleifend ut lacus. Vestibulum ac ante sed diam blandit tempus commodo eu erat. Vestibulum malesuada molestie sodales. Vivamus gravida congue ultricies. Vivamus imperdiet dignissim viverra. Praesent eget leo vitae quam suscipit imperdiet quis eget turpis. Curabitur lorem quam, dapibus at vestibulum at, malesuada eu justo. Proin mi quam, sagittis sit amet ornare ac, tempus quis erat. Vestibulum non orci at orci ultricies consectetur. Cras est augue, ornare quis condimentum eu, fringilla elementum tortor. Nulla pharetra faucibus luctus.",
+          value         : this.tr("<h2>Welcome to the App Inventor for Android Community Gallery!</h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus. Phasellus leo mi, dignissim non consectetur sed, eleifend ut lacus. Vestibulum ac ante sed diam blandit tempus commodo eu erat. Vestibulum malesuada molestie sodales. Vivamus gravida congue ultricies. Vivamus imperdiet dignissim viverra. Praesent eget leo vitae quam suscipit imperdiet quis eget turpis. Curabitur lorem quam, dapibus at vestibulum at, malesuada eu justo. Proin mi quam, sagittis sit amet ornare ac, tempus quis erat. Vestibulum non orci at orci ultricies consectetur. Cras est augue, ornare quis condimentum eu, fringilla elementum tortor. Nulla pharetra faucibus luctus."),
           rich          : true,
           minWidth      : 150,
           allowStretchX : true
@@ -67,25 +67,34 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var linkRow = new qx.ui.container.Composite(linkRowLayout);
       
       // Add "Find Apps" box to link row
-      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+      var findApps = new aiagallery.module.gallery.home.LinkBox(
         "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png"));
+        "aiagallery/test.png");
+      findApps.addListener("click", fsm.eventListener, fsm);
+      linkRow.add(findApps);
+      fsm.addObject("Find Apps", findApps);
 
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
       // Add "Learn" box to link row
-      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+      var learn = new aiagallery.module.gallery.home.LinkBox(
         "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png"));
+        "aiagallery/test.png");
+      learn.addListener("click", fsm.eventListener, fsm);
+      linkRow.add(learn);
+      fsm.addObject("Learn", learn);
       
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
       
       // Add "My Stuff" box to link row
-      linkRow.add(new aiagallery.module.gallery.home.LinkBox(
+      var myStuff = new aiagallery.module.gallery.home.LinkBox(
         "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png"));
+        "aiagallery/test.png");
+      myStuff.addListener("click", fsm.eventListener, fsm);
+      linkRow.add(myStuff);
+      fsm.addObject("My Stuff", myStuff);
 
       // Add the link row to the page
       canvas.add(linkRow);
@@ -98,7 +107,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var featuredAppsHeader = new qx.ui.basic.Label();
       featuredAppsHeader.set(
         {
-          value      : "<h3>Featured Apps</h3>",
+          value      : this.tr("<h3>Featured Apps</h3>"),
           rich       : true
         });
       featuredApps.add(featuredAppsHeader);
@@ -159,8 +168,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
 
       if (response.type == "failed")
       {
-        // FIXME: Add the failure to the cell editor window rather than alert
-        alert("Async(" + response.id + ") exception: " + response.data);
+        // FIXME: Handle the failure somehow
         return;
       }
 
@@ -168,7 +176,8 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "getVisitorList":
+      case "getAppList":
+        // TODO: Display the returned apps in the Featured Apps feed
         break;
         
       default:

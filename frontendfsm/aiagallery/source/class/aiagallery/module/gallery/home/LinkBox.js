@@ -26,7 +26,7 @@ qx.Class.define("aiagallery.module.gallery.home.LinkBox",
     var label = new qx.ui.basic.Label();
     label.set(
       {
-        value      : labelText,
+        value      : this.tr(labelText),
         rich       : true,
         width      : 200
       });
@@ -36,5 +36,10 @@ qx.Class.define("aiagallery.module.gallery.home.LinkBox",
     
     this.add(label);
     this.add(image);
+  },
+  
+  events :
+  {
+    click : "qx.event.type.Mouse"
   }
 });

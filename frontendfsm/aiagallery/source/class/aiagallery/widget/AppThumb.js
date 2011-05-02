@@ -29,6 +29,6 @@ qx.Class.define("aiagallery.widget.AppThumb",
     image.setWidth(100);
     this.add(image);
     this.add(new qx.ui.basic.Label(titleText));
-    this.add(new qx.ui.basic.Label("by " + ownerText));
+    this.add(new qx.ui.basic.Label(this.tr("by %1", ownerText)));
   }
 });
