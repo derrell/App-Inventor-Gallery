@@ -176,7 +176,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "getAppList":
+      case "appQuery":
         // TODO: Display the returned apps in the Featured Apps feed
         break;
         

@@ -245,10 +245,6 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
         table.getTableModel().removeRows(deletedRow, 1, false);
         break;
         
-      case "getAppList":
-        // Nothing to do, this is just to prevent a runtime error
-        break;
-        
       default:
         throw new Error("Unexpected request type: " + requestType);
       }

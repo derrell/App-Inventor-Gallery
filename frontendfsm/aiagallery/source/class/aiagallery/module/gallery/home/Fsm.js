@@ -46,7 +46,7 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
             var rpcRequest = this.popRpcRequest();
 
             // Otherewise, call the standard result handler
-            var gui = aiagallery.module.mgmt.users.Gui.getInstance();
+            var gui = aiagallery.module.gallery.home.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
 
             // Dispose of the request
@@ -141,18 +141,47 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
         "context" : this,
 
         "ontransition" : function(fsm, event)
-        {
-          // Issue the remote procedure call to get the list of all
-          // applications. Request to convert lists into strings.
+        {          
+          // Create criteria list for appQuery
+          var criteria =
+            {
+              type     : "op",
+              method   : "and",
+              children : []
+            };
+            
+          // Create a criterion to grab only featured apps
+          var criterion = 
+            {
+              type  : "element",
+              field : "tags",
+              value : "*Featured*"
+            };
+            
+          // Add it to the criteria list
+          criteria.children.push(criterion);
+          
+          // Issue the remote procedure call to execute the query
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
-                         "getAppList",
-                         [ true, true ]);
+                         "appQuery",
+                         [
+                           // Root of the criteria tree
+                           criteria,
+                           
+                           // Requested fields and the return field name
+                           {
+                             uid    : "uid",
+                             title  : "label", // remap name for Gallery
+                             image1 : "icon",  // remap name for Gallery
+                             tags   : "tags"
+                           }
+                         ]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "getAppList");
+          request.setUserData("requestType", "appQuery");
         }
       });
 
