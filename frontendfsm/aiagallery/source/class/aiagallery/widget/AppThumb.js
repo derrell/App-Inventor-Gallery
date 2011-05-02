@@ -8,27 +8,28 @@
 
 qx.Class.define("aiagallery.widget.AppThumb",
 {
-  extend : qx.ui.container.Composite,
+  extend : qx.ui.basic.Atom,
 
   construct : function(titleText, ownerText, imagePath)
-  {
-    // create the layout
-    var layout = new qx.ui.layout.VBox();
-    
-    this.base(arguments, layout);
-    
+  { 
+    this.base(arguments, this.tr("<b>%1</b><br>by %2", titleText, ownerText), imagePath);
+      
     this.set(
       {
+        rich            : true,
         backgroundColor : "#eee9e9",
         marginRight     : 20,
         padding         : 10,
-        width           : 100
+        gap             : 10,
+        width           : 150,
+        iconPosition    : "top"
       });
 
-    var image = new qx.ui.basic.Image(imagePath);
-    image.setWidth(100);
-    this.add(image);
-    this.add(new qx.ui.basic.Label(titleText));
-    this.add(new qx.ui.basic.Label(this.tr("by %1", ownerText)));
+    this.getChildControl("icon").set(
+      {
+        height : 100,
+        width  : 100,
+        scale  : true
+      });
   }
 });

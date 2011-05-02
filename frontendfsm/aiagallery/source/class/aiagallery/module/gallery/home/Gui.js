@@ -116,33 +116,10 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var featuredAppsSlideBar = new qx.ui.container.SlideBar();
       featuredAppsSlideBar.set(
         {
-          height : 150
+          height : 180
         });
-        
-      // fill it with junk for now just to get an idea of the look
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "It's a Bird", "Sue Permann", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "On the Fence", "Barb Dwyer", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Breakfast Time", "Hammond Aigs", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Be Prepared", "Justin Case", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "What's Your Sign?", "Horace Cope", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Salute", "Stan Dupp", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "At Ease", "Sid Down", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Great Books", "Warren Piece", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Criminal Minds", "Robin Banks", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Don't Cross Me", "Yul Besari", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Tired of This", "Hadda Nuff", "aiagallery/test.png"));
       
+      fsm.addObject("Featured Apps", featuredAppsSlideBar);
       featuredApps.add(featuredAppsSlideBar);
       
       // add Featured Apps section to the page
@@ -177,7 +154,29 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       switch(requestType)
       {
       case "appQuery":
-        // TODO: Display the returned apps in the Featured Apps feed
+        // Get the gallery object
+        var featuredApps = fsm.getObject("Featured Apps");
+        
+        // Retrieve the app list
+        var apps = response.data.result.apps;
+
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        var parent = featuredApps.getLayoutParent();
+        parent.remove(featuredApps);
+        featuredApps = new qx.ui.container.SlideBar();
+        featuredApps.set(
+          {
+            height : 180
+          });
+        fsm.addObject("Featured Apps", featuredApps);
+        parent.add(featuredApps);
+        
+        for (var app = 0; app < apps.length; app++)
+        {
+          // FIXME: Need to fetch visitor's displayName to show instead of id
+          var appThumb = new aiagallery.widget.AppThumb(apps[app].label, apps[app].owner, apps[app].icon);
+          featuredApps.add(appThumb);
+        }
         break;
         
       default:

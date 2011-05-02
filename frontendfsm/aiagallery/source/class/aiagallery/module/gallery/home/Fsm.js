@@ -159,7 +159,9 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
             {
               type  : "element",
               field : "tags",
-              value : "*Featured*"
+              // FIXME: Need to give some apps the *Featured* tag so they can
+              // be grabbed here - temporarily using another tag
+              value : "Computers"
             };
             
           // Add it to the criteria list
@@ -179,7 +181,7 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
                              uid    : "uid",
                              title  : "label", // remap name for Gallery
                              image1 : "icon",  // remap name for Gallery
-                             tags   : "tags"
+                             owner  : "owner"
                            }
                          ]);
 
