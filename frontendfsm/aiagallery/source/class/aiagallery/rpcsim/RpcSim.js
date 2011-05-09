@@ -25,43 +25,11 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
     // Call the superclass constructor
     this.base(arguments);
 
+    // Give object access to the database
+    this._db = aiagallery.rpcsim.RpcSim.Database;
         
     // Simulate the logged-in user
     this.setUserData("whoami", "joe@blow.com");
-
-/*
-    // Gain access to local storage
-    var Storage = qx.bom.Cookie;
-    
-    // See if there's an existing database
-    var s = Storage.get("aiagallery.db");
-    
-    // Did we find anything there?
-    if (s)
-    {
-      // Yup. It's a JSON representation of our database. Parse it.
-      this._db = qx.lang.Json.parse(s);
-    }
-    else
-*/
-    {
-      this._db = aiagallery.rpcsim.RpcSim.DefaultDatabase;
-    }
-    
-    // Prepare to store the database periodically
-/*
-    var timer = qx.util.TimerManager.getInstance();
-    timer.start(function(userData, timerId)
-                {
-                  Storage.set("aiagallery.db",
-                              qx.lang.Json.stringify(this._db));
-                },
-                5000,
-                this,
-                null,
-                5000);
-*/
-
 
     // Start up the RPC simulator
     new rpcjs.sim.Rpc(this.__services, "/rpc");
@@ -77,7 +45,204 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
     },
     
     /** The default database, filled in in the defer() function */
-    DefaultDatabase : null
+    Database : null,
+    
+    /** 
+     * The next value to use for an auto-generated key for an entity
+     */
+    __nextKey : 0,
+
+    
+    /**
+     * Query for all entities of a given class/type, given certain criteria.
+     *
+     * @param classname {String}
+     *   The name of the class, descended from aiagallery.rpcsim.Entity, of
+     *   the object type which is to be queried in the database.
+     *
+     * @param criteria
+     *   See {@link aiagallery.rpcsim.Entity#query} for details.
+     *
+     * @return {Array}
+     *   An array of maps, i.e. native objects (not of Entity objects!)
+     *   containing the data resulting from the query.
+     */
+    query : function(classname, criteria)
+    {
+      var             qualifies;
+      var             builtCriteria;
+      var             dbObjectMap;
+      var             type;
+      var             entry;
+      var             propertyName;
+      var             result;
+      var             results;
+      var             entity;
+      var             clone;
+      var             val;
+      
+      // Get the entity type
+      type = aiagallery.rpcsim.Entity.entityTypeMap[classname];
+      if (! type)
+      {
+        throw new Error("No mapped entity type for " + classname);
+      }
+      
+      // Get the database sub-section for the specified classname/type
+      dbObjectMap = aiagallery.rpcsim.RpcSim.Database[type];
+
+      // Initialize our results array
+      results = [];
+
+      // If they're not asking for all objects, build a criteria predicate.
+      if (criteria)
+      {
+        builtCriteria =
+          (function(criterium)
+            {
+              var             i;
+              var             ret = "";
+              var             propertyTypes;
+
+              switch(criterium.type)
+              {
+              case "op":
+                switch(criterium.method)
+                {
+                case "and":
+                  // Generate the conditions
+                  ret += "(";
+                  for (i = 0; i < criterium.children.length; i++)
+                  {
+                    ret += arguments.callee(criterium.children[i]);
+                    if (i < criterium.children.length - 1)
+                    {
+                      ret += " && ";
+                    }
+                  }
+                  ret += ")";
+                  break;
+
+                default:
+                  throw new Error("Unrecognized criterium method: " +
+                                  criterium.method);
+                }
+                break;
+
+              case "element":
+                // Determine the type of this field
+                propertyTypes = aiagallery.rpcsim.Entity.propertyTypes;
+                switch(propertyTypes[type].fields[criterium.field])
+                {
+                case "Key":
+                case "String":
+                  ret += 
+                    "entry[\"" + criterium.field + "\"] === " +
+                    "\"" + criterium.value + "\" ";
+                  break;
+
+                case "Number":
+                  ret +=
+                    "entry[\"" + criterium.field + "\"] === " + criterium.value;
+                  break;
+
+                case "Array":
+                  ret +=
+                  "qx.lang.Array.contains(entry[\"" + 
+                    criterium.field + "\"], " +
+                  "\"" + criterium.value + "\")";
+                  break;
+
+                default:
+                  throw new Error("Unknown property type: " + type);
+                }
+                break;
+
+              default:
+                throw new Error("Unrceognized criterium type: " +
+                                criterium.type);
+              }
+
+              return ret;
+            })(criteria);
+
+        // Create a function that implements the specified criteria
+        qualifies = new Function(
+          "entry",
+          "return (" + builtCriteria + ");");
+      }
+      else
+      {
+        // They want all entities of the specified type.
+        qualifies = function(entity) { return true; };
+      }
+      
+      for (entry in dbObjectMap)
+      {
+        if (qualifies(dbObjectMap[entry]))
+        {
+          // Make a deep copy of the results
+          result = qx.util.Serializer.toNativeObject(dbObjectMap[entry]);
+          results.push(result);
+        }
+      }
+      
+      // Give 'em the query results!
+      return results;
+    },
+
+
+    /**
+     * Put an entity to the database. If the key field is null or undefined, a
+     * key is automatically generated for the entity.
+     *
+     * @param entity {aiagallery.rpcsim.Entity}
+     *   The entity to be made persistent.
+     */
+    put : function(entity)
+    {
+      var             data = {};
+      var             entityData = entity.getData();
+      var             key = entityData[entity.getEntityKeyProperty()];
+      var             type = entity.getEntityType();
+      var             propertyName;
+      
+      // If there's no key yet...
+      if (typeof(key) == "undefined" || key === null)
+      {
+        // Generate a new key
+        key = String(aiagallery.rpcsim.RpcSim.__nextKey++);
+        
+        // Save this key in the key field
+        entityData[entity.getEntityKeyProperty()] = key;
+      }
+
+      // Create a simple map of properties and values to be put in the database
+      for (propertyName in entity.getDatabaseProperties())
+      {
+        // Add this property value to the data to be saved to the database.
+        data[propertyName] = entityData[propertyName];
+      }
+      
+      // Save it to the database
+      aiagallery.rpcsim.RpcSim.Database[type][key] = data;
+    },
+    
+
+    /**
+     * Remove an entity from the database
+     *
+     * @param entity {aiagallery.rpcsim.Entity}
+     *   An instance of the entity to be removed.
+     */
+    remove : function(entity)
+    {
+      var             entityData = entity.getData();
+      var             key = entityData[entity.getEntityKeyProperty()];
+      var             type = entity.getEntityType();
+      
+      delete aiagallery.rpcsim.RpcSim.Database[type][key];
+    }
   },
 
   members :
@@ -99,18 +264,6 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
         qx.lang.Function.bind(fService, this);
     },
 
-    /**
-     * Allow creating a more elaborate sample database
-     *
-     * @param db
-     *   The replacement database, which must contain all of the requisite
-     *   data as provided in the DefaultDatabase herein.
-     */
-    setDb : function(db)
-    {
-      this._db = db;
-    },
-
     /** Remote procedure call services */
     __services : 
     {
@@ -125,197 +278,13 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
   
   defer : function()
   {
-    var bGenerateDB = false;
-    if (bGenerateDB)
-    {
-      var data =
-      {
-        visitors : 
-        {
-          "jane@uphill.org" :
-          {
-            userId         : "jane@uphill.org",
-            displayName    : "Jane Doe",
-            permissions    : [],
-            status         : aiagallery.rpcsim.RpcSim.Status.Active,
-            recentSearches : [],
-            recentViews    : []
-          },
-
-          "billy@thekid.edu" :
-          {
-            userId         : "billy@thekid.edu",
-            displayName    : "Billy The Kid",
-            permissions    : [],
-            status         : aiagallery.rpcsim.RpcSim.Status.Active,
-            recentSearches : [],
-            recentViews    : []
-          },
-
-          "joe@blow.com" :
-          {
-            userId         : "joe@blow.com",
-            displayName    : "Joe Blow",
-            permissions    : [ "VISITOR EDIT" ],
-            status         : aiagallery.rpcsim.RpcSim.Status.Active,
-            recentSearches : [],
-            recentViews    : []
-          }
-        },
-
-        tags     : 
-        {
-          "*Featured*"        : { type : "special",   count : 1 },
-          "Games"             : { type : "category",  count : 1 },
-          "Educational"       : { type : "category",  count : 1 },
-          "Development"       : { type : "category",  count : 1 },
-          "Graphics"          : { type : "category",  count : 1 },
-          "Internet"          : { type : "category",  count : 1 },
-          "Multimedia"        : { type : "category",  count : 1 },
-          "Bioscience"        : { type : "normal",    count : 1 },
-          "Communications"    : { type : "normal",    count : 1 },
-          "Computers"         : { type : "normal",    count : 1 },
-          "Earth Science"     : { type : "normal",    count : 1 },
-          "Energy"            : { type : "normal",    count : 1 },
-          "Mathematics"       : { type : "normal",    count : 1 },
-          "Oceanography"      : { type : "normal",    count : 1 },
-          "Physical Sciences" : { type : "normal",    count : 1 },
-          "Space"             : { type : "normal",    count : 1 },
-          "Transportation"    : { type : "normal",    count : 1 },
-          "Word Games"        : { type : "normal",    count : 1 },
-          "K-12"              : { type : "normal",    count : 1 }
-        },
-
-        apps :
-        {
-        },
-
-        downloads :
-        {
-        },
-
-        comments :
-        {
-        },
-
-        likes :
-        {
-        },
-
-        flags :
-        {
-        }
-      };
-
-      // Gain easy access to the simulation data
-      var simData = aiagallery.rpcsim.MSimData.Db;
-
-      // Get the tag names into categories and tags arrays
-      var categories = [];
-      var tags = [];
-
-      for (var tag in data.tags)
-      {
-        switch(data.tags[tag].type)
-        {
-        case "category":
-          categories.push(tag);
-          break;
-
-        case "normal":
-          tags.push(tag);
-          break;
-        }
-      }
-
-      // Get the list of potential application owners
-      var owners = qx.lang.Object.getKeys(data.visitors);
-
-      var rand = function(numChoices)
-      {
-        return Math.floor(Math.random() * numChoices);
-      };
-
-      var nextUid = 100;
-
-      for (var app in simData.apps)
-      {
-        // We'll build our list of tags (both category and otherwise)
-        var tagList = [];
-
-        // Clone the category list
-        var c = qx.lang.Array.clone(categories);
-
-        // Select a category
-        tagList.unshift(c[rand(c.length)]);
-
-        // Do we want another category? Use a 1 in 10 chance.
-        if (rand(10) == 0)
-        {
-          // Remove the previously-selected element as a choice now
-          qx.lang.Array.remove(c, tagList[0]);
-
-          // Get one more element
-          tagList.push(c[rand(c.length)]);
-        }
-
-        // Clone the tags list
-        var t = qx.lang.Array.clone(tags);
-
-        for (var j = 0; j < 4; j++)
-        {
-          // With a 1 in 4 chance, add another tag
-          if (rand(4) == 0)
-          {
-            tagList.unshift(t[rand(t.length)]);
-
-            // Delete the used tag from the list
-            qx.lang.Array.remove(t, tags[0]);
-          }
-
-          // If there are no more tags, we're done
-          if (t.length == 0)
-          {
-            break;
-          }
-        }
-
-        var thisData = simData.apps[app];
-        var a = 
-          {
-            uid :   nextUid + "",
-            owner : owners[rand(owners.length)],
-            title : thisData.title,
-            description : "The description of " + thisData.title,
-            image1 : thisData.image1,
-            image2 : null,
-            image3 : null,
-            previousAuthors : [],
-            source : "var x = 'Hello world';",
-            apk : null,
-            tags : tagList,
-            uploadTime : new Date(),
-            numLikes : rand(50),
-            numDownloads : rand(20),
-            numViewed : rand(100),
-            numComments : 0,
-            status : aiagallery.rpcsim.RpcSim.Status.Active
-          };
-
-        // Save this record
-        data.apps[nextUid++ + ""] = a;
-      }
-
-      // Save the just-built database for use.
-      aiagallery.rpcsim.RpcSim.DefaultDatabase = data;
-
-      // Display the data
-      window.console && window.console.log(qx.lang.Json.stringify(data));
-    }
-    else
-    {
-      // Save the database from the MSimData mixin
-      aiagallery.rpcsim.RpcSim.DefaultDatabase = aiagallery.rpcsim.MSimData.Db;
-    }
+    // Save the database from the MSimData mixin
+    aiagallery.rpcsim.RpcSim.Database = aiagallery.rpcsim.MSimData.Db;
+    
+    // Register our put & query functions
+    aiagallery.rpcsim.Entity.registerDatabaseProvider(
+      aiagallery.rpcsim.RpcSim.query,
+      aiagallery.rpcsim.RpcSim.put,
+      aiagallery.rpcsim.RpcSim.remove);
   }
 });

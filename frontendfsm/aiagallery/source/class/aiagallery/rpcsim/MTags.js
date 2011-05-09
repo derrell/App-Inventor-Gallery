@@ -18,19 +18,31 @@ qx.Mixin.define("aiagallery.rpcsim.MTags",
     getCategoryTags : function()
     {
       var             categories;
+      var             criteria;
+      var             results;
 
-      // Retrieve the list of "category" tags
-      categories = [];
-      for (var tag in this._db.tags)
-      {
-        if (this._db.tags[tag].type == "category")
+      // Create the criteria for a search of tags of type "category"
+      criteria =
         {
-          categories.push(tag);
-        }
-      }
+          type  : "element",
+          field : "type",
+          value : "category"
+        };
       
-      // We've built the whole list. Return it.
-      return categories;
+      // Issue a query for category tags
+      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
+                                                  criteria);
+
+      // They want only the tag value to be returned
+      results = [];
+      categories.forEach(
+        function(tag)
+        {
+          results.push(tag.value);
+        });
+
+      // Give 'em what they came for!
+      return results;
     }
   }
 });

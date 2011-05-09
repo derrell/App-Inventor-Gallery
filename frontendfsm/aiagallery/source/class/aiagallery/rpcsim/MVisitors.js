@@ -24,6 +24,7 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
       var             status;
       var             statusIndex;
       var             visitor;
+      var             visitorData;
       var             ret;
       
       displayName = attributes.displayName;
@@ -34,45 +35,43 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
       status = this.statusOrder.indexOf(status);
       
       // Get the old visitor entry
-      visitor = this._db.visitors[userId];
+      visitor = new aiagallery.rpcsim.ObjVisitors(userId);
+      visitorData = visitor.getData();
       
-      // Did it already exist?
-      if (! visitor)
-      {
-        // Nope. We're creating it new.
-        ret = true;
-        
-        // Create an empty map
-        visitor = {};
-      }
-      else
-      {
-        // It already existed
-        ret = false;
-      }
+      // Remember whether it already existed.
+      ret = visitor.getBrandNew();
       
-      this._db.visitors[userId] =
+      // Provide the new data
+      visitor.setData(
         {
           userId      : userId,
-          displayName : displayName || visitor.displayName || "<not specified>",
-          permissions : permissions || visitor.permissions || [],
-          status      : status != -1 ? status : (visitor.status || 2)
-        };
+          displayName : displayName || visitorData.displayName || "<>",
+          permissions : permissions || visitorData.permissions || [],
+          status      : status != -1 ? status : (visitorData.status || 2)
+        });
       
+      // Write the new data
+      visitor.put();
+
       return ret;
     },
     
     deleteVisitor : function(userId)
     {
+      var             visitor;
+
+      // Retrieve this visitor
+      visitor = new aiagallery.rpcsim.ObjVisitors(userId);
+
       // See if this visitor exists.
-      if (! this._db.visitors[userId])
+      if (visitor.getBrandNew())
       {
         // He doesn't. Let 'em know.
         return false;
       }
       
       // Delete the visitor
-      delete this._db.visitors[userId];
+      visitor.removeSelf();
       
       // We were successful
       return true;
@@ -80,26 +79,23 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
     
     getVisitorList : function(bStringize)
     {
-      var             clonedVisitor;
-      var             visitorList = [];
+      var             visitorList;
       
       // For each visitor...
-      for (var visitor in this._db.visitors)
+      visitorList =
+        aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitors");
+
+      // If we were asked to stringize the values...
+      if (bStringize)
       {
-        // Clone the visitor entry for this visitor
-        clonedVisitor = qx.lang.Object.clone(this._db.visitors[visitor]);
-        
-        // If we were asked to stringize the values...
-        if (bStringize)
-        {
-          // ... then do so
-          clonedVisitor.permissions = clonedVisitor.permissions.join(", ");
-          clonedVisitor.status =
-            [ "Banned", "Pending", "Active" ][clonedVisitor.status];
-        }
-        
-        // Push this visitor onto the visitor list
-        visitorList.push(clonedVisitor);
+        // ... then do so
+        visitorList.forEach(
+          function(visitor)
+          {
+            visitor.permissions = visitor.permissions.join(", ");
+            visitor.status =
+              [ "Banned", "Pending", "Active" ][visitor.status];
+          });
       }
       
       // We've built the whole list. Return it.

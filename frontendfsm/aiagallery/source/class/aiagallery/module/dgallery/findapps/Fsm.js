@@ -336,7 +336,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                       function(menuItem, page, subTabs)
                       {
                         // Keep track of which UID this tab applies to
-//                        page.setUserData("app_uid", item.uid);
+                        page.setUserData("app_uid", item.uid);
 
                         // Allow the user to close this tab
                         page.setShowCloseButton(true);

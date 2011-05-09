@@ -36,12 +36,14 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             source;
       var             apk;
       var             tags;
+      var             tagObj;
+      var             tagData;
       var             oldTags;
-      var             tagTable;
       var             uploadTime;
       var             status;
       var             statusIndex;
-      var             app;
+      var             appData;
+      var             appObj;
       var             bNew;
       var             whoami;
       var             missing = [];
@@ -67,7 +69,6 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         ];
       var             requiredFields =
         [
-          "uid",
           "owner",
           "title",
           "description",
@@ -81,14 +82,17 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       // Determine who the logged-in user is
       whoami = this.getUserData("whoami");
 
+      // Get an AppData object. If uid is non-null, retrieve the prior data.
+      appObj = new aiagallery.rpcsim.ObjAppData(uid);
+
+      // Retrieve the data
+      appData = appObj.getData();
+
       // If we were given a record identifier...
       if (uid !== null)
       {
-        // ... then get the old app entry
-        app = this._db.apps[uid];
-        
-        // It must have already existed or it's an error
-        if (! app)
+        // ... it must have already existed or it's an error
+        if (appObj.getBrandNew())
         {
           // It didn't!
           error.setCode(1);
@@ -97,47 +101,22 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         }
 
         // Ensure that the logged-in user owns this application.
-        if (app.owner != whoami)
+        if (appData.owner != whoami)
         {
           // He doesn't. Someone's doing something nasty!
           error.setCode(2);
           error.setMessage("Not owner");
           return error;
         }
-
-        bNew = false;
       }
       else
       {
-        // Otherwise we create a new record
-        uid = aiagallery.rpcsim.MApps.nextAppId;
-        bNew = true;
-
-        // Initialize field names for this new record
-        app =
-          {
-            uid             : uid,
-            owner           : whoami,
-            title           : null,
-            description     : null,
-            image1          : null,
-            image2          : null,
-            image3          : null,
-            previousAuthors : [],
-            source          : null,
-            apk             : null,
-            tags            : [],
-            uploadTime      : null,
-            numLikes        : 0,
-            numDownloads    : 0,
-            numViewed       : 0,
-            numComments     : 0,
-            status          : aiagallery.rpcsim.RpcSim.Status.Active
-          };
+        // Initialize the owner field
+        appData.owner = whoami;
       }
 
       // Save the existing tags list
-      oldTags = app.tags;
+      oldTags = appData.tags;
 
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
@@ -147,11 +126,11 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
           if (attributes[field])
           {
             // Yup. Replace what's in the db entry
-            app[field] = attributes[field];
+            appData[field] = attributes[field];
           }
 
           // If this field is required and not available...
-          if (qx.lang.Array.contains(requiredFields, field) && ! app[field])
+          if (qx.lang.Array.contains(requiredFields, field) && ! appData[field])
           {
             // then mark it as missing
             missing.push(field);
@@ -171,18 +150,12 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       if (attributes.source)
       {
         // ... then update the upload time to now
-        app.uploadTime = new Date();
+        appData.uploadTime = new Date();
       }
-
-      // Save this record in the database
-      this._db.apps[uid] = app;
-      
-      // Gain easy access to the tags "table" of the database
-      tagTable = this._db.tags;
 
       // Add new tags to the database, and update counts of formerly-existing
       // tags. Remove "normal" tags with a count of 0.
-      app.tags.forEach(
+      appData.tags.forEach(
         function(tag)
         {
           // If the tag existed previously, ignore it.
@@ -193,70 +166,78 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
             return;
           }
           
-          // It didn't exist. See if there's already such a tag
-          if (! tagTable[tag])
+          // It didn't exist. Create or retrieve existing tag.
+          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagData = tagObj.getData();
+          
+          // If we created it, data is initialized. Otherwise...
+          if (! tagObj.getBrandNew())
           {
-            // There isn't. Create a new tag with a count of 1
-            tagTable[tag] = { type  : "normal", count : 1 };
+            // ... it existed, so we need to increment its count
+            ++tagData.count;
           }
-          else
-          {
-            // It existed. Increment its count
-            ++tagTable[tag].count;
-          }
+          
+          // Save the tag object
+          tagObj.put();
         });
       
       // Anything left in oldTags are those which were removed.
       oldTags.forEach(
         function(tag)
         {
+          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagData = tagObj.getData();
+
           // The record has to exist already. Decrement this tag's count.
-          --tagTable[tag].count;
+          --tagData.count;
 
           // Ensure it's a "normal" tag
-          if (tagTable[tag].type != "normal")
+          if (tagData.type != "normal")
           {
             // It's not, so we have nothing more we need to do.
             return;
           }
           
           // If the count is less than 1...
-          if (tagTable[tag].count < 1)
+          if (tagData.count < 1)
           {
             // ... then we can remove the tag
-            delete tagTable[tag];
+            tagObj.removeSelf();
           }
         });
 
-      // Did we generate a new uid?
-      if (bNew)
-      {
-        // Yup. Update to the next uid.
-        ++aiagallery.rpcsim.MApps.nextAppId;
-      }
-
-      return qx.lang.Object.clone(app);
+      // Save this record in the database
+      appObj.put();
+      
+      return appObj.getData();  // This includes newly-created key (if adding)
     },
     
     deleteApp : function(uid, error)
     {
-      var             app;
+      var             appObj;
+      var             appData;
+      var             tagObj;
+      var             tagData;
       var             whoami;
-      var             tagTable;
 
-      // See if this app exists.
-      app = this._db.apps[uid];
-      if (! app)
+      // Retrieve an instance of this application entity
+      appObj = new aiagallery.rpcsim.ObjAppData(uid);
+      
+      // Does this application exist?
+      if (appObj.getBrandNew())
       {
         // It doesn't. Let 'em know.
         return false;
       }
+
+      // Get the object data
+      appData = appObj.getData();
       
       // Determine who the logged-in user is
       whoami = this.getUserData("whoami");
 
       // Ensure that the logged-in user owns this application
-      if (app.owner != whoami)
+      if (appData.owner != whoami)
       {
         // He doesn't. Someone's doing something nasty!
         error.setCode(1);
@@ -264,33 +245,34 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         return error;
       }
 
-      // Gain easy access to the tags "table" of the database
-      tagTable = this._db.tags;
-
       // Decrement counts for tags used by this application.
-      app.tags.forEach(
+      appData.tags.forEach(
         function(tag)
         {
+          // Get this tag object
+          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagData = tagObj.getData();
+
           // The record has to exist already. Decrement this tag's count.
-          --tagTable[tag].count;
+          --tagData.count;
 
           // Ensure it's a "normal" tag
-          if (tagTable[tag].type != "normal")
+          if (tagData.type != "normal")
           {
             // It's not, so we have nothing more we need to do.
             return;
           }
           
           // If the count is less than 1...
-          if (tagTable[tag].count < 1)
+          if (tagData.count < 1)
           {
             // ... then we can remove the tag
-            delete tagTable[tag];
+            tagObj.removeSelf();
           }
         });
 
       // Delete the app
-      delete this._db.apps[uid];
+      appObj.removeSelf();
       
       // We were successful
       return true;
@@ -298,161 +280,164 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
     
     getAppList : function(bStringize, bAll)
     {
-      var             clonedApp;
       var             categories;
-      var             appList = [];
+      var             categoryNames;
+      var             appList;
       var             whoami;
+      var             criteria;
       
+      
+      // Get the current user
       whoami = this.getUserData("whoami");
 
-      // For each app...
-      for (var app in this._db.apps)
+      // Create the criteria for a search of apps of the current user
+      if (! bAll)
       {
-        // Reject apps that don't belong to the currently-logged-in user
-        if (! bAll && this._db.apps[app].owner != whoami)
-        {
-          // It's not his. Skip this one.
-          continue;
-        }
+        criteria =
+          {
+            type  : "element",
+            field : "owner",
+            value : whoami
+          };
+      }
+      else
+      {
+        // We want all objects
+        criteria = null;
+      }
+      
+      // Issue a query for all apps 
+      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData", 
+                                               criteria);
 
-        // Clone the app entry for this app
-        clonedApp = qx.lang.Object.clone(this._db.apps[app]);
-        
-        // If we were asked to stringize the values...
-        if (bStringize)
-        {
-          // ... then do so
-          [
-            "tags",
-            "previousAuthors"
-          ].forEach(function(field)
-            {
-              clonedApp[field] = clonedApp[field].join(", ");
-            });
-          
-          // Convert from numeric to string status
-          clonedApp.status =
-            [ "Banned", "Pending", "Active" ][clonedApp.status];
-        }
-        
-        // Push this app onto the app list
-        appList.push(clonedApp);
-      }
-      
-      // Retrieve the list of "category" tags
-      categories = [];
-      for (var tag in this._db.tags)
+      // If we were asked to stringize the values...
+      if (bStringize)
       {
-        if (this._db.tags[tag].type == "category")
-        {
-          categories.push(tag);
-        }
+        // ... then for each app that matched the criteria...
+        appList.forEach(
+          function(app)
+          {
+            [
+              "tags",
+              "previousAuthors"
+            ].forEach(function(field)
+              {
+                // ... stringize this field.
+                app[field] = app[field].join(", ");
+              });
+
+            // Convert from numeric to string status
+            app.status = [ "Banned", "Pending", "Active" ][app.status];
+          });
       }
       
+      // Create the criteria for a search of tags of type "category"
+      criteria =
+        {
+          type  : "element",
+          field : "type",
+          value : "category"
+        };
+      
+      // Issue a query for category tags
+      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
+                                                  criteria);
+      
+      // They want only the tag value to be returned
+      categoryNames = [];
+      categories.forEach(
+        function(tag)
+        {
+          categoryNames.push(tag.value);
+        });
+
       // We've built the whole list. Return it.
-      return { apps : appList, categories : categories };
+      return { apps : appList, categories : categoryNames };
     },
     
     appQuery : function(criteria, requestedFields)
     {
-      var             appList = [];
+      var             appList;
       var             categories;
+      var             categoryNames;
 
-      var builtCriteria =
-        (function(criterium)
+      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData",
+                                               criteria);
+
+      // Remove those members which are not requested, and rename as requested
+      appList.forEach(
+        function(app)
+        {
+          var requested;
+
+          for (var field in app)
           {
-            var             i;
-            var             ret = "";
-
-            switch(criterium.type)
+            requested = requestedFields[field];
+            if (! requested)
             {
-            case "op":
-              switch(criterium.method)
-              {
-              case "and":
-                // Generate the conditions
-                ret += "(";
-                for (i = 0; i < criterium.children.length; i++)
-                {
-                  ret += arguments.callee(criterium.children[i]);
-                  if (i < criterium.children.length - 1)
-                  {
-                    ret += " && ";
-                  }
-                }
-                ret += ")";
-                break;
-
-              default:
-                throw new Error("Unrecognized criterium method: " +
-                                criterium.method);
-              }
-              break;
-
-            case "element":
-              switch(criterium.field)
-              {
-              case "tags" :
-                ret +=
-                "qx.lang.Array.contains(app.tags, \"" +
-                  criterium.value + "\")";
-              }
-              break;
-
-            default:
-              throw new Error("Unrceognized criterium type: " +
-                              criterium.type);
+              delete app[field];
             }
-
-            return ret;
-          })(criteria);
-
-      this.debug("builtCriteria=" + builtCriteria);
-
-      // Create a function that implements the specified criteria
-      // The function will accept
-      //  "
-      var qualifies = new Function( "app", "return (" + builtCriteria + ");");
-      for (var app in this._db.apps)
-      {
-        if (qualifies(this._db.apps[app]))
-        {
-          var result = {};
-          var clone = qx.lang.Object.clone(this._db.apps[app]);
-          for (var requestedField in requestedFields)
-          {
-            result[requestedFields[requestedField]] = clone[requestedField];
+            else
+            {
+              // If the field name is to be remapped...
+              if (requested != field)
+              {
+                // then copy and delete to effect the remapping.
+                app[requested] = app[field];
+                delete app[field];
+              }
+            }
           }
-          appList.push(result);
-        }
-      }
+        });
 
-      // Retrieve the list of "category" tags
-      categories = [];
-      for (var tag in this._db.tags)
-      {
-        if (this._db.tags[tag].type == "category")
+      // Create the criteria for a search of tags of type "category"
+      criteria =
         {
-          categories.push(tag);
-        }
-      }
+          type  : "element",
+          field : "type",
+          value : "category"
+        };
       
-      return { apps : appList, categories : categories };
+      // Issue a query for all apps 
+      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
+                                                  criteria);
+      
+      // They want only the tag value to be returned
+      categoryNames = [];
+      categories.forEach(
+        function(tag)
+        {
+          categoryNames.push(tag.value);
+        });
+
+      return { apps : appList, categories : categoryNames };
     },
     
     getAppInfo : function(uid, bStringize, error)
     {
       var             app;
+      var             appList;
       var             tagTable;
       var             whoami;
-      var             clonedApp;
+      var             criteria;
+      var             owner;
 
       whoami = this.getUserData("whoami");
 
-      // See if this app exists. Also, if the application status is not
-      // Active, only the owner can view it.
-      app = this._db.apps[uid];
-      if (! app || (app.owner != whoami && app.status != 2))
+      // Create the criteria for the specified application
+      criteria =
+        {
+          type  : "element",
+          field : "uid",
+          value : uid
+        };
+      
+      // Issue a query for all apps 
+      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData", 
+                                               criteria);
+
+      // See if this app exists. 
+      if (appList.length == 0)
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
@@ -462,18 +447,41 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         return error;
       }
 
-      // Clone the app entry for this app
-      clonedApp = qx.lang.Object.clone(app);
+      // Get the (one and only) application that was returned.
+      app = appList[0];
+
+      // If the application status is not Active, only the owner can view it.
+      if (app.owner != whoami && app.status != 2)
+      {
+        // It doesn't. Let 'em know that the application has just been removed
+        // (or there's a programmer error)
+        error.setCode(1);
+        error.setMessage("Application is not available. " +
+                         "It may have been removed recently.");
+        return error;
+      }
 
       // Delete the owner field. User doesn't get to see that.
-      delete clonedApp.owner;
+      delete app.owner;
       
       // Delete the apk and source fields. Not needed here, and could be large.
-      delete clonedApp.apk;
-      delete clonedApp.source;
+      delete app.apk;
+      delete app.source;
 
-      // Instead, add a display name field
-      clonedApp.ownerName = this._db.visitors[app.owner].displayName;
+      // Instead, add a display name field. Retrieve it
+      criteria =
+        {
+          type  : "element",
+          field : "id",
+          value : whoami
+        };
+      
+      // Issue a query for this visitor
+      owner = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitor", 
+                                             criteria);
+
+      // Assign the display name as the application's owner name
+      app.ownerName = owner.displayName;
 
       // If we were asked to stringize the values...
       if (bStringize)
@@ -484,16 +492,16 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
           "previousAuthors"
         ].forEach(function(field)
           {
-            clonedApp[field] = clonedApp[field].join(", ");
+            app[field] = app[field].join(", ");
           });
 
         // Convert from numeric to string status
-        clonedApp.status =
-          [ "Banned", "Pending", "Active" ][clonedApp.status];
+        app.status =
+          [ "Banned", "Pending", "Active" ][app.status];
       }
 
       // Give 'em what they came for
-      return clonedApp;
+      return app;
     }    
   }
 });
