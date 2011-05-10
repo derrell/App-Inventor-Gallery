@@ -18,7 +18,7 @@ qx.Class.define("aiagallery.rpcsim.ObjVisitors",
         "id"             : null,
         "displayName"    : null,
         "permissions"    : [],
-        "status"         : aiagallery.rpcsim.RpcSim.Status.Active,
+        "status"         : aiagallery.rpcsim.Constants.Status.Active,
         "recentSearches" : [],
         "recentViews"    : []
       });

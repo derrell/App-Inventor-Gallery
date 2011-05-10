@@ -30,7 +30,7 @@ qx.Class.define("aiagallery.rpcsim.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-        "status"          : aiagallery.rpcsim.RpcSim.Status.Active
+        "status"          : aiagallery.rpcsim.Constants.Status.Active
       });
 
     // Call the superclass constructor

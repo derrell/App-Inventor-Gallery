@@ -477,7 +477,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         };
       
       // Issue a query for this visitor
-      owner = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitor", 
+      owner = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitors", 
                                              criteria);
 
       // Assign the display name as the application's owner name

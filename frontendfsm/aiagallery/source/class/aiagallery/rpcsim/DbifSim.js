@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.RpcSim",
+qx.Class.define("aiagallery.rpcsim.DbifSim",
 {
   extend  : qx.core.Object,
   type    : "singleton",
@@ -26,7 +26,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
     this.base(arguments);
 
     // Give object access to the database
-    this._db = aiagallery.rpcsim.RpcSim.Database;
+    this._db = aiagallery.rpcsim.DbifSim.Database;
         
     // Simulate the logged-in user
     this.setUserData("whoami", "joe@blow.com");
@@ -89,7 +89,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       }
       
       // Get the database sub-section for the specified classname/type
-      dbObjectMap = aiagallery.rpcsim.RpcSim.Database[type];
+      dbObjectMap = aiagallery.rpcsim.DbifSim.Database[type];
 
       // Initialize our results array
       results = [];
@@ -211,7 +211,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       if (typeof(key) == "undefined" || key === null)
       {
         // Generate a new key
-        key = String(aiagallery.rpcsim.RpcSim.__nextKey++);
+        key = String(aiagallery.rpcsim.DbifSim.__nextKey++);
         
         // Save this key in the key field
         entityData[entity.getEntityKeyProperty()] = key;
@@ -225,7 +225,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       }
       
       // Save it to the database
-      aiagallery.rpcsim.RpcSim.Database[type][key] = data;
+      aiagallery.rpcsim.DbifSim.Database[type][key] = data;
     },
     
 
@@ -241,7 +241,7 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
       var             key = entityData[entity.getEntityKeyProperty()];
       var             type = entity.getEntityType();
       
-      delete aiagallery.rpcsim.RpcSim.Database[type][key];
+      delete aiagallery.rpcsim.DbifSim.Database[type][key];
     }
   },
 
@@ -279,12 +279,12 @@ qx.Class.define("aiagallery.rpcsim.RpcSim",
   defer : function()
   {
     // Save the database from the MSimData mixin
-    aiagallery.rpcsim.RpcSim.Database = aiagallery.rpcsim.MSimData.Db;
+    aiagallery.rpcsim.DbifSim.Database = aiagallery.rpcsim.MSimData.Db;
     
     // Register our put & query functions
     aiagallery.rpcsim.Entity.registerDatabaseProvider(
-      aiagallery.rpcsim.RpcSim.query,
-      aiagallery.rpcsim.RpcSim.put,
-      aiagallery.rpcsim.RpcSim.remove);
+      aiagallery.rpcsim.DbifSim.query,
+      aiagallery.rpcsim.DbifSim.put,
+      aiagallery.rpcsim.DbifSim.remove);
   }
 });
