@@ -37,13 +37,6 @@ qx.Class.define("aiagallery.dbif.DbifSim",
   
   statics :
   {
-    Status      : 
-    {
-      Banned  : 0,
-      Pending : 1,
-      Active  : 2
-    },
-    
     /** The default database, filled in in the defer() function */
     Database : null,
     
