@@ -113,8 +113,10 @@ qx.Class.define("aiagallery.dbif.Entity",
     /** Map from classname to entity type */
     entityTypeMap : {},
 
+
     /** Assignment of property types for each entity class */
     propertyTypes : {},
+
 
     /** Register an entity type */
     registerEntityType : function(classname, entityType)
@@ -122,6 +124,7 @@ qx.Class.define("aiagallery.dbif.Entity",
       // Save this value in the map from classname to entity type
       aiagallery.dbif.Entity.entityTypeMap[classname] = entityType;
     },
+
 
     /** Register the property types for an entity class */
     registerPropertyTypes : function(entityType, propertyTypes, keyField)
@@ -140,6 +143,7 @@ qx.Class.define("aiagallery.dbif.Entity",
         };
     },
 
+
     /**
      * Function to query for objects.
      *
@@ -147,7 +151,7 @@ qx.Class.define("aiagallery.dbif.Entity",
      *   The name of the class, descended from aiagallery.dbif.Entity, of
      *   the object type which is to be queried in the database.
      *
-     * @param criteria {Map?}
+     * @param searchCriteria {Map?}
      *   A (possibly recursive) map which contains the following members:
      *     type {String}
      *       "op" -- a logical operation. In this case, there must also be a
@@ -157,6 +161,11 @@ qx.Class.define("aiagallery.dbif.Entity",
      *               member, which is an array of the critieria to which the
      *               specified operation is applied.
      *
+     *               An optional "filterOp" member may also be provided. If
+     *               none is provided, the requested operation is assumed to be
+     *               equality. Any of the following values may be provided for
+     *               the "filterOp" member: "<", "<=", "=", ">", ">=", "!=".
+     *
      *       "element" -- Search by specific field in the object. The
      *                    "field" member must be provided, to specify which
      *                    field, and a "value" member must be specified, to
@@ -164,6 +173,14 @@ qx.Class.define("aiagallery.dbif.Entity",
      *
      *   If no criteria is supplied (undefined or null), then all objects of
      *   the specified classname will be returned.
+     *
+     * @param resultCriteria {Map?}
+     *   A (possibly recursive) map which contains the following members:
+     *     <not yet implemented>
+     *
+     *   If no criteria is supplied (undefined or null), then the sort order
+     *   is undefined, and all entities that match the search criteria will be
+     *   returned.
      *
      * @return {Array}
      *   An array of maps, i.e. native objects (not of Entity objects!)

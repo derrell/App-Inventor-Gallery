@@ -53,14 +53,17 @@ qx.Class.define("aiagallery.dbif.DbifSim",
      *   The name of the class, descended from aiagallery.dbif.Entity, of
      *   the object type which is to be queried in the database.
      *
-     * @param criteria
+     * @param searchCriteria
+     *   See {@link aiagallery.dbif.Entity#query} for details.
+     *
+     * @param resultCriteria
      *   See {@link aiagallery.dbif.Entity#query} for details.
      *
      * @return {Array}
      *   An array of maps, i.e. native objects (not of Entity objects!)
      *   containing the data resulting from the query.
      */
-    query : function(classname, criteria)
+    query : function(classname, searchCriteria, resultCriteria)
     {
       var             qualifies;
       var             builtCriteria;
@@ -88,7 +91,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
       results = [];
 
       // If they're not asking for all objects, build a criteria predicate.
-      if (criteria)
+      if (searchCriteria)
       {
         builtCriteria =
           (function(criterium)
@@ -157,7 +160,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
               }
 
               return ret;
-            })(criteria);
+            })(searchCriteria);
 
         // Create a function that implements the specified criteria
         qualifies = new Function(
@@ -240,8 +243,6 @@ qx.Class.define("aiagallery.dbif.DbifSim",
 
   members :
   {
-    statusOrder : [ "Banned", "Pending", "Active" ],
-    
     /**
      * Register a service name and function.
      *

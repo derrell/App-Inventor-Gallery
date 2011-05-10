@@ -20,7 +20,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   
   construct : function()
   {
-    var             Userservice;
+    var             UserServiceFactory;
     var             userService;
     var             whoami;
 
@@ -28,10 +28,10 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     this.base(arguments);
 
     // Find out who is logged in
-//    Userservice = Packages.com.google.appengine.api.users.UserServiceFactory;
-//    userService = UserService.getUserService();
+    UserServiceFactory =
+      Packages.com.google.appengine.api.users.UserServiceFactory;
+    userService = UserService.getUserService();
     whoami = userService.getCurrentUser();
-    
 
     // Simulate the logged-in user
     this.setUserData("whoami", String(whoami));
@@ -42,16 +42,6 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   
   statics :
   {
-    Status      : 
-    {
-      Banned  : 0,
-      Pending : 1,
-      Active  : 2
-    },
-    
-    /** The default database, filled in in the defer() function */
-    Database : null,
-    
     /** 
      * The next value to use for an auto-generated key for an entity
      */
@@ -72,20 +62,22 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
      *   An array of maps, i.e. native objects (not of Entity objects!)
      *   containing the data resulting from the query.
      */
-    query : function(classname, criteria)
+    query : function(classname, searchCriteria, resultCriteria)
     {
-      var             qualifies;
-      var             builtCriteria;
-      var             dbObjectMap;
+      var             Datastore;
+      var             datastore;
+      var             Query;
+      var             query;
+      var             preparedQuery;
+      var             options;
       var             type;
-      var             entry;
-      var             propertyName;
+      var             fieldNames;
+      var             dbResult;
+      var             dbResults;
       var             result;
       var             results;
-      var             entity;
-      var             clone;
-      var             val;
-      
+      var             propertyTypes;
+  
       // Get the entity type
       type = aiagallery.dbif.Entity.entityTypeMap[classname];
       if (! type)
@@ -93,21 +85,23 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
         throw new Error("No mapped entity type for " + classname);
       }
       
-      // Get the database sub-section for the specified classname/type
-      dbObjectMap = aiagallery.dbif.DbifAppEngine.Database[type];
-
       // Initialize our results array
       results = [];
 
+      // Get the datastore service
+      Datastore = Packages.com.google.appengine.api.datastore;
+      datastore = Datastore.DatastoreServiceFactory.getDatastoreService();
+
+      // Create a new query
+      Query = Datastore.Query;
+      query = new Query();
+
       // If they're not asking for all objects, build a criteria predicate.
-      if (criteria)
+      if (searchCriteria)
       {
-        builtCriteria =
           (function(criterium)
             {
-              var             i;
-              var             ret = "";
-              var             propertyTypes;
+              var             filterOp;
 
               switch(criterium.type)
               {
@@ -115,17 +109,8 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                 switch(criterium.method)
                 {
                 case "and":
-                  // Generate the conditions
-                  ret += "(";
-                  for (i = 0; i < criterium.children.length; i++)
-                  {
-                    ret += arguments.callee(criterium.children[i]);
-                    if (i < criterium.children.length - 1)
-                    {
-                      ret += " && ";
-                    }
-                  }
-                  ret += ")";
+                  // Generate the conditions specified in the children
+                  criterium.children.forEach(arguments.callee);
                   break;
 
                 default:
@@ -135,32 +120,43 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                 break;
 
               case "element":
-                // Determine the type of this field
-                propertyTypes = aiagallery.dbif.Entity.propertyTypes;
-                switch(propertyTypes[type].fields[criterium.field])
+                // Map the specified filter operator to the db's filter ops.
+                filterOp = criterium.filterOp || "=";
+                switch(filterOp)
                 {
-                case "Key":
-                case "String":
-                  ret += 
-                    "entry[\"" + criterium.field + "\"] === " +
-                    "\"" + criterium.value + "\" ";
+                case "<=":
+                  filterOp = Query.FilterOperation.LESS_THAN_OR_EQUAL;
                   break;
-
-                case "Number":
-                  ret +=
-                    "entry[\"" + criterium.field + "\"] === " + criterium.value;
+                  
+                case "<":
+                  filterOp = Query.FilterOperation.LESS_THAN;
                   break;
-
-                case "Array":
-                  ret +=
-                  "qx.lang.Array.contains(entry[\"" + 
-                    criterium.field + "\"], " +
-                  "\"" + criterium.value + "\")";
+                  
+                case "=":
+                  filterOp = Query.FilterOperation.EQUAL;
                   break;
-
+                  
+                case ">":
+                  filterOp = Query.FilterOperation.GREATER_THAN;
+                  break;
+                  
+                case ">=":
+                  filterOp = Query.FilterOperation.GREATER_THAN_OR_EQUAL;
+                  break;
+                  
+                case "!=":
+                  filterOp = Query.FilterOperation.NOT_EQUAL;
+                  break;
+                  
                 default:
-                  throw new Error("Unknown property type: " + type);
+                  throw new Error("Unrecognized logical operation: " +
+                                  criterium.filterOp);
                 }
+
+                // Add a filter using the provided parameters
+                query.addFilter(criterium.field, 
+                                filterOp,
+                                criterium.value);
                 break;
 
               default:
@@ -169,27 +165,83 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
               }
 
               return ret;
-            })(criteria);
-
-        // Create a function that implements the specified criteria
-        qualifies = new Function(
-          "entry",
-          "return (" + builtCriteria + ");");
-      }
-      else
-      {
-        // They want all entities of the specified type.
-        qualifies = function(entity) { return true; };
+            })(searchCriteria);
       }
       
-      for (entry in dbObjectMap)
+      // Prepare to issue a query
+      preparedQuery = datastore.prepare(query);
+      
+      // Assume the default set of result criteria (no limits, offset=0)
+      options = Datastore.FetchOptions.Builder.withDefaults();
+      
+      // If there are any result criteria specified...
+      if (resultCriteria)
       {
-        if (qualifies(dbObjectMap[entry]))
-        {
-          // Make a deep copy of the results
-          result = qx.util.Serializer.toNativeObject(dbObjectMap[entry]);
-          results.push(result);
-        }
+        // ... then go through the criteria list and handle each.
+        resultCriteria.forEach(
+          function(criterium)
+          {
+            switch(criterium.type)
+            {
+            case "limit":
+              options.withLimit(criterium.value);
+              break;
+              
+            case "offset":
+              options.withOffset(criterium.value);
+              break;
+              
+            default:
+              throw new Error("Unrecognized result criterium type: " +
+                              criterium.type);
+            }
+          });
+      }
+
+      // Get the field names for this entity type
+      fieldNames = aiagallery.dbif.Entity.propertyTypes[type];
+
+      // Issue the query
+      dbResults = preparedQuery.asIterator(options);
+      
+      // Process the query results
+      while (dbResults.hasNext())
+      {
+        // Initialize a map for the result data
+        result = {};
+        
+        // Get the next result
+        dbResult = dbResults.next();
+        
+        // Pull all of the result properties into the entity data
+        propertyTypes = aiagallery.dbif.Entity.propertyTypes;
+        fieldNames.forEach(
+          function(fieldName)
+          {
+            // Map the Java field data to appropriate JavaScript data
+            result[fieldName] =
+              (function(value)
+               {
+                 switch(propertyTypes[type].fields[criterium.field])
+                 {
+                   case "Key":
+                   case "String":
+                     return(String(value));
+
+                   case "Number":
+                     return(Number(value));
+
+                   case "Array":
+                     return value.map(arguments.callee);
+
+                   default:
+                     throw new Error("Unknown property type: " + type);
+                 }
+               })(dbResult.getProperty(fieldName));
+        
+            // Save this result
+            results.push(result);
+          });
       }
       
       // Give 'em the query results!
@@ -206,7 +258,10 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
      */
     put : function(entity)
     {
-      var             data = {};
+      var             dbKey;
+      var             dbEntity;
+      var             datastore;
+      var             Datastore;
       var             entityData = entity.getData();
       var             key = entityData[entity.getEntityKeyProperty()];
       var             type = entity.getEntityType();
@@ -222,15 +277,23 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
         entityData[entity.getEntityKeyProperty()] = key;
       }
 
-      // Create a simple map of properties and values to be put in the database
+      // Create the database key value
+      Datastore = Packages.com.google.appengine.api.datastore;
+      dbKey = Datastore.KeyFactory.createKey(entity.getEntityType(), key);
+
+      // Create an App Engine entity to store in the database
+      dbEntity = new Packages.com.google.appengine.api.datastore.Entity(dbKey);
+
+      // Add each property to the database entity
       for (propertyName in entity.getDatabaseProperties())
       {
         // Add this property value to the data to be saved to the database.
-        data[propertyName] = entityData[propertyName];
+        dbEntity.setProperty(propertyName, entityData[propertyName]);
       }
       
       // Save it to the database
-      aiagallery.dbif.DbifAppEngine.Database[type][key] = data;
+      datastore = Datastore.DataServiceFactory.getDatastoreService();
+      datastore.put(dbEntity);
     },
     
 
@@ -245,15 +308,22 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             entityData = entity.getData();
       var             key = entityData[entity.getEntityKeyProperty()];
       var             type = entity.getEntityType();
+      var             dbKey;
+      var             datastore;
+      var             Datastore;
       
-      delete aiagallery.dbif.DbifAppEngine.Database[type][key];
+      // Create the database key value
+      Datastore = Packages.com.google.appengine.api.datastore;
+      dbKey = Datastore.KeyFactory.createKey(type, key);
+
+      // Remove this entity from the database
+      datastore = Datastore.DataServiceFactory.getDatastoreService();
+      datastore["delete"](dbKey);
     }
   },
 
   members :
   {
-    statusOrder : [ "Banned", "Pending", "Active" ],
-    
     /**
      * Register a service name and function.
      *
@@ -283,9 +353,6 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   
   defer : function()
   {
-    // Save the database from the MSimData mixin
-    aiagallery.dbif.DbifAppEngine.Database = aiagallery.dbif.MSimData.Db;
-    
     // Register our put & query functions
     aiagallery.dbif.Entity.registerDatabaseProvider(
       aiagallery.dbif.DbifAppEngine.query,
