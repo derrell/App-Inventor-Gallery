@@ -34,12 +34,7 @@ qx.Mixin.define("aiagallery.dbif.MTags",
                                                 criteria);
 
       // They want only the tag value to be returned
-      results = [];
-      categories.forEach(
-        function(tag)
-        {
-          results.push(tag.value);
-        });
+      results = categories.map(function() { return arguments[0].value; });
 
       // Give 'em what they came for!
       return results;

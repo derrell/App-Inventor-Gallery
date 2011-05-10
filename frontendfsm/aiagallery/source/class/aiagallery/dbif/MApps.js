@@ -344,12 +344,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                                 criteria);
       
       // They want only the tag value to be returned
-      categoryNames = [];
-      categories.forEach(
-        function(tag)
-        {
-          categoryNames.push(tag.value);
-        });
+      categoryNames = categories.map(function() { return arguments[0].value; });
 
       // We've built the whole list. Return it.
       return { apps : appList, categories : categoryNames };
@@ -403,12 +398,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                                 criteria);
       
       // They want only the tag value to be returned
-      categoryNames = [];
-      categories.forEach(
-        function(tag)
-        {
-          categoryNames.push(tag.value);
-        });
+      categoryNames = categories.map(function() { return arguments[0].value; });
 
       return { apps : appList, categories : categoryNames };
     },
