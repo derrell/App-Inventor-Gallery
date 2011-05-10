@@ -6,9 +6,9 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.ObjVisitors",
+qx.Class.define("aiagallery.dbif.ObjVisitors",
 {
-  extend : aiagallery.rpcsim.Entity,
+  extend : aiagallery.dbif.Entity,
   
   construct : function(id)
   {
@@ -18,7 +18,7 @@ qx.Class.define("aiagallery.rpcsim.ObjVisitors",
         "id"             : null,
         "displayName"    : null,
         "permissions"    : [],
-        "status"         : aiagallery.rpcsim.Constants.Status.Active,
+        "status"         : aiagallery.dbif.Constants.Status.Active,
         "recentSearches" : [],
         "recentViews"    : []
       });
@@ -32,7 +32,7 @@ qx.Class.define("aiagallery.rpcsim.ObjVisitors",
   
   defer : function(clazz)
   {
-    aiagallery.rpcsim.Entity.registerEntityType(clazz.classname, "visitors");
+    aiagallery.dbif.Entity.registerEntityType(clazz.classname, "visitors");
 
     var databaseProperties =
       {
@@ -56,8 +56,8 @@ qx.Class.define("aiagallery.rpcsim.ObjVisitors",
       };
 
     // Register our property types
-    aiagallery.rpcsim.Entity.registerPropertyTypes("visitors",
-                                                   databaseProperties,
-                                                   "id");
+    aiagallery.dbif.Entity.registerPropertyTypes("visitors",
+                                                 databaseProperties,
+                                                 "id");
   }
 });

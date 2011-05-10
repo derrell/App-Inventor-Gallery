@@ -6,9 +6,9 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.ObjAppData",
+qx.Class.define("aiagallery.dbif.ObjAppData",
 {
-  extend : aiagallery.rpcsim.Entity,
+  extend : aiagallery.dbif.Entity,
   
   construct : function(uid)
   {
@@ -30,7 +30,7 @@ qx.Class.define("aiagallery.rpcsim.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-        "status"          : aiagallery.rpcsim.Constants.Status.Active
+        "status"          : aiagallery.dbif.Constants.Status.Active
       });
 
     // Call the superclass constructor
@@ -39,7 +39,7 @@ qx.Class.define("aiagallery.rpcsim.ObjAppData",
   
   defer : function(clazz)
   {
-    aiagallery.rpcsim.Entity.registerEntityType(clazz.classname, "apps");
+    aiagallery.dbif.Entity.registerEntityType(clazz.classname, "apps");
 
     var databaseProperties =
       {
@@ -93,7 +93,7 @@ qx.Class.define("aiagallery.rpcsim.ObjAppData",
       };
 
     // Register our property types
-    aiagallery.rpcsim.Entity.registerPropertyTypes("apps", 
-                                                   databaseProperties);
+    aiagallery.dbif.Entity.registerPropertyTypes("apps", 
+                                                 databaseProperties);
   }
 });

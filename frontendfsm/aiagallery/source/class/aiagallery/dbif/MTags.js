@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Mixin.define("aiagallery.rpcsim.MTags",
+qx.Mixin.define("aiagallery.dbif.MTags",
 {
   construct : function()
   {
@@ -30,8 +30,8 @@ qx.Mixin.define("aiagallery.rpcsim.MTags",
         };
       
       // Issue a query for category tags
-      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
-                                                  criteria);
+      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                                criteria);
 
       // They want only the tag value to be returned
       results = [];

@@ -6,9 +6,9 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.ObjComments",
+qx.Class.define("aiagallery.dbif.ObjComments",
 {
-  extend : aiagallery.rpcsim.Entity,
+  extend : aiagallery.dbif.Entity,
   
   construct : function(uid)
   {
@@ -28,7 +28,7 @@ qx.Class.define("aiagallery.rpcsim.ObjComments",
   
   defer : function(clazz)
   {
-    aiagallery.rpcsim.Entity.registerEntityType(clazz.classname, "comments");
+    aiagallery.dbif.Entity.registerEntityType(clazz.classname, "comments");
     
     var databaseProperties =
       {
@@ -58,7 +58,7 @@ qx.Class.define("aiagallery.rpcsim.ObjComments",
       };
 
     // Register our property types
-    aiagallery.rpcsim.Entity.registerPropertyTypes("comments",
-                                                   databaseProperties);
+    aiagallery.dbif.Entity.registerPropertyTypes("comments",
+                                                 databaseProperties);
   }
 });

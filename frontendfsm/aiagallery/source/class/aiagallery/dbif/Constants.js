@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.Constants",
+qx.Class.define("aiagallery.dbif.Constants",
 {
   extend  : qx.core.Object,
 

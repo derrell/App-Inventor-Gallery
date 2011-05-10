@@ -7,16 +7,16 @@
  */
 
 /*
-#use(aiagallery.rpcsim.ObjAppData)
-#use(aiagallery.rpcsim.ObjComments)
-#use(aiagallery.rpcsim.ObjDownloads)
-#use(aiagallery.rpcsim.ObjFlags)
-#use(aiagallery.rpcsim.ObjLikes)
-#use(aiagallery.rpcsim.ObjTags)
-#use(aiagallery.rpcsim.ObjVisitors)
+#use(aiagallery.dbif.ObjAppData)
+#use(aiagallery.dbif.ObjComments)
+#use(aiagallery.dbif.ObjDownloads)
+#use(aiagallery.dbif.ObjFlags)
+#use(aiagallery.dbif.ObjLikes)
+#use(aiagallery.dbif.ObjTags)
+#use(aiagallery.dbif.ObjVisitors)
  */
 
-qx.Class.define("aiagallery.rpcsim.Entity",
+qx.Class.define("aiagallery.dbif.Entity",
 {
   extend : qx.core.Object,
   
@@ -40,7 +40,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     if (typeof entityKey != "undefined")
     {
       // ... then query for the object.
-      queryResults = aiagallery.rpcsim.Entity.query(
+      queryResults = aiagallery.dbif.Entity.query(
         this.constructor.classname,
         {
           type  : "element",
@@ -120,7 +120,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     registerEntityType : function(classname, entityType)
     {
       // Save this value in the map from classname to entity type
-      aiagallery.rpcsim.Entity.entityTypeMap[classname] = entityType;
+      aiagallery.dbif.Entity.entityTypeMap[classname] = entityType;
     },
 
     /** Register the property types for an entity class */
@@ -133,7 +133,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
         propertyTypes["uid"] = "Key";
       }
 
-      aiagallery.rpcsim.Entity.propertyTypes[entityType] = 
+      aiagallery.dbif.Entity.propertyTypes[entityType] = 
         {
           keyField      : keyField,
           fields        : propertyTypes
@@ -144,7 +144,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
      * Function to query for objects.
      *
      * @param classname {String}
-     *   The name of the class, descended from aiagallery.rpcsim.Entity, of
+     *   The name of the class, descended from aiagallery.dbif.Entity, of
      *   the object type which is to be queried in the database.
      *
      * @param criteria {Map?}
@@ -175,7 +175,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     /**
      * Function to put an object to the database.
      *
-     * @param entity {aiagallery.rpcsim.Entity}
+     * @param entity {aiagallery.dbif.Entity}
      *   The object whose database properties are to be written out.
      */
     __put : null,
@@ -185,9 +185,9 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     registerDatabaseProvider : function(query, put, remove)
     {
       // Save the specified functions.
-      aiagallery.rpcsim.Entity.query = query;
-      aiagallery.rpcsim.Entity.__put = put;
-      aiagallery.rpcsim.Entity.__remove = remove;
+      aiagallery.dbif.Entity.query = query;
+      aiagallery.dbif.Entity.__put = put;
+      aiagallery.dbif.Entity.__remove = remove;
     }
   },
 
@@ -200,7 +200,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     put : function()
     {
       // Write this data 
-      aiagallery.rpcsim.Entity.__put(this);
+      aiagallery.dbif.Entity.__put(this);
       
       // This entity is no longer brand new
       this.setBrandNew(false);
@@ -215,7 +215,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
     removeSelf : function()
     {
       // Remove ourself from the database
-      aiagallery.rpcsim.Entity.__remove(this);
+      aiagallery.dbif.Entity.__remove(this);
       
       // Mark this entity as brand new again.
       this.setBrandNew(true);
@@ -231,7 +231,7 @@ qx.Class.define("aiagallery.rpcsim.Entity",
      */
     getDatabaseProperties : function()
     {
-      return aiagallery.rpcsim.Entity.propertyTypes[this.getEntityType()];
+      return aiagallery.dbif.Entity.propertyTypes[this.getEntityType()];
     }
   }
 });

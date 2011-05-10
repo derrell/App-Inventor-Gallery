@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Mixin.define("aiagallery.rpcsim.MSimData",
+qx.Mixin.define("aiagallery.dbif.MSimData",
 {
   statics :
   {

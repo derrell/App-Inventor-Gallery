@@ -6,30 +6,35 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.DbifSim",
+qx.Class.define("aiagallery.dbif.DbifAppEngine",
 {
   extend  : qx.core.Object,
   type    : "singleton",
 
   include : 
   [
-    aiagallery.rpcsim.MSimData,
-
-    aiagallery.rpcsim.MVisitors,
-    aiagallery.rpcsim.MApps,
-    aiagallery.rpcsim.MTags
+    aiagallery.dbif.MVisitors,
+    aiagallery.dbif.MApps,
+    aiagallery.dbif.MTags
   ],
   
   construct : function()
   {
+    var             Userservice;
+    var             userService;
+    var             whoami;
+
     // Call the superclass constructor
     this.base(arguments);
 
-    // Give object access to the database
-    this._db = aiagallery.rpcsim.DbifSim.Database;
-        
+    // Find out who is logged in
+//    Userservice = Packages.com.google.appengine.api.users.UserServiceFactory;
+//    userService = UserService.getUserService();
+    whoami = userService.getCurrentUser();
+    
+
     // Simulate the logged-in user
-    this.setUserData("whoami", "joe@blow.com");
+    this.setUserData("whoami", String(whoami));
 
     // Start up the RPC simulator
     new rpcjs.sim.Rpc(this.__services, "/rpc");
@@ -57,11 +62,11 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
      * Query for all entities of a given class/type, given certain criteria.
      *
      * @param classname {String}
-     *   The name of the class, descended from aiagallery.rpcsim.Entity, of
+     *   The name of the class, descended from aiagallery.dbif.Entity, of
      *   the object type which is to be queried in the database.
      *
      * @param criteria
-     *   See {@link aiagallery.rpcsim.Entity#query} for details.
+     *   See {@link aiagallery.dbif.Entity#query} for details.
      *
      * @return {Array}
      *   An array of maps, i.e. native objects (not of Entity objects!)
@@ -82,14 +87,14 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
       var             val;
       
       // Get the entity type
-      type = aiagallery.rpcsim.Entity.entityTypeMap[classname];
+      type = aiagallery.dbif.Entity.entityTypeMap[classname];
       if (! type)
       {
         throw new Error("No mapped entity type for " + classname);
       }
       
       // Get the database sub-section for the specified classname/type
-      dbObjectMap = aiagallery.rpcsim.DbifSim.Database[type];
+      dbObjectMap = aiagallery.dbif.DbifAppEngine.Database[type];
 
       // Initialize our results array
       results = [];
@@ -131,7 +136,7 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
 
               case "element":
                 // Determine the type of this field
-                propertyTypes = aiagallery.rpcsim.Entity.propertyTypes;
+                propertyTypes = aiagallery.dbif.Entity.propertyTypes;
                 switch(propertyTypes[type].fields[criterium.field])
                 {
                 case "Key":
@@ -196,7 +201,7 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
      * Put an entity to the database. If the key field is null or undefined, a
      * key is automatically generated for the entity.
      *
-     * @param entity {aiagallery.rpcsim.Entity}
+     * @param entity {aiagallery.dbif.Entity}
      *   The entity to be made persistent.
      */
     put : function(entity)
@@ -211,7 +216,7 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
       if (typeof(key) == "undefined" || key === null)
       {
         // Generate a new key
-        key = String(aiagallery.rpcsim.DbifSim.__nextKey++);
+        key = String(aiagallery.dbif.DbifAppEngine.__nextKey++);
         
         // Save this key in the key field
         entityData[entity.getEntityKeyProperty()] = key;
@@ -225,14 +230,14 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
       }
       
       // Save it to the database
-      aiagallery.rpcsim.DbifSim.Database[type][key] = data;
+      aiagallery.dbif.DbifAppEngine.Database[type][key] = data;
     },
     
 
     /**
      * Remove an entity from the database
      *
-     * @param entity {aiagallery.rpcsim.Entity}
+     * @param entity {aiagallery.dbif.Entity}
      *   An instance of the entity to be removed.
      */
     remove : function(entity)
@@ -241,7 +246,7 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
       var             key = entityData[entity.getEntityKeyProperty()];
       var             type = entity.getEntityType();
       
-      delete aiagallery.rpcsim.DbifSim.Database[type][key];
+      delete aiagallery.dbif.DbifAppEngine.Database[type][key];
     }
   },
 
@@ -279,12 +284,12 @@ qx.Class.define("aiagallery.rpcsim.DbifSim",
   defer : function()
   {
     // Save the database from the MSimData mixin
-    aiagallery.rpcsim.DbifSim.Database = aiagallery.rpcsim.MSimData.Db;
+    aiagallery.dbif.DbifAppEngine.Database = aiagallery.dbif.MSimData.Db;
     
     // Register our put & query functions
-    aiagallery.rpcsim.Entity.registerDatabaseProvider(
-      aiagallery.rpcsim.DbifSim.query,
-      aiagallery.rpcsim.DbifSim.put,
-      aiagallery.rpcsim.DbifSim.remove);
+    aiagallery.dbif.Entity.registerDatabaseProvider(
+      aiagallery.dbif.DbifAppEngine.query,
+      aiagallery.dbif.DbifAppEngine.put,
+      aiagallery.dbif.DbifAppEngine.remove);
   }
 });

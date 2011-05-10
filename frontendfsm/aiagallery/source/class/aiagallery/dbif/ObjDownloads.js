@@ -6,9 +6,9 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.ObjLikes",
+qx.Class.define("aiagallery.dbif.ObjDownloads",
 {
-  extend : aiagallery.rpcsim.Entity,
+  extend : aiagallery.dbif.Entity,
   
   construct : function(uid)
   {
@@ -21,27 +21,27 @@ qx.Class.define("aiagallery.rpcsim.ObjLikes",
       });
 
     // Call the superclass constructor
-    this.base(arguments, "likes", uid);
+    this.base(arguments, "downloads", uid);
   },
   
   defer : function(clazz)
   {
-    aiagallery.rpcsim.Entity.registerEntityType(clazz.classname, "likes");
+    aiagallery.dbif.Entity.registerEntityType(clazz.classname, "downloads");
 
     var databaseProperties =
       {
-        /** UID of the AppData object which was liked */
+        /** UID of the AppData object which was downloaded */
         "app" : "Key",
 
-        /** Id of the Visitor who liked the application */
+        /** Id of the Visitor who downloaded the application */
         "visitor" : "String",
 
-        /** Time the like occurred */
+        /** Time the download was initiated */
         "timestamp" : "String"
       };
 
     // Register our property types
-    aiagallery.rpcsim.Entity.registerPropertyTypes("likes",
-                                                   databaseProperties);
+    aiagallery.dbif.Entity.registerPropertyTypes("downloads",
+                                                 databaseProperties);
   }
 });

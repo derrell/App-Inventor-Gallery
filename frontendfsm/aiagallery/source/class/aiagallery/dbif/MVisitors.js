@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Mixin.define("aiagallery.rpcsim.MVisitors",
+qx.Mixin.define("aiagallery.dbif.MVisitors",
 {
   construct : function()
   {
@@ -35,7 +35,7 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
       status = this.statusOrder.indexOf(status);
       
       // Get the old visitor entry
-      visitor = new aiagallery.rpcsim.ObjVisitors(userId);
+      visitor = new aiagallery.dbif.ObjVisitors(userId);
       visitorData = visitor.getData();
       
       // Remember whether it already existed.
@@ -61,7 +61,7 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
       var             visitor;
 
       // Retrieve this visitor
-      visitor = new aiagallery.rpcsim.ObjVisitors(userId);
+      visitor = new aiagallery.dbif.ObjVisitors(userId);
 
       // See if this visitor exists.
       if (visitor.getBrandNew())
@@ -83,7 +83,7 @@ qx.Mixin.define("aiagallery.rpcsim.MVisitors",
       
       // For each visitor...
       visitorList =
-        aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitors");
+        aiagallery.dbif.Entity.query("aiagallery.dbif.ObjVisitors");
 
       // If we were asked to stringize the values...
       if (bStringize)

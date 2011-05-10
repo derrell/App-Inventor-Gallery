@@ -6,7 +6,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Mixin.define("aiagallery.rpcsim.MApps",
+qx.Mixin.define("aiagallery.dbif.MApps",
 {
   construct : function()
   {
@@ -83,7 +83,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       whoami = this.getUserData("whoami");
 
       // Get an AppData object. If uid is non-null, retrieve the prior data.
-      appObj = new aiagallery.rpcsim.ObjAppData(uid);
+      appObj = new aiagallery.dbif.ObjAppData(uid);
 
       // Retrieve the data
       appData = appObj.getData();
@@ -167,7 +167,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
           }
           
           // It didn't exist. Create or retrieve existing tag.
-          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagObj = new aiagallery.dbif.ObjTags(tag);
           tagData = tagObj.getData();
           
           // If we created it, data is initialized. Otherwise...
@@ -185,7 +185,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       oldTags.forEach(
         function(tag)
         {
-          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagObj = new aiagallery.dbif.ObjTags(tag);
           tagData = tagObj.getData();
 
           // The record has to exist already. Decrement this tag's count.
@@ -221,7 +221,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             whoami;
 
       // Retrieve an instance of this application entity
-      appObj = new aiagallery.rpcsim.ObjAppData(uid);
+      appObj = new aiagallery.dbif.ObjAppData(uid);
       
       // Does this application exist?
       if (appObj.getBrandNew())
@@ -250,7 +250,7 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         function(tag)
         {
           // Get this tag object
-          tagObj = new aiagallery.rpcsim.ObjTags(tag);
+          tagObj = new aiagallery.dbif.ObjTags(tag);
           tagData = tagObj.getData();
 
           // The record has to exist already. Decrement this tag's count.
@@ -307,8 +307,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       }
       
       // Issue a query for all apps 
-      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData", 
-                                               criteria);
+      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
+                                             criteria);
 
       // If we were asked to stringize the values...
       if (bStringize)
@@ -340,8 +340,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         };
       
       // Issue a query for category tags
-      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
-                                                  criteria);
+      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                                criteria);
       
       // They want only the tag value to be returned
       categoryNames = [];
@@ -361,8 +361,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
       var             categories;
       var             categoryNames;
 
-      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData",
-                                               criteria);
+      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                             criteria);
 
       // Remove those members which are not requested, and rename as requested
       appList.forEach(
@@ -399,8 +399,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         };
       
       // Issue a query for all apps 
-      categories = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjTags", 
-                                                  criteria);
+      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                                criteria);
       
       // They want only the tag value to be returned
       categoryNames = [];
@@ -433,8 +433,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         };
       
       // Issue a query for all apps 
-      appList = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjAppData", 
-                                               criteria);
+      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
+                                             criteria);
 
       // See if this app exists. 
       if (appList.length == 0)
@@ -477,8 +477,8 @@ qx.Mixin.define("aiagallery.rpcsim.MApps",
         };
       
       // Issue a query for this visitor
-      owner = aiagallery.rpcsim.Entity.query("aiagallery.rpcsim.ObjVisitors", 
-                                             criteria);
+      owner = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                           criteria);
 
       // Assign the display name as the application's owner name
       app.ownerName = owner.displayName;

@@ -6,9 +6,9 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.rpcsim.ObjTags",
+qx.Class.define("aiagallery.dbif.ObjTags",
 {
-  extend : aiagallery.rpcsim.Entity,
+  extend : aiagallery.dbif.Entity,
   
   construct : function(value)
   {
@@ -29,7 +29,7 @@ qx.Class.define("aiagallery.rpcsim.ObjTags",
   
   defer : function(clazz)
   {
-    aiagallery.rpcsim.Entity.registerEntityType(clazz.classname, "tags");
+    aiagallery.dbif.Entity.registerEntityType(clazz.classname, "tags");
 
     var databaseProperties =
       {
@@ -44,8 +44,8 @@ qx.Class.define("aiagallery.rpcsim.ObjTags",
       };
 
     // Register our property types
-    aiagallery.rpcsim.Entity.registerPropertyTypes("tags",
-                                                   databaseProperties,
-                                                   "value");
+    aiagallery.dbif.Entity.registerPropertyTypes("tags",
+                                                 databaseProperties,
+                                                 "value");
   }
 });
