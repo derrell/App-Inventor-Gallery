@@ -53,25 +53,25 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "description" : "String",
 
         /** Image #1 (data URL) */
-        "image1" : "String",
+        "image1" : "LongString",
 
         /** Image #2 (data URL) */
-        "image2" : "String",
+        "image2" : "LongString",
 
         /** Image #3 (data URL) */
-        "image3" : "String",
+        "image3" : "LongString",
 
         /** Authorship chain */
-        "previousAuthors" : "String",
+        "previousAuthors" : "StringArray",
 
         /** Source ZIP file (base64-encoded) */
-        "source" : "String",
+        "source" : "LongString",
 
         /** Executable APK file (base64-encoded) */
-        "apk" : "String",
+        "apk" : "LongString",
 
         /** Tags assigned to this application */
-        "tags" : "Array",
+        "tags" : "StringArray",
 
         /** Time the most recent Source ZIP file was uploaded */
         "uploadTime" : "String",

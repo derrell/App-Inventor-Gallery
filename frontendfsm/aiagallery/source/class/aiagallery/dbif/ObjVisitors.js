@@ -43,16 +43,16 @@ qx.Class.define("aiagallery.dbif.ObjVisitors",
         "displayName" : "String",
 
         /** A list of permissions assigned to this user */
-        "permissions" : "Array",
+        "permissions" : "StringArray",
 
         /** Active, Pending, or Banned (by their numeric values) */
         "status" : "Number",
 
         /** A list of the user's recent searches */
-        "recentSearches" : "Array",
+        "recentSearches" : "StringArray",
 
         /** A list of the user's recent application views */
-        "recentViews" : "Array"
+        "recentViews" : "KeyArray"
       };
 
     // Register our property types

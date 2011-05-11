@@ -79,6 +79,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
     
     getVisitorList : function(bStringize)
     {
+      var             visitor;
       var             visitorList;
       
       // For each visitor...
@@ -89,13 +90,14 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       if (bStringize)
       {
         // ... then do so
-        visitorList.forEach(
-          function(visitor)
-          {
-            visitor.permissions = visitor.permissions.join(", ");
-            visitor.status =
-              [ "Banned", "Pending", "Active" ][visitor.status];
-          });
+        for (visitor in visitorList)
+        {
+          var             thisGuy = visitorList[visitor];
+          thisGuy.permissions = 
+            thisGuy.permissions ? thisGuy.permissions.join(", ") : "";
+          thisGuy.status =
+            [ "Banned", "Pending", "Active" ][thisGuy.status];
+        }
       }
       
       // We've built the whole list. Return it.

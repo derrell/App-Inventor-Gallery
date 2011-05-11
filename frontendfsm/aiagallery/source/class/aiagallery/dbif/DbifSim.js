@@ -132,6 +132,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
                 {
                 case "Key":
                 case "String":
+                case "LongString":
                   ret += 
                     "entry[\"" + criterium.field + "\"] === " +
                     "\"" + criterium.value + "\" ";
@@ -142,11 +143,18 @@ qx.Class.define("aiagallery.dbif.DbifSim",
                     "entry[\"" + criterium.field + "\"] === " + criterium.value;
                   break;
 
-                case "Array":
+                case "KeyArray":
+                case "StringArray":
+                case "LongStringArray":
                   ret +=
                   "qx.lang.Array.contains(entry[\"" + 
-                    criterium.field + "\"], " +
-                  "\"" + criterium.value + "\")";
+                    criterium.field + "\"], " + "\"" + criterium.value + "\")";
+                  break;
+
+                case "NumberArray":
+                  ret +=
+                  "qx.lang.Array.contains(entry[\"" + 
+                    criterium.field + "\"], " + criterium.value + ")";
                   break;
 
                 default:

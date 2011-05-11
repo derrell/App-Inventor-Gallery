@@ -30,18 +30,23 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     // Find out who is logged in
     UserServiceFactory =
       Packages.com.google.appengine.api.users.UserServiceFactory;
-    userService = UserService.getUserService();
+    userService = UserServiceFactory.getUserService();
     whoami = userService.getCurrentUser();
 
     // Simulate the logged-in user
     this.setUserData("whoami", String(whoami));
 
-    // Start up the RPC simulator
-    new rpcjs.sim.Rpc(this.__services, "/rpc");
+    // Start up the App Engine RPC engine
+    this.__rpcHandler = new rpcjs.appengine.Rpc(this.__services, "/rpc");
   },
   
   statics :
   {
+    /**
+     * The remote procedure code server for App Engine
+     */
+    __rpcHandler : null,
+
     /** 
      * The next value to use for an auto-generated key for an entity
      */
@@ -64,6 +69,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
      */
     query : function(classname, searchCriteria, resultCriteria)
     {
+      var             i;
       var             Datastore;
       var             datastore;
       var             Query;
@@ -71,7 +77,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             preparedQuery;
       var             options;
       var             type;
-      var             fieldNames;
+      var             fields;
       var             dbResult;
       var             dbResults;
       var             result;
@@ -94,7 +100,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
 
       // Create a new query
       Query = Datastore.Query;
-      query = new Query();
+      query = new Query(type);
 
       // If they're not asking for all objects, build a criteria predicate.
       if (searchCriteria)
@@ -125,27 +131,27 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                 switch(filterOp)
                 {
                 case "<=":
-                  filterOp = Query.FilterOperation.LESS_THAN_OR_EQUAL;
+                  filterOp = Query.FilterOperator.LESS_THAN_OR_EQUAL;
                   break;
                   
                 case "<":
-                  filterOp = Query.FilterOperation.LESS_THAN;
+                  filterOp = Query.FilterOperator.LESS_THAN;
                   break;
                   
                 case "=":
-                  filterOp = Query.FilterOperation.EQUAL;
+                  filterOp = Query.FilterOperator.EQUAL;
                   break;
                   
                 case ">":
-                  filterOp = Query.FilterOperation.GREATER_THAN;
+                  filterOp = Query.FilterOperator.GREATER_THAN;
                   break;
                   
                 case ">=":
-                  filterOp = Query.FilterOperation.GREATER_THAN_OR_EQUAL;
+                  filterOp = Query.FilterOperator.GREATER_THAN_OR_EQUAL;
                   break;
                   
                 case "!=":
-                  filterOp = Query.FilterOperation.NOT_EQUAL;
+                  filterOp = Query.FilterOperator.NOT_EQUAL;
                   break;
                   
                 default:
@@ -163,8 +169,6 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                 throw new Error("Unrceognized criterium type: " +
                                 criterium.type);
               }
-
-              return ret;
             })(searchCriteria);
       }
       
@@ -199,7 +203,8 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       }
 
       // Get the field names for this entity type
-      fieldNames = aiagallery.dbif.Entity.propertyTypes[type];
+      propertyTypes = aiagallery.dbif.Entity.propertyTypes;
+      fields = propertyTypes[type].fields;
 
       // Issue the query
       dbResults = preparedQuery.asIterator(options);
@@ -214,34 +219,60 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
         dbResult = dbResults.next();
         
         // Pull all of the result properties into the entity data
-        propertyTypes = aiagallery.dbif.Entity.propertyTypes;
-        fieldNames.forEach(
-          function(fieldName)
-          {
-            // Map the Java field data to appropriate JavaScript data
-            result[fieldName] =
-              (function(value)
+        for (fieldName in fields)
+        {
+          // Map the Java field data to appropriate JavaScript data
+          result[fieldName] =
+            (function(value, type)
+             {
+               var             ret;
+               var             Text;
+
+               switch(type)
                {
-                 switch(propertyTypes[type].fields[criterium.field])
-                 {
-                   case "Key":
-                   case "String":
-                     return(String(value));
+                 case "Key":
+                 case "String":
+                   return(String(value));
 
-                   case "Number":
-                     return(Number(value));
+                 case "LongString":
+                   return value ? String(value.getValue()) : value;
 
-                   case "Array":
-                     return value.map(arguments.callee);
+                 case "Number":
+                   return(Number(value));
 
-                   default:
-                     throw new Error("Unknown property type: " + type);
-                 }
-               })(dbResult.getProperty(fieldName));
-        
-            // Save this result
-            results.push(result);
-          });
+                 case "KeyArray":
+                 case "StringArray":
+                 case "LongStringArray":
+                 case "NumberArray":
+                   if (value)
+                   {
+                     // Initialize the return array
+                     ret = [];
+
+                     // Determine the type of the elements
+                     var elemType = type.replace(/Array/, "");
+                     
+                     // Convert the elements to their proper types
+                     for (i = 0; i < value.length; i++)
+                     {
+                       ret.push(arguments.callee(value[i]), elemType);
+                     }
+                     
+                     return ret;
+                   }
+                   else
+                   {
+                     return [];
+                   }
+
+                 default:
+                   throw new Error("Unknown property type: " + type);
+               }
+             })(dbResult.getProperty(fieldName), fields[fieldName]);
+        }
+
+        // Save this result
+        results.push(result);
       }
       
       // Give 'em the query results!
@@ -266,6 +297,8 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             key = entityData[entity.getEntityKeyProperty()];
       var             type = entity.getEntityType();
       var             propertyName;
+      var             fields;
+      var             data;
       
       // If there's no key yet...
       if (typeof(key) == "undefined" || key === null)
@@ -285,14 +318,50 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       dbEntity = new Packages.com.google.appengine.api.datastore.Entity(dbKey);
 
       // Add each property to the database entity
-      for (propertyName in entity.getDatabaseProperties())
+      fields = entity.getDatabaseProperties().fields;
+      for (fieldName in fields)
       {
-        // Add this property value to the data to be saved to the database.
-        dbEntity.setProperty(propertyName, entityData[propertyName]);
+        // Map the Java field data to appropriate JavaScript data
+        data =
+          (function(value, type)
+           {
+             var             i;
+             var             jArr;
+
+             switch(type)
+             {
+               case "Key":
+               case "String":
+               case "Number":
+                 return value;
+
+               case "LongString":
+                 var Text = Packages.com.google.appengine.api.datastore.Text;
+                 return value ? new Text(value) : value;
+
+               case "KeyArray":
+               case "StringArray":
+               case "LongStringArray":
+               case "NumberArray":
+                 jArr = new java.util.ArrayList();
+                 for (i = 0; value && i < value.length; i++)
+                 {
+                   jArr.add(arguments.callee(value[i],
+                                             type.replace(/Array/, "")));
+                 }
+                 return jArr;
+
+               default:
+                 throw new Error("Unknown property type: " + type);
+             }
+           })(entityData[fieldName], fields[fieldName]);
+
+        // Save this result
+        dbEntity.setProperty(fieldName, data);
       }
-      
+
       // Save it to the database
-      datastore = Datastore.DataServiceFactory.getDatastoreService();
+      datastore = Datastore.DatastoreServiceFactory.getDatastoreService();
       datastore.put(dbEntity);
     },
     
@@ -317,7 +386,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       dbKey = Datastore.KeyFactory.createKey(type, key);
 
       // Remove this entity from the database
-      datastore = Datastore.DataServiceFactory.getDatastoreService();
+      datastore = Datastore.DatastoreServiceFactory.getDatastoreService();
       datastore["delete"](dbKey);
     }
   },
@@ -337,6 +406,22 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     {
       this.__services.aiagallery.features[serviceName] = 
         qx.lang.Function.bind(fService, this);
+    },
+    
+    
+    /**
+     * Process a single request.
+     *
+     * @param jsonData {String}
+     *   The data provide in a POST request
+     *
+     * @return {String}
+     *   Upon success, the JSON-encoded result of the RPC request is returned.
+     *   Otherwise, null is returned.
+     */
+    processRequest : function(jsonData)
+    {
+      return this.__rpcHandler.processRequest(jsonData);
     },
 
     /** Remote procedure call services */
