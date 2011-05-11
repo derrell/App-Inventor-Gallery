@@ -1,0 +1,24 @@
+# Early notes...
+# Here's how I compiled the JavaScript file (from the src/guestbook directory):
+
+java -classpath /usr/share/java/js.jar:/usr/share/jetty/lib/servlet-api-2.5.jar org.mozilla.javascript.tools.jsc.Main -extends javax.servlet.http.HttpServlet -package guestbook GuestbookServlet.js
+
+
+# That leaves the *two* class files in src/guestbook. Move them into place:
+cp src/guestbook/*.class war/WEB-INF/classes/
+
+
+# To run it:
+./run.sh war
+
+# which does this:
+
+#!/bin/bash
+SDK_BIN="/home/derrell/ME/eclipse-workspace/App Inventor Gallery/backend-js/appengine-java-sdk-1.4.3/bin"
+SDK_LIB="$SDK_BIN/../lib"
+SDK_CONFIG="$SDK_BIN/../config/sdk"
+JAR_FILE="$SDK_LIB/appengine-tools-api.jar:war/WEB-INF/lib/*.jar"
+
+java -ea -cp "$JAR_FILE" \
+  com.google.appengine.tools.KickStart \
+  com.google.appengine.tools.development.DevAppServerMain $*
