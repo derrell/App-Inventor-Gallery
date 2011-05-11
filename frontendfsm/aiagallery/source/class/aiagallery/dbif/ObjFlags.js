@@ -19,7 +19,7 @@ qx.Class.define("aiagallery.dbif.ObjFlags",
         "app"         : null,
         "comment"     : null,
         "visitor"     : null,
-        "timestamp"   : new Date(),
+        "timestamp"   : String((new Date()).getTime()),
         "explanation" : null
       });
 

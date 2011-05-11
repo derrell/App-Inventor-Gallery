@@ -17,7 +17,7 @@ qx.Class.define("aiagallery.dbif.ObjDownloads",
       {
         "app"       : null,
         "visitor"   : null,
-        "timestamp" : new Date()
+        "timestamp" : String((new Date()).getTime())
       });
 
     // Call the superclass constructor

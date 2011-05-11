@@ -150,7 +150,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (attributes.source)
       {
         // ... then update the upload time to now
-        appData.uploadTime = new Date();
+        appData.uploadTime = String((new Date()).getTime());
       }
 
       // Add new tags to the database, and update counts of formerly-existing
@@ -398,7 +398,10 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                                 criteria);
       
       // They want only the tag value to be returned
-      categoryNames = categories.map(function() { return arguments[0].value; });
+      categoryNames = categories.map(function() 
+                                     { 
+                                       return arguments[0].value;
+                                     });
 
       return { apps : appList, categories : categoryNames };
     },

@@ -227,6 +227,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
              {
                var             ret;
                var             Text;
+               var             iterator;
 
                switch(type)
                {
@@ -253,9 +254,11 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                      var elemType = type.replace(/Array/, "");
                      
                      // Convert the elements to their proper types
-                     for (i = 0; i < value.length; i++)
+                     iterator = value.iterator();
+                     while (iterator.hasNext())
                      {
-                       ret.push(arguments.callee(value[i]), elemType);
+                       // Call ourself with this element
+                       ret.push(arguments.callee(iterator.next(), elemType));
                      }
                      
                      return ret;
@@ -300,6 +303,12 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             fields;
       var             data;
       
+      // Ensure that there's either a real key or no key; not empty string
+      if (key === "")
+      {
+        throw new Error("Found disallowed empty key");
+      }
+
       // If there's no key yet...
       if (typeof(key) == "undefined" || key === null)
       {
