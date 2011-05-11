@@ -265,9 +265,13 @@ clean:
 create_qxoo.jar:
 	touch $(qxoo_jar)
 
+.PHONY: appserver
 appserver :
 	java -ea -cp ${classpath} \
 	  com.google.appengine.tools.KickStart \
 	  com.google.appengine.tools.development.DevAppServerMain \
 	  --port=8080 war
 
+.PHONY: upload
+upload :	all
+	../appengine-java-sdk-1.4.3/bin/appcfg.sh update war

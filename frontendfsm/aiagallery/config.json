@@ -107,7 +107,7 @@
         [
           "rm -rf ../../war/resource",
           "rm -rf ../../war/script",
-          "rsync -av ./build/ ../../war/"
+          "rsync -av ./build/ ../../backend-js/jsserver/war/"
         ]
       }
     }

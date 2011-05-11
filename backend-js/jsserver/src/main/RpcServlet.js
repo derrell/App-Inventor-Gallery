@@ -80,6 +80,7 @@ function doGet(request, response)
   var entry;
   var entity;
 
+/*
   print("Query string: " + request.getQueryString());
 
   //
@@ -137,4 +138,5 @@ function doGet(request, response)
     entity.setData(Db.flags[entry]);
     entity.put();
   }
+*/
 };
