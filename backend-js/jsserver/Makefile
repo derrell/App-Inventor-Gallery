@@ -35,13 +35,11 @@ qxoo_classes :=							\
 	qxoo_classes/qx/bom/client/Event.class			\
 	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/Mixin.class				\
-	qxoo_classes/qx/core/Setting.class			\
 	qxoo_classes/qx/Interface.class				\
 	qxoo_classes/qx/lang/Core.class				\
 	qxoo_classes/qx/core/Property.class			\
 	qxoo_classes/qx/Class.class				\
 	qxoo_classes/qx/dev/StackTrace.class			\
-	qxoo_classes/qx/core/Variant.class			\
 	qxoo_classes/qx/lang/Array.class			\
 	qxoo_classes/qx/core/Aspect.class			\
 	qxoo_classes/qx/data/MBinding.class			\
