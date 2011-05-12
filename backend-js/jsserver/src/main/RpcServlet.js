@@ -80,63 +80,64 @@ function doGet(request, response)
   var entry;
   var entity;
 
-/*
   print("Query string: " + request.getQueryString());
 
-  //
-  // Add the simulation data to the App Engine database
-  //
+  if (request.getQueryString() == "addSimData")
+  {
+    //
+    // Add the simulation data to the App Engine database
+    //
 
-  qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
-  var Db = aiagallery.dbif.MSimData.Db;
-  
-  for (entry in Db.visitors)
-  {
-    entity = new aiagallery.dbif.ObjVisitors(entry);
-    entity.setData(Db.visitors[entry]);
-    entity.put();
+    qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
+    var Db = aiagallery.dbif.MSimData.Db;
+
+    for (entry in Db.visitors)
+    {
+      entity = new aiagallery.dbif.ObjVisitors(entry);
+      entity.setData(Db.visitors[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.tags)
+    {
+      entity = new aiagallery.dbif.ObjTags(entry);
+      entity.setData(Db.tags[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.apps)
+    {
+      entity = new aiagallery.dbif.ObjAppData(entry);
+      entity.setData(Db.apps[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.downloads)
+    {
+      entity = new aiagallery.dbif.ObjDownloads(entry);
+      entity.setData(Db.downloads[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.comments)
+    {
+      entity = new aiagallery.dbif.ObjComments(entry);
+      entity.setData(Db.comments[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.likes)
+    {
+      entity = new aiagallery.dbif.ObjLikes(entry);
+      entity.setData(Db.likes[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.flags)
+    {
+      entity = new aiagallery.dbif.ObjFlags(entry);
+      entity.setData(Db.flags[entry]);
+      entity.put();
+    }
   }
-    
-  for (entry in Db.tags)
-  {
-    entity = new aiagallery.dbif.ObjTags(entry);
-    entity.setData(Db.tags[entry]);
-    entity.put();
-  }
-    
-  for (entry in Db.apps)
-  {
-    entity = new aiagallery.dbif.ObjAppData(entry);
-    entity.setData(Db.apps[entry]);
-    entity.put();
-  }
-    
-  for (entry in Db.downloads)
-  {
-    entity = new aiagallery.dbif.ObjDownloads(entry);
-    entity.setData(Db.downloads[entry]);
-    entity.put();
-  }
-    
-  for (entry in Db.comments)
-  {
-    entity = new aiagallery.dbif.ObjComments(entry);
-    entity.setData(Db.comments[entry]);
-    entity.put();
-  }
-    
-  for (entry in Db.likes)
-  {
-    entity = new aiagallery.dbif.ObjLikes(entry);
-    entity.setData(Db.likes[entry]);
-    entity.put();
-  }
-    
-  for (entry in Db.flags)
-  {
-    entity = new aiagallery.dbif.ObjFlags(entry);
-    entity.setData(Db.flags[entry]);
-    entity.put();
-  }
-*/
 };
