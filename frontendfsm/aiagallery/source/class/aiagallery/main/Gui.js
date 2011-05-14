@@ -98,13 +98,11 @@ qx.Class.define("aiagallery.main.Gui",
         // file). Set value to true then false initially, to ensure that
         // changeValue handler gets called.
         simulate.setValue(true);
-/* For the time being, always use simulate mode...
         simulate.setValue(false);
         if (qx.core.Environment.get("qx.debug"))
         {
           simulate.setValue(true);
         }
-*/
 
         header.add(simulate);
 

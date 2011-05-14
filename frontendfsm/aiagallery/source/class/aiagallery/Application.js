@@ -9,7 +9,7 @@
  */
 
 /*
-#require(aiagallery.rpcsim.RpcSim)
+#require(aiagallery.dbif.DbifSim)
 #use(aiagallery.main.AbstractModule)
 */
 
@@ -125,7 +125,7 @@ qx.Class.define("aiagallery.Application",
       aiagallery.Application.addModules(moduleList);
 
       // Start the RPC simulator by getting its singleton instance
-      aiagallery.rpcsim.RpcSim.getInstance();
+      this.dbif = aiagallery.dbif.DbifSim.getInstance();
     }
   }
 });

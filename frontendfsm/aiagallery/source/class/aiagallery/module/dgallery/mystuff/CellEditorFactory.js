@@ -240,7 +240,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Add those tags that are not also categories
       currentTags.forEach(function(tag)
         {
-          if (! qx.lang.Array.contains(categoryList, tag))
+          if (tag != "" && ! qx.lang.Array.contains(categoryList, tag))
           {
             additionalTags.add(new qx.ui.form.ListItem(tag));
           }
