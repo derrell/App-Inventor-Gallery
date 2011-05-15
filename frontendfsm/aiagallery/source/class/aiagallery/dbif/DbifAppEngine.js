@@ -172,9 +172,6 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
             })(searchCriteria);
       }
       
-      // Prepare to issue a query
-      preparedQuery = datastore.prepare(query);
-      
       // Assume the default set of result criteria (no limits, offset=0)
       options = Datastore.FetchOptions.Builder.withDefaults();
       
@@ -195,6 +192,16 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
               options.withOffset(criterium.value);
               break;
               
+            case "sort":
+              qx.lang.Object.getKeys(criterium.value).forEach(
+                function(key)
+                {
+                  query.addSort(key, 
+                                (criterium.value[key] === "desc"
+                                 ? Query.SortDirection.DESCENDING
+                                 : Query.SortDirection.ASCENDING));
+                });
+
             default:
               throw new Error("Unrecognized result criterium type: " +
                               criterium.type);
@@ -206,6 +213,9 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       propertyTypes = aiagallery.dbif.Entity.propertyTypes;
       fields = propertyTypes[type].fields;
 
+      // Prepare to issue a query
+      preparedQuery = datastore.prepare(query);
+      
       // Issue the query
       dbResults = preparedQuery.asIterator(options);
       

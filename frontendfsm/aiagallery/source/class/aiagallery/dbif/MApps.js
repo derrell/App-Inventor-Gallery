@@ -278,14 +278,43 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return true;
     },
     
-    getAppList : function(bStringize, bAll)
+/**
+ * Get a portion of the application list.
+ *
+ * @param bStringize {Boolean}
+ *   Whether the tags, previousAuthors, and status values should be reformed
+ *   into a string representation rather than being returned in their native
+ *   representation.
+ *
+ * @param bAll {Boolean}
+ *   Whether to return all applications (if permissions allow it) rather than
+ *   only those applications owned by the logged-in user.
+ *
+ * @param sortCriteria {Array}
+ *   An array of maps. Each map contains a single key and value, with the key
+ *   being a field name on which to sort, and the value being one of the two
+ *   strings, "asc" to request an ascending sort on that field, or "desc" to
+ *   request a descending sort on that field. The order of maps in the array
+ *   determines the priority of that field in the sort. The first map in the
+ *   array indicates the primary sort key; the second map in the array
+ *   indicates the next-highest-priority sort key, etc.
+ *
+ * @param offset {Integer}
+ *   An integer value >= 0 indicating the number of records to skip, in the
+ *   specified sort order, prior to the first one returned in the result set.
+ *
+ * @param limit {Integer}
+ *   An integer value > 0 indicating the maximum number of records to return
+ *   in the result set.
+ */
+    getAppList : function(bStringize, bAll, sortCriteria, offset, limit)
     {
       var             categories;
       var             categoryNames;
       var             appList;
       var             whoami;
       var             criteria;
-      
+      var             resultCriteria = [];
       
       // Get the current user
       whoami = this.getUserData("whoami");
@@ -306,9 +335,31 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         criteria = null;
       }
       
+      // If an offset is requested...
+      if (typeof(offset) != "undefined")
+      {
+        // ... then specify it in the result criteria.
+        resultCriteria.push({ "offset" : offset });
+      }
+      
+      // If a limit is requested...
+      if (typeof(limit) !== "undefined")
+      {
+        // ... then specify it in the result criteria
+        resultCriteria.push({ "limit" : limit });
+      }
+      
+      // If sort criteria are given...
+      if (typeof(sortCriteria) !== "undefined")
+      {
+        // ... then add them too.
+        resultCriteria.push({ type : "sort", value : sortCriteria });
+      }
+
       // Issue a query for all apps 
       appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
-                                             criteria);
+                                             criteria,
+                                             resultCriteria);
 
       // If we were asked to stringize the values...
       if (bStringize)
@@ -341,7 +392,16 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       
       // Issue a query for category tags
       categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                                criteria);
+                                                criteria,
+                                                [
+                                                  { 
+                                                    type : "sort",
+                                                    value :
+                                                    {
+                                                      "value" : "asc"
+                                                    }
+                                                  }
+                                                ]);
       
       // They want only the tag value to be returned
       categoryNames = categories.map(function() { return arguments[0].value; });
@@ -393,9 +453,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           value : "category"
         };
       
-      // Issue a query for all apps 
+      // Issue a query for all categories
       categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                                criteria);
+                                                criteria,
+                                                [
+                                                  { 
+                                                    type : "sort",
+                                                    value :
+                                                    {
+                                                      "value" : "asc"
+                                                    }
+                                                  }
+                                                ]);
       
       // They want only the tag value to be returned
       categoryNames = categories.map(function() 
