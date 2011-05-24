@@ -201,6 +201,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
                                  ? Query.SortDirection.DESCENDING
                                  : Query.SortDirection.ASCENDING));
                 });
+              break;
 
             default:
               throw new Error("Unrecognized result criterium type: " +
