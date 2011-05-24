@@ -93,7 +93,6 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
       };
 
     // Register our property types
-    aiagallery.dbif.Entity.registerPropertyTypes("apps", 
-                                                 databaseProperties);
+    aiagallery.dbif.Entity.registerPropertyTypes("apps", databaseProperties);
   }
 });

@@ -57,11 +57,11 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
      * Query for all entities of a given class/type, given certain criteria.
      *
      * @param classname {String}
-     *   The name of the class, descended from aiagallery.dbif.Entity, of
+     *   The name of the class, descended from rpcjs.dbif.Entity, of
      *   the object type which is to be queried in the database.
      *
      * @param criteria
-     *   See {@link aiagallery.dbif.Entity#query} for details.
+     *   See {@link rpcjs.dbif.Entity#query} for details.
      *
      * @return {Array}
      *   An array of maps, i.e. native objects (not of Entity objects!)
@@ -85,7 +85,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             propertyTypes;
   
       // Get the entity type
-      type = aiagallery.dbif.Entity.entityTypeMap[classname];
+      type = rpcjs.dbif.Entity.entityTypeMap[classname];
       if (! type)
       {
         throw new Error("No mapped entity type for " + classname);
@@ -211,7 +211,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       }
 
       // Get the field names for this entity type
-      propertyTypes = aiagallery.dbif.Entity.propertyTypes;
+      propertyTypes = rpcjs.dbif.Entity.propertyTypes;
       fields = propertyTypes[type].fields;
 
       // Prepare to issue a query
@@ -298,7 +298,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
      * Put an entity to the database. If the key field is null or undefined, a
      * key is automatically generated for the entity.
      *
-     * @param entity {aiagallery.dbif.Entity}
+     * @param entity {rpcjs.dbif.Entity}
      *   The entity to be made persistent.
      */
     put : function(entity)
@@ -389,7 +389,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     /**
      * Remove an entity from the database
      *
-     * @param entity {aiagallery.dbif.Entity}
+     * @param entity {rpcjs.dbif.Entity}
      *   An instance of the entity to be removed.
      */
     remove : function(entity)
@@ -459,7 +459,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   defer : function()
   {
     // Register our put & query functions
-    aiagallery.dbif.Entity.registerDatabaseProvider(
+    rpcjs.dbif.Entity.registerDatabaseProvider(
       aiagallery.dbif.DbifAppEngine.query,
       aiagallery.dbif.DbifAppEngine.put,
       aiagallery.dbif.DbifAppEngine.remove);

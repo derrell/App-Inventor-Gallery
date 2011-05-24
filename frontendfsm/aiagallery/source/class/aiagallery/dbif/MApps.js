@@ -336,21 +336,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       }
       
       // If an offset is requested...
-      if (typeof(offset) != "undefined")
+      if (typeof(offset) != "undefined" && offset !== null)
       {
         // ... then specify it in the result criteria.
         resultCriteria.push({ "offset" : offset });
       }
       
       // If a limit is requested...
-      if (typeof(limit) !== "undefined")
+      if (typeof(limit) !== "undefined" && limit !== null)
       {
         // ... then specify it in the result criteria
         resultCriteria.push({ "limit" : limit });
       }
       
       // If sort criteria are given...
-      if (typeof(sortCriteria) !== "undefined")
+      if (typeof(sortCriteria) !== "undefined" && sortCriteria !== null)
       {
         // ... then add them too.
         resultCriteria.push({ type : "sort", value : sortCriteria });
