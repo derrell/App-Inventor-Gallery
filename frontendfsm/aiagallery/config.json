@@ -78,6 +78,17 @@
       ]
     },
 
+    "source" :
+    {
+      "compile-options" :
+      {
+        "uris" :
+        {
+          "add-nocache-param" : false
+        }
+      }
+    },
+
     "source-hybrid" :
     {
       "compile-options" :
