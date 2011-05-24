@@ -50,9 +50,6 @@ try
   classname = "qx.Mixin";
   new Packages.qx.Mixin();
 
-  classname = "qx.core.Setting";
-  new Packages.qx.core.Setting();
-
   classname = "qx.Interface";
   new Packages.qx.Interface();
 
@@ -67,9 +64,6 @@ try
 
   classname = "qx.dev.StackTrace";
   new Packages.qx.dev.StackTrace();
-
-  classname = "qx.core.Variant";
-  new Packages.qx.core.Variant();
 
   classname = "qx.lang.Array";
   new Packages.qx.lang.Array();

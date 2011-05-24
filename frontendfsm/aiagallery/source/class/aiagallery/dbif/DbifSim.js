@@ -65,6 +65,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
      */
     query : function(classname, searchCriteria, resultCriteria)
     {
+      var             i;
       var             qualifies;
       var             builtCriteria;
       var             dbObjectMap;
@@ -76,7 +77,12 @@ qx.Class.define("aiagallery.dbif.DbifSim",
       var             entity;
       var             clone;
       var             val;
-      
+      var             limit = Number.MAX_VALUE;
+      var             offset = 0;
+      var             sortKeys;
+      var             builtSort;
+      var             sortFunction;
+
       // Get the entity type
       type = aiagallery.dbif.Entity.entityTypeMap[classname];
       if (! type)
@@ -181,6 +187,71 @@ qx.Class.define("aiagallery.dbif.DbifSim",
         qualifies = function(entity) { return true; };
       }
       
+      // Assume no required sort order
+      sortFunction = null;
+
+      // If there are any result criteria specified...
+      if (resultCriteria)
+      {
+        // ... then go through the criteria list and handle each.
+        resultCriteria.forEach(
+          function(criterium)
+          {
+            switch(criterium.type)
+            {
+            case "limit":
+              limit = criterium.value;
+              if (limit <= 0)
+              {
+                throw new Error("Request for limit <= 0");
+              }
+              break;
+              
+            case "offset":
+              offset = criterium.value;
+              if (offset < 0)
+              {
+                throw new Error("Request for offset < 0");
+              }
+              break;
+              
+            case "sort":
+              builtSort = [ "var v1, v2;" ];
+              sortKeys = qx.lang.Object.getKeys(criterium.value);
+              sortKeys.forEach(
+                function(key)
+                {
+                  {
+                    builtSort.push("v1 = a['" + key + "'];");
+                    builtSort.push("v2 = b['" + key + "'];");
+                    if (criterium.value[key] === "asc")
+                    {
+                      builtSort.push("if (v1 < v2) return -1;");
+                      builtSort.push("if (v1 > v2) return 1;");
+                    }
+                    else if (criterium.value[key] === "desc")
+                    {
+                      builtSort.push("if (v1 > v2) return -1;");
+                      builtSort.push("if (v1 < v2) return 1;");
+                    }
+                    else
+                    {
+                      throw new Error("Unexpected sort order for " + key +
+                                      ": " + criterium.value[key]);
+                    }
+                  }
+                });
+              builtSort.push("return 0;");
+              sortFunction = new Function("a", "b", builtSort.join("\n"));
+              break;
+
+            default:
+              throw new Error("Unrecognized result criterium type: " +
+                              criterium.type);
+            }
+          });
+      }
+
       for (entry in dbObjectMap)
       {
         if (qualifies(dbObjectMap[entry]))
@@ -191,8 +262,14 @@ qx.Class.define("aiagallery.dbif.DbifSim",
         }
       }
       
-      // Give 'em the query results!
-      return results;
+      // Sort the results
+      if (sortFunction)
+      {
+        results.sort(sortFunction);
+      }
+      
+      // Give 'em the query results, with the appropriate offset and limit.
+      return results.slice(offset, offset + limit);
     },
 
 
