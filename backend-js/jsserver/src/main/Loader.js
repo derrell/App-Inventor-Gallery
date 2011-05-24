@@ -170,6 +170,9 @@ try
   classname = "qx.lang.Json";
   new Packages.qx.lang.Json();
 
+  classname = "qx.lang.Object";
+  new Packages.qx.lang.Object();
+
   classname = "qx.io.remote.RpcError";
   new Packages.qx.io.remote.RpcError();
   
