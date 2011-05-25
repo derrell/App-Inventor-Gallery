@@ -20,10 +20,25 @@ qx.Class.define("aiagallery.dbif.Entity",
 {
   extend : rpcjs.dbif.Entity,
   
+  construct : function(entityType, entityKey)
+  {
+    // Call the superclass constructor
+    this.base(arguments, entityType, entityKey);
+  },
+
   statics :
   {
-    registerEntityType    : rpcjs.dbif.Entity.registerEntityType,
-    registerPropertyTypes : rpcjs.dbif.Entity.registerPropertyTypes,
-    query                 : rpcjs.dbif.Entity.query
+    registerEntityType    : null,
+    registerPropertyTypes : null,
+    query                 : null
+  },
+  
+  defer : function()
+  {
+    // Point our own statics at our superclass' statics
+    aiagallery.dbif.Entity.registerEntityType =
+      rpcjs.dbif.Entity.registerEntityType;
+    aiagallery.dbif.Entity.registerPropertyTypes = 
+      rpcjs.dbif.Entity.registerPropertyTypes;
   }
 });

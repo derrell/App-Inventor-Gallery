@@ -357,9 +357,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       }
 
       // Issue a query for all apps 
-      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
-                                             criteria,
-                                             resultCriteria);
+      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
+                                        criteria,
+                                        resultCriteria);
 
       // If we were asked to stringize the values...
       if (bStringize)
@@ -391,17 +391,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
       
       // Issue a query for category tags
-      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                                criteria,
-                                                [
-                                                  { 
-                                                    type : "sort",
-                                                    value :
-                                                    {
-                                                      "value" : "asc"
-                                                    }
-                                                  }
-                                                ]);
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           criteria,
+                                           [
+                                             { 
+                                               type : "sort",
+                                               value :
+                                               {
+                                                 "value" : "asc"
+                                               }
+                                             }
+                                           ]);
       
       // They want only the tag value to be returned
       categoryNames = categories.map(function() { return arguments[0].value; });
@@ -416,8 +416,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             categories;
       var             categoryNames;
 
-      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData",
-                                             criteria);
+      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
       // Remove those members which are not requested, and rename as requested
       appList.forEach(
@@ -454,17 +453,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
       
       // Issue a query for all categories
-      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                                criteria,
-                                                [
-                                                  { 
-                                                    type : "sort",
-                                                    value :
-                                                    {
-                                                      "value" : "asc"
-                                                    }
-                                                  }
-                                                ]);
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           criteria,
+                                           [
+                                             { 
+                                               type : "sort",
+                                               value :
+                                               {
+                                                 "value" : "asc"
+                                               }
+                                             }
+                                           ]);
       
       // They want only the tag value to be returned
       categoryNames = categories.map(function() 
@@ -495,8 +494,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
       
       // Issue a query for all apps 
-      appList = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
-                                             criteria);
+      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
       // See if this app exists. 
       if (appList.length == 0)
@@ -539,8 +537,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
       
       // Issue a query for this visitor
-      owner = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
-                                           criteria);
+      owner = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
 
       // Assign the display name as the application's owner name
       app.ownerName = owner.displayName;

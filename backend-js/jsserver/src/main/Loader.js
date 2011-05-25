@@ -179,6 +179,9 @@ try
   classname = "aiagallery.dbif.MApps";
   new Packages.aiagallery.dbif.MApps();
   
+  classname = "rpcjs.dbif.Entity";
+  new Packages.rpcjs.dbif.Entity();
+
   classname = "aiagallery.dbif.Entity";
   new Packages.aiagallery.dbif.Entity();
   
@@ -226,6 +229,12 @@ try
   
   classname = "rpcjs.rpc.error.Error";
   new Packages.rpcjs.rpc.error.Error();
+
+  classname = "rpcjs.sim.Dbif";
+  new Packages.rpcjs.sim.Dbif();
+
+  classname = "rpcjs.appengine.Dbif";
+  new Packages.rpcjs.appengine.Dbif();
 }
 catch(e)
 {

@@ -100,7 +100,10 @@ app_classes :=							\
 rpcjs_classes :=					\
 	qxoo_classes/rpcjs/appengine/Rpc.class		\
 	qxoo_classes/rpcjs/rpc/Server.class		\
-	qxoo_classes/rpcjs/rpc/error/Error.class
+	qxoo_classes/rpcjs/rpc/error/Error.class	\
+	qxoo_classes/rpcjs/dbif/Entity.class		\
+	qxoo_classes/rpcjs/sim/Dbif.class		\
+	qxoo_classes/rpcjs/appengine/Dbif.class
 
 server_classes :=				\
 	qxoo_classes/main/Loader.class		\
