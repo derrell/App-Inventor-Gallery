@@ -66,7 +66,7 @@ qx.Class.define("aiagallery.widget.radioview.RadioView",
 
         control.addAt = function(o, index)
         {
-          control._add(o, 
+          control._addAt(o, 
                        index,
                        { row : _this.__nextRow, column : _this.__nextCol });
           ++_this.__nextRow;
