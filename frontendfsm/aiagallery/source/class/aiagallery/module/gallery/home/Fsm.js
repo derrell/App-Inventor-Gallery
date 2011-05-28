@@ -62,14 +62,10 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
         {
 
           // Request to navigate to another page via one of the link boxes
-          "click" :
-          {
-            "Find Apps" : "Transition_Idle_to_Idle_via_linkBoxClick",
-            
-            "Learn" : "Transition_Idle_to_Idle_via_linkBoxClick",
-            
-            "My Stuff" : "Transition_Idle_to_Idle_via_linkBoxClick"
-          },
+          "click" : "Transition_Idle_to_Idle_via_linkBoxClick",
+
+          // Click on a featured app
+          "featuredAppClick" : "Transition_Idle_to_Idle_via_featuredAppClick",
           
           // When we get an appear event, retrieve the visitor list
           "appear" :
@@ -127,7 +123,84 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
 
       state.addTransition(trans);
             
+      /*
+       * Transition: Idle to Idle
+       *
+       * Cause: A featured item is selected
+       *
+       * Action:
+       *  Create (if necessary) and switch to an application-specific tab
+       */
+      
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_Idle_via_featuredAppClick",
+      {
+        "nextState" : "State_Idle",
+      
+        "context" : this,
+      
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+          var             item = event.getData();
+          var             app;
+          var             moduleList;
+      
+          // Get the main tab view
+          var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
+          
+          // See if there's already a tab for this application
+          var page = null;
+          mainTabs.getChildren().forEach(
+            function(thisPage)
+            {
+              var uid = thisPage.getUserData("app_uid");
+              if (uid == item.uid)
+              {
+                page = thisPage;
+          
+                // Select the existing application page
+                mainTabs.setSelection([ page ]);
+              }
+            });
+          
+          // If we didn't find an existing tab, create a new one.
+          if (! page)
+          {
+            // Create a new module (tab) for this application
+            app = new aiagallery.main.Module(
+                    item.label,
+                    null,
+                    item.label,
+                    aiagallery.module.dgallery.appinfo.AppInfo,
+                    [
+                      function(menuItem, page, subTabs)
+                      {
+                        // Keep track of which UID this tab applies to
+                        page.setUserData("app_uid", item.uid);
+      
+                        // Allow the user to close this tab
+                        page.setShowCloseButton(true);
+      
+                        // Select the new application page
+                        mainTabs.setSelection([ page ]);
+                      }
+                    ]);
             
+            // Transmit the UID of this module */
+            app.setUserData("app_uid", item.uid);
+            
+            // Start up the new module
+            moduleList = {};
+            moduleList[item.label] = {};
+            moduleList[item.label][item.label] = app;
+            aiagallery.Application.addModules(moduleList);
+          }
+        }
+      });
+      
+      state.addTransition(trans);
+      
       /*
        * Transition: Idle to Idle
        *

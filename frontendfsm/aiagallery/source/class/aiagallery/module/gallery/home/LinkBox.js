@@ -12,7 +12,7 @@ qx.Class.define("aiagallery.module.gallery.home.LinkBox",
 
   construct : function(labelText, imagePath)
   {
-    this.base(arguments, this.tr(labelText), imagePath);
+    this.base(arguments, labelText, imagePath);
     
     this.set(
       {

@@ -68,7 +68,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       
       // Add "Find Apps" box to link row
       var findApps = new aiagallery.module.gallery.home.LinkBox(
-        "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        this.tr("<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
         "aiagallery/findApps.png");
       findApps.addListener("click", fsm.eventListener, fsm);
       linkRow.add(findApps);
@@ -79,7 +79,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
             
       // Add "Learn" box to link row
       var learn = new aiagallery.module.gallery.home.LinkBox(
-        "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        this.tr("<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
         "aiagallery/learn.png");
       learn.addListener("click", fsm.eventListener, fsm);
       linkRow.add(learn);
@@ -90,7 +90,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       
       // Add "My Stuff" box to link row
       var myStuff = new aiagallery.module.gallery.home.LinkBox(
-        "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
+        this.tr("<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
         "aiagallery/myStuff.png");
       myStuff.addListener("click", fsm.eventListener, fsm);
       linkRow.add(myStuff);
@@ -171,11 +171,22 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
         fsm.addObject("Featured Apps", featuredApps);
         parent.add(featuredApps);
         
-        for (var app = 0; app < apps.length; app++)
+        for (var i = 0; i < apps.length; i++)
         {
+          var app = apps[i];
+          
           // FIXME: Need to fetch visitor's displayName to show instead of id
-          var appThumb = new aiagallery.widget.AppThumb(apps[app].label, apps[app].owner, apps[app].icon);
+          var appThumb = 
+            new aiagallery.widget.AppThumb(app.label, app.owner, app.icon);
           featuredApps.add(appThumb);
+
+          // Fire an event specific to this application, sans a friendly name.
+          appThumb.addListener(
+            "click", 
+            function(e)
+            {
+              fsm.fireImmediateEvent("featuredAppClick", this, app);
+            });
         }
         break;
         
