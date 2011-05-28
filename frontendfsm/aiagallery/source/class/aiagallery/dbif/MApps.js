@@ -278,35 +278,36 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return true;
     },
     
-/**
- * Get a portion of the application list.
- *
- * @param bStringize {Boolean}
- *   Whether the tags, previousAuthors, and status values should be reformed
- *   into a string representation rather than being returned in their native
- *   representation.
- *
- * @param bAll {Boolean}
- *   Whether to return all applications (if permissions allow it) rather than
- *   only those applications owned by the logged-in user.
- *
- * @param sortCriteria {Array}
- *   An array of maps. Each map contains a single key and value, with the key
- *   being a field name on which to sort, and the value being one of the two
- *   strings, "asc" to request an ascending sort on that field, or "desc" to
- *   request a descending sort on that field. The order of maps in the array
- *   determines the priority of that field in the sort. The first map in the
- *   array indicates the primary sort key; the second map in the array
- *   indicates the next-highest-priority sort key, etc.
- *
- * @param offset {Integer}
- *   An integer value >= 0 indicating the number of records to skip, in the
- *   specified sort order, prior to the first one returned in the result set.
- *
- * @param limit {Integer}
- *   An integer value > 0 indicating the maximum number of records to return
- *   in the result set.
- */
+    /**
+     * Get a portion of the application list.
+     *
+     * @param bStringize {Boolean}
+     *   Whether the tags, previousAuthors, and status values should be
+     *   reformed into a string representation rather than being returned in
+     *   their native representation.
+     *
+     * @param bAll {Boolean}
+     *   Whether to return all applications (if permissions allow it) rather
+     *   than only those applications owned by the logged-in user.
+     *
+     * @param sortCriteria {Array}
+     *   An array of maps. Each map contains a single key and value, with the
+     *   key being a field name on which to sort, and the value being one of
+     *   the two strings, "asc" to request an ascending sort on that field, or
+     *   "desc" to request a descending sort on that field. The order of maps
+     *   in the array determines the priority of that field in the sort. The
+     *   first map in the array indicates the primary sort key; the second map
+     *   in the array indicates the next-highest-priority sort key, etc.
+     *
+     * @param offset {Integer}
+     *   An integer value >= 0 indicating the number of records to skip, in
+     *   the specified sort order, prior to the first one returned in the
+     *   result set.
+     *
+     * @param limit {Integer}
+     *   An integer value > 0 indicating the maximum number of records to return
+     *   in the result set.
+     */
     getAppList : function(bStringize, bAll, sortCriteria, offset, limit)
     {
       var             categories;

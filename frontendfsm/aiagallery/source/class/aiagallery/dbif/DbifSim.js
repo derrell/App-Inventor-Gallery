@@ -23,7 +23,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
   construct : function()
   {
     // Call the superclass constructor
-    this.base(arguments, "aiagallery");
+    this.base(arguments, "aiagallery", "/rpc");
         
     // Simulate the logged-in user
     this.setUserData("whoami", "joe@blow.com");

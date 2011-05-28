@@ -214,6 +214,12 @@ try
   
   classname = "aiagallery.dbif.Constants";
   new Packages.aiagallery.dbif.Constants();
+
+  classname = "rpcjs.sim.Dbif";
+  new Packages.rpcjs.sim.Dbif();
+
+  classname = "rpcjs.appengine.Dbif";
+  new Packages.rpcjs.appengine.Dbif();
   
   classname = "aiagallery.dbif.DbifAppEngine";
   new Packages.aiagallery.dbif.DbifAppEngine();
@@ -229,12 +235,6 @@ try
   
   classname = "rpcjs.rpc.error.Error";
   new Packages.rpcjs.rpc.error.Error();
-
-  classname = "rpcjs.sim.Dbif";
-  new Packages.rpcjs.sim.Dbif();
-
-  classname = "rpcjs.appengine.Dbif";
-  new Packages.rpcjs.appengine.Dbif();
 }
 catch(e)
 {
