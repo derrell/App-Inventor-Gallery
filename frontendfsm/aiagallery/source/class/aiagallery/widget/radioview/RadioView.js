@@ -64,6 +64,19 @@ qx.Class.define("aiagallery.widget.radioview.RadioView",
           }
         };
 
+        control.addAt = function(o, index)
+        {
+          control._addAt(o, 
+                       index,
+                       { row : _this.__nextRow, column : _this.__nextCol });
+          ++_this.__nextRow;
+          if (_this.__nextRow == _this.getRowCount())
+          {
+            _this.__nextRow = 0;
+            ++_this.__nextCol;
+          }
+        };
+
         // Add the grid to the box
         box.add(control, { flex : 1 });
 

@@ -30,17 +30,17 @@ qx.Mixin.define("aiagallery.dbif.MTags",
         };
       
       // Issue a query for category tags
-      categories = aiagallery.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                                criteria,
-                                                [
-                                                  { 
-                                                    type : "sort",
-                                                    value :
-                                                    {
-                                                      "value" : "asc"
-                                                    }
-                                                  }
-                                                ]);
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           criteria,
+                                           [
+                                             { 
+                                               type : "sort",
+                                               value :
+                                               {
+                                                 "value" : "asc"
+                                               }
+                                             }
+                                           ]);
 
       // They want only the tag value to be returned
       results = categories.map(function() { return arguments[0].value; });

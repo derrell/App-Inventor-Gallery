@@ -170,12 +170,18 @@ try
   classname = "qx.lang.Json";
   new Packages.qx.lang.Json();
 
+  classname = "qx.lang.Object";
+  new Packages.qx.lang.Object();
+
   classname = "qx.io.remote.RpcError";
   new Packages.qx.io.remote.RpcError();
   
   classname = "aiagallery.dbif.MApps";
   new Packages.aiagallery.dbif.MApps();
   
+  classname = "rpcjs.dbif.Entity";
+  new Packages.rpcjs.dbif.Entity();
+
   classname = "aiagallery.dbif.Entity";
   new Packages.aiagallery.dbif.Entity();
   
@@ -208,6 +214,12 @@ try
   
   classname = "aiagallery.dbif.Constants";
   new Packages.aiagallery.dbif.Constants();
+
+  classname = "rpcjs.sim.Dbif";
+  new Packages.rpcjs.sim.Dbif();
+
+  classname = "rpcjs.appengine.Dbif";
+  new Packages.rpcjs.appengine.Dbif();
   
   classname = "aiagallery.dbif.DbifAppEngine";
   new Packages.aiagallery.dbif.DbifAppEngine();

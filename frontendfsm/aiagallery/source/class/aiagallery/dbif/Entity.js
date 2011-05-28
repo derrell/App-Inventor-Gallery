@@ -18,237 +18,27 @@
 
 qx.Class.define("aiagallery.dbif.Entity",
 {
-  extend : qx.core.Object,
+  extend : rpcjs.dbif.Entity,
   
   construct : function(entityType, entityKey)
   {
-    var             queryResults;
-    var             keyField;
-    var             cloneObj;
-    var             properties;
-
     // Call the superclass constructor
-    this.base(arguments);
-    
-    // Save the entity type
-    this.setEntityType(entityType);
-    
-    // Get the key field name.
-    keyField = this.getEntityKeyProperty();
-    
-    // If an entity key was specified...
-    if (typeof entityKey != "undefined")
-    {
-      // ... then query for the object.
-      queryResults = aiagallery.dbif.Entity.query(
-        this.constructor.classname,
-        {
-          type  : "element",
-          field : keyField,
-          value : entityKey
-        });
-      
-      // Did we find anything there?
-      if (queryResults.length == 0)
-      {
-        // Nope. Just set this object's key
-        this.getData()[keyField] = entityKey;
-      }
-      else
-      {
-        // Set our object data to the data retrieved from the query
-        this.setData(queryResults[0]);
-        
-        // It's not a brand new object
-        this.setBrandNew(false);
-      }
-    }
+    this.base(arguments, entityType, entityKey);
   },
 
-  properties :
-  {
-    /** A map containing the data for this entity */
-    data :
-    {
-      init : null
-    },
-
-    /** Flag indicating that this entity was newly created */
-    brandNew :
-    {
-      init  : true,
-      check : "Boolean"
-    },
-
-    /**
-     * The property name that is to be used as the database entity key (aka
-     * primary key).
-     */
-    entityKeyProperty :
-    {
-      init  : "uid",
-      check : "String"
-    },
-
-    /** Mapping from classname to type used in the database */
-    entityType :
-    {
-      check    : "String",
-      nullable : false
-    },
-
-    /*
-     * The unique id to be used as the database entity key (aka primary key),
-     * if no other property has been designated in entityKeyProperty as the
-     * primary key.
-     */
-    uid :
-    {
-      init : null
-    }
-  },
-  
   statics :
   {
-    /** Map from classname to entity type */
-    entityTypeMap : {},
-
-
-    /** Assignment of property types for each entity class */
-    propertyTypes : {},
-
-
-    /** Register an entity type */
-    registerEntityType : function(classname, entityType)
-    {
-      // Save this value in the map from classname to entity type
-      aiagallery.dbif.Entity.entityTypeMap[classname] = entityType;
-    },
-
-
-    /** Register the property types for an entity class */
-    registerPropertyTypes : function(entityType, propertyTypes, keyField)
-    {
-      // If there's no key field name specified...
-      if (! keyField)
-      {
-        // Add "uid" to the list of database properties.
-        propertyTypes["uid"] = "Key";
-      }
-
-      aiagallery.dbif.Entity.propertyTypes[entityType] = 
-        {
-          keyField      : keyField,
-          fields        : propertyTypes
-        };
-    },
-
-
-    /**
-     * Function to query for objects.
-     *
-     * @param classname {String}
-     *   The name of the class, descended from aiagallery.dbif.Entity, of
-     *   the object type which is to be queried in the database.
-     *
-     * @param searchCriteria {Map?}
-     *   A (possibly recursive) map which contains the following members:
-     *     type {String}
-     *       "op" -- a logical operation. In this case, there must also be a
-     *               "method" member which contains the logical operation to
-     *               be performed. Currently, the only supported operations
-     *               are "and" and "contains". There must also be a "children"
-     *               member, which is an array of the critieria to which the
-     *               specified operation is applied.
-     *
-     *               An optional "filterOp" member may also be provided. If
-     *               none is provided, the requested operation is assumed to be
-     *               equality. Any of the following values may be provided for
-     *               the "filterOp" member: "<", "<=", "=", ">", ">=", "!=".
-     *
-     *       "element" -- Search by specific field in the object. The
-     *                    "field" member must be provided, to specify which
-     *                    field, and a "value" member must be specified, to
-     *                    indicate what value must be in that field.
-     *
-     *   If no criteria is supplied (undefined or null), then all objects of
-     *   the specified classname will be returned.
-     *
-     * @param resultCriteria {Map?}
-     *   A (possibly recursive) map which contains the following members:
-     *     <not yet implemented>
-     *
-     *   If no criteria is supplied (undefined or null), then the sort order
-     *   is undefined, and all entities that match the search criteria will be
-     *   returned.
-     *
-     * @return {Array}
-     *   An array of maps, i.e. native objects (not of Entity objects!)
-     *   containing the data resulting from the query.
-     */
-    query : null,
-    
-
-    /**
-     * Function to put an object to the database.
-     *
-     * @param entity {aiagallery.dbif.Entity}
-     *   The object whose database properties are to be written out.
-     */
-    __put : null,
-
-
-    /** Register a put and query function, specific to a database */
-    registerDatabaseProvider : function(query, put, remove)
-    {
-      // Save the specified functions.
-      aiagallery.dbif.Entity.query = query;
-      aiagallery.dbif.Entity.__put = put;
-      aiagallery.dbif.Entity.__remove = remove;
-    }
+    registerEntityType    : null,
+    registerPropertyTypes : null,
+    query                 : null
   },
-
-  members :
+  
+  defer : function()
   {
-    /**
-     * Put the db property data in this object to the database. The properties
-     * which are put are those which have member "db" : true.
-     */
-    put : function()
-    {
-      // Write this data 
-      aiagallery.dbif.Entity.__put(this);
-      
-      // This entity is no longer brand new
-      this.setBrandNew(false);
-    },
-    
-    /**
-     * Remove this entity from the database. 
-     * 
-     * NOTE: This object should no longer be used after having called this
-     *       method!
-     */
-    removeSelf : function()
-    {
-      // Remove ourself from the database
-      aiagallery.dbif.Entity.__remove(this);
-      
-      // Mark this entity as brand new again.
-      this.setBrandNew(true);
-    },
-
-    /**
-     * Provide the map of database properties and their types.
-     *
-     * @return {Map}
-     *   A map where the key is a database property, and the value is its
-     *   type. Valid types are "String", "Number", "Array", and "Key". The
-     *   latter is database implementation dependent.
-     */
-    getDatabaseProperties : function()
-    {
-      return aiagallery.dbif.Entity.propertyTypes[this.getEntityType()];
-    }
+    // Point our own statics at our superclass' statics
+    aiagallery.dbif.Entity.registerEntityType =
+      rpcjs.dbif.Entity.registerEntityType;
+    aiagallery.dbif.Entity.registerPropertyTypes = 
+      rpcjs.dbif.Entity.registerPropertyTypes;
   }
 });

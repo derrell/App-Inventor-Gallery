@@ -83,8 +83,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       var             visitorList;
       
       // For each visitor...
-      visitorList =
-        aiagallery.dbif.Entity.query("aiagallery.dbif.ObjVisitors");
+      visitorList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors");
 
       // If we were asked to stringize the values...
       if (bStringize)
