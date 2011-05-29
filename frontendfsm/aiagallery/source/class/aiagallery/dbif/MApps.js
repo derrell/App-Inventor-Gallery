@@ -466,7 +466,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                              }
                                            ]);
       
-      // They want only the tag value to be returned
+      // Tag objects contain the tag value, type, and count of uses. For this
+      // procedure, we want to return only the tag value.
       categoryNames = categories.map(function() 
                                      { 
                                        return arguments[0].value;
