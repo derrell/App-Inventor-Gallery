@@ -86,31 +86,33 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       
       var container = new qx.ui.container.Composite(new qx.ui.layout.Canvas());
       var criteriascroll = new qx.ui.container.Scroll().set(
-	{
-	  height : 330 ,
-	  width : 1000
-	});
+        {
+          height : 330 ,
+          width : 1000
+        });
+      
       groupbox.set(
-	{
-	  height : 300,
-	  width : 1000,
-	  contentPadding : 3
-	});
+        {
+          height : 300,
+          width : 1000,
+          contentPadding : 3
+        });
       
       // The groupbox gets wrapped by the Scroll
       criteriascroll.add(groupbox) ;
       
       // Dummy lines to see how my scroll vbox works
-      for( var i = 0 ; i < 100 ; i++ )
-	 groupbox.add(new qx.ui.form.Button("Hello! I'm #"+i+" and I'm a very long button for testing purposes! Eventually I will be replaced by a whole line of buttons and boxes. Life's grand.") );
+      for (var i = 0 ; i < 100 ; i++)
+        groupbox.add(new qx.ui.form.Button("Hello! I'm #"+i+" and I'm a very long button for testing purposes! Eventually" + 
+                                           " I will be replaced by a whole line of buttons and boxes. Life's grand.") );
       
       // buttonbar is where the search, reset, and possibly "add new search refinement" buttons go
       var buttonbar = new qx.ui.groupbox.GroupBox() ;
       buttonbar.set(
-      {
-	layout         : new qx.ui.layout.HBox(),
-	contentPadding : 3
-      });
+        {
+          layout         : new qx.ui.layout.HBox(),
+          contentPadding : 3
+        });
       
       var searchbtn = new qx.ui.form.Button("Search On This") ;
       var resetbtn = new qx.ui.form.Button("Reset All Fields") ;
@@ -142,7 +144,18 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       vBox.add(gallery, { flex : 1 });
     },
 
-
+    /**
+     * Construct and return a search refining line
+     * 
+     * 
+     * @return new container with the empty search refining form
+     */
+    
+    buildSearchRefineLine : function( container ) {
+      var groupbox = new qx.ui.groupbox.GroupBox();
+      
+      
+    },
     /**
      * Handle the response to a remote procedure call
      *
