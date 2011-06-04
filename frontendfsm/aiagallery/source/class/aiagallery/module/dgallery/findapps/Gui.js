@@ -71,19 +71,49 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       groupbox.add(list);
       fsm.addObject("browse2", list);
 
-      // Create the search criteria
-      groupbox = new qx.ui.groupbox.GroupBox("Search");
-      groupbox.set(
-        {
-          layout         : new qx.ui.layout.HBox(),
-          contentPadding : 0
-        });
-      groupbox.getChildControl("frame").setBackgroundColor("white");
-      hBox.add(groupbox, { flex : 1 });
+      // Begin creating the search gui
+      groupbox = new qx.ui.groupbox.GroupBox("Search") ;
+      groupbox.setLayout( new qx.ui.layout.VBox()) ;
+	
+      var container = new qx.ui.container.Composite(new qx.ui.layout.Canvas());
+      var criteriascroll = new qx.ui.container.Scroll().set(
+	{
+	  height : 300,
+	  width : 600
+	});
 
+      criteriascroll.add(groupbox) ;
+      //dummy lines to see how my scroll vbox works
+      for( var i = 0 ; i < 100 ; i++ )
+	 groupbox.add(new qx.ui.form.Button("Hello! I'm #"+i+" and I'm a very long button for testing purposes!") );
+      
+      
+      // buttonbar is where the search and reset buttons go
+      var buttonbar = new qx.ui.groupbox.GroupBox() ;
+      buttonbar.set(
+      {
+	layout         : new qx.ui.layout.HBox(),
+	contentPadding : 3
+      });
+      
+      var mybtn = new qx.ui.form.Button("Search On This") ;
+      var resetbtn = new qx.ui.form.Button("Reset All Fields") ;
+      buttonbar.add(resetbtn) ;
+      buttonbar.add(mybtn);
+     
+      
+      
+      container.add(criteriascroll, { top : 0 } ) ;
+      container.add(buttonbar, { bottom: 0 } ) ;
+     // container.getChildControl("frame").setBackgroundColor("white");
+      
+      // End search gui by adding it to hBox
+      hBox.add(container, { flex : 1 });
       // Provide a bit of space at the right
       hBox.add(new qx.ui.core.Spacer(10));
 
+      
+      
       // Create a vertical box layout for the bottom pane
       vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
       splitpane.add(vBox, 1);
