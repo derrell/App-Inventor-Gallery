@@ -74,14 +74,20 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Begin creating the search gui
       
       // groupbox will house all of the "lines of refinement", so is a VBox.
-      // I believe I will need more specific access to this, so will probably need a variable (maybe a member somewhere)
-      //      other than groupbox
+      // I believe I will need more specific access to this, so will probably
+      // need a variable (maybe a member somewhere) other than groupbox
       groupbox = new qx.ui.groupbox.GroupBox("Search") ;
       groupbox.setLayout( new qx.ui.layout.VBox()) ;
 	
-      // Canvas will house the Scroll-wrapped groupbox and the Buttonbar groupbox
-      // FIXME: Need better layout (height and width) numbers for the following groupbox and scroll, make it look nice
-      // FIXME: Since the groupbox is no longer the outer wrapper, the title "Search" goes away in the scroll.
+      // Canvas will house the Scroll-wrapped groupbox and the Buttonbar
+      // groupbox
+      //
+      // FIXME: Need better layout (height and width) numbers for the
+      // following groupbox and scroll, make it look nice
+      //
+      // FIXME: Since the groupbox is no longer the outer wrapper, the title
+      // "Search" goes away in the scroll.
+      //
       // FIXME: perhaps a new titling strategy for the page is needed
       
       var container = new qx.ui.container.Composite(new qx.ui.layout.Canvas());
@@ -103,10 +109,14 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       
       // Dummy lines to see how my scroll vbox works
       for (var i = 0 ; i < 100 ; i++)
-        groupbox.add(new qx.ui.form.Button("Hello! I'm #"+i+" and I'm a very long button for testing purposes! Eventually" + 
-                                           " I will be replaced by a whole line of buttons and boxes. Life's grand.") );
+        groupbox.add(new qx.ui.form.Button(
+                       "Hello! I'm #" + i + " and I'm a very long button " +
+                         "for testing purposes! Eventually" + 
+                         " I will be replaced by a whole line of buttons " +
+                         "and boxes. Life's grand.") );
       
-      // buttonbar is where the search, reset, and possibly "add new search refinement" buttons go
+      // buttonbar is where the search, reset, and possibly "add new search
+      // refinement" buttons go
       var buttonbar = new qx.ui.groupbox.GroupBox() ;
       buttonbar.set(
         {
@@ -119,10 +129,12 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       buttonbar.add(resetbtn) ;
       buttonbar.add(searchbtn);
      
-      // Finally, why the Canvas was used, to put the Scroll-wrapped box on top and the buttonbar on bottom easily
+      // Finally, why the Canvas was used, to put the Scroll-wrapped box on
+      // top and the buttonbar on bottom easily
       container.add(criteriascroll, { top : 0 } ) ;
       container.add(buttonbar, { bottom: 0 } ) ;
-      //FIXME: the following line, worked for the groupbox, but breaks now that I'm using a Canvas main wrapper.
+      //FIXME: the following line, worked for the groupbox, but breaks now
+      //that I'm using a Canvas main wrapper.
       //container.getChildControl("frame").setBackgroundColor("white");
       
       // End search gui by adding it to hBox
@@ -131,8 +143,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Provide a bit of space at the right
       hBox.add(new qx.ui.core.Spacer(10));
 
-      
-      
       // Create a vertical box layout for the bottom pane
       vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
       splitpane.add(vBox, 1);
