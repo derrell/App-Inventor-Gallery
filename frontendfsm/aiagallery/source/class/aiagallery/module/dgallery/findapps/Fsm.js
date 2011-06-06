@@ -79,6 +79,13 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
 
           },
           
+          "execute" :
+          {
+            
+            "searchBtn" : "Transition_Idle_to_AwaitRpcResult_via_search"
+            
+          },
+          
           // When we get an appear event, retrieve the category tags list. We
           // only want to do it the first time, though, so we use a predicate
           // to determine if it's necessary.
@@ -259,28 +266,119 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           // we made.
           request.setUserData("requestType", "appQuery");
           
-          // Keep track of which list will get the new tags list
-          switch(friendly)
-          {
-          case "browse0":
-            request.setUserData("tagResultsTo", "browse1");
-            break;
-            
-          case "browse1":
-            request.setUserData("tagResultsTo", "browse2");
-            break;
-            
-          case "browse2":
-            request.setUserData("tagResultsTo", null);
-            break;
-          }
+          // We'll also need to know where the request originated
+          request.setUserData("querySource", friendly);
 
         }
       });
 
       state.addTransition(trans);
 
+
+        /*
+       * Transition: Idle to Awaiting RPC Result
+       *
+       * Cause: "Search" button pressed
+       *
+       * Action:
+       *  Initiate a request for the list of  matching applications.
+       */
+
+/*        
+        //FIXME: I am commenting out large blocks of code i don't think I'll need while I work.
+        //FIXME: this is because I used the Transition..._via_browse as a template
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_search",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          var             i;
+          var             browse;
+          var             browse0;
+          var             browse1;
+          var             browse2;
+          var             criteria;
+          var             criterium;
+          var             and;
+          var             request;
+          var             selection;
+
+          // Create an array of the lists
+
+          // Determine on which browse list we received the event
+          var friendly = fsm.getFriendlyName(event.getTarget());
           
+          //FIXME: Want to use this to clear all Finder lists on search event
+          //FIXME: Keep browse0 populated but def. remove its selection
+          browse1.removeAll();
+          browse2.removeAll();
+            
+            
+          // We're building a series of AND criteria
+          criteria =
+            {
+              type     : "op",
+              method   : "and",
+              children : []
+            };
+          
+          // Find the selection in each list and generate a criterium
+          for (i = 0; i < browse.length; i++)
+          {
+            // Get this list's selection
+            selection = browse[i].getSelection();
+            
+            // If there's a selection...
+            if (selection.length > 0)
+            {
+              // Create a criterum element
+              criterium = 
+                {
+                  type  : "element", 
+                  field : "tags", 
+                  value : selection[0].getLabel()
+                };
+              
+              // Add it to the list of criteria being ANDed
+              criteria.children.push(criterium);
+            }
+          }
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "appQuery",
+                         [
+                           // Root of the criteria tree
+                           criteria,
+                           
+                           // Requested fields and the return field name
+                           {
+                             uid    : "uid",
+                             title  : "label", // remap name for Gallery
+                             image1 : "icon",  // remap name for Gallery
+                             tags   : "tags"
+                           }
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "appQuery");
+          
+          // And where that request came from.
+          request.setUserData("querySource", friendly);
+
+        }
+      });
+
+      state.addTransition(trans);
+      */
+
       /*
        * Transition: Idle to Idle
        *
