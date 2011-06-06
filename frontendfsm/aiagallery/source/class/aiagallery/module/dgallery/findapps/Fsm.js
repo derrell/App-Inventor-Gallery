@@ -283,8 +283,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
        * Action:
        *  Initiate a request for the list of  matching applications.
        */
-
-/*        
+        
         //FIXME: I am commenting out large blocks of code i don't think I'll need while I work.
         //FIXME: this is because I used the Transition..._via_browse as a template
       trans = new qx.util.fsm.Transition(
@@ -314,9 +313,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           
           //FIXME: Want to use this to clear all Finder lists on search event
           //FIXME: Keep browse0 populated but def. remove its selection
-          browse1.removeAll();
-          browse2.removeAll();
-            
+          fsm.getObject("browse1").removeAll();
+          fsm.getObject("browse2").removeAll();
+          fsm.getObject("browse0").resetSelection();
             
           // We're building a series of AND criteria
           criteria =
@@ -326,27 +325,18 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
               children : []
             };
           
-          // Find the selection in each list and generate a criterium
-          for (i = 0; i < browse.length; i++)
-          {
-            // Get this list's selection
-            selection = browse[i].getSelection();
-            
-            // If there's a selection...
-            if (selection.length > 0)
+          //  Aggregating all of the form information for the search.
+          
+          criterium = 
             {
-              // Create a criterum element
-              criterium = 
-                {
-                  type  : "element", 
-                  field : "tags", 
-                  value : selection[0].getLabel()
-                };
+              type  : "element", 
+              field : "tags", 
+              value : fsm.getObject("myTextBox").getValue()
+            };
               
-              // Add it to the list of criteria being ANDed
-              criteria.children.push(criterium);
-            }
-          }
+          // Add it to the list of criteria being ANDed
+          criteria.children.push(criterium);
+
 
           // Issue the remote procedure call to execute the query
           request =
@@ -377,7 +367,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
       });
 
       state.addTransition(trans);
-      */
 
       /*
        * Transition: Idle to Idle

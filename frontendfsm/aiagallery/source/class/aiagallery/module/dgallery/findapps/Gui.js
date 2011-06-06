@@ -70,7 +70,8 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       list.addListener("changeSelection", fsm.eventListener, fsm);
       groupbox.add(list);
       fsm.addObject("browse2", list);
-
+      // Finished with the finder-style browser
+       
       // Begin creating the search gui
       // groupbox contains the whole rest of the shabang
       groupbox = new qx.ui.groupbox.GroupBox("Search") ;
@@ -97,9 +98,11 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
           contentPadding : 3
        });
             
-      // Dummy lines to see how my scroll vbox works
-      for (var i = 0 ; i < 100 ; i++)
-        criteria.add( new qx.ui.form.TextField() );
+      
+      // Start with a single line of refinement
+      var myRefineLine = this.buildSearchRefineLine( fsm );
+      criteria.add(myRefineLine);
+      
       
       // buttonbar is where the search, reset, and possibly "add new search refinement" buttons go
       var buttonbar = new qx.ui.groupbox.GroupBox() ;
@@ -144,13 +147,46 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
     /**
      * Construct and return a search refining line
      * 
+     * @param FSM object
      * 
      * @return new container with the empty search refining form
      */
     
-    buildSearchRefineLine : function( container ) {
-      var groupbox = new qx.ui.groupbox.GroupBox();
+    buildSearchRefineLine : function(fsm) {
       
+      // This HBox will contain an entire line of refinement
+      var groupbox = new qx.ui.groupbox.GroupBox();
+      groupbox.set(
+        {
+          layout          : new qx.ui.layout.HBox()
+        });
+      
+      // Create the Attribute Select Box
+      var attrSelect = new qx.ui.form.SelectBox();
+      
+      // Store some attributes in it
+      var myAttr = new qx.ui.form.ListItem("Tag", null, "tags");
+      attrSelect.add(myAttr);
+      
+      // Create the Qualifier Select Box
+      var qualSelect = new qx.ui.form.SelectBox();
+      
+      // Store some qualifiers in it
+      // NOTE: the model is currently an empty string, duno how this will pan out
+      var myQual = new qx.ui.form.ListItem("is exactly", null, "") ;
+      qualSelect.add(myQual);
+      
+      // Add the Attribute Select Box first
+      groupbox.add(attrSelect);
+      // Then the qualifier box
+      groupbox.add(qualSelect);
+      // Then the text box
+      var myTextBox = new qx.ui.form.TextField();
+      fsm.addObject("myTextBox", myTextBox);
+      groupbox.add( myTextBox ) ;
+      
+      // Finally give'm what they came for.
+      return groupbox;
       
     },
     /**
