@@ -49,7 +49,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
 
-            // Otherewise, call the standard result handler
+            // Call the standard result handler
             var gui = aiagallery.module.dgallery.findapps.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
 

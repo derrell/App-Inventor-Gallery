@@ -61,7 +61,7 @@ qx.Class.define("aiagallery.Application",
         {
           // ... call the module's buildInitialFsm() function
           module = moduleList[menuItem][moduleName]["clazz"].getInstance();
-         module.buildInitialFsm(moduleList[menuItem][moduleName]);
+          module.buildInitialFsm(moduleList[menuItem][moduleName]);
         }
       }
 

@@ -84,6 +84,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/Entity.class		\
 	qxoo_classes/aiagallery/dbif/MVisitors.class		\
 	qxoo_classes/aiagallery/dbif/MTags.class		\
+	qxoo_classes/aiagallery/dbif/MMobile.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjDownloads.class		\

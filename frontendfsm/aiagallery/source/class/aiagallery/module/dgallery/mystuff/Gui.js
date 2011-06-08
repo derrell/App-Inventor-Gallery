@@ -88,6 +88,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       model.setColumns([ 
                          this.tr("Title"),
                          this.tr("Description"),
+                         this.tr("Owner"),
                          this.tr("Image 1"),
                          this.tr("Image 2"),
                          this.tr("Image 3"),
@@ -102,6 +103,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
                        [
                          "title",
                          "description",
+                         "owner",
                          "image1",
                          "image2",
                          "image3",
@@ -146,7 +148,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       var tcm = table.getTableColumnModel();
       
       // The image columns require an image cell renderer
-      for (var i = 2; i <= 4; i++)
+      for (var i = 3; i <= 5; i++)
       {
         var imageCellRenderer = new qx.ui.table.cellrenderer.Image(60, 60);
         imageCellRenderer.setRepeat("scale");
@@ -162,15 +164,16 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       resizeBehavior.set(0,  { width:100 });                // Title
       resizeBehavior.set(1,  { width:150 });                // Description
-      resizeBehavior.set(2,  { width:70  });                // Image 1
-      resizeBehavior.set(3,  { width:70  });                // Image 2
-      resizeBehavior.set(4,  { width:70  });                // Image 3
-      resizeBehavior.set(8,  { width:70  });                // # Likes
-      resizeBehavior.set(9,  { width:70  });                // # Downloads
-      resizeBehavior.set(10, { width:70  });                // # Viewed
+      resizeBehavior.set(2,  { width:100 });                // Owner
+      resizeBehavior.set(3,  { width:70  });                // Image 1
+      resizeBehavior.set(4,  { width:70  });                // Image 2
+      resizeBehavior.set(5,  { width:70  });                // Image 3
+      resizeBehavior.set(9,  { width:70  });                // # Likes
+      resizeBehavior.set(10, { width:70  });                // # Downloads
+      resizeBehavior.set(11, { width:70  });                // # Viewed
 
       var editor = new aiagallery.module.dgallery.mystuff.CellEditorFactory();
-      for (var i = 0; i < 12; i++)
+      for (var i = 0; i < 13; i++)
       {
         tcm.setCellEditorFactory(i, editor);
       }

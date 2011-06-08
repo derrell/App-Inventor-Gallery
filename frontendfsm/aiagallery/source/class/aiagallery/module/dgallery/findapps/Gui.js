@@ -85,54 +85,41 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var criteriascroll = new qx.ui.container.Scroll().set(
         {
           height : 330,
-          width : 1000,
-
+          width : 1000
         });
-       criteriascroll.add(criteria) ;
-      /*
-      // FIXME: not sure this height/width is necessary, just playing around with groubox wrapped in Scroll
-      criteria.set(
-        {
-          height : 300,
-          width : 1000,
-          contentPadding : 3
-       });
-        */    
-      
+      criteriascroll.add(criteria);
+       
       // Start with a single line of refinement
-      var myRefineLine = this.buildSearchRefineLine( fsm );
+      var myRefineLine = this.buildSearchRefineLine(fsm);
       criteria.add(myRefineLine);
       
-      
       // buttonbar is where the search, reset, and possibly "add new search refinement" buttons go
-      var buttonbar = new qx.ui.groupbox.GroupBox() ;
+      var buttonbar = new qx.ui.groupbox.GroupBox();
       buttonbar.set(
         {
           layout         : new qx.ui.layout.HBox(),
           contentPadding : 3
         });
       
-      var searchbtn = new qx.ui.form.Button("Search On This") ;
+      var searchbtn = new qx.ui.form.Button("Search On This");
       fsm.addObject("searchBtn", searchbtn);
       searchbtn.addListener("execute", fsm.eventListener, fsm);
-      var resetbtn = new qx.ui.form.Button("Reset All Fields") ;
-      buttonbar.add(resetbtn) ;
+      var resetbtn = new qx.ui.form.Button("Reset All Fields");
+      buttonbar.add(resetbtn);
       buttonbar.add(searchbtn);
      
       // Finally, add the Scroll-wrapped criteria on top of the buttonbar
-      groupbox.add(criteriascroll, { flex : 1 }) ;
-      groupbox.add(buttonbar) ;
+      groupbox.add(criteriascroll, { flex : 1 });
+      groupbox.add(buttonbar);
 
       groupbox.getChildControl("frame").setBackgroundColor("white");
 
       // End search gui by adding it to hBox
-      hBox.add(groupbox, { flex : 1 });
+      hBox.add(groupbox, {flex : 1});
 
       // Provide a bit of space at the right
       hBox.add(new qx.ui.core.Spacer(10));
 
-      
-      
       // Create a vertical box layout for the bottom pane
       vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
       splitpane.add(vBox, 1);
@@ -295,15 +282,15 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
           {
           case "browse0":
             nextList = browse1;
-            break ;
+            break;
             
           case "browse1":
             nextList = browse2;
-            break ;
+            break;
           
           case "browse2":
             // nothing to do
-            break ;
+            break;
           }
           // Create a single list of all of the resulting tags
           tagMap = {};
@@ -336,7 +323,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
                 nextList.add(new qx.ui.form.ListItem(tag));
               });
           }
-      }
+        }
         break;
 
       default:
