@@ -86,10 +86,10 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
         {
           height : 330,
           width : 1000,
-          flex : 1
+
         });
        criteriascroll.add(criteria) ;
-      
+      /*
       // FIXME: not sure this height/width is necessary, just playing around with groubox wrapped in Scroll
       criteria.set(
         {
@@ -97,7 +97,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
           width : 1000,
           contentPadding : 3
        });
-            
+        */    
       
       // Start with a single line of refinement
       var myRefineLine = this.buildSearchRefineLine( fsm );
@@ -120,7 +120,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       buttonbar.add(searchbtn);
      
       // Finally, add the Scroll-wrapped criteria on top of the buttonbar
-      groupbox.add(criteriascroll) ;
+      groupbox.add(criteriascroll, { flex : 1 }) ;
       groupbox.add(buttonbar) ;
 
       groupbox.getChildControl("frame").setBackgroundColor("white");
