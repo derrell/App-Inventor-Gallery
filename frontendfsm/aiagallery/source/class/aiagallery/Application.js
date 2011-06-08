@@ -200,3 +200,9 @@ new aiagallery.main.Module(
   "aiagallery/test.png",
   "Users",
   aiagallery.module.mgmt.users.Users);
+
+new aiagallery.main.Module(
+ "Management",
+ "aiagallery/test.png",
+ "Development",
+ aiagallery.module.mgmt.development.Development);

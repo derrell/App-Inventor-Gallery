@@ -306,7 +306,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
 
           // Create an array of the lists
 
-          // Determine on which browse list we received the event
+          // Determine on which widget we received the event
           var friendly = fsm.getFriendlyName(event.getTarget());
           
           //FIXME: Want to use this to clear all Finder lists on search event

@@ -99,6 +99,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getAppInfo : function(appId)
     {
+      // Using the method included by mixin MApps
+      return this.getAppInfo(appId, false, null);
     },
     
     __getComments : function(appId)

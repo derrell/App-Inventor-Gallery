@@ -17,7 +17,8 @@ qx.Class.define("aiagallery.dbif.DbifSim",
 
     aiagallery.dbif.MVisitors,
     aiagallery.dbif.MApps,
-    aiagallery.dbif.MTags
+    aiagallery.dbif.MTags,
+    aiagallery.dbif.MMobile
   ],
   
   construct : function()
