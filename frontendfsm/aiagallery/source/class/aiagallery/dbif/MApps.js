@@ -419,6 +419,36 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return { apps : appList, categories : categoryNames };
     },
     
+    /**
+     * Issue a query for a set of applicaitons. Limit the response to
+     * particular fields.
+     *
+     * @param criteria {Map|Key}
+     *   Criteria for selection of which applications to return. This
+     *   parameter is in the format described in the 'searchCriteria'
+     *   parameter of rpcjs.dbif.Entity.query().
+     *
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     *
+     *         return { apps : appList, categories : categoryNames };
+     * @return {Map}
+     *   The return value is a map with two members: "apps" and
+     *   "categories". The former is an array of maps, each providing
+     *   information about one application. The latter is an array of the tags
+     *   which are identified as top-level categories.
+     */
     appQuery : function(criteria, requestedFields)
     {
       var             appList;
