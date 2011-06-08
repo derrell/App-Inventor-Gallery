@@ -316,7 +316,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             whoami;
       var             criteria;
       var             resultCriteria = [];
-      
+      var             owners;
+  
       // Get the current user
       whoami = this.getUserData("whoami");
 
@@ -380,6 +381,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
             // Convert from numeric to string status
             app.status = [ "Banned", "Pending", "Active" ][app.status];
+
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
           });
       }
       
@@ -416,6 +424,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             appList;
       var             categories;
       var             categoryNames;
+      var             owners;
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
@@ -434,6 +443,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             }
             else
             {
+              // If the owner is being requested...
+              if (field === "owner")
+              {
+                // ... then issue a query for this visitor
+                owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                                 app[field]);
+
+                // Replace his visitor id with his display name
+                app[field] = owners[0].displayName;
+              }
+
               // If the field name is to be remapped...
               if (requested != field)
               {
@@ -483,7 +503,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             tagTable;
       var             whoami;
       var             criteria;
-      var             owner;
+      var             owners;
 
       whoami = this.getUserData("whoami");
 
@@ -537,12 +557,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           field : "id",
           value : whoami
         };
+      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
+qx.dev.Debug.debugObject(owners, "owners");
       
       // Issue a query for this visitor
-      owner = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
+/*
+this.warn("whoami=" + whoami);
+      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", whoami);
+*/
 
       // Assign the display name as the application's owner name
-      app.ownerName = owner.displayName;
+      app.owner = owners[0].displayName;
 
       // If we were asked to stringize the values...
       if (bStringize)
