@@ -77,7 +77,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       groupbox = new qx.ui.groupbox.GroupBox("Search") ;
       groupbox.setLayout( new qx.ui.layout.VBox()) ;
 
-      // criteria will house all of the "lines of refinement", perfect candidate for VBox
+      // criteria will house all of the "lines of refinement"
       var criteria = new qx.ui.groupbox.GroupBox();
       criteria.setLayout( new qx.ui.layout.VBox());
   
@@ -93,7 +93,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var myRefineLine = this.buildSearchRefineLine(fsm);
       criteria.add(myRefineLine);
       
-      // buttonbar is where the search, reset, and possibly "add new search refinement" buttons go
+      // buttonbar is where the search, reset, and possibly more buttons go
       var buttonbar = new qx.ui.groupbox.GroupBox();
       buttonbar.set(
         {
@@ -159,7 +159,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var qualSelect = new qx.ui.form.SelectBox();
       
       // Store some qualifiers in it
-      // NOTE: the model is currently an empty string, duno how this will pan out
+      // NOTE: unsure how to use model here, so using empty string
       var myQual = new qx.ui.form.ListItem("is exactly", null, "") ;
       qualSelect.add(myQual);
       

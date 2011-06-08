@@ -284,8 +284,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
        *  Initiate a request for the list of  matching applications.
        */
         
-        //FIXME: I am commenting out large blocks of code i don't think I'll need while I work.
-        //FIXME: this is because I used the Transition..._via_browse as a template
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_search",
       {
