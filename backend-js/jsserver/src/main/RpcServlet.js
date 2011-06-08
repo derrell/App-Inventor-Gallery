@@ -9,6 +9,7 @@
 * This is the HTTP Servlet for remote procedure calls.
 */
 
+// Load each of the JavaScript classes
 new Packages.main.Loader();
 
 /**
@@ -73,17 +74,29 @@ function doPost(request, response)
  */
 function doGet(request, response)
 {
-  var PDatastore = Packages.com.google.appengine.api.datastore;
-  var datastore = PDatastore.DatastoreServiceFactory.getDatastoreService();
-  var employee;
-  var key;
   var entry;
   var entity;
+  var queryString = request.getQueryString();
+  var querySplit;
+  var jsonInput;
+  var rpcResult;
+  var out;
+  
+  // We likely received something like:
+  //   tag=by_developer%3AJoe%20Blow%3A0%3A10%3AuploadTime
+  // which decodes to this:
+  //   tag=by_developer:Joe Blow:0:10:uploadTime
+  //
+  // Decode it and split the command (tag, in this case) from the
+  // parameter. We'll ignore any commands other than the first, i.e. anything
+  // including and following an ampersand.
+  querySplit = decodeURIComponent(queryString).split(/[=&]/);
 
-  print("Query string: " + request.getQueryString());
-
-  if (request.getQueryString() == "addSimData")
+  // See what was requested.
+  switch(querySplit[0])
   {
+/*
+  case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
     //
@@ -143,5 +156,26 @@ function doGet(request, response)
       entity.setData(Db.flags[entry]);
       entity.put();
     }
+    break;
+*/
+
+  case "tag":              // mobile client request
+    // Simulate a real RPC request
+    jsonInput = 
+      '{\n' +
+      '  "service" : "aiagallery.features",\n' +
+      '  "method"  : "mobileRequest",\n' +
+      '  "params"  : [ "' + querySplit[1] + '" ]\n' +
+      '}';
+
+    // Process this request
+    rpcResult = 
+      aiagallery.dbif.DbifAppEngine.getInstance().processRequest(jsonInput);
+    
+    // Generate the response.
+    response.setContentType("application/json");
+    out = response.getWriter();
+    out.println(rpcResult);
+    break;
   }
 };
