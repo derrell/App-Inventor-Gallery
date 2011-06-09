@@ -189,6 +189,12 @@ qx.Class.define("aiagallery.main.Gui",
             canvas.addListener("appear", fsm.eventListener, fsm);
             canvas.addListener("disappear", fsm.eventListener, fsm);
           }
+          
+          // Make the main gallery subtabs globally accessible
+          if (menuItem == "Gallery") 
+          {
+            qx.core.Init.getApplication().setUserData("subTabs", subTabs);
+          }
         }
         else
         {
