@@ -44,7 +44,7 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var welcomeRow = new qx.ui.container.Composite(welcomeLayout);
       
       // Create an image (temporary one for now)
-      var homeImage = new qx.ui.basic.Image("aiagallery/homepage.png");
+      var homeImage = new qx.ui.basic.Image("aiagallery/homepage2.png");
       welcomeRow.add(homeImage);
 
       // Create a welcome message      
@@ -68,19 +68,19 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       
       // Add "Find Apps" box to link row
       var findApps = new aiagallery.module.gallery.home.LinkBox(
-        "<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        this.tr("<b>Find Apps</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
+        "aiagallery/findApps.png");
       findApps.addListener("click", fsm.eventListener, fsm);
       linkRow.add(findApps);
       fsm.addObject("Find Apps", findApps);
-
+      
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
       // Add "Learn" box to link row
       var learn = new aiagallery.module.gallery.home.LinkBox(
-        "<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        this.tr("<b>Learn</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
+        "aiagallery/learn.png");
       learn.addListener("click", fsm.eventListener, fsm);
       linkRow.add(learn);
       fsm.addObject("Learn", learn);
@@ -90,8 +90,8 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       
       // Add "My Stuff" box to link row
       var myStuff = new aiagallery.module.gallery.home.LinkBox(
-        "<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus.",
-        "aiagallery/test.png");
+        this.tr("<b>My Stuff</b><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer quis arcu ut velit ullamcorper mattis in quis metus."),
+        "aiagallery/myStuff.png");
       myStuff.addListener("click", fsm.eventListener, fsm);
       linkRow.add(myStuff);
       fsm.addObject("My Stuff", myStuff);
@@ -116,33 +116,10 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       var featuredAppsSlideBar = new qx.ui.container.SlideBar();
       featuredAppsSlideBar.set(
         {
-          height : 150
+          height : 180
         });
-        
-      // fill it with junk for now just to get an idea of the look
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "It's a Bird", "Sue Permann", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "On the Fence", "Barb Dwyer", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Breakfast Time", "Hammond Aigs", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Be Prepared", "Justin Case", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "What's Your Sign?", "Horace Cope", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Salute", "Stan Dupp", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "At Ease", "Sid Down", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Great Books", "Warren Piece", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Criminal Minds", "Robin Banks", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Don't Cross Me", "Yul Besari", "aiagallery/test.png"));
-      featuredAppsSlideBar.add(new aiagallery.widget.AppThumb(
-        "Tired of This", "Hadda Nuff", "aiagallery/test.png"));
       
+      fsm.addObject("Featured Apps", featuredAppsSlideBar);
       featuredApps.add(featuredAppsSlideBar);
       
       // add Featured Apps section to the page
@@ -176,8 +153,46 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "getAppList":
-        // TODO: Display the returned apps in the Featured Apps feed
+      case "appQuery":
+        // Get the gallery object
+        var featuredApps = fsm.getObject("Featured Apps");
+        
+        // Retrieve the app list
+        var apps = response.data.result.apps;
+
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        var parent = featuredApps.getLayoutParent();
+        parent.remove(featuredApps);
+        featuredApps = new qx.ui.container.SlideBar();
+        featuredApps.set(
+          {
+            height : 180
+          });
+        fsm.addObject("Featured Apps", featuredApps);
+        parent.add(featuredApps);
+        
+        for (var i = 0; i < apps.length; i++)
+        {
+          var app = apps[i];
+          
+          // FIXME: Need to fetch visitor's displayName to show instead of id
+          var appThumb = 
+            new aiagallery.widget.AppThumb(app.label, app.owner, app.icon);
+          featuredApps.add(appThumb);
+          
+          // Associate the app data with the UI widget so it can be passed
+          // in the click event callback
+          appThumb.setUserData("App Data", app);
+          
+          // Fire an event specific to this application, sans a friendly name.
+          appThumb.addListener(
+            "click", 
+            function(e)
+            {
+              fsm.fireImmediateEvent("featuredAppClick", this, 
+                e.getCurrentTarget().getUserData("App Data"));
+            });
+        }       
         break;
         
       default:
