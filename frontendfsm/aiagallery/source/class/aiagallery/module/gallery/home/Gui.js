@@ -179,15 +179,20 @@ qx.Class.define("aiagallery.module.gallery.home.Gui",
           var appThumb = 
             new aiagallery.widget.AppThumb(app.label, app.owner, app.icon);
           featuredApps.add(appThumb);
-
+          
+          // Associate the app data with the UI widget so it can be passed
+          // in the click event callback
+          appThumb.setUserData("App Data", app);
+          
           // Fire an event specific to this application, sans a friendly name.
           appThumb.addListener(
             "click", 
             function(e)
             {
-              fsm.fireImmediateEvent("featuredAppClick", this, app);
+              fsm.fireImmediateEvent("featuredAppClick", this, 
+                e.getCurrentTarget().getUserData("App Data"));
             });
-        }
+        }       
         break;
         
       default:
