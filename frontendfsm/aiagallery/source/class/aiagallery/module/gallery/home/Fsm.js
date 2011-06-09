@@ -146,6 +146,12 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
           var             app;
           var             moduleList;
       
+          //
+          // FIXME djl: This code is common with findapps. Create a function
+          // someplace where it is available to various modules, and call that
+          // function rather than duplicating the code in multiple places.
+          //
+
           // Get the main tab view
           var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
           
