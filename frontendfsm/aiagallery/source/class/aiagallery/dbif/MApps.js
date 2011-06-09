@@ -316,7 +316,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             whoami;
       var             criteria;
       var             resultCriteria = [];
-      
+      var             owners;
+  
       // Get the current user
       whoami = this.getUserData("whoami");
 
@@ -380,6 +381,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
             // Convert from numeric to string status
             app.status = [ "Banned", "Pending", "Active" ][app.status];
+
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
           });
       }
       
@@ -411,11 +419,42 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return { apps : appList, categories : categoryNames };
     },
     
+    /**
+     * Issue a query for a set of applicaitons. Limit the response to
+     * particular fields.
+     *
+     * @param criteria {Map|Key}
+     *   Criteria for selection of which applications to return. This
+     *   parameter is in the format described in the 'searchCriteria'
+     *   parameter of rpcjs.dbif.Entity.query().
+     *
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     *
+     *         return { apps : appList, categories : categoryNames };
+     * @return {Map}
+     *   The return value is a map with two members: "apps" and
+     *   "categories". The former is an array of maps, each providing
+     *   information about one application. The latter is an array of the tags
+     *   which are identified as top-level categories.
+     */
     appQuery : function(criteria, requestedFields)
     {
       var             appList;
       var             categories;
       var             categoryNames;
+      var             owners;
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
@@ -434,6 +473,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             }
             else
             {
+              // If the owner is being requested...
+              if (field === "owner")
+              {
+                // ... then issue a query for this visitor
+                owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                                 app[field]);
+
+                // Replace his visitor id with his display name
+                app[field] = owners[0].displayName;
+              }
+
               // If the field name is to be remapped...
               if (requested != field)
               {
@@ -483,7 +533,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             tagTable;
       var             whoami;
       var             criteria;
-      var             owner;
+      var             owners;
 
       whoami = this.getUserData("whoami");
 
@@ -537,12 +587,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           field : "id",
           value : whoami
         };
+      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
+qx.dev.Debug.debugObject(owners, "owners");
       
       // Issue a query for this visitor
-      owner = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
+/*
+this.warn("whoami=" + whoami);
+      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", whoami);
+*/
 
       // Assign the display name as the application's owner name
-      app.ownerName = owner.displayName;
+      app.owner = owners[0].displayName;
 
       // If we were asked to stringize the values...
       if (bStringize)

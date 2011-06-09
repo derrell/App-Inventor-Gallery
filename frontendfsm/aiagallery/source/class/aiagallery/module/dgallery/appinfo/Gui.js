@@ -24,10 +24,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
      */
     buildGui : function(module)
     {
-      var             o;
-      var             fsm = module.fsm;
-      var             canvas = module.canvas;
-      
     },
 
 

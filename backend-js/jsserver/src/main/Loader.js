@@ -179,6 +179,9 @@ try
   classname = "aiagallery.dbif.MApps";
   new Packages.aiagallery.dbif.MApps();
   
+  classname = "aiagallery.dbif.MMobile";
+  new Packages.aiagallery.dbif.MMobile();
+  
   classname = "rpcjs.dbif.Entity";
   new Packages.rpcjs.dbif.Entity();
 

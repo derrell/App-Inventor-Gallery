@@ -44,7 +44,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       // Provide the new data
       visitor.setData(
         {
-          userId      : userId,
+          id          : userId,
           displayName : displayName || visitorData.displayName || "<>",
           permissions : permissions || visitorData.permissions || [],
           status      : status != -1 ? status : (visitorData.status || 2)
