@@ -526,6 +526,33 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return { apps : appList, categories : categoryNames };
     },
     
+    /**
+     * Get the details about a particular application.
+     *
+     * @param uid {Key}
+     *   The unique identifier of an application.
+     *
+     * @param bStringize {Boolean}
+     *   Whether some non-string parameters should be converted to a string
+     *   representation. For example, the "tags" and "previousAuthors" fields
+     *   are arrays, and are returned as an array if this parameter is false,
+     *   but are returned as a comma-separated string of the array values if
+     *   this parameter value is true. The status value, an integer, is
+     *   returned as a number when this parameter is false, and as the string
+     *   representing the status value when it is true.
+     *
+     * @param error {rpcjs.rpc.error.Error}
+     *   All RPCs are passed, as their final argument, an error object. Most
+     *   don't use it, but this one does. If the application being requested
+     *   is not found (which, since the uid of the specific application is
+     *   provided as a parameter, likely means that it was just deleted), an
+     *   error is generated back to the client by setting the code and message
+     *   in this object.
+     *
+     * @return {Map}
+     *   All of the information about the application, with the exception that
+     *   the owner has been converted to the owner's display name.
+     */
     getAppInfo : function(uid, bStringize, error)
     {
       var             app;
@@ -588,7 +615,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           value : whoami
         };
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
-qx.dev.Debug.debugObject(owners, "owners");
+//qx.dev.Debug.debugObject(owners, "owners");
       
       // Issue a query for this visitor
 /*
