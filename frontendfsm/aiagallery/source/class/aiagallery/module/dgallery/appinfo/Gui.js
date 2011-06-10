@@ -216,13 +216,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                              { row : 2, column : 1, colSpan : 3 });
         
         [
-          { label : "Uploaded",  data : result.uploadTime,   row : 3 },
-          { label : "Tags",      data : result.tags,         row : 4 },
-          { label : "Status",    data : result.status,       row : 5 },
-          { label : "Likes",     data : result.numLikes,     row : 6 },
-          { label : "Downloads", data : result.numDownloads, row : 7 },
-          { label : "Views",     data : result.numViewed,    row : 8 },
-          { label : "Comments",  data : result.numComments,  row : 9 }
+          { label : "Owner",     data : result.owner,        row : 3 },
+          { label : "Uploaded",  data : result.uploadTime,   row : 4 },
+          { label : "Tags",      data : result.tags,         row : 5 },
+          { label : "Status",    data : result.status,       row : 6 },
+          { label : "Likes",     data : result.numLikes,     row : 7 },
+          { label : "Downloads", data : result.numDownloads, row : 8 },
+          { label : "Views",     data : result.numViewed,    row : 9 },
+          { label : "Comments",  data : result.numComments,  row : 10 }
         ].forEach(
           function(field)
           {
