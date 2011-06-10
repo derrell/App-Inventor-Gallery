@@ -600,31 +600,16 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         return error;
       }
 
-      // Delete the owner field. User doesn't get to see that.
-      delete app.owner;
-      
+      // Issue a query for this visitor
+      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                       app.owner);
+
+      // Replace the (private) owner id with his display name
+      app.owner = owners[0].displayName;
+
       // Delete the apk and source fields. Not needed here, and could be large.
       delete app.apk;
       delete app.source;
-
-      // Instead, add a display name field. Retrieve it
-      criteria =
-        {
-          type  : "element",
-          field : "id",
-          value : whoami
-        };
-      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", criteria);
-//qx.dev.Debug.debugObject(owners, "owners");
-      
-      // Issue a query for this visitor
-/*
-this.warn("whoami=" + whoami);
-      owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", whoami);
-*/
-
-      // Assign the display name as the application's owner name
-      app.owner = owners[0].displayName;
 
       // If we were asked to stringize the values...
       if (bStringize)
