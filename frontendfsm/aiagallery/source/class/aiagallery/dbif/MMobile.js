@@ -79,6 +79,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getAll : function(offset, count, sortOrder)
     {
+      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", null,
+                                     // This is where resultCriteria goes
+                                     null);
     },
     
     __getBySearch : function(keywordString, offset, count, sortOrder)
@@ -87,24 +90,74 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(tagName, offset, count, sortOrder)
     {
+      return rpcjs.dbif.Entity.query("aiagalelry.dbif.ObjAppData",
+                                     {
+                                      
+                                       type  : "element",
+                                       field : "tags",
+                                       value : tagName
+                                       
+                                     },
+                                     // This is where resultCriteria goes
+                                     null);
     },
     
     __getByFeatured : function(offset, count, sortOrder)
     {
+      // If the only quality of a Featured App is that it has a Featured tag
+      //   then this works.
+      return this.__getByTag( "Featured", offset, count, sortOrder);
     },
     
     __getByOwner : function(displayName, offset, count, sortOrder)
     {
+      
+      // First I'm going to trade the displayName for the real owner Id
+      var owner = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                          {
+                                            type  : "element",
+                                            field : "displayName", 
+                                            value : displayName
+                                          },
+                                          null);
+      var ownerId = owner[0].id;
+      
+      // Then use the ownerId to query for all Apps
+      var results = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                            {
+                                              type  : "element",
+                                              field : "owner",
+                                              value : ownerId
+                                            },
+                                        // This is where resultCriteria goes
+                                            null);
+      return results;
+                
+                                            
     },
     
     __getAppInfo : function(appId)
     {
       // Using the method included by mixin MApps
+      
+      // FIXME: This breaks on a bad appId. Need to learn what "error" should
+      // FIXME:   be passed for the third paramater. Works otherwise
       return this.getAppInfo(appId, false, null);
     },
     
     __getComments : function(appId)
     {
+      // UNTESTED. At time of dev, no comments available to query on
+      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments",
+                                     {
+                                      
+                                       type  : "element",
+                                       field : "app",
+                                       value : appId
+                                       
+                                     },
+                                     // No resultCriteria here
+                                     null);
     },
     
     __getCategories : function()
