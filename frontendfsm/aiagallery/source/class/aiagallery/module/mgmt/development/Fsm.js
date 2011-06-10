@@ -77,14 +77,14 @@ qx.Class.define("aiagallery.module.mgmt.development.Fsm",
           // to determine if it's necessary.
           "appear"    :
           {
-            "main.canvas" : 
-              qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
+            //"main.canvas" : 
+              //qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
           },
 
           // When we get a disappear event
           "disappear" :
           {
-            "main.canvas" : "Transition_Idle_to_Idle_via_disappear"
+            //"main.canvas" : "Transition_Idle_to_Idle_via_disappear"
           }
         }
       });
