@@ -88,7 +88,8 @@ qx.Class.define("aiagallery.module.mgmt.development.Gui",
       {
       case "mobileRequest":
         
-        fsm.getObject("resultField").setValue(response.data.result);  
+        fsm.getObject("resultField").setValue(response.data.result.join(", "));
+ 
         break;
 
       case "getCategoryTags":
