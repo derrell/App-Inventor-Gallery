@@ -81,7 +81,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", null,
                                      // This is where resultCriteria goes
-                                     null);
+                                     this.__buildResultCriteria( offset,
+                                                                 count,
+                                                                 sortOrder));
     },
     
     __getBySearch : function(keywordString, offset, count, sortOrder)
@@ -90,7 +92,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(tagName, offset, count, sortOrder)
     {
-      return rpcjs.dbif.Entity.query("aiagalelry.dbif.ObjAppData",
+      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
                                      {
                                       
                                        type  : "element",
@@ -99,7 +101,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
                                        
                                      },
                                      // This is where resultCriteria goes
-                                     null);
+                                     this.__buildResultCriteria( offset,
+                                                                 count,
+                                                                 sortOrder));
     },
     
     __getByFeatured : function(offset, count, sortOrder)
@@ -119,6 +123,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
                                             field : "displayName", 
                                             value : displayName
                                           },
+                                          // No resultCriteria, just need 1
                                           null);
       var ownerId = owner[0].id;
       
@@ -130,7 +135,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
                                               value : ownerId
                                             },
                                         // This is where resultCriteria goes
-                                            null);
+                                            this.__buildResultCriteria( offset,
+                                                                   count,
+                                                                   sortOrder));
       return results;
                 
                                             
@@ -164,6 +171,45 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       // Use the method included by mixin MTags
       return this.getCategoryTags();
+    },
+   
+    /**
+     * Build a correctly formatted Result Criteria array for rpc queries
+     * 
+     * @param offset {Number}
+     *   Specify how many results to skip
+     * 
+     * @param count {Number}
+     *   Limit how many matching results are returned
+     * 
+     * @param sortOrder {String}
+     *   Either "desc" or "asc" to specify the order in which results should be
+     *   returned.
+     * 
+     * @return {Array}
+     *   Array contains objects specifying the result criteria
+     * 
+     */
+    __buildResultCriteria : function(offset, count, sortOrder)
+    {
+      var ret = [];
+      
+      if (sortOrder)
+      {
+        ret.push({ type  : "sort", value : { "value" : sortOrder  } });
+      }
+      
+      if (count)
+      {
+        ret.push( { type  : "limit", value : count}); 
+      }
+      
+      if (offset)
+      {
+        ret.push( {  type  : "offset", value : offset });
+      }
+      
+      return ret;
     }
   }
 });
