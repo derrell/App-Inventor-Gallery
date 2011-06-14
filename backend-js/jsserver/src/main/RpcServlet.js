@@ -123,7 +123,7 @@ function doGet(request, response)
       entity = new aiagallery.dbif.ObjAppData(entry);
       
       // UID is encoded as a string, but should be a number in this environment.
-      Db.apps[entry].uid = Number(Db.apps[entry]);
+      Db.apps[entry].uid = parseInt(Db.apps[entry].uid);
       
       entity.setData(Db.apps[entry]);
       entity.put();
