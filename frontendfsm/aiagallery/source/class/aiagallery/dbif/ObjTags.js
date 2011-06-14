@@ -40,7 +40,7 @@ qx.Class.define("aiagallery.dbif.ObjTags",
         "type"  : "String",
         
         /** The number of uses of this tag value */
-        "count" : "Number"
+        "count" : "Integer"
       };
 
     // Register our property types
