@@ -564,19 +564,11 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       whoami = this.getUserData("whoami");
 
-      // Create the criteria for the specified application
-      criteria =
-        {
-          type  : "element",
-          field : "uid",
-          value : uid
-        };
-      
-      // Issue a query for all apps 
-      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
+      // Issue a query for this app
+      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
 
       // See if this app exists. 
-      if (appList.length == 0)
+      if (appList.length === 0)
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
