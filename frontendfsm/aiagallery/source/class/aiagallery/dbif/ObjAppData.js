@@ -77,19 +77,19 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "uploadTime" : "String",
 
         /** Number of "likes" of this application */
-        "numLikes" : "Number",
+        "numLikes" : "Integer",
 
         /** Number of downloads of this application */
-        "numDownloads" : "Number",
+        "numDownloads" : "Integer",
 
         /** Number of times this application was viewed */
-        "numViewed" : "Number",
+        "numViewed" : "Integer",
 
         /** Number of comments on this application */
-        "numComments" : "Number",
+        "numComments" : "Integer",
 
         /** Status of this application (active, pending, banned) */
-        "status" : "Number"
+        "status" : "Integer"
       };
 
     // Register our property types

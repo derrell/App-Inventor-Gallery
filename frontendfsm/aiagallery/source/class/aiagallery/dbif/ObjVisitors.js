@@ -46,7 +46,7 @@ qx.Class.define("aiagallery.dbif.ObjVisitors",
         "permissions" : "StringArray",
 
         /** Active, Pending, or Banned (by their numeric values) */
-        "status" : "Number",
+        "status" : "Integer",
 
         /** A list of the user's recent searches */
         "recentSearches" : "StringArray",
