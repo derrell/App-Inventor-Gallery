@@ -93,7 +93,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Gui",
                        ],
                        [
                          "displayName",
-                         "userId",
+                         "id",
                          "permissions",
                          "status"
                        ]);
