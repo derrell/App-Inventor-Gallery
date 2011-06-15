@@ -119,7 +119,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       
       // First I'm going to trade the displayName for the real owner Id
-      var owner = rpcjs.dbif.Entity.query(
+      var owners = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjVisitors",
         {
           type  : "element",
@@ -128,7 +128,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         },
         // No resultCriteria, just need 1
         null);
-      var ownerId = owner[0].id;
+      var ownerId = owners[0].id;
       
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
@@ -153,7 +153,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // error object which we can manipulate if there's an error. In this
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
-      return this.getAppInfo(appId, false, error);
+      
+      return this.getAppInfo(parseInt(appId,10), false, error);
     },
     
     __getComments : function(appId)
@@ -164,7 +165,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         {
           type  : "element",
           field : "app",
-          value : appId
+          value : parseInt(appId,10)
         },
         // No resultCriteria here
         null);

@@ -564,7 +564,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       whoami = this.getUserData("whoami");
 
-      // Issue a query for this app
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
 
       // See if this app exists. 
@@ -586,7 +585,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
-        error.setCode(1);
+        error.setCode(2);
         error.setMessage("Application is not available. " +
                          "It may have been removed recently.");
         return error;
