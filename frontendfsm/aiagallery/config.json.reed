@@ -1,0 +1,136 @@
+{
+  "name"    : "aiagallery",
+
+  "include" :
+  [
+    {
+      "path" : "${QOOXDOO_PATH}/tool/data/config/application.json"
+    }
+  ],
+
+  "export" :
+  [
+    "api",
+    "api-data",
+    "build",
+    "clean",
+    "distclean",
+    "fix",
+    "info",
+    "inspector",
+    "lint",
+    "migration",
+    "pretty",
+    "profiling",
+    "source",
+    "source-all",
+    "source-hybrid",
+    "simulation-build",
+    "simulation-run",
+    "test",
+    "test-source",
+    "translation"
+  ],
+  
+  "default-job" : "source",
+
+  "let" :
+  {
+    "APPLICATION"  : "aiagallery",
+
+    // QOOXDOO_PATH should point to the directory which contains "framework",
+    // "tool", "application", and "component"
+    "QOOXDOO_PATH" : "../../../qooxdoo/qooxdoo",
+    
+    // CONTRIB_PATH should point to the directory that contains "Dialog",
+    // "RpcJs" and "UploadWidget"
+    "CONTRIB_PATH" : "../../../qooxdoo-contrib/trunk/qooxdoo-contrib",
+
+    "QXTHEME"      : "aiagallery.theme.Theme",
+    "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*", "${APPLICATION}.simulation.*"],
+    "LOCALES"      : [ "en" ],
+    "CACHE"        : "${TMPDIR}/qx${QOOXDOO_VERSION}/cache",
+    "OPTIMIZE"     : [ ],
+    "ROOT"         : "."
+  },
+
+  // You only need to edit the remainder of this file, if you want to customize
+  // specific jobs, or add own job definitions.
+
+  "jobs" :
+  {
+    "libraries" : 
+    {
+      "library" :
+      [
+        {
+          "manifest" : "${CONTRIB_PATH}/Dialog/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "${CONTRIB_PATH}/RpcJs/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "${CONTRIB_PATH}/UploadWidget/trunk/Manifest.json"
+        },
+        {
+          "manifest" : "${CONTRIB_PATH}/CollapsablePanel/trunk/Manifest.json"
+        }
+      ]
+    },
+
+    "source" :
+    {
+      "compile-options" :
+      {
+        "uris" :
+        {
+          "add-nocache-param" : false
+        }
+      }
+    },
+
+    "source-hybrid" :
+    {
+      "compile-options" :
+      {
+        "code" :
+        {
+          "=except" : [ ]
+        }
+      }
+    },
+
+    "build" :
+    {
+      "=run" : [
+        "build-script",
+        "build-resources",
+        "build-files",
+        "build-backend"
+      ]
+    },
+
+    "build-backend" :
+    {
+      "shell" :
+      {
+        "command"   :
+        [
+          "rm -rf ../../war/resource",
+          "rm -rf ../../war/script",
+          "rsync -av ./build/ ../../backend-js/jsserver/war/"
+        ]
+      }
+    }
+
+/*
+    "build-script" :
+    {
+      "variants" : 
+      {
+        "=qx.debug" : [ "on" ]
+      }
+    }
+*/
+  }
+}
