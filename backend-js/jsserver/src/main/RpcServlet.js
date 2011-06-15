@@ -157,8 +157,8 @@ function doGet(request, response)
       entity.put();
     }
     break;
-*/
 
+*/
   case "tag":              // mobile client request
     // Simulate a real RPC request
     jsonInput = 

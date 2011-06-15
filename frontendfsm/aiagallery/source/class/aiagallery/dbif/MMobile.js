@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -15,7 +16,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
 
   members :
   {
-    mobileRequest : function(command)
+    mobileRequest : function(command, error)
     {
       var             fields;
       var             field;
@@ -61,6 +62,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         
       case "getinfo":
         // Get information about an application
+        fields.push(error);
         return this.__getAppInfo.apply(this, fields);
         
       case "comments":
@@ -79,11 +81,14 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getAll : function(offset, count, sortOrder)
     {
-      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", null,
-                                     // This is where resultCriteria goes
-                                     this.__buildResultCriteria( offset,
-                                                                 count,
-                                                                 sortOrder));
+      return rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjAppData",
+        // We want everything, so null search criteria
+        null,
+        // This is where resultCriteria goes
+        this.__buildResultCriteria( offset,
+                                    count,
+                                    sortOrder));
     },
     
     __getBySearch : function(keywordString, offset, count, sortOrder)
@@ -92,18 +97,15 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(tagName, offset, count, sortOrder)
     {
-      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
-                                     {
-                                      
-                                       type  : "element",
-                                       field : "tags",
-                                       value : tagName
-                                       
-                                     },
-                                     // This is where resultCriteria goes
-                                     this.__buildResultCriteria( offset,
-                                                                 count,
-                                                                 sortOrder));
+      return rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjAppData",
+        {
+          type  : "element",
+          field : "tags",
+          value : tagName 
+        },
+        // This is where resultCriteria goes
+        this.__buildResultCriteria( offset, count, sortOrder));
     },
     
     __getByFeatured : function(offset, count, sortOrder)
@@ -117,54 +119,55 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       
       // First I'm going to trade the displayName for the real owner Id
-      var owner = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                          {
-                                            type  : "element",
-                                            field : "displayName", 
-                                            value : displayName
-                                          },
-                                          // No resultCriteria, just need 1
-                                          null);
+      var owner = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjVisitors",
+        {
+          type  : "element",
+          field : "displayName", 
+          value : displayName
+        },
+        // No resultCriteria, just need 1
+        null);
       var ownerId = owner[0].id;
       
       // Then use the ownerId to query for all Apps
-      var results = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
-                                            {
-                                              type  : "element",
-                                              field : "owner",
-                                              value : ownerId
-                                            },
-                                        // This is where resultCriteria goes
-                                            this.__buildResultCriteria( offset,
-                                                                   count,
-                                                                   sortOrder));
+      var results = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjAppData",
+        {
+          type  : "element",
+          field : "owner",
+          value : ownerId
+        },
+        // This is where resultCriteria goes
+        this.__buildResultCriteria( offset, count, sortOrder));
       return results;
                 
                                             
     },
     
-    __getAppInfo : function(appId)
+    __getAppInfo : function(appId, error)
     {
       // Using the method included by mixin MApps
       
-      // FIXME: This breaks on a bad appId. Need to learn what "error" should
-      // FIXME:   be passed for the third paramater. Works otherwise
-      return this.getAppInfo(appId, false, null);
+      // The final parameter to each RPC when called by the RPC Server, is an
+      // error object which we can manipulate if there's an error. In this
+      // case, we're pretending to be the server when we call a different RPC,
+      // so pass its error object.
+      return this.getAppInfo(appId, false, error);
     },
     
     __getComments : function(appId)
     {
-      // UNTESTED. At time of dev, no comments available to query on
-      return rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments",
-                                     {
-                                      
-                                       type  : "element",
-                                       field : "app",
-                                       value : appId
-                                       
-                                     },
-                                     // No resultCriteria here
-                                     null);
+      // FIXME: UNTESTED. At time of dev, no comments available to query on
+      return rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjComments",
+        {
+          type  : "element",
+          field : "app",
+          value : appId
+        },
+        // No resultCriteria here
+        null);
     },
     
     __getCategories : function()
@@ -192,23 +195,28 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
      */
     __buildResultCriteria : function(offset, count, sortOrder)
     {
+      // Building the Result Criteria object based on what's given
       var ret = [];
       
+      // Is sortOrder ("asc" or "desc") specified? then add sort order criteria
       if (sortOrder)
       {
         ret.push({ type  : "sort", value : { "value" : sortOrder  } });
       }
       
+      // Did they request a certain number of results? add a limit criteria
       if (count)
       {
         ret.push( { type  : "limit", value : count}); 
       }
       
+      // Did they want to skip a number of results? add offset criteria object
       if (offset)
       {
         ret.push( {  type  : "offset", value : offset });
       }
       
+      // return the whole finished Result Criteria object
       return ret;
     }
   }

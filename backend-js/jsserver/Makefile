@@ -12,9 +12,9 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
+qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
 app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -277,4 +277,4 @@ appserver :
 
 .PHONY: upload
 upload :	all
-	../appengine-java-sdk-1.5.0.1/bin/appcfg.sh update war
+	../appengine-java-sdk-1.4.3/bin/appcfg.sh update war

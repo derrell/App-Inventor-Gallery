@@ -1,5 +1,5 @@
 #!/bin/bash
-SDK_BIN="/home/derrell/ME/eclipse-workspace/App Inventor Gallery/backend-js/appengine-java-sdk-1.5.0.1/bin"
+SDK_BIN="../appengine-java-sdk-1.5.0.1/bin"
 SDK_LIB="$SDK_BIN/../lib"
 SDK_CONFIG="$SDK_BIN/../config/sdk"
 JAR_FILE=""
