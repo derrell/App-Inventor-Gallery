@@ -404,11 +404,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                            criteria,
                                            [
                                              { 
-                                               type : "sort",
-                                               value :
-                                               {
-                                                 "value" : "asc"
-                                               }
+                                               type  : "sort",
+                                               field : "value",
+                                               order : "asc"
                                              }
                                            ]);
       
@@ -508,11 +506,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                            criteria,
                                            [
                                              { 
-                                               type : "sort",
-                                               value :
-                                               {
-                                                 "value" : "asc"
-                                               }
+                                               type  : "sort",
+                                               field : "value",
+                                               order : "asc"
                                              }
                                            ]);
       
