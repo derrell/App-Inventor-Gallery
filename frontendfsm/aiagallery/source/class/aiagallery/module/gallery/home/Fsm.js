@@ -238,9 +238,7 @@ qx.Class.define("aiagallery.module.gallery.home.Fsm",
             {
               type  : "element",
               field : "tags",
-              // FIXME: Need to give some apps the *Featured* tag so they can
-              // be grabbed here - temporarily using another tag
-              value : "Computers"
+              value : "*Featured*"
             };
             
           // Add it to the criteria list
