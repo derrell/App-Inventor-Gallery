@@ -86,9 +86,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         // We want everything, so null search criteria
         null,
         // This is where resultCriteria goes
-        this.__buildResultCriteria( offset,
-                                    count,
-                                    sortOrder));
+        this.__buildResultCriteria( offset, count, "uid", sortOrder));
     },
     
     __getBySearch : function(keywordString, offset, count, sortOrder)
@@ -105,7 +103,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           value : tagName 
         },
         // This is where resultCriteria goes
-        this.__buildResultCriteria( offset, count, sortOrder));
+        this.__buildResultCriteria( offset, count, "uid", sortOrder));
     },
     
     __getByFeatured : function(offset, count, sortOrder)
@@ -119,7 +117,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       
       // First I'm going to trade the displayName for the real owner Id
-      var owner = rpcjs.dbif.Entity.query(
+      var owners = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjVisitors",
         {
           type  : "element",
@@ -128,7 +126,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         },
         // No resultCriteria, just need 1
         null);
-      var ownerId = owner[0].id;
+      var ownerId = owners[0].id;
       
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
@@ -139,7 +137,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           value : ownerId
         },
         // This is where resultCriteria goes
-        this.__buildResultCriteria( offset, count, sortOrder));
+        // FIXME: "uid" is a useless sort field
+        this.__buildResultCriteria( offset, count, "uid", sortOrder));
       return results;
                 
                                             
@@ -153,7 +152,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // error object which we can manipulate if there's an error. In this
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
-      return this.getAppInfo(appId, false, error);
+      
+      return this.getAppInfo(parseInt(appId,10), false, error);
     },
     
     __getComments : function(appId)
@@ -164,7 +164,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         {
           type  : "element",
           field : "app",
-          value : appId
+          value : parseInt(appId,10)
         },
         // No resultCriteria here
         null);
@@ -185,6 +185,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
      * @param count {Number}
      *   Limit how many matching results are returned
      * 
+     * @param sortField {String}
+     *   The field on which to sort
+     * 
      * @param sortOrder {String}
      *   Either "desc" or "asc" to specify the order in which results should be
      *   returned.
@@ -193,30 +196,31 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
      *   Array contains objects specifying the result criteria
      * 
      */
-    __buildResultCriteria : function(offset, count, sortOrder)
+    __buildResultCriteria : function(offset, count, sortField, sortOrder)
     {
       // Building the Result Criteria object based on what's given
       var ret = [];
       
-      // Is sortOrder ("asc" or "desc") specified? then add sort order criteria
-      if (sortOrder)
+      // Are the field on which to sort and sort order specified? Then add sort
+      //   criteria.
+      if (sortField && sortOrder)
       {
-        ret.push({ type  : "sort", value : { "value" : sortOrder  } });
+        ret.push({ type  : "sort", field : sortField, order : sortOrder});
       }
       
       // Did they request a certain number of results? add a limit criteria
       if (count)
       {
-        ret.push( { type  : "limit", value : count}); 
+        ret.push({ type  : "limit", value : parseInt(count,10)}); 
       }
       
       // Did they want to skip a number of results? add offset criteria object
       if (offset)
       {
-        ret.push( {  type  : "offset", value : offset });
+        ret.push({  type  : "offset", value : parseInt(offset,10)});
       }
       
-      // return the whole finished Result Criteria object
+      // return the whole finished Result Criteria array, or an empty array
       return ret;
     }
   }

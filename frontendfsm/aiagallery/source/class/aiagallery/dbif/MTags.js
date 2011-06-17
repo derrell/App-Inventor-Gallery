@@ -34,11 +34,9 @@ qx.Mixin.define("aiagallery.dbif.MTags",
                                            criteria,
                                            [
                                              { 
-                                               type : "sort",
-                                               value :
-                                               {
-                                                 "value" : "asc"
-                                               }
+                                               type  : "sort",
+                                               field : "value",
+                                               order : "asc"
                                              }
                                            ]);
 
