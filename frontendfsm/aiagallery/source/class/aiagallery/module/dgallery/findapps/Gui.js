@@ -139,7 +139,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
      * @return new container with the empty search refining form
      */
     
-    buildSearchRefineLine : function(fsm) {
+    __buildSearchRefineLine : function(fsm) {
       
       // This HBox will contain an entire line of refinement
       var groupbox = new qx.ui.groupbox.GroupBox();
