@@ -102,6 +102,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       searchWrapper.setUserData("widget",criteria);
       searchWrapper.setUserData("buildRefineFunc", this.buildSearchRefineLine);
       
+      // Going to need access in reset function to this object by the criteria
+      criteria.setUserData("searchObject", searchWrapper);
+      
       // Store the search object in the FSM so everyone has access to the data
       fsm.addObject("searchCriteria", searchWrapper);
       
@@ -123,7 +126,23 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var searchbtn = new qx.ui.form.Button("Search On This");
       fsm.addObject("searchBtn", searchbtn);
       searchbtn.addListener("execute", fsm.eventListener, fsm);
+      
       var resetbtn = new qx.ui.form.Button("Reset All Fields");
+      resetbtn.addListener("execute", function() {
+        
+        var searchObj = this.getUserData("searchObject");
+        var newLine   = searchObj.getUserData("buildRefineFunc")();
+        
+        // Set the Search Criteria Array to an empty array and clean the widget
+        searchObj.setUserData("array", [] );
+        this.removeAll();
+        
+        // Add a brand new first line
+        this.add(newLine.widget);
+        searchObj.getUserData("array").push(newLine.criteria);
+        
+      // Pass criteria widget as context so we can access (and clean) it.  
+      }, criteria);
       
       var addcriteriabtn = new qx.ui.form.Button("Add Search Criteria");
       
@@ -197,7 +216,6 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       
       // Store some attributes in it
       attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
-      attrSelect.add(new qx.ui.form.ListItem("Owner", null, "owner"));
       attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
       
       // Create the Qualifier Select Box
