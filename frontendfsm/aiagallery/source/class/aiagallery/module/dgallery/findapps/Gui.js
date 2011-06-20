@@ -90,7 +90,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       criteriascroll.add(criteria);
        
       // Start with a single line of refinement
-      var myRefineLine = this.buildSearchRefineLine(fsm);
+      var myRefineLine = this.__buildSearchRefineLine(fsm);
       criteria.add(myRefineLine);
       
       // buttonbar is where the search, reset, and possibly more buttons go
