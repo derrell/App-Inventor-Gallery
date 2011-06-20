@@ -302,17 +302,15 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           var             criterium;
           var             and;
           var             request;
-          var             selection;
-
-          // Create an array of the lists
+          var             criteriaArray;
 
           // Determine on which widget we received the event
           var friendly = fsm.getFriendlyName(event.getTarget());
           
-          //FIXME: Want to use this to clear all Finder lists on search event
-          //FIXME: Keep browse0 populated but def. remove its selection
+          // Clear all Finder lists
           fsm.getObject("browse1").removeAll();
           fsm.getObject("browse2").removeAll();
+          // Don't clear the Categories one, just blank its selection
           fsm.getObject("browse0").resetSelection();
             
           // We're building a series of AND criteria
@@ -323,17 +321,28 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
               children : []
             };
           
-          //  Aggregating all of the form information for the search.
-          
-          criterium = 
+          // Aggregating all of the form information for the search.
+          criteriaArray = fsm.getObject("searchCriteria").getUserData("array");
+          var crit = {};
+          for (var i = 0 ; i < criteriaArray.length ; i++)
+          {
+            crit = criteriaArray[i];
+            if (!crit.deleted)
             {
-              type  : "element", 
-              field : "tags", 
-              value : fsm.getObject("myTextBox").getValue()
-            };
+              criterium = 
+              {
+                type  : "element", 
+                field : crit.attributeBox.getSelection()[0].getModel(),
+                value : crit.valueBox.getValue()
+              };
               
-          // Add it to the list of criteria being ANDed
-          criteria.children.push(criterium);
+              // Add it to the list of criteria being ANDed
+              criteria.children.push(criterium);
+            }
+          
+          }
+          
+        
 
 
           // Issue the remote procedure call to execute the query
