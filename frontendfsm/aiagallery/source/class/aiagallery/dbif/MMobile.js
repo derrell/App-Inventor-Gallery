@@ -103,14 +103,14 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           value : tagName 
         },
         // This is where resultCriteria goes
-        this.__buildResultCriteria( offset, count, "uid", sortOrder));
+        this.__buildResultCriteria(offset, count, "uid", sortOrder));
     },
     
     __getByFeatured : function(offset, count, sortOrder)
     {
       // If the only quality of a Featured App is that it has a Featured tag
       //   then this works.
-      return this.__getByTag( "Featured", offset, count, sortOrder);
+      return this.__getByTag("*Featured*", offset, count, sortOrder);
     },
     
     __getByOwner : function(displayName, offset, count, sortOrder)
