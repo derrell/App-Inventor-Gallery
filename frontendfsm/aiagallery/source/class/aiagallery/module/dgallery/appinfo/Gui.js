@@ -71,7 +71,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
-        
 
         // Add a groupbox with the application title
         groupbox = new qx.ui.groupbox.GroupBox(result.title);
@@ -94,9 +93,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a container for the application info, and use the grid layout.
         appInfoContainer = new qx.ui.container.Composite(layout);
         
-        // Do we have any comments?
-        if (result.numComments > 0)
-        {
           // Yes. We'll create a splitpane, with the application info on the
           // left, and comment viewing on the right.
           splitpane = new qx.ui.splitpane.Pane("horizontal");
@@ -116,86 +112,40 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           // Put a vbox container in the scroll container
           vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
           scrollContainer.add(vbox);
-          
-          //
-          // Dummy data, for the moment...
-          //
-          [
-            {
-              author : "Joe",
-              text :
-                "qooxdoo is a comprehensive and innovative framework for " +
-                "creating rich internet applications (RIAs). Leveraging " +
-                "object-oriented JavaScript allows developers to build " +
-                "impressive cross-browser applications. No HTML, CSS nor " +
-                "DOM knowledge is needed.It includes a platform-independent " +
-                "development tool chain, a state-of-the-art GUI toolkit and " +
-                "an advanced client-server communication layer. It is open " +
-                "source under an LGPL/EPL dual license."
-            },
-
-            {
-              author : "Billy",
-              text : "qooxdoo sucks!"
-            },
-                                                                 
-            {
-              author : "Joe",
-              text : "No it doesn't!"
-            },
-                                                                 
-            {
-              author : "Billy",
-              text : "Yes it does!"
-            },
-                                                                 
-            {
-              author : "Joe",
-              text : "nah ah!"
-            },
-                                                                 
-            {
-              author : "Billy",
-              text : "uh huh!"
-            },
-                                                                 
-            {
-              author : "Jane",
-              text :
-                "Billy, you're a dips***. Stop trolling." +
-                "And Joe, you should know better than to bother responding " +
-                "to the likes of him."
-            },
-                                                                 
-            {
-              author : "Billy",
-              text :
-                "Jane, you ignorant slut..."
-            }
-          ].forEach(
-            function(comment)
-            {
-              cpanel = new collapsablepanel.Panel(
-                comment.author + ": " + comment.text);
+  
+          //Newly added code that implements basic comments in the UI. 
+          //The comments are currently unconnected to the database. All 
+          //changes made are only in the UI, and are not saved.
+          var commentInput = new qx.ui.form.TextField();
+          commentInput.setPlaceholder("Type your comment here:");
+	  var allComments = new qx.ui.container.Composite(
+            new qx.ui.layout.VBox());
+          var submitComment = new qx.ui.form.Button("Submit Comment");
+          submitComment.addListener("execute", function(e) 
+          {
+              var newComment = commentInput.getValue();
+              if (newComment != null) 
+              {
+              cpanel = new collapsablepanel.Panel(newComment);
               cpanel.setGroup(radiogroup);
-              label = new qx.ui.basic.Label(comment.text);
+              label = new qx.ui.basic.Label(newComment);
               label.set(
                 {
                   rich : true,
                   wrap : true
                 });
               cpanel.add(label);
-              vbox.add(cpanel);
-            });
-          
-          // Have nothing selected, initially
-          radiogroup.setSelection([]);
-        }
-        else
-        {
-          // No comments, so put the application info directly into the canvas.
-          groupbox.add(appInfoContainer, { edge : 10 });
-        }
+              allComments.add(cpanel);
+              }
+          commentInput.setValue(null);
+          }, this);
+        
+          // The textfield, all the existing comments, and the submit button
+          // get added to the UI.
+          vbox.add(allComments);
+          vbox.add(commentInput);
+          vbox.add(submitComment);
+	  
 
         appInfoContainer.add(new qx.ui.basic.Image(result.image1),
                              { row : 1, column : 1 });
