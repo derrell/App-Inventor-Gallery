@@ -93,39 +93,41 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a container for the application info, and use the grid layout.
         appInfoContainer = new qx.ui.container.Composite(layout);
         
-          // Yes. We'll create a splitpane, with the application info on the
-          // left, and comment viewing on the right.
-          splitpane = new qx.ui.splitpane.Pane("horizontal");
-          groupbox.add(splitpane, { edge : 10 });
-          
-          // Add the application info container to the splitter
-          splitpane.add(appInfoContainer, 1);
+        // Yes. We'll create a splitpane, with the application info on the
+        // left, and comment viewing on the right.
+        splitpane = new qx.ui.splitpane.Pane("horizontal");
+        groupbox.add(splitpane, { edge : 10 });
 
-          // Create a group for the comment collapsable pannel
-          radiogroup = new qx.ui.form.RadioGroup();
-          radiogroup.setAllowEmptySelection(true);
-          
-          // We'll put all of the collapsable panels in a scroll container
-          scrollContainer = new qx.ui.container.Scroll();
-          splitpane.add(scrollContainer, 1);
-          
-          // Put a vbox container in the scroll container
-          vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-          scrollContainer.add(vbox);
-  
-          //Newly added code that implements basic comments in the UI. 
-          //The comments are currently unconnected to the database. All 
-          //changes made are only in the UI, and are not saved.
-          var commentInput = new qx.ui.form.TextField();
-          commentInput.setPlaceholder("Type your comment here:");
-	  var allComments = new qx.ui.container.Composite(
-            new qx.ui.layout.VBox());
-          var submitComment = new qx.ui.form.Button("Submit Comment");
-          submitComment.addListener("execute", function(e) 
+        // Add the application info container to the splitter
+        splitpane.add(appInfoContainer, 1);
+
+        // Create a group for the comment collapsable pannel
+        radiogroup = new qx.ui.form.RadioGroup();
+        radiogroup.setAllowEmptySelection(true);
+
+        // We'll put all of the collapsable panels in a scroll container
+        scrollContainer = new qx.ui.container.Scroll();
+        splitpane.add(scrollContainer, 1);
+
+        // Put a vbox container in the scroll container
+        vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        scrollContainer.add(vbox);
+
+        //Newly added code that implements basic comments in the UI. 
+        //The comments are currently unconnected to the database. All 
+        //changes made are only in the UI, and are not saved.
+        var commentInput = new qx.ui.form.TextField();
+        commentInput.setPlaceholder("Type your comment here:");
+        var allComments = new qx.ui.container.Composite(
+          new qx.ui.layout.VBox());
+        var submitComment = new qx.ui.form.Button("Submit Comment");
+        submitComment.addListener(
+          "execute", 
+          function(e) 
           {
-              var newComment = commentInput.getValue();
-              if (newComment != null) 
-              {
+            var newComment = commentInput.getValue();
+            if (newComment != null) 
+            {
               cpanel = new collapsablepanel.Panel(newComment);
               cpanel.setGroup(radiogroup);
               label = new qx.ui.basic.Label(newComment);
@@ -136,16 +138,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                 });
               cpanel.add(label);
               allComments.add(cpanel);
-              }
+            }
           commentInput.setValue(null);
-          }, this);
-        
-          // The textfield, all the existing comments, and the submit button
-          // get added to the UI.
-          vbox.add(allComments);
-          vbox.add(commentInput);
-          vbox.add(submitComment);
-	  
+          }, 
+          this);
+
+        // The textfield, all the existing comments, and the submit button
+        // get added to the UI.
+        vbox.add(allComments);
+        vbox.add(commentInput);
+        vbox.add(submitComment);
 
         appInfoContainer.add(new qx.ui.basic.Image(result.image1),
                              { row : 1, column : 1 });
