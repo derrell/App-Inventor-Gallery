@@ -71,7 +71,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
-        
+	
+	// debugging code to convert result to string
+	/*var str = "";
+	for (prop in result) {
+	    if (prop != "image1"){
+	  str = str + prop + ": " + result[prop] + "\n";
+	}
+	}
+	alert("result is: " + str);*/
+
 
         // Add a groupbox with the application title
         groupbox = new qx.ui.groupbox.GroupBox(result.title);
@@ -95,8 +104,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         appInfoContainer = new qx.ui.container.Composite(layout);
         
         // Do we have any comments?
-        if (result.numComments > 0)
-        {
+       // if (result.numComments > 0)
+        //{
           // Yes. We'll create a splitpane, with the application info on the
           // left, and comment viewing on the right.
           splitpane = new qx.ui.splitpane.Pane("horizontal");
@@ -117,85 +126,46 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
           scrollContainer.add(vbox);
           
-          //
-          // Dummy data, for the moment...
-          //
-          [
-            {
-              author : "Joe",
-              text :
-                "qooxdoo is a comprehensive and innovative framework for " +
-                "creating rich internet applications (RIAs). Leveraging " +
-                "object-oriented JavaScript allows developers to build " +
-                "impressive cross-browser applications. No HTML, CSS nor " +
-                "DOM knowledge is needed.It includes a platform-independent " +
-                "development tool chain, a state-of-the-art GUI toolkit and " +
-                "an advanced client-server communication layer. It is open " +
-                "source under an LGPL/EPL dual license."
-            },
-
-            {
-              author : "Billy",
-              text : "qooxdoo sucks!"
-            },
-                                                                 
-            {
-              author : "Joe",
-              text : "No it doesn't!"
-            },
-                                                                 
-            {
-              author : "Billy",
-              text : "Yes it does!"
-            },
-                                                                 
-            {
-              author : "Joe",
-              text : "nah ah!"
-            },
-                                                                 
-            {
-              author : "Billy",
-              text : "uh huh!"
-            },
-                                                                 
-            {
-              author : "Jane",
-              text :
-                "Billy, you're a dips***. Stop trolling." +
-                "And Joe, you should know better than to bother responding " +
-                "to the likes of him."
-            },
-                                                                 
-            {
-              author : "Billy",
-              text :
-                "Jane, you ignorant slut..."
-            }
-          ].forEach(
-            function(comment)
-            {
-              cpanel = new collapsablepanel.Panel(
-                comment.author + ": " + comment.text);
-              cpanel.setGroup(radiogroup);
-              label = new qx.ui.basic.Label(comment.text);
+	  /////////BEGINNING OF MY CODE////////
+	  
+	  var commentInput = new qx.ui.form.TextField();
+	  commentInput.setPlaceholder("Type your comment here:");
+	  //var allComments = new qx.ui.form.TextArea();
+	  var allComments = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+	  var submitComment = new qx.ui.form.Button("Submit Comment");
+	  submitComment.addListener("execute", function(e) {
+	     /* var newComment = commentInput.getValue();
+	      var listOfComments = allComments.getValue();
+	      if (listOfComments != null) {
+	      allComments.setValue(listOfComments + "\n" + newComment);
+	      } else if (newComment != null) {
+		  allComments.setValue(newComment);
+	      }*/
+	      var newComment = commentInput.getValue();
+	      if (newComment != null) {
+	      cpanel = new collapsablepanel.Panel(newComment);
+	      cpanel.setGroup(radiogroup);
+              label = new qx.ui.basic.Label(newComment);
               label.set(
                 {
                   rich : true,
                   wrap : true
                 });
               cpanel.add(label);
-              vbox.add(cpanel);
-            });
-          
-          // Have nothing selected, initially
-          radiogroup.setSelection([]);
-        }
-        else
+	      allComments.add(cpanel);
+	      }
+	      commentInput.setValue(null);
+	  }, this);
+	  
+	  vbox.add(allComments);
+	  vbox.add(commentInput);
+	  vbox.add(submitComment);
+	  
+        /*else
         {
-          // No comments, so put the application info directly into the canvas.
-          groupbox.add(appInfoContainer, { edge : 10 });
-        }
+	    // No comments, so put the application info directly into the canvas.
+	     groupbox.add(appInfoContainer, { edge : 10 });
+	  }*/
 
         appInfoContainer.add(new qx.ui.basic.Image(result.image1),
                              { row : 1, column : 1 });
