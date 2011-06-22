@@ -277,4 +277,4 @@ appserver :
 
 .PHONY: upload
 upload :	all
-	../appengine-java-sdk-1.4.3/bin/appcfg.sh update war
+	../appengine-java-sdk-1.5.0.1/bin/appcfg.sh update war
