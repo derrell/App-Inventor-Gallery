@@ -95,7 +95,7 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
-/*
+ /*
   case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
@@ -157,8 +157,64 @@ function doGet(request, response)
       entity.put();
     }
     break;
-
 */
+  case "clearSimData":            // destroy all simulation data(derrell only)
+    //
+    // Remove ALL data sitting in simulation database.
+    //
+
+    qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
+    var Db = aiagallery.dbif.MSimData.Db;
+    var dbField;
+                
+
+    for (entry in Db.visitors)
+    {
+      entity = new aiagallery.dbif.ObjVisitors(Db.visitors[entry].id);
+      entity.removeSelf();
+    }
+
+    for (entry in Db.tags)
+    {
+      entity = new aiagallery.dbif.ObjTags(Db.tags[entry].value);
+      entity.removeSelf();
+    }
+/*
+ * FIXME: This doesn't work. I don't know why.
+    for (entry in Db.apps)
+    {
+      // Toggle the commenting on the next two lines if you're deleting int uids
+      entity = new aiagallery.dbif.ObjAppData(Db.apps[entry].uid);
+  //entity = newaiagallery.dbif.ObjAppData(parseInt(Db.apps[entry].uid,10));
+      entity.removeSelf();
+    }
+*/
+    for (entry in Db.downloads)
+    {
+      entity = new aiagallery.dbif.ObjDownloads(Db.downloads[entry].apps);
+      entity.removeSelf();
+    }
+
+    for (entry in Db.comments)
+    {
+      entity = new aiagallery.dbif.ObjComments(Db.comments[entry].app);
+      entity.removeSelf();
+    }
+
+    for (entry in Db.likes)
+    {
+      entity = new aiagallery.dbif.ObjLikes(Db.likes[entry].app);
+      entity.removeSelf();
+    }
+
+    for (entry in Db.flags)
+    {
+      entity = new aiagallery.dbif.ObjFlags(Db.flags[entry].app);
+      entity.removeSelf();
+    }
+
+    break;
+
   case "tag":              // mobile client request
     // Simulate a real RPC request
     jsonInput = 
