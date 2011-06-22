@@ -74,13 +74,14 @@ function doPost(request, response)
  */
 function doGet(request, response)
 {
-  var entry;
-  var entity;
-  var queryString = request.getQueryString();
-  var querySplit;
-  var jsonInput;
-  var rpcResult;
-  var out;
+  var             entry;
+  var             entity;
+  var             queryString = request.getQueryString();
+  var             querySplit;
+  var             jsonInput;
+  var             rpcResult;
+  var             out;
+  var             Db;
   
   // We likely received something like:
   //   tag=by_developer%3AJoe%20Blow%3A0%3A10%3AuploadTime
@@ -95,14 +96,13 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
- /*
   case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
     //
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
-    var Db = aiagallery.dbif.MSimData.Db;
+    Db = aiagallery.dbif.MSimData.Db;
 
     for (entry in Db.visitors)
     {
@@ -157,14 +157,14 @@ function doGet(request, response)
       entity.put();
     }
     break;
-*/
+
   case "clearSimData":            // destroy all simulation data(derrell only)
     //
     // Remove ALL data sitting in simulation database.
     //
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
-    var Db = aiagallery.dbif.MSimData.Db;
+    Db = aiagallery.dbif.MSimData.Db;
     var dbField;
                 
 
@@ -179,16 +179,12 @@ function doGet(request, response)
       entity = new aiagallery.dbif.ObjTags(Db.tags[entry].value);
       entity.removeSelf();
     }
-/*
- * FIXME: This doesn't work. I don't know why.
+
     for (entry in Db.apps)
     {
-      // Toggle the commenting on the next two lines if you're deleting int uids
       entity = new aiagallery.dbif.ObjAppData(Db.apps[entry].uid);
-  //entity = newaiagallery.dbif.ObjAppData(parseInt(Db.apps[entry].uid,10));
       entity.removeSelf();
     }
-*/
     for (entry in Db.downloads)
     {
       entity = new aiagallery.dbif.ObjDownloads(Db.downloads[entry].apps);
