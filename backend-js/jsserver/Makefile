@@ -12,9 +12,9 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
+qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
 app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
