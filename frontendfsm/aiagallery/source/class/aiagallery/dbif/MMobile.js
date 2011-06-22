@@ -79,21 +79,21 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       }
     },
     
-    __getAll : function(offset, count, sortOrder)
+    __getAll : function(offset, count, order, field)
     {
       return rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         // We want everything, so null search criteria
         null,
         // This is where resultCriteria goes
-        this.__buildResultCriteria( offset, count, "uid", sortOrder));
+        this.__buildResultCriteria( offset, count, order, field));
     },
     
-    __getBySearch : function(keywordString, offset, count, sortOrder)
+    __getBySearch : function(keywordString, offset, count, order, field)
     {
     },
     
-    __getByTag : function(tagName, offset, count, sortOrder)
+    __getByTag : function(tagName, offset, count, order, field)
     {
       return rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
@@ -103,17 +103,17 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           value : tagName 
         },
         // This is where resultCriteria goes
-        this.__buildResultCriteria(offset, count, "uid", sortOrder));
+        this.__buildResultCriteria(offset, count, order, field));
     },
     
-    __getByFeatured : function(offset, count, sortOrder)
+    __getByFeatured : function(offset, count, order, field)
     {
       // If the only quality of a Featured App is that it has a Featured tag
       //   then this works.
-      return this.__getByTag("*Featured*", offset, count, sortOrder);
+      return this.__getByTag("*Featured*", offset, count, order, field);
     },
     
-    __getByOwner : function(displayName, offset, count, sortOrder)
+    __getByOwner : function(displayName, offset, count, order, field)
     {
       
       // First I'm going to trade the displayName for the real owner Id
@@ -138,7 +138,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         },
         // This is where resultCriteria goes
         // FIXME: "uid" is a useless sort field
-        this.__buildResultCriteria( offset, count, "uid", sortOrder));
+        this.__buildResultCriteria( offset, count, order, field));
       return results;
                 
                                             
@@ -196,7 +196,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
      *   Array contains objects specifying the result criteria
      * 
      */
-    __buildResultCriteria : function(offset, count, sortField, sortOrder)
+    __buildResultCriteria : function(offset, count, sortOrder, sortField)
     {
       // Building the Result Criteria object based on what's given
       var ret = [];
