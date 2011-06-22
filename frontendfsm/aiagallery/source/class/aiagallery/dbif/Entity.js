@@ -14,6 +14,9 @@
 #use(aiagallery.dbif.ObjLikes)
 #use(aiagallery.dbif.ObjTags)
 #use(aiagallery.dbif.ObjVisitors)
+#use(aiagallery.dbif.ObjSearch)
+
+#use(aiagallery.dbif.ObjTest)
  */
 
 qx.Class.define("aiagallery.dbif.Entity",

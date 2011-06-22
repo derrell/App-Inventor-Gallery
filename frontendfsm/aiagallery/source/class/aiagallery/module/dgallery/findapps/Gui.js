@@ -34,6 +34,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var             list;
       var             browse;
       var             gallery;
+      var             searchCriteriaArr = [];
 
       // Create a splitpane. Top: browse and search; bottom: results
       splitpane = new qx.ui.splitpane.Pane("vertical");
@@ -91,7 +92,26 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
        
       // Start with a single line of refinement
       var myRefineLine = this.buildSearchRefineLine(fsm);
-      criteria.add(myRefineLine);
+      
+      // Store the criteria object in the criteria container
+      searchCriteriaArr.push(myRefineLine.criteria);
+     
+      // Wrapping all stuff relevant to search in one object
+      var searchWrapper = new qx.core.Object();
+      searchWrapper.setUserData("array", searchCriteriaArr);
+      searchWrapper.setUserData("widget",criteria);
+      searchWrapper.setUserData("buildRefineFunc", this.buildSearchRefineLine);
+      
+      // Going to need access in reset function to this object by the criteria
+      criteria.setUserData("searchObject", searchWrapper);
+      
+      // Store the search object in the FSM so everyone has access to the data
+      fsm.addObject("searchCriteria", searchWrapper);
+      
+      // And install the container widget
+      criteria.add(myRefineLine.widget);
+      
+      
       
       // buttonbar is where the search, reset, and possibly more buttons go
       var buttonbar = new qx.ui.groupbox.GroupBox();
@@ -101,13 +121,55 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
           contentPadding : 3
         });
       
+      
+      
       var searchbtn = new qx.ui.form.Button("Search On This");
       fsm.addObject("searchBtn", searchbtn);
       searchbtn.addListener("execute", fsm.eventListener, fsm);
+      
       var resetbtn = new qx.ui.form.Button("Reset All Fields");
+      resetbtn.addListener("execute", function() {
+        
+        var searchObj = this.getUserData("searchObject");
+        var newLine   = searchObj.getUserData("buildRefineFunc")();
+        
+        // Set the Search Criteria Array to an empty array and clean the widget
+        searchObj.setUserData("array", [] );
+        this.removeAll();
+        
+        // Add a brand new first line
+        this.add(newLine.widget);
+        searchObj.getUserData("array").push(newLine.criteria);
+        
+      // Pass criteria widget as context so we can access (and clean) it.  
+      }, criteria);
+      
+      var addcriteriabtn = new qx.ui.form.Button("Add Search Criteria");
+      
+      // When the button is hit, create a new refinement line
+      addcriteriabtn.addListener("execute", function() {
+        
+        // Gather everything we'll need, mostly unpacking the searchObject
+        var         searchObject   = this.getObject("searchCriteria");
+        var         criteriaWidget = searchObject.getUserData("widget");
+        var         array          = searchObject.getUserData("array");
+        var         newRefineLine  = 
+          searchObject.getUserData("buildRefineFunc")();
+        
+        // Add the widget to the GUI, and the data to the data array
+        criteriaWidget.add(newRefineLine.widget);
+        array.push(newRefineLine.criteria);
+        
+      // Pass the listener the FSM, no other way to get it in there!
+      }, fsm);
+      
+      // Add buttons onto button bar, with a little space
       buttonbar.add(resetbtn);
+      buttonbar.add(new qx.ui.core.Spacer(5));
       buttonbar.add(searchbtn);
-     
+      buttonbar.add(new qx.ui.core.Spacer(5));
+      buttonbar.add(addcriteriabtn);
+      
       // Finally, add the Scroll-wrapped criteria on top of the buttonbar
       groupbox.add(criteriascroll, { flex : 1 });
       groupbox.add(buttonbar);
@@ -139,21 +201,22 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
      * @return new container with the empty search refining form
      */
     
-    buildSearchRefineLine : function(fsm) {
+    buildSearchRefineLine : function() {
       
       // This HBox will contain an entire line of refinement
       var groupbox = new qx.ui.groupbox.GroupBox();
       groupbox.set(
         {
-          layout          : new qx.ui.layout.HBox()
+          layout          : new qx.ui.layout.HBox(),
+          padding         : 0
         });
       
       // Create the Attribute Select Box
       var attrSelect = new qx.ui.form.SelectBox();
       
       // Store some attributes in it
-      var myAttr = new qx.ui.form.ListItem("Tag", null, "tags");
-      attrSelect.add(myAttr);
+      attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
+      attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
       
       // Create the Qualifier Select Box
       var qualSelect = new qx.ui.form.SelectBox();
@@ -163,17 +226,47 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       var myQual = new qx.ui.form.ListItem("is exactly", null, "") ;
       qualSelect.add(myQual);
       
-      // Add the Attribute Select Box first
-      groupbox.add(attrSelect);
-      // Then the qualifier box
-      groupbox.add(qualSelect);
-      // Then the text box
-      var myTextBox = new qx.ui.form.TextField();
-      fsm.addObject("myTextBox", myTextBox);
-      groupbox.add( myTextBox ) ;
+      // Create the field for the value to compare against
+      var valueField = new qx.ui.form.TextField();
       
+      // Create a button to delete this line
+      var deletebtn = new qx.ui.form.Button("-");
+      deletebtn.addListener("execute", function() {
+        
+        // Hit the "deleted" switch, to make sure this isn't part of the query
+        this.getUserData("myCriteria").deleted = true;
+        // Remove this from the GUI
+        this.destroy();
+        
+      // Add groupbox as the context, so we can manipulate it.
+      }, groupbox);
+      
+      // Add boxes in the correct order, with a little space separating them.
+      groupbox.add(attrSelect);
+      groupbox.add(new qx.ui.core.Spacer(5));
+      groupbox.add(qualSelect);
+      groupbox.add(new qx.ui.core.Spacer(5));
+      groupbox.add(valueField);
+      groupbox.add(new qx.ui.core.Spacer(10));
+      groupbox.add(deletebtn);
+      
+      // Create an object to easily access all of the selections
+      var criteriaObject = 
+      {
+        attributeBox  : attrSelect,
+        qualifierBox  : qualSelect,
+        valueBox      : valueField,
+        deleted       : false
+      };
+     
+      // Give a reference to the groupbox so that it can deal with a delete.
+      groupbox.setUserData("myCriteria", criteriaObject);
+     
       // Finally give'm what they came for.
-      return groupbox;
+      return {
+        "widget"   : groupbox,
+        "criteria" : criteriaObject
+      };
       
     },
     /**
