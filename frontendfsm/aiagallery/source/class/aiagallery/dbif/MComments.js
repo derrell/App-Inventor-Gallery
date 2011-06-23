@@ -199,10 +199,10 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       }
       
       // Issue a query for all comments, with limit and offset settings applied
-      commentList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
+      commentList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments", 
                                         {
                                           type : "element",
-                                          field: "uid",
+                                          field: "app",
                                           value: appId
                                         },
                                         resultCriteria);
@@ -259,7 +259,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
          charCode = base160str.charCodeAt(i)
          
          // Is this the last entry in the encoding array?
-         if (charCode == this._base160arr[base160.len-1] )
+         if (charCode == this._base160arr[base160str.len-1] )
          {
            // Then this is a carry. This value gets base160arr[0]. We go on to
            // the next higher-order digit by continuing through the for-loop
