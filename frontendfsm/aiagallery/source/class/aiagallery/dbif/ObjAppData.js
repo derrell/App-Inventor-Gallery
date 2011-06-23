@@ -30,6 +30,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
+        "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active
       });
 
@@ -85,7 +86,10 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         /** Number of times this application was viewed */
         "numViewed" : "Integer",
 
-        /** Number of comments on this application */
+        /** Number of root comments on this application */
+        "numRootComments" : "Integer",
+        
+        /** Total number of comments on this application */
         "numComments" : "Integer",
 
         /** Status of this application (active, pending, banned) */
