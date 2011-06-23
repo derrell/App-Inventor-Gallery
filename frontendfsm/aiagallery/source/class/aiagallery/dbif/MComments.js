@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -17,7 +18,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
 
   statics :
   {
-    base160arr : 
+    _base160arr : 
     [48 , 49 , 50 , 51 , 52 , 53 , 54 , 55 , 56 , 57 , /* 0-9 */
     58 , 59 , 65 , 66 , 67 , 68 , 69 , 70 , 71 , 72 , /* : ; A-H */
     73 , 74 , 75 , 76 , 77 , 78 , 79 , 80 , 81 , 82 , /* I-R */
@@ -59,28 +60,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       var             commentObj;
       var             parentObj;
       var             parentTreeId;
-      var             parent;
       var             myTreeId;
       var             parentList;
       var             parentNumChildren;
-      var             allowableFields =
-        [
-          "app",
-          "treeId",
-          "visitor",
-          "timestamp",
-          "numChildren",
-          "text"
-        ];
-      var             requiredFields =
-        [
-          "app",
-          "treeId",
-          "visitor",
-          "timestamp",
-          "numChildren",
-          "text"
-        ];
         
         
       // Determine who the logged-in user is
@@ -90,13 +72,13 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObj = new aiagallery.dbif.ObjComments();
       
       // Set up all the data we can at the moment (everything but treeId)
-      commentObj.setData({
-        "visitor"     : whoami,
-        "timestamp"   : String((new Date()).getTime()),
-        "text"        : text,
-        "app"         : appId,
-        "numChildren" : 0
-      });
+      commentObj.setData(
+        {
+          "visitor"     : whoami,
+          "text"        : text,
+          "app"         : appId,
+          "numChildren" : 0
+        });
       
       // Was a parent comment's UID provided?
       // Regardless, we need to have parentNumChildren and parentTreeId filled
@@ -105,21 +87,18 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       if (!parentUID)
       {
         // No, we're going to have to use the default parent id "0000"
-        parentTreeId = "0000";
+        parentTreeId = "";
         
         // Need to get and increment the App's numRootComments
         parentObj = new aiagallery.dbif.ObjAppData(appId);
         
         // Get what we need
-        parentNumChildren = parentObj.getData().numRootComments;
+        parentNumChildren = parentObj.getData().numRootComments || 0;
         
         // Increment and update
-        parentObj.setData({
-          "numRootComments" : parentNumChildren + 1
-        });
-        parentObj.push();
+        parentObj.setData({"numRootComments" : parentNumChildren + 1});
+        parentObj.put();
         
-        //Done
       }
       else
       {
@@ -140,21 +119,17 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         parentTreeId = parentObj.getData().treeId;
         
         // Increment # of children and update. Congrats! a new baby comment!
-        parentObj.setData({
-          "numChildren" : parentNumChildren + 1
-        });
-        parentObj.push();
+        parentObj.setData({"numChildren" : parentNumChildren + 1});
+        parentObj.put();
         
-      }appObj.put();
+      }
       
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
-      myTreeId = parentTreeId + this.numTobase160(parentNumChildren);
+      myTreeId = parentTreeId + this._numTobase160(parentNumChildren);
       
       // Complete the comment record by giving it a treeId
-      commentObj.setData({
-        "treeId" : myTreeId
-      });
+      commentObj.setData({"treeId" : myTreeId});
       
       // Save this in the database
       commentObj.put();
@@ -185,26 +160,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     },
     
     /**
-     * Get a portion of the application list.
+     * Get comments associated with an App
      *
-     * @param bStringize {Boolean}
-     *   Whether the tags, previousAuthors, and status values should be
-     *   reformed into a string representation rather than being returned in
-     *   their native representation.
-     *
-     * @param bAll {Boolean}
-     *   Whether to return all applications (if permissions allow it) rather
-     *   than only those applications owned by the logged-in user.
-     *
-     * @param sortCriteria {Array}
-     *   An array of maps. Each map contains a single key and value, with the
-     *   key being a field name on which to sort, and the value being one of
-     *   the two strings, "asc" to request an ascending sort on that field, or
-     *   "desc" to request a descending sort on that field. The order of maps
-     *   in the array determines the priority of that field in the sort. The
-     *   first map in the array indicates the primary sort key; the second map
-     *   in the array indicates the next-highest-priority sort key, etc.
-     *
+     * @param appId {?}
+     *   The appId whose comments should be returned
+     * 
      * @param offset {Integer}
      *   An integer value >= 0 indicating the number of records to skip, in
      *   the specified sort order, prior to the first one returned in the
@@ -213,36 +173,17 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      * @param limit {Integer}
      *   An integer value > 0 indicating the maximum number of records to return
      *   in the result set.
+     * 
+     * @return {Array}
+     *   An array containing all of the comments related to this app
+     *   
      */
-    getComments : function(bStringize, bAll, sortCriteria, offset, limit)
+    getComments : function(appId, offset, limit)
     {
-      var             categories;
-      var             categoryNames;
-      var             appList;
-      var             whoami;
-      var             criteria;
+      var             commentList;
       var             resultCriteria = [];
-      var             owners;
   
-      // Get the current user
-      whoami = this.getUserData("whoami");
 
-      // Create the criteria for a search of apps of the current user
-      if (! bAll)
-      {
-        criteria =
-          {
-            type  : "element",
-            field : "owner",
-            value : whoami
-          };
-      }
-      else
-      {
-        // We want all objects
-        criteria = null;
-      }
-      
       // If an offset is requested...
       if (typeof(offset) != "undefined" && offset !== null)
       {
@@ -257,177 +198,18 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         resultCriteria.push({ "limit" : limit });
       }
       
-      // If sort criteria are given...
-      if (typeof(sortCriteria) !== "undefined" && sortCriteria !== null)
-      {
-        // ... then add them too.
-        resultCriteria.push({ type : "sort", value : sortCriteria });
-      }
-
-      // Issue a query for all apps 
-      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
-                                        criteria,
+      // Issue a query for all comments, with limit and offset settings applied
+      commentList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", 
+                                        {
+                                          type : "element",
+                                          field: "uid",
+                                          value: appId
+                                        },
                                         resultCriteria);
 
-      // If we were asked to stringize the values...
-      if (bStringize)
-      {
-        // ... then for each app that matched the criteria...
-        appList.forEach(
-          function(app)
-          {
-            [
-              "tags",
-              "previousAuthors"
-            ].forEach(function(field)
-              {
-                // ... stringize this field.
-                app[field] = app[field].join(", ");
-              });
-
-            // Convert from numeric to string status
-            app.status = [ "Banned", "Pending", "Active" ][app.status];
-
-            // Replace the owner name with the owner's display name
-            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                            app["owner"]);
-
-            // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
-          });
-      }
-      
-      // Create the criteria for a search of tags of type "category"
-      criteria =
-        {
-          type  : "element",
-          field : "type",
-          value : "category"
-        };
-      
-      // Issue a query for category tags
-      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                           criteria,
-                                           [
-                                             { 
-                                               type  : "sort",
-                                               field : "value",
-                                               order : "asc"
-                                             }
-                                           ]);
-      
-      // They want only the tag value to be returned
-      categoryNames = categories.map(function() { return arguments[0].value; });
-
-      // We've built the whole list. Return it.
-      return { apps : appList, categories : categoryNames };
+      return commentList;
     },
-    
-    /**
-     * Issue a query for a set of applicaitons. Limit the response to
-     * particular fields.
-     *
-     * @param criteria {Map|Key}
-     *   Criteria for selection of which applications to return. This
-     *   parameter is in the format described in the 'searchCriteria'
-     *   parameter of rpcjs.dbif.Entity.query().
-     *
-     * @param requestedFields {Map?}
-     *   If provided, this is a map containing, as the member names, the
-     *   fields which should be returned in the results. The value of each
-     *   entry in the map indicates what to name that field, in the
-     *   result. (This produces a mapping of the field names.) An example is
-     *   requestedFields map might look like this:
-     *
-     *     {
-     *       uid    : "uid",
-     *       title  : "label", // remap the title field to be called "label"
-     *       image1 : "icon",  // remap the image1 field to be called "icon"
-     *       tags   : "tags"
-     *     }
-     *
-     *         return { apps : appList, categories : categoryNames };
-     * @return {Map}
-     *   The return value is a map with two members: "apps" and
-     *   "categories". The former is an array of maps, each providing
-     *   information about one application. The latter is an array of the tags
-     *   which are identified as top-level categories.
-     */
-    appQuery : function(criteria, requestedFields)
-    {
-      var             appList;
-      var             categories;
-      var             categoryNames;
-      var             owners;
-
-      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
-
-      // Remove those members which are not requested, and rename as requested
-      appList.forEach(
-        function(app)
-        {
-          var requested;
-
-          for (var field in app)
-          {
-            requested = requestedFields[field];
-            if (! requested)
-            {
-              delete app[field];
-            }
-            else
-            {
-              // If the owner is being requested...
-              if (field === "owner")
-              {
-                // ... then issue a query for this visitor
-                owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                                 app[field]);
-
-                // Replace his visitor id with his display name
-                app[field] = owners[0].displayName;
-              }
-
-              // If the field name is to be remapped...
-              if (requested != field)
-              {
-                // then copy and delete to effect the remapping.
-                app[requested] = app[field];
-                delete app[field];
-              }
-            }
-          }
-        });
-
-      // Create the criteria for a search of tags of type "category"
-      criteria =
-        {
-          type  : "element",
-          field : "type",
-          value : "category"
-        };
-      
-      // Issue a query for all categories
-      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
-                                           criteria,
-                                           [
-                                             { 
-                                               type  : "sort",
-                                               field : "value",
-                                               order : "asc"
-                                             }
-                                           ]);
-      
-      // Tag objects contain the tag value, type, and count of uses. For this
-      // procedure, we want to return only the tag value.
-      categoryNames = categories.map(function() 
-                                     { 
-                                       return arguments[0].value;
-                                     });
-
-      return { apps : appList, categories : categoryNames };
-    },
- 
+   
     /**
      * Encode an integer as a string of base160 characters
      * 
@@ -437,7 +219,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      * @return {String}
      *   A string of length 4 containing base160 digits as characters.
      */
-    numTobase160 : function(val)
+    _numTobase160 : function(val)
     {
       var retStr = "";
       
@@ -445,7 +227,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       {
         // Take the number mod 160. Prepend the ASCII char of the result.
         retStr = String.fromCharCode(this.base160arr[val % 160]) + retStr;
-        val /= 160 ;
+        val = Math.floor(val / 160);
       }
       
       return retStr;
@@ -462,13 +244,13 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   An integer encoded as a string of base160 characters. This is the 
      *   argument + 1.
      */
-    incrementbase160 : function(base160str)
+    _incrementbase160 : function(base160str)
     {
       var len = base160str.length;
       var i;
       var notMyPiece = base160str.substr(0, len-4);
       var retStr = "";
-      var char;
+      var charCode;
       
       // We only care about the rightmost 4 digits
       for (i = len-1; i >= len-4 ; i--)
@@ -477,11 +259,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
          charCode = base160str.charCodeAt(i)
          
          // Is this the last entry in the encoding array?
-         if (charCode == this.base160arr[base160.len-1] )
+         if (charCode == this._base160arr[base160.len-1] )
          {
            // Then this is a carry. This value gets base160arr[0]. We go on to
            // the next higher-order digit by continuing through the for-loop
-           retStr = this.base160arr[0] + retStr;
+           retStr = this._base160arr[0] + retStr;
          }
          else
          {

@@ -18,7 +18,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "app"        : null,
         "treeId"     : null,
         "visitor"    : null,
-        "timestamp"  : null,
+        "timestamp"  : (new Date()).toString(),
         "numChildren": 0,
         "text"       : null
       });
