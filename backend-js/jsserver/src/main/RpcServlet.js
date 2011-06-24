@@ -78,8 +78,11 @@ function doGet(request, response)
   var             entity;
   var             queryString = request.getQueryString();
   var             querySplit;
+  var             argSplit;
   var             jsonInput;
   var             rpcResult;
+  var             decoder;
+  var             decodeResult;
   var             out;
   var             Db;
   
@@ -228,6 +231,19 @@ function doGet(request, response)
     response.setContentType("application/json");
     out = response.getWriter();
     out.println(rpcResult);
+    break;
+ 
+  
+  case "getURL64":
+    
+    argSplit = querySplit[1].split(":");
+    decoder = aiagallery.dbif.Decoder64.getInstance();
+    decodeResult = decoder.getDecodedURL(argSplit[0],argSplit[1]);
+    
+    // Generate te response
+    response.setContentType(decodeResult.mime);
+    out = response.getWriter();
+    out.println(decodeResult.content);
     break;
   }
 };

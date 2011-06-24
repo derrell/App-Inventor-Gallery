@@ -176,6 +176,9 @@ try
   classname = "qx.io.remote.RpcError";
   new Packages.qx.io.remote.RpcError();
   
+  classname = "qx.util.Base64";
+  new Packages.qx.util.Base64();
+  
   classname = "aiagallery.dbif.MApps";
   new Packages.aiagallery.dbif.MApps();
   
@@ -229,6 +232,9 @@ try
   
   classname = "aiagallery.dbif.DbifAppEngine";
   new Packages.aiagallery.dbif.DbifAppEngine();
+  
+  classname = "aiagallery.dbif.Decoder64";
+  new Packages.aiagallery.dbif.Decoder64();
   
   classname = "aiagallery.dbif.MSimData";
   new Packages.aiagallery.dbif.MSimData();
