@@ -194,6 +194,9 @@ try
   classname = "aiagallery.dbif.MTags";
   new Packages.aiagallery.dbif.MTags();
   
+  classname = "aiagallery.dbif.MComments";
+  new Packages.aiagallery.dbif.MComments();
+  
   classname = "aiagallery.dbif.ObjAppData";
   new Packages.aiagallery.dbif.ObjAppData();
   
