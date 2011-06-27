@@ -26,7 +26,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     this.setWhoAmI("joe@blow.com");
     
     // Simulate being the administrator
-    this.setIsAdmin(true);
+//    this.setIsAdmin(true);
   },
   
   defer : function()
