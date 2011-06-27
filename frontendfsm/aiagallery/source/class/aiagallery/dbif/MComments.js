@@ -66,7 +66,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         
         
       // Determine who the logged-in user is
-      whoami = this.getUserData("whoami");
+      whoami = this.getWhoAmI();
 
       // Get a new ObjComments object.
       commentObj = new aiagallery.dbif.ObjComments();

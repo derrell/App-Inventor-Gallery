@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="backend"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/derrell/ME/Dropbox/EclipseWorkspace/App Inventor Gallery/classes/json_simple-1.1.jar"/>
-	<classpathentry kind="lib" path="/home/derrell/ME/Dropbox/EclipseWorkspace/App Inventor Gallery/classes/servlet-api-2.5.jar"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
-	<classpathentry kind="output" path="war/WEB-INF/classes"/>
-</classpath>
