@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
  * http://www.eclipse.org/org/documents/epl-v10.php
@@ -234,13 +235,25 @@ function doGet(request, response)
     break;
  
   
-  case "getURL64":
+  case "getdata":            // Request for a base 64 encoded URL
     
+    /* 
+     * The call here looked like this to begin with:
+     * 
+     * getdata=appId:urlField
+     * 
+     * Above, we split this by the equal sign to determine which call was made,
+     * and now we split the second part of that by colons, to get our
+     * parameters. 
+     */
     argSplit = querySplit[1].split(":");
-    decoder = aiagallery.dbif.Decoder64.getInstance();
-    decodeResult = decoder.getDecodedURL(argSplit[0],argSplit[1]);
     
-    // Generate te response
+    // Call the (static) decoder method, which takes an appId and a field
+    decodeResult = 
+      aiagallery.dbif.Decoder64.getDecodedURL(argSplit[0], argSplit[1]);
+    
+    // decodeResult is a map containing a "mime" member and a "content" member.
+    // Just pass them where they're needed and we're done.
     response.setContentType(decodeResult.mime);
     out = response.getWriter();
     out.println(decodeResult.content);
