@@ -113,8 +113,17 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return true;
 
       default:
-        // Do not allow access to unrecognized method names
-        return false;
+        if (true)
+        {
+          // FIXME: Temporarily allow access to all functions. This must be
+          // deleted once the cases of this switch are properly implemented.
+          return true;
+        }
+        else
+        {
+          // Do not allow access to unrecognized method names
+          return false;
+        }
       }
     }
   }
