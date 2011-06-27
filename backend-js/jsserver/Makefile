@@ -85,6 +85,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MVisitors.class		\
 	qxoo_classes/aiagallery/dbif/MTags.class		\
 	qxoo_classes/aiagallery/dbif/MMobile.class		\
+	qxoo_classes/aiagallery/dbif/MComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjDownloads.class		\
@@ -93,12 +94,14 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
+	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
 								\
 	qxoo_classes/aiagallery/dbif/MSimData.class
 
 
 rpcjs_classes :=					\
+	qxoo_classes/rpcjs/AbstractRpcHandler.class	\
 	qxoo_classes/rpcjs/appengine/Rpc.class		\
 	qxoo_classes/rpcjs/rpc/Server.class		\
 	qxoo_classes/rpcjs/rpc/error/Error.class	\
