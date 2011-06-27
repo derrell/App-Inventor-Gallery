@@ -182,9 +182,6 @@ try
   classname = "aiagallery.dbif.MApps";
   new Packages.aiagallery.dbif.MApps();
   
-  classname = "aiagallery.dbif.MMobile";
-  new Packages.aiagallery.dbif.MMobile();
-  
   classname = "rpcjs.dbif.Entity";
   new Packages.rpcjs.dbif.Entity();
 
@@ -197,6 +194,12 @@ try
   classname = "aiagallery.dbif.MTags";
   new Packages.aiagallery.dbif.MTags();
   
+<<<<<<< HEAD
+=======
+  classname = "aiagallery.dbif.MMobile";
+  new Packages.aiagallery.dbif.MMobile();
+  
+>>>>>>> upstream/wip
   classname = "aiagallery.dbif.MComments";
   new Packages.aiagallery.dbif.MComments();
   
@@ -230,6 +233,9 @@ try
   classname = "rpcjs.appengine.Dbif";
   new Packages.rpcjs.appengine.Dbif();
   
+  classname = "aiagallery.dbif.MDbifCommon";
+  new Packages.aiagallery.dbif.MDbifCommon();
+  
   classname = "aiagallery.dbif.DbifAppEngine";
   new Packages.aiagallery.dbif.DbifAppEngine();
   
@@ -238,6 +244,9 @@ try
   
   classname = "aiagallery.dbif.MSimData";
   new Packages.aiagallery.dbif.MSimData();
+  
+  classname = "rpcjs.AbstractRpcHandler";
+  new Packages.rpcjs.AbstractRpcHandler();
   
   classname = "rpcjs.appengine.Rpc";
   new Packages.rpcjs.appengine.Rpc();
