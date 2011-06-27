@@ -13,11 +13,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
 
   include : 
   [
-    aiagallery.dbif.MVisitors,
-    aiagallery.dbif.MApps,
-    aiagallery.dbif.MTags,
-    aiagallery.dbif.MMobile,
-    aiagallery.dbif.MComments
+    aiagallery.dbif.MDbifCommon
   ],
   
   construct : function()
@@ -36,7 +32,10 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     whoami = userService.getCurrentUser();
 
     // Save the logged-in user
-    this.setUserData("whoami", String(whoami));
+    this.setWhoAmI(String(whoami));
+    
+    // Track whether this user is an administrator
+    this.setIsAdmin(userService.isUserAdmin());
   },
   
   defer : function()

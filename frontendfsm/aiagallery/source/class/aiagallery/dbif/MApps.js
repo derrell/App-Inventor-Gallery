@@ -80,7 +80,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       delete attributes["owner"];
 
       // Determine who the logged-in user is
-      whoami = this.getUserData("whoami");
+      whoami = this.getWhoAmI();
 
       // Get an AppData object. If uid is non-null, retrieve the prior data.
       appObj = new aiagallery.dbif.ObjAppData(uid);
@@ -234,7 +234,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       appData = appObj.getData();
       
       // Determine who the logged-in user is
-      whoami = this.getUserData("whoami");
+      whoami = this.getWhoAmI();
 
       // Ensure that the logged-in user owns this application
       if (appData.owner != whoami)
@@ -319,7 +319,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             owners;
   
       // Get the current user
-      whoami = this.getUserData("whoami");
+      whoami = this.getWhoAmI();
 
       // Create the criteria for a search of apps of the current user
       if (! bAll)
@@ -558,7 +558,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             criteria;
       var             owners;
 
-      whoami = this.getUserData("whoami");
+      whoami = this.getWhoAmI();
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
 
