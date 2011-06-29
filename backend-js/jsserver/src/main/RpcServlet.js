@@ -252,11 +252,19 @@ function doGet(request, response)
     decodeResult = 
       aiagallery.dbif.Decoder64.getDecodedURL(argSplit[0], argSplit[1]);
     
-    // decodeResult is a map containing a "mime" member and a "content" member.
-    // Just pass them where they're needed and we're done.
-    response.setContentType(decodeResult.mime);
-    out = response.getWriter();
-    out.println(decodeResult.content);
+    if (decodeResult === null)
+    {
+      response.sendError(404, "No data found. Field may be empty, or App " +
+                              "may not exist.");
+    }
+    else
+    { 
+      // decodeResult is a map with a "mime" member and a "content" member.
+      // Just pass them where they're needed and we're done.
+      response.setContentType(decodeResult.mime);
+      out = response.getWriter();
+      out.println(decodeResult.content);
+    }
     break;
   }
 };
