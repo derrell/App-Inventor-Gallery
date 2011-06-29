@@ -200,6 +200,9 @@ try
   classname = "aiagallery.dbif.MComments";
   new Packages.aiagallery.dbif.MComments();
   
+  classname = "aiagallery.dbif.MDbifCommon";
+  new Packages.aiagallery.dbif.MDbifCommon();
+  
   classname = "aiagallery.dbif.ObjAppData";
   new Packages.aiagallery.dbif.ObjAppData();
   
