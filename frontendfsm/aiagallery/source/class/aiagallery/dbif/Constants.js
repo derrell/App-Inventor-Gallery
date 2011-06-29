@@ -17,6 +17,29 @@ qx.Class.define("aiagallery.dbif.Constants",
       Banned  : 0,
       Pending : 1,
       Active  : 2
+    },
+    
+    Permissions :
+    {
+      // Start: from MApps
+      "addOrEditApp" : ,
+      "deleteApp"    : ,
+      "getAppList"   : ,
+      "appQuery"     : ,
+      "getAppInfo"   : ,
+      // End MApps
+      
+      // Start MComments
+      "addComment"   : ,
+      "deleteComment": ,
+      "getComments"  : ,
+      // End MComments
+      
+      // Start MTags
+      "getCategoryTags" : ,
+      // End MTags
+      
+      
     }
   }
 });
