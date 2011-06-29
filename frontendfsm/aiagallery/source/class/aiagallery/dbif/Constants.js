@@ -22,24 +22,22 @@ qx.Class.define("aiagallery.dbif.Constants",
     Permissions :
     {
       // Start: from MApps
-      "addOrEditApp" : ,
-      "deleteApp"    : ,
-      "getAppList"   : ,
-      "appQuery"     : ,
-      "getAppInfo"   : ,
+      "addOrEditApp" : "Add and edit applications",
+      "deleteApp"    : "Delete applications",
+      "getAppList"   : "Get application list",
+      "appQuery"     : "Query for applications",
+      "getAppInfo"   : "Get application detail information",
       // End MApps
       
       // Start MComments
-      "addComment"   : ,
-      "deleteComment": ,
-      "getComments"  : ,
+      "addComment"   : "Add comments to an application",
+      "deleteComment": "Delete comments from an application",
+      "getComments"  : "Retrieve comments about an application",
       // End MComments
       
       // Start MTags
-      "getCategoryTags" : ,
+      "getCategoryTags" : "Get the list of category tags"
       // End MTags
-      
-      
     }
   }
 });
