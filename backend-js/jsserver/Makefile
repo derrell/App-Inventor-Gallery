@@ -12,9 +12,9 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
+qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
 app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -76,7 +76,8 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/JsonImpl.class			\
 	qxoo_classes/qx/lang/Json.class				\
 	qxoo_classes/qx/lang/Object.class			\
-	qxoo_classes/qx/io/remote/RpcError.class
+	qxoo_classes/qx/io/remote/RpcError.class		\
+	qxoo_classes/qx/util/Base64.class
 
 
 app_classes :=							\
@@ -96,6 +97,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
 	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
+	qxoo_classes/aiagallery/dbif/Decoder64.class		\
 								\
 	qxoo_classes/aiagallery/dbif/MSimData.class
 
