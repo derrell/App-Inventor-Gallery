@@ -34,7 +34,7 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       contents = fieldContent.substring(fieldContent.indexOf(",") + 1);
       
       // Send the url to the decoder function
-      decodedContents = qx.util.Base64.decode(contents);
+      decodedContents = qx.util.Base64.decode(contents, true);
       
       // Give 'em what they want
       return {mime: mimeType, content: decodedContents};
