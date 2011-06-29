@@ -15,21 +15,12 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
     // Pre-initialize the data
     this.setData(
       {
-        "owner"           : null,
-        "title"           : null,
-        "description"     : null,
-        "image1"          : null,
-        "image2"          : null,
-        "image3"          : null,
-        "previousAuthors" : null,
-        "source"          : null,
-        "apk"             : null,
         "tags"            : [],
-        "uploadTime"      : null,
         "numLikes"        : 0,
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
+        "creationTime"    : (new Date()).toString(),
         "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active
       });
@@ -76,6 +67,9 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
 
         /** Time the most recent Source ZIP file was uploaded */
         "uploadTime" : "String",
+        
+        /** The date and time this App was first created */
+        "creationTime" : "String",
 
         /** Number of "likes" of this application */
         "numLikes" : "Integer",

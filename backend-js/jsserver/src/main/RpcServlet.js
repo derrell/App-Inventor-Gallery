@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
  * http://www.eclipse.org/org/documents/epl-v10.php
@@ -78,8 +79,11 @@ function doGet(request, response)
   var             entity;
   var             queryString = request.getQueryString();
   var             querySplit;
+  var             argSplit;
   var             jsonInput;
   var             rpcResult;
+  var             decoder;
+  var             decodeResult;
   var             out;
   var             Db;
   
@@ -228,6 +232,39 @@ function doGet(request, response)
     response.setContentType("application/json");
     out = response.getWriter();
     out.println(rpcResult);
+    break;
+ 
+  
+  case "getdata":            // Request for a base 64 encoded URL
+    
+    /* 
+     * The call here looked like this to begin with:
+     * 
+     * getdata=appId:urlField
+     * 
+     * Above, we split this by the equal sign to determine which call was made,
+     * and now we split the second part of that by colons, to get our
+     * parameters. 
+     */
+    argSplit = querySplit[1].split(":");
+    
+    // Call the (static) decoder method, which takes an appId and a field
+    decodeResult = 
+      aiagallery.dbif.Decoder64.getDecodedURL(argSplit[0], argSplit[1]);
+    
+    if (decodeResult === null)
+    {
+      response.sendError(404, "No data found. Field may be empty, or App " +
+                              "may not exist.");
+    }
+    else
+    { 
+      // decodeResult is a map with a "mime" member and a "content" member.
+      // Just pass them where they're needed and we're done.
+      response.setContentType(decodeResult.mime);
+      out = response.getWriter();
+      out.println(decodeResult.content);
+    }
     break;
   }
 };
