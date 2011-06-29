@@ -15,11 +15,12 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     // Pre-initialize the data
     this.setData(
       {
-        "app"       : null,
-        "treeId"    : null,
-        "visitor"   : null,
-        "timestamp" : null,
-        "text"      : null
+        "app"        : null,
+        "treeId"     : null,
+        "visitor"    : null,
+        "timestamp"  : (new Date()).toString(),
+        "numChildren": 0,
+        "text"       : null
       });
 
     // Call the superclass constructor
@@ -38,7 +39,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         /*
          * Hierarchy identifier to track comment threads. 
          *
-         * See http//www.tetilab.com/roberto/pgsql/postgres-trees.pdf for an
+         * See http://www.tetilab.com/roberto/pgsql/postgres-trees.pdf for an
          * explanation of the Genealogical Representation of Trees in
          * Databases which is being used here.  Note that we use fgID
          * representation, with 4 bytes per level, so we can represent 6.5E+08
@@ -46,6 +47,9 @@ qx.Class.define("aiagallery.dbif.ObjComments",
          * our purposes. :-)
          */
         "treeId" : "String",
+        
+        /** How many direct responses does this comment have? */
+        "numChildren" : "Integer",
 
         /** Id of the Visitor who downloaded the application */
         "visitor" : "String",

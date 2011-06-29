@@ -76,7 +76,8 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/JsonImpl.class			\
 	qxoo_classes/qx/lang/Json.class				\
 	qxoo_classes/qx/lang/Object.class			\
-	qxoo_classes/qx/io/remote/RpcError.class
+	qxoo_classes/qx/io/remote/RpcError.class		\
+	qxoo_classes/qx/util/Base64.class
 
 
 app_classes :=							\
@@ -85,6 +86,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MVisitors.class		\
 	qxoo_classes/aiagallery/dbif/MTags.class		\
 	qxoo_classes/aiagallery/dbif/MMobile.class		\
+	qxoo_classes/aiagallery/dbif/MComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjDownloads.class		\
@@ -93,12 +95,15 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
+	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
+	qxoo_classes/aiagallery/dbif/Decoder64.class		\
 								\
 	qxoo_classes/aiagallery/dbif/MSimData.class
 
 
 rpcjs_classes :=					\
+	qxoo_classes/rpcjs/AbstractRpcHandler.class	\
 	qxoo_classes/rpcjs/appengine/Rpc.class		\
 	qxoo_classes/rpcjs/rpc/Server.class		\
 	qxoo_classes/rpcjs/rpc/error/Error.class	\
@@ -277,4 +282,4 @@ appserver :
 
 .PHONY: upload
 upload :	all
-	../appengine-java-sdk-1.4.3/bin/appcfg.sh update war
+	../appengine-java-sdk-1.5.0.1/bin/appcfg.sh update war

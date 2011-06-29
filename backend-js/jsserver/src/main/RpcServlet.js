@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License: LGPL: http://www.gnu.org/licenses/lgpl.html EPL :
  * http://www.eclipse.org/org/documents/epl-v10.php
@@ -74,13 +75,17 @@ function doPost(request, response)
  */
 function doGet(request, response)
 {
-  var entry;
-  var entity;
-  var queryString = request.getQueryString();
-  var querySplit;
-  var jsonInput;
-  var rpcResult;
-  var out;
+  var             entry;
+  var             entity;
+  var             queryString = request.getQueryString();
+  var             querySplit;
+  var             argSplit;
+  var             jsonInput;
+  var             rpcResult;
+  var             decoder;
+  var             decodeResult;
+  var             out;
+  var             Db;
   
   // We likely received something like:
   //   tag=by_developer%3AJoe%20Blow%3A0%3A10%3AuploadTime
@@ -95,14 +100,13 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
- /*
   case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
     //
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
-    var Db = aiagallery.dbif.MSimData.Db;
+    Db = aiagallery.dbif.MSimData.Db;
 
     for (entry in Db.visitors)
     {
@@ -157,14 +161,14 @@ function doGet(request, response)
       entity.put();
     }
     break;
-*/
+
   case "clearSimData":            // destroy all simulation data(derrell only)
     //
     // Remove ALL data sitting in simulation database.
     //
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
-    var Db = aiagallery.dbif.MSimData.Db;
+    Db = aiagallery.dbif.MSimData.Db;
     var dbField;
                 
 
@@ -179,16 +183,12 @@ function doGet(request, response)
       entity = new aiagallery.dbif.ObjTags(Db.tags[entry].value);
       entity.removeSelf();
     }
-/*
- * FIXME: This doesn't work. I don't know why.
+
     for (entry in Db.apps)
     {
-      // Toggle the commenting on the next two lines if you're deleting int uids
       entity = new aiagallery.dbif.ObjAppData(Db.apps[entry].uid);
-  //entity = newaiagallery.dbif.ObjAppData(parseInt(Db.apps[entry].uid,10));
       entity.removeSelf();
     }
-*/
     for (entry in Db.downloads)
     {
       entity = new aiagallery.dbif.ObjDownloads(Db.downloads[entry].apps);
@@ -232,6 +232,39 @@ function doGet(request, response)
     response.setContentType("application/json");
     out = response.getWriter();
     out.println(rpcResult);
+    break;
+ 
+  
+  case "getdata":            // Request for a base 64 encoded URL
+    
+    /* 
+     * The call here looked like this to begin with:
+     * 
+     * getdata=appId:urlField
+     * 
+     * Above, we split this by the equal sign to determine which call was made,
+     * and now we split the second part of that by colons, to get our
+     * parameters. 
+     */
+    argSplit = querySplit[1].split(":");
+    
+    // Call the (static) decoder method, which takes an appId and a field
+    decodeResult = 
+      aiagallery.dbif.Decoder64.getDecodedURL(argSplit[0], argSplit[1]);
+    
+    if (decodeResult === null)
+    {
+      response.sendError(404, "No data found. Field may be empty, or App " +
+                              "may not exist.");
+    }
+    else
+    { 
+      // decodeResult is a map with a "mime" member and a "content" member.
+      // Just pass them where they're needed and we're done.
+      response.setContentType(decodeResult.mime);
+      out = response.getWriter();
+      out.println(decodeResult.content);
+    }
     break;
   }
 };
