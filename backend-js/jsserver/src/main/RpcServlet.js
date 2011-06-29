@@ -52,10 +52,14 @@ function doPost(request, response)
     rpcResult = 
       aiagallery.dbif.DbifAppEngine.getInstance().processRequest(jsonInput);
     
-    // Generate the response.
-    response.setContentType("application/json");
-    out = response.getWriter();
-    out.println(rpcResult);
+    // Ignore null results, which occur if the request is a notification.
+    if (rpcResult !== null)
+    {
+      // Generate the response.
+      response.setContentType("application/json");
+      out = response.getWriter();
+      out.println(rpcResult);
+    }
   }
   catch (e)
   {
