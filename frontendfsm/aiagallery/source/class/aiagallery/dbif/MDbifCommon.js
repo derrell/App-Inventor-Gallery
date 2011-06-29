@@ -28,15 +28,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
   {
     whoAmI :
     {
-      check : "String",
+      check : "Object",
       apply : "_applyWhoAmI"
-    },
-    
-    isAdmin :
-    {
-      check : "Boolean",
-      init  : false,
-      apply : "_applyIsAdmin"
     }
   },
 
@@ -45,11 +38,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     _applyWhoAmI : function(value, old)
     {
       aiagallery.dbif.MDbifCommon.__whoami = value;
-    },
-
-    _applyIsAdmin : function(value, old)
-    {
-      aiagallery.dbif.MDbifCommon.__isAdmin = value;
     }
   },
 
@@ -57,6 +45,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
   {
     __whoami : null,
     __isAdmin : null,
+    __initialized : false,
 
     /**
      * Function to be called for authentication to run a service
@@ -74,6 +63,44 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var             methodComponents;
       var             methodName;
       var             serviceName;
+      var             me;
+      var             meData;
+      var             bNeedPut = false;
+
+      // Have we yet initialized the user object?
+      if (aiagallery.dbif.MDbifCommon.__whoami &&
+          ! aiagallery.dbif.MDbifCommon.__initialized)
+      {
+        // Nope. Retrieve our visitor object
+        me = new aiagallery.dbif.ObjVisitors(
+          aiagallery.dbif.MDbifCommon.__whoami.email);
+        
+        // Does it contain a display name yet?
+        meData = me.getData();
+        if (meData.displayName === null)
+        {
+          // Nope. Add one.
+          meData.displayName = aiagallery.dbif.MDbifCommon.__whoami.userId;
+          bNeedPut = true;
+        }
+        
+        // Is this a brand new object?
+        if (me.getBrandNew())
+        {
+          // Yup. Fill in defaults
+          meData.permissions.push("getCategoryTags");
+          bNeedPut = true;
+        }
+
+        // Write out this new object, if necessary
+        if (bNeedPut)
+        {
+          me.put();
+        }
+        
+        // We're now initialized
+        aiagallery.dbif.MDbifCommon.__initialized = true;
+      }
 
       // Split the fully-qualified method name into its constituent parts
       methodComponents = fqMethod.split(".");
@@ -94,7 +121,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       }
       
       // If the user is an adminstrator, ...
-      if (aiagallery.dbif.MDbifCommon.__isAdmin)
+      if (aiagallery.dbif.MDbifCommon.__whoami &&
+          aiagallery.dbif.MDbifCommon.__whoami.__isAdmin)
       {
         // ... they implicitly have access.
         return true;

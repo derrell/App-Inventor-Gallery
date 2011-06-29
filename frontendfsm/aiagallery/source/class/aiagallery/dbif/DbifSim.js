@@ -22,11 +22,26 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     // Call the superclass constructor
     this.base(arguments, "aiagallery", "/rpc");
         
-    // Simulate the logged-in user
-    this.setWhoAmI("joe@blow.com");
-    
-    // Simulate being the administrator
-//    this.setIsAdmin(true);
+    if (true)
+    {
+      // Save the logged-in user
+      this.setWhoAmI(
+        {
+          email   : "jarjar@binks.org",
+          userId  : "obnoxious",
+          isAdmin : false
+        });
+    }
+    else
+    {
+      // Save the logged-in user
+      this.setWhoAmI(
+        {
+          email   : "joe@blow.com",
+          userId  : "Joey",
+          isAdmin : false
+        });
+    }
   },
   
   defer : function()
