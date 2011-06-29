@@ -12,10 +12,12 @@ qx.Class.define("aiagallery.dbif.ObjVisitors",
   
   construct : function(id)
   {
+    var initialData;
+
     // Pre-initialize the data
     this.setData(
       {
-        "id"             : null,
+        "id"             : id,
         "displayName"    : null,
         "permissions"    : [],
         "status"         : aiagallery.dbif.Constants.Status.Active,

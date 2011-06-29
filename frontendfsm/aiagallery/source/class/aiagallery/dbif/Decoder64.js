@@ -26,6 +26,12 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       // Get the contents of that field
       fieldContent = myObj.getData()[base64field];
       
+      // Was there any data in the field?
+      if (!fieldContent)
+      {
+        // No, return null and let the caller decide how to handle that.
+        return null;
+      }
       // Parse out the mimeType. This always starts at index 5 and ends with a 
       // semicolon
       mimeType = fieldContent.substring(5, fieldContent.indexOf(";"));

@@ -20,7 +20,9 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   {
     var             UserServiceFactory;
     var             userService;
+    var             user;
     var             whoami;
+    var             userId;
 
     // Call the superclass constructor
     this.base(arguments, "aiagallery", "/rpc");
@@ -29,13 +31,17 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     UserServiceFactory =
       Packages.com.google.appengine.api.users.UserServiceFactory;
     userService = UserServiceFactory.getUserService();
-    whoami = userService.getCurrentUser();
+    user = userService.getCurrentUser();
+    whoami = String(user.getEmail());
+    userId = String(user.getUserId());
 
     // Save the logged-in user
-    this.setWhoAmI(String(whoami));
-    
-    // Track whether this user is an administrator
-    this.setIsAdmin(userService.isUserAdmin());
+    this.setWhoAmI(
+      {
+        email   : whoami,
+        userId  : userId,
+        isAdmin : userService.isUserAdmin()
+      });
   },
   
   defer : function()
