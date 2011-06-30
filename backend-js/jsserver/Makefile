@@ -12,9 +12,9 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
+qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
 app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -95,6 +95,8 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjLikes.class		\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
+	qxoo_classes/aiagallery/dbif/ObjSearch.class		\
+	qxoo_classes/aiagallery/dbif/ObjPermissionGroup.class	\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
 	qxoo_classes/aiagallery/dbif/Decoder64.class		\

@@ -224,6 +224,12 @@ try
   classname = "aiagallery.dbif.ObjVisitors";
   new Packages.aiagallery.dbif.ObjVisitors();
   
+  classname = "aiagallery.dbif.ObjPermissionGroup";
+  new Packages.aiagallery.dbif.ObjPermissionGroup();
+  
+  classname = "aiagallery.dbif.ObjSearch";
+  new Packages.aiagallery.dbif.ObjSearch();
+  
   classname = "aiagallery.dbif.Constants";
   new Packages.aiagallery.dbif.Constants();
 
