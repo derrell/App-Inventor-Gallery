@@ -95,6 +95,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjLikes.class		\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
+	qxoo_classes/aiagallery/dbif/ObjPermissionGroup.class	\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
 	qxoo_classes/aiagallery/dbif/Decoder64.class		\
