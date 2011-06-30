@@ -69,6 +69,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var             serviceName;
       var             me;
       var             meData;
+      var             meObjVisitor;
+      var             mePermissionGroups;
       var             bAnonymous;
 
       // Have we yet initialized the user object?
@@ -119,28 +121,26 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       }
 
       // Do per-method authentication.
-      //
-      // NOTE: We have access to the logged-in user's email in
-      // aiagallery.dbif.MDbifCommon.__whoami.email, which can be used in the
-      // determination of whether to grant access.
-      //
       
       // Are they logged in, or anonymous?
       bAnonymous = (aiagallery.dbif.MDbifCommon.__whoami === null);
       
       switch(methodName)
       {
+        
+        
       //
       // MApps
       //
       case "addOrEditApp":
-        return false;           // FIXME
+        return true;
+//FIXME:return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "deleteApp":
-        return false;           // FIXME
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
-      case "getAppListAll":     // FIXME
-        return false;
+      case "getAppListAll":
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getAppList":
       case "appQuery":
@@ -154,7 +154,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "deleteComment":
-        return false;           // FIXME
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getComments":
         return true;            // Anonymous access
@@ -170,22 +170,68 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       // MVisitors
       //
       case "addOrEditVisitor":
-        return false;           // FIXME
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "deleteVisitor":
-        return false;           // FIXME
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getVisitorList":
-        return false;           // FIXME
-
+        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        
       case "getCategoryTags":
-        // Allowable access.
+        // Anonymous access.
         return true;
 
       default:
         // Do not allow access to unrecognized method names
         return false;
       }
+    },
+    __deepPermissionCheck : function(methodName)
+    {
+      var email = aiagallery.dbif.MDbifCommon.__whoami.email;
+      var myObjData = new aiagallery.dbif.ObjVisitor(email).getData();
+      var permissionArr = myObjData["permissions"];
+      var permissionGroupArr = myObjData["permissionGroups"];
+      var permission;
+      var group;
+      var i, j;
+      
+      if (permissionArr != null)
+      {
+        for (i = 0 ; i < permissionArr.length; i++)
+        {
+          permission = permissionArr[i];
+          
+          if (permission === methodName)
+          {
+            return true; 
+          }
+        }
+      }
+      
+      if (permissionGroupArr != null)
+      {
+        for (i = 0 ; i < permissionGroupArr.length; i++)
+        {
+          group = new aiagallery.dbif.ObjPermissionGroup(permissionGroupArr[i]);
+          
+          permissionArr = group.getData()["permissions"];
+          
+          for (j = 0 ; j < permissionArr.length; j++)
+          {
+            permission = permissionArr[j];
+            
+            if (permission === methodName)
+            {
+              return true; 
+            }
+            
+          }
+        }
+      }
+      return true;
+      
     }
   }
 });
