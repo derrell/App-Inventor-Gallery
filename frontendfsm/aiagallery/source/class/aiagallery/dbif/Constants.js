@@ -21,23 +21,42 @@ qx.Class.define("aiagallery.dbif.Constants",
     
     Permissions :
     {
-      // Start: from MApps
-      "addOrEditApp" : "Add and edit applications",
-      "deleteApp"    : "Delete applications",
-      "getAppList"   : "Get application list",
-      "appQuery"     : "Query for applications",
-      "getAppInfo"   : "Get application detail information",
-      // End MApps
+      //
+      // MApps
+      //
+      "addOrEditApp"  : "Add and edit applications",
+      "deleteApp"     : "Delete applications",
+      "getAppListAll" : "Get all users application list",
+
+      /* Anonymous access...
+      "getAppList"    : "Get logged in user application list",
+      "appQuery"      : "Query for applications",
+      "getAppInfo"    : "Get application detail information",
+      ... */
       
-      // Start MComments
+      //
+      // MComments
+      //
       "addComment"   : "Add comments to an application",
       "deleteComment": "Delete comments from an application",
-      "getComments"  : "Retrieve comments about an application",
-      // End MComments
       
-      // Start MTags
-      "getCategoryTags" : "Get the list of category tags"
-      // End MTags
+      /* Anonymous access...
+      "getComments"  : "Retrieve comments about an application",
+      ... */
+      
+      //
+      // MTags
+      //
+      /* Anonymous access...
+      "getCategoryTags" : "Get the list of category tags",
+      ... */
+      
+      //
+      // MVisitors
+      //
+      "addOrEditVisitor" : "Add and edit visitors",
+      "deleteVisitor"    : "Delete visitors",
+      "getVisitorList"   : "Retrieve list of visitors"
     }
   }
 });

@@ -29,7 +29,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
         {
           email   : "jarjar@binks.org",
           userId  : "obnoxious",
-          isAdmin : false
+          isAdmin : true
         });
     }
     else

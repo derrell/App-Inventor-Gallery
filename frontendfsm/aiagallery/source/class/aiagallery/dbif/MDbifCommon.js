@@ -26,6 +26,10 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
   properties :
   {
+    /**
+     * Information about the currently-logged-in user. The value is a map
+     * containing the fields: email, userId, and isAdmin.
+     */
     whoAmI :
     {
       check : "Object",
@@ -65,7 +69,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var             serviceName;
       var             me;
       var             meData;
-      var             bNeedPut = false;
+      var             bAnonymous;
 
       // Have we yet initialized the user object?
       if (aiagallery.dbif.MDbifCommon.__whoami &&
@@ -81,20 +85,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         {
           // Nope. Add one.
           meData.displayName = aiagallery.dbif.MDbifCommon.__whoami.userId;
-          bNeedPut = true;
-        }
-        
-        // Is this a brand new object?
-        if (me.getBrandNew())
-        {
-          // Yup. Fill in defaults
-          meData.permissions.push("getCategoryTags");
-          bNeedPut = true;
-        }
-
-        // Write out this new object, if necessary
-        if (bNeedPut)
-        {
           me.put();
         }
         
@@ -122,7 +112,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       
       // If the user is an adminstrator, ...
       if (aiagallery.dbif.MDbifCommon.__whoami &&
-          aiagallery.dbif.MDbifCommon.__whoami.__isAdmin)
+          aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
       {
         // ... they implicitly have access.
         return true;
@@ -130,28 +120,71 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
       // Do per-method authentication.
       //
-      // NOTE: We have access to the logged-in user name in
-      // aiagallery.dbif.MDbifCommon.__whoami, which can be used in the
+      // NOTE: We have access to the logged-in user's email in
+      // aiagallery.dbif.MDbifCommon.__whoami.email, which can be used in the
       // determination of whether to grant access.
       //
+      
+      // Are they logged in, or anonymous?
+      bAnonymous = (aiagallery.dbif.MDbifCommon.__whoami === null);
+      
       switch(methodName)
       {
+      //
+      // MApps
+      //
+      case "addOrEditApp":
+        return false;           // FIXME
+
+      case "deleteApp":
+        return false;           // FIXME
+
+      case "getAppListAll":     // FIXME
+        return false;
+
+      case "getAppList":
+      case "appQuery":
+      case "getAppInfo":
+        return true;            // Anonymous access
+      
+      //
+      // MComments
+      //
+      case "addComment":
+        return ! bAnonymous;    // Access is allowed if they're logged in
+
+      case "deleteComment":
+        return false;           // FIXME
+
+      case "getComments":
+        return true;            // Anonymous access
+
+      //
+      // MTags
+      //
+      
+      case "getCategoryTags":
+        return true;            // Anonymous access
+
+      //
+      // MVisitors
+      //
+      case "addOrEditVisitor":
+        return false;           // FIXME
+
+      case "deleteVisitor":
+        return false;           // FIXME
+
+      case "getVisitorList":
+        return false;           // FIXME
+
       case "getCategoryTags":
         // Allowable access.
         return true;
 
       default:
-        if (true)
-        {
-          // FIXME: Temporarily allow access to all functions. This must be
-          // deleted once the cases of this switch are properly implemented.
-          return true;
-        }
-        else
-        {
-          // Do not allow access to unrecognized method names
-          return false;
-        }
+        // Do not allow access to unrecognized method names
+        return false;
       }
     }
   }

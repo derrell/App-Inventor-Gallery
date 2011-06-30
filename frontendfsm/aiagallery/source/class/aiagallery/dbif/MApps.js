@@ -101,7 +101,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         }
 
         // Ensure that the logged-in user owns this application.
-        if (appData.owner != whoami)
+        if (appData.owner != whoami.email)
         {
           // He doesn't. Someone's doing something nasty!
           error.setCode(2);
@@ -112,7 +112,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       else
       {
         // Initialize the owner field
-        appData.owner = whoami;
+        appData.owner = whoami.email;
       }
 
       // Save the existing tags list
@@ -237,7 +237,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       whoami = this.getWhoAmI();
 
       // Ensure that the logged-in user owns this application
-      if (appData.owner != whoami)
+      if (appData.owner != whoami.email)
       {
         // He doesn't. Someone's doing something nasty!
         error.setCode(1);
@@ -286,10 +286,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      *   reformed into a string representation rather than being returned in
      *   their native representation.
      *
-     * @param bAll {Boolean}
-     *   Whether to return all applications (if permissions allow it) rather
-     *   than only those applications owned by the logged-in user.
-     *
      * @param sortCriteria {Array}
      *   An array of maps. Each map contains a single key and value, with the
      *   key being a field name on which to sort, and the value being one of
@@ -307,8 +303,12 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * @param limit {Integer}
      *   An integer value > 0 indicating the maximum number of records to return
      *   in the result set.
+     *
+     * @param bAll {Boolean}
+     *   Whether to return all applications (if permissions allow it) rather
+     *   than only those applications owned by the logged-in user.
      */
-    getAppList : function(bStringize, bAll, sortCriteria, offset, limit)
+    _getAppList : function(bStringize, sortCriteria, offset, limit, bAll)
     {
       var             categories;
       var             categoryNames;
@@ -328,7 +328,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           {
             type  : "element",
             field : "owner",
-            value : whoami
+            value : whoami.email
           };
       }
       else
@@ -417,6 +417,68 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return { apps : appList, categories : categoryNames };
     },
     
+    /**
+     * Get a the application list of the logged-in user.
+     *
+     * @param bStringize {Boolean}
+     *   Whether the tags, previousAuthors, and status values should be
+     *   reformed into a string representation rather than being returned in
+     *   their native representation.
+     *
+     * @param sortCriteria {Array}
+     *   An array of maps. Each map contains a single key and value, with the
+     *   key being a field name on which to sort, and the value being one of
+     *   the two strings, "asc" to request an ascending sort on that field, or
+     *   "desc" to request a descending sort on that field. The order of maps
+     *   in the array determines the priority of that field in the sort. The
+     *   first map in the array indicates the primary sort key; the second map
+     *   in the array indicates the next-highest-priority sort key, etc.
+     *
+     * @param offset {Integer}
+     *   An integer value >= 0 indicating the number of records to skip, in
+     *   the specified sort order, prior to the first one returned in the
+     *   result set.
+     *
+     * @param limit {Integer}
+     *   An integer value > 0 indicating the maximum number of records to return
+     *   in the result set.
+     */
+    getAppList : function(bStringize, sortCriteria, offset, limit)
+    {
+      return this._getAppList(bStringize, sortCriteria, offset, limit, false);
+    },
+
+    /**
+     * Get a the entire application list.
+     *
+     * @param bStringize {Boolean}
+     *   Whether the tags, previousAuthors, and status values should be
+     *   reformed into a string representation rather than being returned in
+     *   their native representation.
+     *
+     * @param sortCriteria {Array}
+     *   An array of maps. Each map contains a single key and value, with the
+     *   key being a field name on which to sort, and the value being one of
+     *   the two strings, "asc" to request an ascending sort on that field, or
+     *   "desc" to request a descending sort on that field. The order of maps
+     *   in the array determines the priority of that field in the sort. The
+     *   first map in the array indicates the primary sort key; the second map
+     *   in the array indicates the next-highest-priority sort key, etc.
+     *
+     * @param offset {Integer}
+     *   An integer value >= 0 indicating the number of records to skip, in
+     *   the specified sort order, prior to the first one returned in the
+     *   result set.
+     *
+     * @param limit {Integer}
+     *   An integer value > 0 indicating the maximum number of records to return
+     *   in the result set.
+     */
+    getAppListAll : function(bStringize, sortCriteria, offset, limit)
+    {
+      return this._getAppList(bStringize, sortCriteria, offset, limit, true);
+    },
+
     /**
      * Issue a query for a set of applicaitons. Limit the response to
      * particular fields.
@@ -577,7 +639,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.owner != whoami && app.status != 2)
+      if (app.owner != whoami.email && app.status != 2)
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)

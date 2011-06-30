@@ -12,7 +12,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   construct : function()
   {
     this.registerService("addComment", this.addComment);
-    this.registerService("deleteComment",    this.deleteComment);
+    this.registerService("deleteComment", this.deleteComment);
     this.registerService("getComments", this.getComments);
   },
 
