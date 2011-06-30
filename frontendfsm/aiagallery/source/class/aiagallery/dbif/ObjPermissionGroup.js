@@ -13,31 +13,19 @@ qx.Class.define("aiagallery.dbif.ObjPermissionGroup",
  
   construct : function(name)
   {
-    var i;
-    var permissionsArr = [];
-    var dataObj = { "name" : name };
     
-    // Build an array of permissions with any additional arguments
-    for (i = 1; i < arguments.length; i++)
-    {
-      permissionsArr.push(arguments[i]);
-    }
-    
-    // Were there any permissions?
-    if ( i > 1 )
-    {
-     // Yes, add them to this entity's data
-     dataObj["permissions"] = permissionArr;
-    }
-    
-    // Give the entity its name and permissions list
-    this.setData(dataObj);
+    // Give the entity its name, and a simple description
+    this.setData(
+      {
+        "name"        : name,
+        "description" : name
+      });
 
     // Use the group's name as the DB key
     this.setEntityKeyProperty(name);
     
     // Call the superclass constructor
-    this.base(arguments, "permissiongroup", keyArr);
+    this.base(arguments, "permissiongroup", name);
   },
   
   defer : function(clazz)
@@ -50,6 +38,9 @@ qx.Class.define("aiagallery.dbif.ObjPermissionGroup",
         /** A list of names of RPC calls to which members of this group have
          *  access */   
         "permissions" : "StringArray",
+        
+        /** A simple description of the group, i.e. "The all powerful Admin" */
+        "description" : "String",
 
         /** The name of this group, i.e. Administrator, guest, moderator etc. */
         "name"  : "Key"
