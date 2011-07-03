@@ -12,6 +12,7 @@ qx.Class.define("aiagallery.dbif.Constants",
 
   statics :
   {
+    /** Mapping of status names to values */
     Status      : 
     {
       Banned  : 0,
@@ -19,6 +20,15 @@ qx.Class.define("aiagallery.dbif.Constants",
       Active  : 2
     },
     
+    /** Reverse mapping of status: values to names */
+    StatusNameToValue :
+    [
+      "Banned", 
+      "Pending",
+      "Active"
+    ],
+
+    /** Mapping of permission names to descriptions */
     Permissions :
     {
       //
