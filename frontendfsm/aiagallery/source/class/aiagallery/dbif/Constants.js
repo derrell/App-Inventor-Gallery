@@ -21,7 +21,7 @@ qx.Class.define("aiagallery.dbif.Constants",
     },
     
     /** Reverse mapping of status: values to names */
-    StatusNameToValue :
+    StatusToValue :
     [
       "Banned", 
       "Pending",
