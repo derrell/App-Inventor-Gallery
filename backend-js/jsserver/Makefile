@@ -12,9 +12,9 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
+qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
 app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -33,6 +33,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/bom/client/EcmaScript.class		\
 	qxoo_classes/qx/bom/client/Device.class			\
 	qxoo_classes/qx/bom/client/Event.class			\
+	qxoo_classes/qx/bom/client/Runtime.class		\
 	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/Mixin.class				\
 	qxoo_classes/qx/Interface.class				\

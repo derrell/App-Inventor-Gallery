@@ -43,6 +43,9 @@ try
 
   classname = "qx.bom.client.Event";
   new Packages.qx.bom.client.Event();
+  
+  classname = "qx.bom.client.Runtime";
+  new Packages.qx.bom.client.Runtime();
 
   classname = "qx.core.Environment";
   new Packages.qx.core.Environment();
