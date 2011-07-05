@@ -34,37 +34,28 @@ function doPost(request, response)
   var             jsonInput;
 
   // Retrieve the JSON input from the POST data
-  try
-  {
-    // Get the input stream (the POST data)
-    reader = request.getReader();
-    
-    // Read the request data, line by line.
-    for (line = reader.readLine(); line != null; line = reader.readLine())
-    {
-      input.push(String(line));
-    }
-    
-    // Convert the input lines to a single string
-    jsonInput = String(input.join("\n"));
+  reader = request.getReader();
 
-    // Process this request
-    rpcResult = 
-      aiagallery.dbif.DbifAppEngine.getInstance().processRequest(jsonInput);
-    
-    // Ignore null results, which occur if the request is a notification.
-    if (rpcResult !== null)
-    {
-      // Generate the response.
-      response.setContentType("application/json");
-      out = response.getWriter();
-      out.println(rpcResult);
-    }
-  }
-  catch (e)
+  // Read the request data, line by line.
+  for (line = reader.readLine(); line != null; line = reader.readLine())
   {
-      // Some otherwise uncaught exception occurred.
-      throw new Error("Cannot execute remote method", e);
+    input.push(String(line));
+  }
+
+  // Convert the input lines to a single string
+  jsonInput = String(input.join("\n"));
+
+  // Process this request
+  rpcResult = 
+    aiagallery.dbif.DbifAppEngine.getInstance().processRequest(jsonInput);
+
+  // Ignore null results, which occur if the request is a notification.
+  if (rpcResult !== null)
+  {
+    // Generate the response.
+    response.setContentType("application/json");
+    out = response.getWriter();
+    out.println(rpcResult);
   }
 };
 
