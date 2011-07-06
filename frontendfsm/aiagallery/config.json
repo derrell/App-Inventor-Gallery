@@ -36,10 +36,6 @@
 
   "let" :
   {
-    // CONTRIB_PATH should point to the directory that contains "Dialog",
-    // "RpcJs" and "UploadWidget"
-    "CONTRIB_PATH" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib",
-
     "APPLICATION"  : "aiagallery",
     "QXTHEME"      : "aiagallery.theme.Theme",
     "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*", "${APPLICATION}.simulation.*"],
