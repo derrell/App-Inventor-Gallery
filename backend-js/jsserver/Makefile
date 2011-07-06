@@ -12,9 +12,8 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../qooxdoo/qooxdoo/framework/source/class
-app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+
+include Makefile.paths
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -33,6 +32,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/bom/client/EcmaScript.class		\
 	qxoo_classes/qx/bom/client/Device.class			\
 	qxoo_classes/qx/bom/client/Event.class			\
+	qxoo_classes/qx/bom/client/Runtime.class		\
 	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/Mixin.class				\
 	qxoo_classes/qx/Interface.class				\
@@ -95,7 +95,6 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjLikes.class		\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
-	qxoo_classes/aiagallery/dbif/ObjSearch.class		\
 	qxoo_classes/aiagallery/dbif/ObjPermissionGroup.class	\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
