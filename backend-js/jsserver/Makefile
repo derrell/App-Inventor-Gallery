@@ -12,6 +12,7 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
+
 include Makefile.paths
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
