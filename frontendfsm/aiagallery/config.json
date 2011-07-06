@@ -37,15 +37,6 @@
   "let" :
   {
     "APPLICATION"  : "aiagallery",
-
-    // QOOXDOO_PATH should point to the directory which contains "framework",
-    // "tool", "application", and "component"
-    "QOOXDOO_PATH" : "../../../../qooxdoo.git/trunk/qooxdoo",
-    
-    // CONTRIB_PATH should point to the directory that contains "Dialog",
-    // "RpcJs" and "UploadWidget"
-    "CONTRIB_PATH" : "../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib",
-
     "QXTHEME"      : "aiagallery.theme.Theme",
     "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*", "${APPLICATION}.simulation.*"],
     "LOCALES"      : [ "en" ],
