@@ -27,19 +27,31 @@ import sys, os, re, subprocess
 CMD_PYTHON = sys.executable
 QOOXDOO_PATH = '../../../'
 
+# If we find a qooxdoo_path file, we'll use its contents as QOOXDOO_PATH
+qxpathRead = None
+
 def getQxPath():
+    global qxpathRead
     path = QOOXDOO_PATH
-    # try updating from config file
-    if os.path.exists('config.json'):
-        # "using QOOXDOO_PATH from config.json"
-        qpathr=re.compile(r'"QOOXDOO_PATH"\s*:\s*"([^"]*)"\s*,?')
-        conffile = open('config.json')
-        aconffile = conffile.readlines()
-        for line in aconffile:
-            mo = qpathr.search(line)
-            if mo:
-                path = mo.group(1)
-                break # assume first occurrence is ok
+    qxUserHome = os.path.expanduser(os.path.join("~", ".qooxdoo"))
+
+    # try getting the qooxdoo_path file
+    qxPath = os.path.join(qxUserHome, "qooxdoo_path")
+    if os.access(qxPath, os.R_OK):
+        with open(qxPath) as fp:
+            qxpathRead = path = fp.read().rstrip()
+    else:
+        # try updating from config file
+        if os.path.exists('config.json'):
+            # "using QOOXDOO_PATH from config.json"
+            qpathr=re.compile(r'"QOOXDOO_PATH"\s*:\s*"([^"]*)"\s*,?')
+            conffile = open('config.json')
+            aconffile = conffile.readlines()
+            for line in aconffile:
+                mo = qpathr.search(line)
+                if mo:
+                    path = mo.group(1)
+                    break # assume first occurrence is ok
     path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), path))
 
     return path
@@ -56,6 +68,9 @@ argList = []
 argList.append(CMD_PYTHON)
 argList.append(REAL_GENERATOR)
 argList.extend(sys.argv[1:])
+if qxpathRead != None:
+    argList.append("-m")
+    argList.append("QOOXDOO_PATH:" + qxpathRead)
 if sys.platform == "win32":
     argList1=[]
     for arg in argList:
