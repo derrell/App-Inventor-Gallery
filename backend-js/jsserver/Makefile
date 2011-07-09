@@ -12,9 +12,7 @@ classpath := "${classes}"
 
 http_servlet := -extends javax.servlet.http.HttpServlet
 
-qxroot := ../../../../qooxdoo.git/trunk/qooxdoo/framework/source/class
-app := ../../frontendfsm/aiagallery/source/class
-rpcjs := ../../../../qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib/RpcJs/trunk/source/class
+include Makefile.paths
 
 qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
@@ -33,6 +31,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/bom/client/EcmaScript.class		\
 	qxoo_classes/qx/bom/client/Device.class			\
 	qxoo_classes/qx/bom/client/Event.class			\
+	qxoo_classes/qx/bom/client/Runtime.class		\
 	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/Mixin.class				\
 	qxoo_classes/qx/Interface.class				\
@@ -75,6 +74,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/Generics.class			\
 	qxoo_classes/qx/lang/JsonImpl.class			\
 	qxoo_classes/qx/lang/Json.class				\
+	qxoo_classes/qx/util/Base64.class			\
 	qxoo_classes/qx/lang/Object.class			\
 	qxoo_classes/qx/io/remote/RpcError.class
 
@@ -85,6 +85,8 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MVisitors.class		\
 	qxoo_classes/aiagallery/dbif/MTags.class		\
 	qxoo_classes/aiagallery/dbif/MMobile.class		\
+	qxoo_classes/aiagallery/dbif/MComments.class		\
+	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjDownloads.class		\
@@ -92,13 +94,16 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/ObjLikes.class		\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
+	qxoo_classes/aiagallery/dbif/ObjPermissionGroup.class	\
 	qxoo_classes/aiagallery/dbif/Constants.class		\
 	qxoo_classes/aiagallery/dbif/DbifAppEngine.class	\
+	qxoo_classes/aiagallery/dbif/Decoder64.class		\
 								\
 	qxoo_classes/aiagallery/dbif/MSimData.class
 
 
 rpcjs_classes :=					\
+	qxoo_classes/rpcjs/AbstractRpcHandler.class	\
 	qxoo_classes/rpcjs/appengine/Rpc.class		\
 	qxoo_classes/rpcjs/rpc/Server.class		\
 	qxoo_classes/rpcjs/rpc/error/Error.class	\

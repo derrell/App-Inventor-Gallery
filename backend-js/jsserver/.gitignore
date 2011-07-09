@@ -2,3 +2,4 @@
 *.class
 *.tmp
 qxoo_classes
+Makefile.paths

@@ -12,10 +12,12 @@ qx.Class.define("aiagallery.dbif.ObjVisitors",
   
   construct : function(id)
   {
+    var initialData;
+
     // Pre-initialize the data
     this.setData(
       {
-        "id"             : null,
+        "id"             : id,
         "displayName"    : null,
         "permissions"    : [],
         "status"         : aiagallery.dbif.Constants.Status.Active,
@@ -42,8 +44,12 @@ qx.Class.define("aiagallery.dbif.ObjVisitors",
         /** How the user's name is displayed in the gallery */
         "displayName" : "String",
 
-        /** A list of permissions assigned to this user */
+        /** A list of explicit permissions assigned to this user */
         "permissions" : "StringArray",
+        
+        /** A list of names of permission groups assigned to this user. Each of
+         *  these groups gives this user additional explicit permissions */
+        "permissionGroups" : "StringArray",
 
         /** Active, Pending, or Banned (by their numeric values) */
         "status" : "Integer",
