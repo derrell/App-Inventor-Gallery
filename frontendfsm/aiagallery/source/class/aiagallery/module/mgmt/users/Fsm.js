@@ -417,7 +417,6 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           var             email;
           var             selection;
           var             internal = { permissions : [], status : null };
-          var             i8n = { permissions : [], status : null };
           var             request;
 
           // Retrieve the cell editor and cell info
@@ -433,16 +432,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
             {
               // Add to our permission list the "internal" (English) permission
               internal.permissions.push(item.getUserData("internal"));
-              
-              // Also track the translated string
-              i8n.permissions.push(item.getLabel());
+            
             });
           selection = cellEditor.getUserData("status").getSelection()[0];
           internal.status = selection.getUserData("internal");
-          
-          // Get the status string. It's a localized string, so call its
-          // toString method so we don't end up with an object.
-          i8n.status = selection.getLabel().toString();
           
           // Save the request data
           var requestData = 
@@ -468,8 +461,8 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           // we made.
           request.setUserData("requestType", "AddOrEditVisitor");
 
-          // Save the translated permissions and status too
-          request.setUserData("i8n", i8n);
+          // Save the permissions and status
+          request.setUserData("internal", internal);
         }
       });
 
@@ -548,7 +541,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           var             cellInfo;
           var             rpcRequest;
           var             requestData;
-          var             i8n;
+          var             internal;
           var             table;
           var             dataModel;
           var             permissions;
@@ -561,8 +554,8 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           cellEditor = this.getUserData("cellEditor");
           cellInfo = this.getUserData("cellInfo");
           requestData = rpcRequest.getUserData("requestData");
-          i8n = rpcRequest.getUserData("i8n");
-          
+          internal = rpcRequest.getUserData("internal");
+
           // We'll also need the Table object, from the FSM
           table = fsm.getObject("table");
           
@@ -573,13 +566,13 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           rowData.push(requestData.displayName);
           rowData.push(requestData.email);
 
-          // Munge the permissions from an array into a comma-separated string,
-          // and add it it to the row data
-          permissions = i8n.permissions.join(", ");
+          // Munge the internal permissions from an array into a comma-separated
+          // string, and add it it to the row data
+          permissions = internal.permissions.join(", ");
           rowData.push(permissions);
           
-          // Add the translated status to the row data
-          rowData.push(i8n.status);
+          // Add the status to the row data
+          rowData.push(internal.status);
 
           // If there's cell info available (they're editing), ...
           if (cellInfo && cellInfo.row !== undefined)
