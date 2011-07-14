@@ -74,9 +74,12 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/Generics.class			\
 	qxoo_classes/qx/lang/JsonImpl.class			\
 	qxoo_classes/qx/lang/Json.class				\
-	qxoo_classes/qx/util/Base64.class			\
 	qxoo_classes/qx/lang/Object.class			\
-	qxoo_classes/qx/io/remote/RpcError.class
+	qxoo_classes/qx/io/remote/RpcError.class		\
+	qxoo_classes/qx/util/Base64.class
+
+# not yet
+# 	qxoo_classes/qx/dev/DebugObject.class
 
 
 app_classes :=							\
