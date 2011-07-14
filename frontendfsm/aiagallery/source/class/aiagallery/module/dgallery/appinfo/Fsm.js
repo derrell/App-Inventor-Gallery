@@ -78,7 +78,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       // The following transitions have a predicate, so must be listed first
 
       /*
-       * Transition: Idle to Idle
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: "appear" on canvas
        *
