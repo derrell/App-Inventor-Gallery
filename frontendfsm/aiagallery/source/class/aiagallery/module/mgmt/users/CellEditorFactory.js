@@ -118,21 +118,32 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       var permissionList = rowData[2].split(/ *, */);
 
       // Add each of the permission values
-      [
-        { i8n: this.tr("VISITOR ADD"),    internal: "VISITOR ADD" },
-        { i8n: this.tr("VISITOR DELETE"), internal: "VISITOR DELETE" },
-        { i8n: this.tr("VISITOR VIEW"),   internal: "VISITOR VIEW" },
-        { i8n: this.tr("TAG ADD"),        internal: "TAG ADD" },
-        { i8n: this.tr("TAG DELETE"),     internal: "TAG DELETE" },
-        { i8n: this.tr("TAG VIEW"),       internal: "TAG VIEW" }
-      ].forEach(function(perm) 
-        {
-          var item = new qx.ui.form.ListItem(perm.i8n);
-          item.setUserData("internal", perm.internal);
+      qx.lang.Object.getKeys(aiagallery.dbif.Constants.Permissions).forEach(
+        function(perm) 
+        {          
+          // Pull the permission description into the variable description
+          var description = aiagallery.dbif.Constants.Permissions[perm];
+
+          // Create a ListItem with the permission name and description
+          var item = new qx.ui.form.ListItem(description + " (" + perm + ")");
+
+          // Set the internal name of the permission to equal the display name
+          item.setUserData("internal", perm);
+
+          // Set "description" in userdata of the permission to be the 
+          // description of the permission.
+          item.setUserData("description", description); 
+
+          // Create a tooltip that describes the permission, then attach it to 
+          // the List Item
+          var tooltip = new qx.ui.tooltip.ToolTip(description);
+          item.setToolTip(tooltip);
+
+          // Add the list item with the attached tool tip to the list
           permissions.add(item);
           
           // Is this permission currently assigned to the user being edited?
-          if (qx.lang.Array.contains(permissionList, perm.internal))
+          if (qx.lang.Array.contains(permissionList, perm))
           {
             // Yup. Add it to the selection list
             permissions.addToSelection(item);
@@ -143,19 +154,26 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
 
       var status = new qx.ui.form.SelectBox();
 
-      // Add each of the status values
-      [
-        { i8n: this.tr("Active"),  internal: "Active" },
-        { i8n: this.tr("Pending"), internal: "Pending" },
-        { i8n: this.tr("Banned"),  internal: "Banned" }
-      ].forEach(function(stat) 
+      // Add each of the status values by pulling the array from Constants.js
+      qx.lang.Object.getKeys(aiagallery.dbif.Constants.Status).forEach(
+        function(stat)
+        //[
+        //  { i8n: this.tr("Active"),  internal: "Active" },
+        //  { i8n: this.tr("Pending"), internal: "Pending" },
+        //  { i8n: this.tr("Banned"),  internal: "Banned" }
+        //].forEach(function(stat) 
         {
-          var item = new qx.ui.form.ListItem(stat.i8n);
-          item.setUserData("internal", stat.internal);
+          // Create a new list item with the current status' name
+          var item = new qx.ui.form.ListItem(stat);
+          
+          // Set the internal name of the status to the display name for now
+          item.setUserData("internal", stat);
+
+          // Add this item to the selectbox
           status.add(item);
           
           // Is this the current status?
-          if (stat.internal == rowData[3])
+          if (stat == rowData[3])
           {
             status.setSelection( [ item ] );
           }
