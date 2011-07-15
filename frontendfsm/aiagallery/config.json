@@ -1,6 +1,35 @@
 {
   "name"    : "aiagallery",
 
+  "config-warnings" :
+  {
+    "job-shadowing" :
+    [
+      "source-hybrid",
+      "source",
+      "build",
+      "provider-deps",
+      "migration",
+      "source",
+      "source-hybrid",
+      "libraries",
+      "source-all",
+      "build",
+      "provider",
+      "test",
+      "source-all-script",
+      "clean",
+      "lint",
+      "source-script",
+      "translation",
+      "build-resources",
+      "build-script",
+      "build-files",
+      "info",
+      "distclean"
+    ]
+  },
+  
   "include" :
   [
     {
