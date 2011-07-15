@@ -128,7 +128,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
-      myTreeId = parentTreeId + this._numTobase160(parentNumChildren);
+      myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
       // Complete the comment record by giving it a treeId
       commentObj.setData({"treeId" : myTreeId});
@@ -231,14 +231,15 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      * @return {String}
      *   A string of length 4 containing base160 digits as characters.
      */
-    _numTobase160 : function(val)
+    _numToBase160 : function(val)
     {
       var retStr = "";
       
       for (var i = 3; i >= 0 ; i--)
       {
         // Take the number mod 160. Prepend the ASCII char of the result.
-        retStr = String.fromCharCode(this.base160arr[val % 160]) + retStr;
+        retStr = String.fromCharCode(
+          aiagallery.dbif.MComments._base160arr[val % 160]) + retStr;
         val = Math.floor(val / 160);
       }
       
@@ -246,8 +247,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     },
     /**
      * Increment the base160 number passed. This only augments the farthest
-     * right 4 characters. Any characters at index 0 through 
-     * base160str.length - 5 are untouched.
+     * right-most 4 characters (base160 digits).
      * 
      * @param base160str {String}
      *   An integer encoded as a string of base160 characters.
@@ -256,38 +256,46 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   An integer encoded as a string of base160 characters. This is the 
      *   argument + 1.
      */
-    _incrementbase160 : function(base160str)
+    _incrementBase160 : function(base160str)
     {
       var len = base160str.length;
       var i;
       var notMyPiece = base160str.substr(0, len-4);
       var retStr = "";
-      var charCode;
+      var ch;
+      var index;
       
-      // We only care about the rightmost 4 digits
-      for (i = len-1; i >= len-4 ; i--)
+      // We only care about the rightmost 4 digits, one level in the tree.
+      for (i = len - 1; i >= len-4 ; i--)
       {
-         // What is the ascii value?
-         charCode = base160str.charCodeAt(i);
+        // Get this digit
+        ch = base160str.charCodeAt(i);
+
+        // Find the index of this digit in the encoding array.
+        index = aiagallery.dbif.MComments._base160arr.indexOf(ch);
          
-         // Is this the last entry in the encoding array?
-         if (charCode == this._base160arr[base160str.len-1] )
-         {
-           // Then this is a carry. This value gets base160arr[0]. We go on to
-           // the next higher-order digit by continuing through the for-loop
-           retStr = this._base160arr[0] + retStr;
-         }
-         else
-         {
-           // No carry. Just add 1, piece everything together, and we're done.
-           retStr = String.fromCharCode(charCode + 1) + retStr;
-          
-           retStr = notMyPiece + base160str.substring(len-4, i) + retStr;
-           return retStr;
-         }
+        // Is this the last entry in the encoding array?
+        if (index === aiagallery.dbif.MComments._base160arr.length - 1)
+        {
+          // Yup.  This is a carry. This value gets base160arr[0]. We go on to
+          // the next higher-order digit by continuing through the for-loop
+          retStr = 
+            String.fromCharCode(aiagallery.dbif.MComments._base160arr[0]) +
+            retStr;
+        }
+        else
+        {
+          // No carry. Just add 1, piece everything together, and we're done.
+          retStr = 
+            String.fromCharCode(
+              aiagallery.dbif.MComments._base160arr[index + 1]) +
+            retStr;
+          retStr = base160str.substring(len - 4, i) + retStr;
+          break;
+        }
       }
      
-      return retStr;
+      return notMyPiece + retStr;
     }
   }
 });
