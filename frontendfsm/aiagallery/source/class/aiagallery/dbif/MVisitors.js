@@ -32,7 +32,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       
       // Get the status value. If the status string isn't found, we'll use
       // "Active" when we set the database.
-      status = this.statusOrder.indexOf(status);
+      status = aiagallery.dbif.Constants.StatusToName.indexOf(status);
       
       // Get the old visitor entry
       visitor = new aiagallery.dbif.ObjVisitors(userId);

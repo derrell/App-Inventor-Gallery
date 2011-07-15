@@ -7,9 +7,9 @@
  */
 
 /**
- * Development Testing Page
+ * "Mobile" feature testing page
  */
-qx.Class.define("aiagallery.module.mgmt.development.Development",
+qx.Class.define("aiagallery.module.testing.mobile.Mobile",
 {
   type : "singleton",
   extend : aiagallery.main.AbstractModule,
@@ -29,10 +29,10 @@ qx.Class.define("aiagallery.module.mgmt.development.Development",
     initialAppear : function(module)
     {
       // Replace existing (temporary) finite state machine with the real one.
-      aiagallery.module.mgmt.development.Fsm.getInstance().buildFsm(module);
+      aiagallery.module.testing.mobile.Fsm.getInstance().buildFsm(module);
 
       // Create the real gui.
-      aiagallery.module.mgmt.development.Gui.getInstance().buildGui(module);
+      aiagallery.module.testing.mobile.Gui.getInstance().buildGui(module);
     }
   }
 });

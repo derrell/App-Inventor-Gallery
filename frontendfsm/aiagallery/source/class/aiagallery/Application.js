@@ -192,17 +192,24 @@ new aiagallery.main.Module(
 new aiagallery.main.Module(
   "Management",
   "aiagallery/test.png",
-  "Applications",
+  "Users",
   aiagallery.module.mgmt.users.Users);
 
 new aiagallery.main.Module(
   "Management",
   "aiagallery/test.png",
-  "Users",
+  "Applications",
   aiagallery.module.mgmt.users.Users);
 
 new aiagallery.main.Module(
- "Management",
- "aiagallery/test.png",
- "Development",
- aiagallery.module.mgmt.development.Development);
+  "Testing",
+  "aiagallery/test.png",
+  "Mobile",
+  aiagallery.module.testing.mobile.Mobile);
+
+new aiagallery.main.Module(
+  "Testing",
+  "aiagallery/test.png",
+  "Temporary",
+  aiagallery.module.testing.temp.Temp);
+

@@ -188,6 +188,10 @@ try
   $debugLoad("qx.util.Base64");
   new Packages.qx.util.Base64();
   
+// not yet
+//  $debugLoad("qx.dev.DebugObject");
+//  new Packages.qx.dev.DebugObject();
+
   $debugLoad("aiagallery.dbif.MApps");
   new Packages.aiagallery.dbif.MApps();
   
