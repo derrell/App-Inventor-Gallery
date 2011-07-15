@@ -20,7 +20,32 @@ qx.Mixin.define("aiagallery.dbif.MApps",
   statics :
   {
     /** The next AppId value to use */
-    nextAppId : 100
+    nextAppId : 100,
+    
+    /**
+     * Stringize the array fields of an App
+     * 
+     * @param app {Object}
+     *   a reference to the App whose array fields are to be stringized.
+     */
+    __stringizeAppInfo : function(app)
+    {
+            [
+              // FIXME: When previous Author chain is implemented, uncomment
+              //"previousAuthors",
+              "tags"
+              
+            ].forEach(function(field)
+              {
+                // ... stringize this field.
+                app[field] = app[field].join(", ");
+              });
+
+            // Convert from numeric to string status
+            app.status = [ "Banned", "Pending", "Active" ][app.status];
+            
+      
+    }
   },
 
   members :
@@ -363,33 +388,27 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                         criteria,
                                         resultCriteria);
 
-      // If we were asked to stringize the values...
-      if (bStringize)
-      {
-        // ... then for each app that matched the criteria...
-        appList.forEach(
+      // Manipulate each App individually, before returning
+      appList.forEach(
           function(app)
           {
-            [
-              "tags",
-              "previousAuthors"
-            ].forEach(function(field)
-              {
-                // ... stringize this field.
-                app[field] = app[field].join(", ");
-              });
-
-            // Convert from numeric to string status
-            app.status = [ "Banned", "Pending", "Active" ][app.status];
-
             // Replace the owner name with the owner's display name
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                             app["owner"]);
 
             // Replace his visitor id with his display name
             app["owner"] = owners[0].displayName;
+           
+            // If we were asked to stringize the values...
+            if (bStringize)
+            {
+              // ... then send each App to the Stringizer
+              aiagallery.dbif.MApps.__stringizeAppInfo(app);
+            }
+            
           });
-      }
+        
+  
       
       // Create the criteria for a search of tags of type "category"
       criteria =
@@ -590,6 +609,20 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * @param uid {Key}
      *   The unique identifier of an application.
      *
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
      * @param bStringize {Boolean}
      *   Whether some non-string parameters should be converted to a string
      *   representation. For example, the "tags" and "previousAuthors" fields
@@ -662,19 +695,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       // If we were asked to stringize the values...
       if (bStringize)
-      {
-        // ... then do so
-        [
-          "tags",
-          "previousAuthors"
-        ].forEach(function(field)
-          {
-            app[field] = app[field].join(", ");
-          });
-
-        // Convert from numeric to string status
-        app.status =
-          [ "Banned", "Pending", "Active" ][app.status];
+      { 
+        aiagallery.dbif.MApps.__stringizeAppInfo(app);
       }
 
       // Give 'em what they came for
