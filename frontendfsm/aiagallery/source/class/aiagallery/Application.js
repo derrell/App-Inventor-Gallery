@@ -201,15 +201,17 @@ new aiagallery.main.Module(
   "Applications",
   aiagallery.module.mgmt.users.Users);
 
-new aiagallery.main.Module(
-  "Testing",
-  "aiagallery/test.png",
-  "Mobile",
-  aiagallery.module.testing.mobile.Mobile);
+if (qx.core.Environment.get("qx.debug"))
+{
+  new aiagallery.main.Module(
+    "Testing",
+    "aiagallery/test.png",
+    "Mobile",
+    aiagallery.module.testing.mobile.Mobile);
 
-new aiagallery.main.Module(
-  "Testing",
-  "aiagallery/test.png",
-  "Temporary",
-  aiagallery.module.testing.temp.Temp);
-
+  new aiagallery.main.Module(
+    "Testing",
+    "aiagallery/test.png",
+    "Temporary",
+    aiagallery.module.testing.temp.Temp);
+}
