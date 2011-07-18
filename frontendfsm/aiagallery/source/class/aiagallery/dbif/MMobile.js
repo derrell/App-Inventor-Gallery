@@ -148,12 +148,31 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       // Using the method included by mixin MApps
       
+      // Requesting all fields except data URLs (source, apk, image1-3)
+      var requestedFields = 
+      {
+        owner              : "owner",
+        title              : "title",
+        description        : "description",
+        //FIXME: Uncomment next line when previous authors are implemented
+        //previousAuthors    : "previousAuthors",
+        tags               : "tags",
+        uploadTime         : "uploadTime",
+        creationTime       : "creationTime",
+        numLikes           : "numLikes",
+        numDownloads       : "numDownloads",
+        numViewed          : "numViewed",
+        numRootComments    : "numRootComments",
+        numComments        : "numComments",
+        status             : "status"
+      };
+      
       // The final parameter to each RPC when called by the RPC Server, is an
       // error object which we can manipulate if there's an error. In this
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
       
-      return this.getAppInfo(parseInt(appId,10), false, null, error);
+      return this.getAppInfo(parseInt(appId,10), false, requestedFields, error);
     },
     
     __getComments : function(appId)
