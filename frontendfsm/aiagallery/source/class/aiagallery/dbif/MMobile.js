@@ -153,7 +153,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
       
-      return this.getAppInfo(parseInt(appId,10), false, error);
+      return this.getAppInfo(parseInt(appId,10), false, null, error);
     },
     
     __getComments : function(appId)
