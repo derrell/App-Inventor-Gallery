@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -15,12 +16,8 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     // Pre-initialize the data
     this.setData(
       {
-        "app"        : null,
-        "treeId"     : null,
-        "visitor"    : null,
         "timestamp"  : (new Date()).toString(),
-        "numChildren": 0,
-        "text"       : null
+        "numChildren": 0
       });
 
     // Call the superclass constructor
@@ -33,7 +30,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     
     var databaseProperties =
       {
-        /** UID of the AppData object which was downloaded */
+        /** UID of the AppData object which was commented upon */
         "app" : "Key",
 
         /*
@@ -51,10 +48,10 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         /** How many direct responses does this comment have? */
         "numChildren" : "Integer",
 
-        /** Id of the Visitor who downloaded the application */
+        /** Id of the Visitor who made this comment */
         "visitor" : "String",
 
-        /** Time the download was initiated */
+        /** Time the comment was made */
         "timestamp" : "String",
 
         /** Text of this comment */
