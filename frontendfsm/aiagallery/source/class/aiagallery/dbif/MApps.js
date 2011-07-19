@@ -13,6 +13,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     this.registerService("addOrEditApp", this.addOrEditApp);
     this.registerService("deleteApp",    this.deleteApp);
     this.registerService("getAppList", this.getAppList);
+    this.registerService("getAppListAll", this.getAppListAll);
     this.registerService("appQuery", this.appQuery);
     this.registerService("getAppInfo", this.getAppInfo);
   },
@@ -20,9 +21,82 @@ qx.Mixin.define("aiagallery.dbif.MApps",
   statics :
   {
     /** The next AppId value to use */
-    nextAppId : 100
-  },
+    nextAppId : 100,
+    
+    /**
+     * Stringize the array fields of an App
+     * 
+     * @param app {Object}
+     *   a reference to the App whose array fields are to be stringized.
+     */
+    __stringizeAppInfo : function(app)
+    {
+            [
+              // FIXME: When previous Author chain is implemented, uncomment
+              //"previousAuthors",
+              "tags"
+              
+            ].forEach(function(field)
+              {
+                // ... stringize this field.
+                app[field] = app[field].join(", ");
+              });
 
+            // Convert from numeric to string status
+            app.status = [ "Banned", "Pending", "Active" ][app.status];
+            
+      
+    },
+    
+    /**
+     * Strip an App object of all but the requested fields. Also renames
+     * fields per request
+     * 
+     * @param app {Object}
+     *   a reference to the App whose fields are to be deleted or renamed.
+     * 
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should remain in the resultant Object. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",   // No change in name. 
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
+     *   Any field which is not in this map is deleted from app
+     */
+    _requestedFields : function(app, requestedFields)
+    {
+      // Remove those members which are not requested, and rename as requested
+      var requested;
+      
+      for (var field in app)
+      {
+        // Is this field a requested field?
+        requested = requestedFields[field];
+        if (! requested)
+        {
+          // No, remove it
+          delete app[field];
+        }
+        
+        // If the field name is to be remapped...
+        if (requested != field)
+        {
+          // then copy and delete to effect the remapping.
+          app[requested] = app[field];
+          delete app[field];
+        }
+      }
+    }
+  },
+  
   members :
   {
     addOrEditApp : function(uid, attributes, error)
@@ -355,7 +429,15 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (typeof(sortCriteria) !== "undefined" && sortCriteria !== null)
       {
         // ... then add them too.
-        resultCriteria.push({ type : "sort", value : sortCriteria });
+        for (var sortField in sortCriteria)
+        {
+          resultCriteria.push(
+          { 
+            type : "sort", 
+            field: sortField, 
+            order: sortCriteria[sortField]
+          });
+        }
       }
 
       // Issue a query for all apps 
@@ -363,33 +445,27 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                         criteria,
                                         resultCriteria);
 
-      // If we were asked to stringize the values...
-      if (bStringize)
-      {
-        // ... then for each app that matched the criteria...
-        appList.forEach(
+      // Manipulate each App individually, before returning
+      appList.forEach(
           function(app)
           {
-            [
-              "tags",
-              "previousAuthors"
-            ].forEach(function(field)
-              {
-                // ... stringize this field.
-                app[field] = app[field].join(", ");
-              });
-
-            // Convert from numeric to string status
-            app.status = [ "Banned", "Pending", "Active" ][app.status];
-
             // Replace the owner name with the owner's display name
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                             app["owner"]);
 
             // Replace his visitor id with his display name
             app["owner"] = owners[0].displayName;
+           
+            // If we were asked to stringize the values...
+            if (bStringize)
+            {
+              // ... then send each App to the Stringizer
+              aiagallery.dbif.MApps.__stringizeAppInfo(app);
+            }
+            
           });
-      }
+        
+  
       
       // Create the criteria for a search of tags of type "category"
       criteria =
@@ -518,43 +594,25 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
-      // Remove those members which are not requested, and rename as requested
+      // Manipulate each App individually
       appList.forEach(
         function(app)
         {
-          var requested;
+          // Issue a query for this visitor
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                       app.owner);
 
-          for (var field in app)
+          // Replace the (private) owner id with his display name
+          app.owner = owners[0].displayName;
+          
+          // If there were requested fields specified...
+          if (requestedFields)
           {
-            requested = requestedFields[field];
-            if (! requested)
-            {
-              delete app[field];
-            }
-            else
-            {
-              // If the owner is being requested...
-              if (field === "owner")
-              {
-                // ... then issue a query for this visitor
-                owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                                 app[field]);
-
-                // Replace his visitor id with his display name
-                app[field] = owners[0].displayName;
-              }
-
-              // If the field name is to be remapped...
-              if (requested != field)
-              {
-                // then copy and delete to effect the remapping.
-                app[requested] = app[field];
-                delete app[field];
-              }
-            }
+            // Send to the requestedFields function for removal and remapping
+            aiagallery.dbif.MApps._requestedFields(app, requestedFields);
           }
+          
         });
-
       // Create the criteria for a search of tags of type "category"
       criteria =
         {
@@ -590,6 +648,20 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * @param uid {Key}
      *   The unique identifier of an application.
      *
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
      * @param bStringize {Boolean}
      *   Whether some non-string parameters should be converted to a string
      *   representation. For example, the "tags" and "previousAuthors" fields
@@ -611,7 +683,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      *   All of the information about the application, with the exception that
      *   the owner has been converted to the owner's display name.
      */
-    getAppInfo : function(uid, bStringize, error)
+    getAppInfo : function(uid, bStringize, requestedFields, error)
     {
       var             app;
       var             appList;
@@ -656,27 +728,19 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Replace the (private) owner id with his display name
       app.owner = owners[0].displayName;
 
-      // Delete the apk and source fields. Not needed here, and could be large.
-      delete app.apk;
-      delete app.source;
-
       // If we were asked to stringize the values...
       if (bStringize)
-      {
-        // ... then do so
-        [
-          "tags",
-          "previousAuthors"
-        ].forEach(function(field)
-          {
-            app[field] = app[field].join(", ");
-          });
-
-        // Convert from numeric to string status
-        app.status =
-          [ "Banned", "Pending", "Active" ][app.status];
+      { 
+        aiagallery.dbif.MApps.__stringizeAppInfo(app);
       }
-
+      
+      // If there were requested fields specified...
+      if (requestedFields)
+      {
+        // Send it to the requestedFields function for stripping and remapping
+        aiagallery.dbif.MApps._requestedFields(app, requestedFields);
+      }
+      
       // Give 'em what they came for
       return app;
     }    

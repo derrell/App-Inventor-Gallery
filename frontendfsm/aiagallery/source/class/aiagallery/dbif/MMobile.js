@@ -91,6 +91,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getBySearch : function(keywordString, offset, count, order, field)
     {
+      //FIXME: Waiting for back-end implementation
     },
     
     __getByTag : function(tagName, offset, count, order, field)
@@ -108,7 +109,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByFeatured : function(offset, count, order, field)
     {
-      // If the only quality of a Featured App is that it has a Featured tag
+      // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
       return this.__getByTag("*Featured*", offset, count, order, field);
     },
@@ -148,26 +149,38 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       // Using the method included by mixin MApps
       
+      // Requesting all fields except data URLs (source, apk, image1-3)
+      var requestedFields = 
+      {
+        owner              : "owner",
+        title              : "title",
+        description        : "description",
+        //FIXME: Uncomment next line when previous authors are implemented
+        //previousAuthors    : "previousAuthors",
+        tags               : "tags",
+        uploadTime         : "uploadTime",
+        creationTime       : "creationTime",
+        numLikes           : "numLikes",
+        numDownloads       : "numDownloads",
+        numViewed          : "numViewed",
+        numRootComments    : "numRootComments",
+        numComments        : "numComments",
+        status             : "status"
+      };
+      
       // The final parameter to each RPC when called by the RPC Server, is an
       // error object which we can manipulate if there's an error. In this
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
       
-      return this.getAppInfo(parseInt(appId,10), false, error);
+      return this.getAppInfo(parseInt(appId,10), false, requestedFields, error);
     },
     
     __getComments : function(appId)
     {
       // FIXME: UNTESTED. At time of dev, no comments available to query on
-      return rpcjs.dbif.Entity.query(
-        "aiagallery.dbif.ObjComments",
-        {
-          type  : "element",
-          field : "app",
-          value : parseInt(appId,10)
-        },
-        // No resultCriteria here
-        null);
+      
+      return this.getComments(parseInt(appId,10));
     },
     
     __getCategories : function()

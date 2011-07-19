@@ -258,7 +258,7 @@ function doGet(request, response)
       // Just pass them where they're needed and we're done.
       response.setContentType(decodeResult.mime);
       out = response.getWriter();
-      out.println(decodeResult.content);
+      out.print(decodeResult.content);
     }
     break;
   }

@@ -19,22 +19,24 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   statics :
   {
     _base160arr : 
-    [48 , 49 , 50 , 51 , 52 , 53 , 54 , 55 , 56 , 57 , /* 0-9 */
-    58 , 59 , 65 , 66 , 67 , 68 , 69 , 70 , 71 , 72 , /* : ; A-H */
-    73 , 74 , 75 , 76 , 77 , 78 , 79 , 80 , 81 , 82 , /* I-R */
-    83 , 84 , 85 , 86 , 87 , 88 , 89 , 90 , 97 , 98 , /* S-Z , a-b */
-    99 , 100, 101, 102, 103, 104, 105, 106, 107, 108, /* c-l */
-    109, 110, 111, 112, 113, 114, 115, 116, 117, 118, /* m-v */
-    119, 120, 121, 122, 160, 161, 162, 163, 164, 165, /* w-z, latin1 */
-    166, 167, 168, 169, 170, 171, 172, 173, 174, 175, /* latin1 */
-    176, 177, 178, 179, 180, 181, 182, 183, 184, 185, /* latin1 */
-    186, 187, 188, 189, 190, 191, 192, 193, 194, 195, /* latin1 */
-    196, 197, 198, 199, 200, 201, 202, 203, 204, 205, /* latin1 */
-    206, 207, 208, 209, 210, 211, 212, 213, 214, 215, /* latin1 */
-    216, 217, 218, 219, 220, 221, 222, 223, 224, 225, /* latin1 */
-    226, 227, 228, 229, 230, 231, 232, 233, 234, 235, /* latin1 */
-    236, 237, 238, 239, 240, 241, 242, 243, 244, 245, /* latin1 */
-    246, 247, 248, 249, 250, 251, 252, 253, 254, 255] /* latin1 */
+    [
+       48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  /* 0-9 */
+       58,  59,  65,  66,  67,  68,  69,  70,  71,  72,  /* : ; A-H */
+       73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  /* I-R */
+       83,  84,  85,  86,  87,  88,  89,  90,  97,  98,  /* S-Z , a-b */
+       99, 100, 101, 102, 103, 104, 105, 106, 107, 108, /* c-l */
+      109, 110, 111, 112, 113, 114, 115, 116, 117, 118, /* m-v */
+      119, 120, 121, 122, 160, 161, 162, 163, 164, 165, /* w-z, latin1 */
+      166, 167, 168, 169, 170, 171, 172, 173, 174, 175, /* latin1 */
+      176, 177, 178, 179, 180, 181, 182, 183, 184, 185, /* latin1 */
+      186, 187, 188, 189, 190, 191, 192, 193, 194, 195, /* latin1 */
+      196, 197, 198, 199, 200, 201, 202, 203, 204, 205, /* latin1 */
+      206, 207, 208, 209, 210, 211, 212, 213, 214, 215, /* latin1 */
+      216, 217, 218, 219, 220, 221, 222, 223, 224, 225, /* latin1 */
+      226, 227, 228, 229, 230, 231, 232, 233, 234, 235, /* latin1 */
+      236, 237, 238, 239, 240, 241, 242, 243, 244, 245, /* latin1 */
+      246, 247, 248, 249, 250, 251, 252, 253, 254, 255  /* latin1 */
+    ]
   },
 
   members :
@@ -58,7 +60,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     {
       var             whoami;
       var             commentObj;
+      var             commentObjData;
       var             parentObj;
+      var             parentObjData;
       var             parentTreeId;
       var             myTreeId;
       var             parentList;
@@ -71,14 +75,14 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Get a new ObjComments object.
       commentObj = new aiagallery.dbif.ObjComments();
       
+      // Retrieve a data object to manipulate.
+      commentObjData = commentObj.getData();
+      
       // Set up all the data we can at the moment (everything but treeId)
-      commentObj.setData(
-        {
-          "visitor"     : whoami,
-          "text"        : text,
-          "app"         : appId,
-          "numChildren" : 0
-        });
+      commentObjData.visitor     = whoami.userId;
+      commentObjData.text        = text;
+      commentObjData.app         = appId;
+      commentObjData.numChildren = 0;
       
       // Was a parent comment's UID provided?
       // Regardless, we need to have parentNumChildren and parentTreeId filled
@@ -92,18 +96,21 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         // Need to get and increment the App's numRootComments
         parentObj = new aiagallery.dbif.ObjAppData(appId);
         
-        // Get what we need
-        parentNumChildren = parentObj.getData().numRootComments || 0;
+        parentObjData = parentObj.getData();
         
-        // Increment and update
-        parentObj.setData({"numRootComments" : parentNumChildren + 1});
-        parentObj.put();
+        // Get what we need
+        parentNumChildren = parentObjData.numRootComments || 0;
+         
+        // Increment parent's # of children
+        parentObjData.numRootComments = parentNumChildren + 1;
         
       }
       else
       {
         // Yes, use it to get the parent object.
         parentObj = new aiagallery.dbif.ObjComments(parentUID);
+        
+        parentObjData = parentObj.getData();
         
         // Was our parentUID invalid, resulting in a new ObjComments?
         if (parentObj.getBrandNew())
@@ -115,26 +122,27 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         }
         
         // Get what we came for.
-        parentNumChildren = parentObj.getData().numChildren;
-        parentTreeId = parentObj.getData().treeId;
+        parentNumChildren = parentObjData.numChildren;
+        parentTreeId = parentObjData.treeId;
         
-        // Increment # of children and update. Congrats! a new baby comment!
-        parentObj.setData({"numChildren" : parentNumChildren + 1});
-        parentObj.put();
-        
+        // Increment parent's # of children
+        parentObjData.numChildren = parentNumChildren + 1;
       }
       
+      // Update the parent object. Congrats! a new baby comment!
+      parentObj.put();
+
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
-      myTreeId = parentTreeId + this._numTobase160(parentNumChildren);
+      myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
       // Complete the comment record by giving it a treeId
-      commentObj.setData({"treeId" : myTreeId});
+      commentObjData.treeId = myTreeId;
       
       // Save this in the database
       commentObj.put();
       
-      // This includes newly-created key (if adding)
+      // This includes newly-created key
       return commentObj.getData();  
     },
     
@@ -195,7 +203,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   
 
       // If an offset is requested...
-      if (typeof(offset) != "undefined" && offset !== null)
+      if (typeof(offset) !== "undefined" && offset !== null)
       {
         // ... then specify it in the result criteria.
         resultCriteria.push({ "offset" : offset });
@@ -216,6 +224,8 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                           value: appId
                                         },
                                         resultCriteria);
+      console.log(appId);
+      console.log(commentList);
 
       return commentList;
     },
@@ -229,14 +239,15 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      * @return {String}
      *   A string of length 4 containing base160 digits as characters.
      */
-    _numTobase160 : function(val)
+    _numToBase160 : function(val)
     {
       var retStr = "";
       
       for (var i = 3; i >= 0 ; i--)
       {
         // Take the number mod 160. Prepend the ASCII char of the result.
-        retStr = String.fromCharCode(this.base160arr[val % 160]) + retStr;
+        retStr = String.fromCharCode(
+          aiagallery.dbif.MComments._base160arr[val % 160]) + retStr;
         val = Math.floor(val / 160);
       }
       
@@ -244,8 +255,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     },
     /**
      * Increment the base160 number passed. This only augments the farthest
-     * right 4 characters. Any characters at index 0 through 
-     * base160str.length - 5 are untouched.
+     * right-most 4 characters (base160 digits).
      * 
      * @param base160str {String}
      *   An integer encoded as a string of base160 characters.
@@ -254,38 +264,46 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   An integer encoded as a string of base160 characters. This is the 
      *   argument + 1.
      */
-    _incrementbase160 : function(base160str)
+    _incrementBase160 : function(base160str)
     {
       var len = base160str.length;
       var i;
       var notMyPiece = base160str.substr(0, len-4);
       var retStr = "";
-      var charCode;
+      var ch;
+      var index;
       
-      // We only care about the rightmost 4 digits
-      for (i = len-1; i >= len-4 ; i--)
+      // We only care about the rightmost 4 digits, one level in the tree.
+      for (i = len - 1; i >= len-4 ; i--)
       {
-         // What is the ascii value?
-         charCode = base160str.charCodeAt(i);
+        // Get this digit
+        ch = base160str.charCodeAt(i);
+
+        // Find the index of this digit in the encoding array.
+        index = aiagallery.dbif.MComments._base160arr.indexOf(ch);
          
-         // Is this the last entry in the encoding array?
-         if (charCode == this._base160arr[base160str.len-1] )
-         {
-           // Then this is a carry. This value gets base160arr[0]. We go on to
-           // the next higher-order digit by continuing through the for-loop
-           retStr = this._base160arr[0] + retStr;
-         }
-         else
-         {
-           // No carry. Just add 1, piece everything together, and we're done.
-           retStr = String.fromCharCode(charCode + 1) + retStr;
-          
-           retStr = notMyPiece + base160str.substring(len-4, i) + retStr;
-           return retStr;
-         }
+        // Is this the last entry in the encoding array?
+        if (index === aiagallery.dbif.MComments._base160arr.length - 1)
+        {
+          // Yup.  This is a carry. This value gets base160arr[0]. We go on to
+          // the next higher-order digit by continuing through the for-loop
+          retStr = 
+            String.fromCharCode(aiagallery.dbif.MComments._base160arr[0]) +
+            retStr;
+        }
+        else
+        {
+          // No carry. Just add 1, piece everything together, and we're done.
+          retStr = 
+            String.fromCharCode(
+              aiagallery.dbif.MComments._base160arr[index + 1]) +
+            retStr;
+          retStr = base160str.substring(len - 4, i) + retStr;
+          break;
+        }
       }
      
-      return retStr;
+      return notMyPiece + retStr;
     }
   }
 });

@@ -189,6 +189,13 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       var prevAuthors = new qx.ui.form.TextField("");
       prevAuthors.setValue(rowData.prevAuthors || "");
       cellEditor.add(prevAuthors, { row : row++, column : 1, colSpan : 2 });
+
+      // FIXME: temporary
+      prevAuthors.set(
+        {
+          enabled : false,
+          value   : "<not yet implemented>"
+        });
       
       // Create the editor field for "category" (required) tags which have
       // been stored in the table's user data.

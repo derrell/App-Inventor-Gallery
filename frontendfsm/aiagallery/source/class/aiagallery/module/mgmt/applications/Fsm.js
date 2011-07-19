@@ -9,7 +9,7 @@
 /**
  * User management finite state machine
  */
-qx.Class.define("aiagallery.module.mgmt.users.Fsm",
+qx.Class.define("aiagallery.module.mgmt.applications.Fsm",
 {
   type : "singleton",
   extend : aiagallery.main.AbstractModuleFsm,
@@ -44,9 +44,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           {
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
-
+            console.log(rpcRequest);
             // Otherewise, call the standard result handler
-            var gui = aiagallery.module.mgmt.users.Gui.getInstance();
+            var gui = aiagallery.module.mgmt.applications.Gui.getInstance();
+
             gui.handleResponse(module, rpcRequest);
 
             // Dispose of the request
@@ -61,25 +62,25 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           var selectionModel = fsm.getObject("table").getSelectionModel();
           var bHasSelection = ! selectionModel.isSelectionEmpty();
           fsm.getObject("edit").setEnabled(bHasSelection);
-          fsm.getObject("deleteUser").setEnabled(bHasSelection);
+          fsm.getObject("deleteApp").setEnabled(bHasSelection);
         },
 
         "events" :
         {
           "execute" :
           {
-            // When the Delete User button is pressed
-            "deleteUser" : "Transition_Idle_to_AwaitRpcResult_via_deleteUser",
+            // When the Delete Application button is pressed
+            "deleteApp" : "Transition_Idle_to_AwaitRpcResult_via_deleteApp",
 
-            // When the Add User button is pressed
-            "addUser" : "Transition_Idle_to_AddOrEditUser_via_addUser"
+            // When the Add Application button is pressed
+            "addApp" : "Transition_Idle_to_AddOrEditApp_via_addApp"
           },
 
           "cellEditorOpening" :
           {
             // When a cell is double-clicked, or the Edit button is pressed,
             // either of which open a cell editor for the row data
-            "table" : "Transition_Idle_to_AddOrEditUser_via_cellEditorOpening"
+            "table" : "Transition_Idle_to_AddOrEditApp_via_cellEditorOpening"
           },
 
           // Request to call some remote procedure call which is specified by
@@ -113,7 +114,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_AwaitRpcResult_via_deleteUser",
+        "Transition_Idle_to_AwaitRpcResult_via_deleteApp",
       {
         "nextState" : "State_AwaitRpcResult",
 
@@ -121,7 +122,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-          // Determine what user is selected for deletion. We're in
+          // Determine what app is selected for deletion. We're in
           // single-selection mode, so we can easily reference into the
           // selection array.
           var table = fsm.getObject("table");
@@ -129,18 +130,18 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           var selection = selectionModel.getSelectedRanges()[0].minIndex;
           var data = table.getTableModel().getData()[selection];
 
-          // Issue a Delete Visitor call
+          // Issue a Delete App call
           var request =
             this.callRpc(fsm,
                           "aiagallery.features",
-                          "deleteVisitor",
+                          "deleteApp",
                           [
                             data[1] // the email address is their user id
                           ]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "deleteVisitor");
+          request.setUserData("requestType", "deleteApp");
           
           // We also need to know what row got deleted
           request.setUserData("deletedRow", selection);
@@ -150,18 +151,18 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
       state.addTransition(trans);
 
       /*
-       * Transition: Idle to AddOrEditUser
+       * Transition: Idle to AddOrEditApp
        *
-       * Cause: "execute" on "Add User" button
+       * Cause: "execute" on "Add Application" button
        *
        * Action:
-       *  Open an empty editor to add a new user
+       *  Open an empty editor to add a new application
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_AddOrEditUser_via_addUser",
+        "Transition_Idle_to_AddOrEditApp_via_addApp",
       {
-        "nextState" : "State_AddOrEditUser",
+        "nextState" : "State_AddOrEditApp",
 
         "context" : this,
 
@@ -281,17 +282,18 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-          // Issue the remote procedure call to get the visitor list. Request
-          // that the permissions and status be converted to strings for us.
+          // Issue the remote procedure call to get the application list.
+          // Request that the permissions and status be converted to strings 
+          // for us.
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
-                         "getVisitorList",
-                         [ true ]);
+                         "getAppListAll",
+                         [true, null, null, null, true]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "getVisitorList");
+          request.setUserData("requestType", "getAppListAll");
         }
       });
 
@@ -315,18 +317,18 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-//          aiagallery.module.mgmt.users.Fsm._stopTimer(fsm);
+//          aiagallery.module.mgmt.applications.Fsm._stopTimer(fsm);
         }
       });
 
       state.addTransition(trans);
 
       // ------------------------------------------------------------ //
-      // State: AddOrEditUser
+      // State: AddOrEditApp
       // ------------------------------------------------------------ //
 
       /*
-       * State: AddOrEditUser
+       * State: AddOrEditApp
        *
        * Actions upon entry
        *  - If the event that got us here was "completed", update the GUI
@@ -338,7 +340,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        *    AwaitRpcResult state
        */
 
-      state = new qx.util.fsm.State("State_AddOrEditUser",
+      state = new qx.util.fsm.State("State_AddOrEditApp",
       {
         "context" : this,
 
@@ -360,7 +362,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
             if (response.type == "failed")
             {
               // Yup. Update the GUI
-              var gui = aiagallery.module.mgmt.users.Gui.getInstance();
+              var gui = aiagallery.module.mgmt.applications.Gui.getInstance();
               gui.handleResponse(module, rpcRequest);
             }
             else
@@ -380,13 +382,13 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
           "execute" :
           {
             // When the Ok button is pressed in the cell editor
-            "ok" : "Transition_AddOrEditUser_to_AwaitRpcResult_via_ok",
+            "ok" : "Transition_AddOrEditApp_to_AwaitRpcResult_via_ok",
             
-            "cancel" : "Transition_AddOrEditUser_to_Idle_via_cancel"
+            "cancel" : "Transition_AddOrEditApp_to_Idle_via_cancel"
           },
           
           // When we received a "completed" event on RPC
-          "completed" : "Transition_AddOrEditUser_to_Idle_via_completed"
+          "completed" : "Transition_AddOrEditApp_to_Idle_via_completed"
         }
       });
 
@@ -399,11 +401,11 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        * Cause: "execute" on "Ok" button in cell editor
        *
        * Action:
-       *  Issue a remote procedure call to save the User data
+       *  Issue a remote procedure call to save the Application data
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_AddOrEditUser_to_AwaitRpcResult_via_ok",
+        "Transition_AddOrEditApp_to_AwaitRpcResult_via_ok",
       {
         "nextState" : "State_AwaitRpcResult",
 
@@ -445,10 +447,10 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
               status      : internal.status 
             };
 
-          // Issue a Add Or Edit Visitor call.
+          // Issue a Add Or Edit Application call.
           request = this.callRpc(fsm,
                      "aiagallery.features",
-                     "addOrEditVisitor",
+                     "addOrEditApp",
                      [ email, requestData ]);
 
           // Save the user id in the request data too
@@ -459,7 +461,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "AddOrEditVisitor");
+          request.setUserData("requestType", "AddOrEditApp");
 
           // Save the permissions and status
           request.setUserData("internal", internal);
@@ -469,7 +471,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
       state.addTransition(trans);
 
       /*
-       * Transition: AddOrEditUser to Idle
+       * Transition: AddOrEditApp to Idle
        *
        * Cause: "execute" on the Cancel button in the cell editor
        *
@@ -478,7 +480,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_AddOrEditUser_to_Idle_via_cancel",
+        "Transition_AddOrEditApp_to_Idle_via_cancel",
       {
         "nextState" : "State_Idle",
 
@@ -520,7 +522,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
       state.addTransition(trans);
 
       /*
-       * Transition: AddOrEditUser to Idle
+       * Transition: AddOrEditApp to Idle
        *
        * Cause: "completed" event from RPC
        *
@@ -529,7 +531,7 @@ qx.Class.define("aiagallery.module.mgmt.users.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_AddOrEditUser_to_Idle_via_completed",
+        "Transition_AddOrEditApp_to_Idle_via_completed",
       {
         "nextState" : "State_Idle",
 

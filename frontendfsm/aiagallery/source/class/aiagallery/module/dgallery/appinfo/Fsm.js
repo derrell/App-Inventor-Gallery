@@ -45,7 +45,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
 
-            // Otherewise, call the standard result handler
+            // Otherwise, call the standard result handler
             var gui = aiagallery.module.dgallery.appinfo.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
 
@@ -78,7 +78,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       // The following transitions have a predicate, so must be listed first
 
       /*
-       * Transition: Idle to Idle
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: "appear" on canvas
        *
@@ -118,7 +118,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "getAppInfo",
-                         [ module.getUserData("app_uid"), true ]);
+                         [ module.getUserData("app_uid"), true, null ]);
 
           // When we get the result, we'll need to know what type of request
           // we made.

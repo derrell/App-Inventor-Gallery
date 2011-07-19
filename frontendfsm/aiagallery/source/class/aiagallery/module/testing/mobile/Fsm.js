@@ -11,9 +11,9 @@ require(aiagallery.module.dgallery.appinfo.AppInfo)
  */
 
 /**
- * Development page Finite State Machine
+ * "Mobile feature testing page Finite State Machine
  */
-qx.Class.define("aiagallery.module.mgmt.development.Fsm",
+qx.Class.define("aiagallery.module.testing.mobile.Fsm",
 {
   type : "singleton",
   extend : aiagallery.main.AbstractModuleFsm,
@@ -50,7 +50,7 @@ qx.Class.define("aiagallery.module.mgmt.development.Fsm",
             var rpcRequest = this.popRpcRequest();
 
             // Call the standard result handler
-            var gui = aiagallery.module.mgmt.development.Gui.getInstance();
+            var gui = aiagallery.module.testing.mobile.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
 
             // Dispose of the request

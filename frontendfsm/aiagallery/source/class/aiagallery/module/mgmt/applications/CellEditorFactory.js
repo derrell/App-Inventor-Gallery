@@ -9,9 +9,9 @@
  */
 
 /**
- * A cell editor factory for Users (all fields)
+ * A cell editor factory for Applications (all fields)
  */
-qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
+qx.Class.define("aiagallery.module.mgmt.applications.CellEditorFactory",
 {
   extend    : qx.core.Object,
   implement : qx.ui.table.ICellEditorFactory,
@@ -32,20 +32,20 @@ qx.Class.define("aiagallery.module.mgmt.users.CellEditorFactory",
       var             bEditing;
 
       // If there's a cellInfo object provided, we're editing an existing
-      // user. Get the row data. Otherwise, we're adding a new user.
+      // app. Get the row data. Otherwise, we're adding a new app.
       if (cellInfo && cellInfo.row !== undefined)
       {
         // We're editing. Get the current row data.
         bEditing = true;
         dataModel = cellInfo.table.getTableModel();
         rowData = dataModel.getRowData(cellInfo.row);
-        title = this.tr("Edit User: ") + rowData[0];
+        title = this.tr("Edit App: ") + rowData[0];
       }
       else
       {
         bEditing = false;
-        title = this.tr("Add New User");
-        rowData = [ "", "", "", "" ];
+        title = this.tr("Add New App");
+        rowData = [ "", "", "", "", "", "", "", "", "" ];
       }
       
       var layout = new qx.ui.layout.Grid(9, 2);

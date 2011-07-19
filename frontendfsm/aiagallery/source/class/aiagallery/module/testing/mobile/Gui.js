@@ -7,9 +7,9 @@
  */
 
 /**
- * The graphical user interface for the development testing page
+ * The graphical user interface for the "Mobile" feature testing page
  */
-qx.Class.define("aiagallery.module.mgmt.development.Gui",
+qx.Class.define("aiagallery.module.testing.mobile.Gui",
 {
   type : "singleton",
   extend : qx.core.Object,
@@ -92,9 +92,9 @@ qx.Class.define("aiagallery.module.mgmt.development.Gui",
         result = "Bad Query!!!";
         
         if (response.data.result)
-        {
-         console.log(response.data.result);
+        { 
          // Or on success, change result
+         console.log(response.data.result);
          result = "Response Logged to Console"; 
           
         }

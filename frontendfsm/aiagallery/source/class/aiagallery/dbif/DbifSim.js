@@ -46,8 +46,27 @@ qx.Class.define("aiagallery.dbif.DbifSim",
   
   defer : function()
   {
-    // Save the database from the MSimData mixin
-    rpcjs.sim.Dbif.Database = aiagallery.dbif.MSimData.Db;
+    // Retrieve the database from Web Storage, if such exists.
+    if (typeof window.localStorage !== "undefined")
+    {
+      if (typeof localStorage.simDB == "string")
+      {
+        qx.Bootstrap.debug("Reading DB from Web Storage");
+        rpcjs.sim.Dbif.setDb(qx.lang.Json.parse(localStorage.simDB));
+      }
+      else
+      {
+        // No database yet stored. Retrieve the database from the MSimData mixin
+        qx.Bootstrap.debug("No database yet. Using new SIM database.");
+        rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
+      }
+    }
+    else
+    {
+      // Retrieve the database from the MSimData mixin
+      qx.Bootstrap.debug("No Web Storage available. Using new SIM database.");
+      rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
+    }
     
     // Register our put & query functions
     rpcjs.dbif.Entity.registerDatabaseProvider(
