@@ -13,6 +13,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     this.registerService("addOrEditApp", this.addOrEditApp);
     this.registerService("deleteApp",    this.deleteApp);
     this.registerService("getAppList", this.getAppList);
+    this.registerService("getAppListAll", this.getAppListAll);
     this.registerService("appQuery", this.appQuery);
     this.registerService("getAppInfo", this.getAppInfo);
   },
@@ -380,9 +381,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * @param bAll {Boolean}
      *   Whether to return all applications (if permissions allow it) rather
      *   than only those applications owned by the logged-in user.
-     * 
-     * NOTE: This is not a public RPC. This is a protected function called
-     * by the public RPCs getAppList and getAppListAll, defined below.
      */
     _getAppList : function(bStringize, sortCriteria, offset, limit, bAll)
     {

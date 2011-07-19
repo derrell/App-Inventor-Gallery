@@ -199,7 +199,7 @@ new aiagallery.main.Module(
   "Management",
   "aiagallery/test.png",
   "Applications",
-  aiagallery.module.mgmt.users.Users);
+  aiagallery.module.mgmt.applications.Applications);
 
 if (qx.core.Environment.get("qx.debug"))
 {
