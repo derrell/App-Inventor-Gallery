@@ -60,7 +60,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     {
       var             whoami;
       var             commentObj;
+      var             commentObjData;
       var             parentObj;
+      var             parentObjData;
       var             parentTreeId;
       var             myTreeId;
       var             parentList;
@@ -73,14 +75,14 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Get a new ObjComments object.
       commentObj = new aiagallery.dbif.ObjComments();
       
+      // Retrieve a data object to manipulate.
+      commentObjData = commentObj.getData();
+      
       // Set up all the data we can at the moment (everything but treeId)
-      commentObj.setData(
-        {
-          "visitor"     : whoami,
-          "text"        : text,
-          "app"         : appId,
-          "numChildren" : 0
-        });
+      commentObjData.visitor     = whoami.userId;
+      commentObjData.text        = text;
+      commentObjData.app         = appId;
+      commentObjData.numChildren = 0;
       
       // Was a parent comment's UID provided?
       // Regardless, we need to have parentNumChildren and parentTreeId filled
@@ -94,18 +96,21 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         // Need to get and increment the App's numRootComments
         parentObj = new aiagallery.dbif.ObjAppData(appId);
         
-        // Get what we need
-        parentNumChildren = parentObj.getData().numRootComments || 0;
+        parentObjData = parentObj.getData();
         
-        // Increment and update
-        parentObj.setData({"numRootComments" : parentNumChildren + 1});
-        parentObj.put();
+        // Get what we need
+        parentNumChildren = parentObjData.numRootComments || 0;
+         
+        // Increment parent's # of children
+        parentObjData.numRootComments = parentNumChildren + 1;
         
       }
       else
       {
         // Yes, use it to get the parent object.
         parentObj = new aiagallery.dbif.ObjComments(parentUID);
+        
+        parentObjData = parentObj.getData();
         
         // Was our parentUID invalid, resulting in a new ObjComments?
         if (parentObj.getBrandNew())
@@ -117,26 +122,27 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         }
         
         // Get what we came for.
-        parentNumChildren = parentObj.getData().numChildren;
-        parentTreeId = parentObj.getData().treeId;
+        parentNumChildren = parentObjData.numChildren;
+        parentTreeId = parentObjData.treeId;
         
-        // Increment # of children and update. Congrats! a new baby comment!
-        parentObj.setData({"numChildren" : parentNumChildren + 1});
-        parentObj.put();
-        
+        // Increment parent's # of children
+        parentObjData.numChildren = parentNumChildren + 1;
       }
       
+      // Update the parent object. Congrats! a new baby comment!
+      parentObj.put();
+
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
       myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
       // Complete the comment record by giving it a treeId
-      commentObj.setData({"treeId" : myTreeId});
+      commentObjData.treeId = myTreeId;
       
       // Save this in the database
       commentObj.put();
       
-      // This includes newly-created key (if adding)
+      // This includes newly-created key
       return commentObj.getData();  
     },
     
@@ -197,7 +203,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   
 
       // If an offset is requested...
-      if (typeof(offset) != "undefined" && offset !== null)
+      if (typeof(offset) !== "undefined" && offset !== null)
       {
         // ... then specify it in the result criteria.
         resultCriteria.push({ "offset" : offset });
@@ -218,6 +224,8 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                           value: appId
                                         },
                                         resultCriteria);
+      console.log(appId);
+      console.log(commentList);
 
       return commentList;
     },
