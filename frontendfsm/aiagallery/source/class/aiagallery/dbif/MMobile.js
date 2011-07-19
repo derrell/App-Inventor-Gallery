@@ -108,7 +108,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByFeatured : function(offset, count, order, field)
     {
-      // If the only quality of a Featured App is that it has a Featured tag
+      // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
       return this.__getByTag("*Featured*", offset, count, order, field);
     },
@@ -178,15 +178,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getComments : function(appId)
     {
       // FIXME: UNTESTED. At time of dev, no comments available to query on
-      return rpcjs.dbif.Entity.query(
-        "aiagallery.dbif.ObjComments",
-        {
-          type  : "element",
-          field : "app",
-          value : parseInt(appId,10)
-        },
-        // No resultCriteria here
-        null);
+      
+      return this.getComments(parseInt(appId,10));
     },
     
     __getCategories : function()

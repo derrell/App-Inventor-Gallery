@@ -70,7 +70,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * 
      *   Any field which is not in this map is deleted from app
      */
-    __requestedFields : function(app, requestedFields)
+    _requestedFields : function(app, requestedFields)
     {
       // Remove those members which are not requested, and rename as requested
       var requested;
@@ -431,7 +431,15 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (typeof(sortCriteria) !== "undefined" && sortCriteria !== null)
       {
         // ... then add them too.
-        resultCriteria.push({ type : "sort", value : sortCriteria });
+        for (var sortField in sortCriteria)
+        {
+          resultCriteria.push(
+          { 
+            type : "sort", 
+            field: sortField, 
+            order: sortCriteria[sortField]
+          });
+        }
       }
 
       // Issue a query for all apps 
@@ -588,7 +596,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
-      // Remove those members which are not requested, and rename as requested
+      // Manipulate each App individually
       appList.forEach(
         function(app)
         {
@@ -602,8 +610,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           // If there were requested fields specified...
           if (requestedFields)
           {
-            // Send to the requestedFields function for stripping and remapping
-            aiagallery.dbif.MApps.__requestedFields(app, requestedFields);
+            // Send to the requestedFields function for removal and remapping
+            aiagallery.dbif.MApps._requestedFields(app, requestedFields);
           }
           
         });
@@ -732,7 +740,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (requestedFields)
       {
         // Send it to the requestedFields function for stripping and remapping
-        aiagallery.dbif.MApps.__requestedFields(app, requestedFields);
+        aiagallery.dbif.MApps._requestedFields(app, requestedFields);
       }
       
       // Give 'em what they came for
