@@ -13,17 +13,79 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
 
   members :
   {
-    testGetAll : function()
+    testMobileRequests : function()
     {
       
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      var uid;
+      var developer;
       
+      // testing all
+      mobileRequest = dbifSim.mobileRequest("all:0:1:asc:uid");
       
-      this.assertEquals();
+      this.assertArray(mobileRequest, "mobile request all returns array");
+
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile all");
+      // testing tag
+      mobileRequest = dbifSim.mobileRequest("tag:Games:0:1");
       
+      this.assertArray(mobileRequest, "mobile request tag returns array");
       
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile tag");
+      
+      // testing featured
+      mobileRequest = dbifSim.mobileRequest("featured:0:1:desc:uid");
+      
+      this.assertArray(mobileRequest, "mobile request featured returns array");
+      
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile featured");
+      
+console.log(mobileRequest);
+      // Getting display name for by_developer
+      var owners = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjVisitors",
+        {
+          type  : "element",
+          field : "id", 
+          value : mobileRequest[0].owner
+        },
+        // No resultCriteria, just need 1
+        null);
+      developer = owners[0].displayName;
+
+
+console.log(owners);
+
+
+      // testing by_developer
+      mobileRequest = dbifSim.mobileRequest("by_developer:"+developer+":0:1");
+      
+      this.assertArray(mobileRequest, "mobile request developer returns array");
+      
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile developer");
+     
+      // testing getinfo
+     
+      uid = mobileRequest[0].uid
+      
+      mobileRequest = dbifSim.mobileRequest("getinfo:"+uid);
+      
+      this.assertObject(mobileRequest, "mobile request getinfo returns array");
+      
+      this.assertKeyInMap( "owner",
+                           mobileRequest,
+                           "apps retrieved from mobile getinfo");
     }
   }
 });

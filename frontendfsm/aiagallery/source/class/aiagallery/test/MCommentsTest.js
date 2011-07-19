@@ -28,10 +28,10 @@ console.log(myCommentData);
                                              "Hiiii",
                                              myCommentData.uid);
      
-      console.log(myCommentData);
-      console.log(new aiagallery.dbif.ObjComments("1"));
-      console.log(dbifSim.getComments(105));
-      
+console.log(myCommentData);
+console.log(new aiagallery.dbif.ObjComments("1"));
+console.log(dbifSim.getComments(105));
+console.log(rpcjs.sim.Dbif.Database);
     }
   }
 });

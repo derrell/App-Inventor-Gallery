@@ -91,6 +91,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getBySearch : function(keywordString, offset, count, order, field)
     {
+      //FIXME: Waiting for back-end implementation
     },
     
     __getByTag : function(tagName, offset, count, order, field)

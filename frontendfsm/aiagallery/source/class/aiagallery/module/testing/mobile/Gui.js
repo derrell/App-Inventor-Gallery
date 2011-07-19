@@ -92,9 +92,9 @@ qx.Class.define("aiagallery.module.testing.mobile.Gui",
         result = "Bad Query!!!";
         
         if (response.data.result)
-        {
-         console.log(response.data.result);
+        { 
          // Or on success, change result
+         console.log(response.data.result);
          result = "Response Logged to Console"; 
           
         }
