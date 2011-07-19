@@ -214,6 +214,7 @@ function doGet(request, response)
     // Simulate a real RPC request
     jsonInput = 
       '{\n' +
+      '  "id"      : "0",\n' +
       '  "service" : "aiagallery.features",\n' +
       '  "method"  : "mobileRequest",\n' +
       '  "params"  : [ "' + querySplit[1] + '" ]\n' +
