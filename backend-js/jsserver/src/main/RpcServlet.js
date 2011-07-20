@@ -119,11 +119,14 @@ function doGet(request, response)
 
     for (entry in Db.apps)
     {
-      entity = new aiagallery.dbif.ObjAppData(entry);
+      // UID is a number, so retrieve it
+      var uid = Db.apps[entry].uid;
       
-      // UID is encoded as a string, but should be a number in this environment.
-      Db.apps[entry].uid = parseInt(Db.apps[entry].uid);
+      entity = new aiagallery.dbif.ObjAppData(uid);
       
+      // Kludge in the numRootComments field since it's not in MSimData
+      Db.apps[entry].numRootComments = 0;
+
       entity.setData(Db.apps[entry]);
       entity.put();
     }
