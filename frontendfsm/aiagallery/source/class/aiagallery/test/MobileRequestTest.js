@@ -49,7 +49,6 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
                            mobileRequest[0],
                            "apps retrieved from mobile featured");
       
-console.log(mobileRequest);
       // Getting display name for by_developer
       var owners = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjVisitors",
@@ -58,13 +57,9 @@ console.log(mobileRequest);
           field : "id", 
           value : mobileRequest[0].owner
         },
-        // No resultCriteria, just need 1
+        // No resultCriteria, just need a single result
         null);
       developer = owners[0].displayName;
-
-
-console.log(owners);
-
 
       // testing by_developer
       mobileRequest = dbifSim.mobileRequest("by_developer:"+developer+":0:1");
