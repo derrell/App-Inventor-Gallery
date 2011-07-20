@@ -224,8 +224,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                           value: appId
                                         },
                                         resultCriteria);
-      console.log(appId);
-      console.log(commentList);
 
       return commentList;
     },
