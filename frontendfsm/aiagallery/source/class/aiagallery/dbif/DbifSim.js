@@ -65,6 +65,18 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     {
       // Retrieve the database from the MSimData mixin
       qx.Bootstrap.debug("No Web Storage available. Using new SIM database.");
+
+      // Convert string appId keys to numbers
+      qx.Bootstrap.debug("Beginning appId conversion...");
+      var apps = aiagallery.dbif.MSimData.Db["apps"];
+      qx.lang.Object.getKeys(apps).forEach(
+        function(appId)
+        {
+          qx.Bootstrap.debug("Converting " + appId);
+          apps[parseInt(appId, 10)] = apps[appId];
+          delete apps[appId];
+        });
+
       rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
     }
     
