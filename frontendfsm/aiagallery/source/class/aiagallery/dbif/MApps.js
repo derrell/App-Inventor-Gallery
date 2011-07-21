@@ -737,8 +737,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // If there were requested fields specified...
       if (requestedFields)
       {
+        // If the "comments" field was requested
+        if (requestedFields["comments"])
+        {
+          
+          // Use function from Mixin MComments to add comments to app info object
+          app.comments = this.getComments(uid);
+          
+        }
+        
         // Send it to the requestedFields function for stripping and remapping
         aiagallery.dbif.MApps._requestedFields(app, requestedFields);
+      
       }
       
       // Give 'em what they came for
