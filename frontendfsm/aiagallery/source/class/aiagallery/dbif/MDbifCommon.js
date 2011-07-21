@@ -184,7 +184,15 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getVisitorList":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        if (qx.core.Environment.get("qx.debug"))
+        {
+          return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        }
+        else
+        {
+          // At present, do not allow access to visitor list on App Engine
+          return false;
+        }
         
       case "getCategoryTags":
         // Anonymous access.
