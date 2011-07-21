@@ -27,6 +27,16 @@ qx.Class.define("aiagallery.test.MCommentsTest",
       var myCommentData = dbifSim.addComment(105,
                                              "Hiiii",
                                              myCommentData.uid);
+      
+      var myCommentData = dbifSim.addComment(105,
+                                             "What's uuuuup",
+                                             myCommentData.uid);
+      
+      
+
+      console.log(new aiagallery.dbif.ObjComments(0));
+      console.log(dbifSim.getComments(105));
+      console.log(myCommentData.uid);
     }
   }
 });

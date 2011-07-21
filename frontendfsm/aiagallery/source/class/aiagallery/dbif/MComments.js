@@ -84,11 +84,12 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObjData.app         = appId;
       commentObjData.numChildren = 0;
       
-      // Was a parent comment's UID provided?
       // Regardless, we need to have parentNumChildren and parentTreeId filled
       //   by the end of this if-else block. Where ever we got the numChildren
       //   from also needs to be incremented and updated.
-      if (!parentUID)
+      
+      // Was a parent comment's UID provided?
+      if (typeof(parentUID) === "undefined" || parentUID === null)
       {
         // No, we're going to have to use the default parent id "0000"
         parentTreeId = "";
