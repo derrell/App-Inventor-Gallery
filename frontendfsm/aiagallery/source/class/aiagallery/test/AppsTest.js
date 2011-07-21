@@ -7,7 +7,7 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
-qx.Class.define("aiagallery.test.MAppsTest",
+qx.Class.define("aiagallery.test.AppsTest",
 {
   extend : qx.dev.unit.TestCase,
 
