@@ -55,6 +55,13 @@ qx.Class.define("aiagallery.dbif.Constants",
       ... */
       
       //
+      // MMobile
+      //
+      /* Anonymous access...
+      "mobileRequest" : "Mobile client requests",
+      ... */
+
+      //
       // MTags
       //
       /* Anonymous access...

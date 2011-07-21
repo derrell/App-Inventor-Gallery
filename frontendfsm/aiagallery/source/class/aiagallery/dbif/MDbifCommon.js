@@ -81,12 +81,16 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         me = new aiagallery.dbif.ObjVisitors(
           aiagallery.dbif.MDbifCommon.__whoami.email);
         
-        // Does it contain a display name yet?
+        // Is it brand new, or does not contain a display name yet?
         meData = me.getData();
-        if (meData.displayName === null)
+        if (me.getBrandNew() || meData.displayName === null)
         {
-          // Nope. Add one.
-          meData.displayName = aiagallery.dbif.MDbifCommon.__whoami.userId;
+          // True. Save it.
+          if (! meData.displayName)
+          {
+            meData.displayName = aiagallery.dbif.MDbifCommon.__whoami.userId;
+          }
+          
           me.put();
         }
         
@@ -128,19 +132,18 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       switch(methodName)
       {
         
-        
       //
       // MApps
       //
       case "addOrEditApp":
-        return true;
-//FIXME:return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "deleteApp":
         return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getAppListAll":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+          return true;          // TEMPORARY
+// FIXME: return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
 
       case "getAppList":
       case "appQuery":
@@ -160,9 +163,14 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return true;            // Anonymous access
 
       //
+      // MMobile
+      //
+      case "mobileRequest":
+        return true;            // Anonymous access
+
+      //
       // MTags
       //
-      
       case "getCategoryTags":
         return true;            // Anonymous access
 
@@ -187,51 +195,50 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return false;
       }
     },
+
+
     __deepPermissionCheck : function(methodName)
     {
       var email = aiagallery.dbif.MDbifCommon.__whoami.email;
-      var myObjData = new aiagallery.dbif.ObjVisitor(email).getData();
+      var myObjData = new aiagallery.dbif.ObjVisitors(email).getData();;
       var permissionArr = myObjData["permissions"];
       var permissionGroupArr = myObjData["permissionGroups"];
       var permission;
       var group;
       var i, j;
       
-      if (permissionArr != null)
+      if (permissionArr != null &&
+          qx.lang.Array.contains(permissionArr, methodName))
       {
-        for (i = 0 ; i < permissionArr.length; i++)
-        {
-          permission = permissionArr[i];
-          
-          if (permission === methodName)
-          {
-            return true; 
-          }
-        }
+        return true;
       }
       
-      if (permissionGroupArr != null)
+      if (false)                // this needs testing before use...
       {
-        for (i = 0 ; i < permissionGroupArr.length; i++)
+        if (permissionGroupArr != null)
         {
-          group = new aiagallery.dbif.ObjPermissionGroup(permissionGroupArr[i]);
-          
-          permissionArr = group.getData()["permissions"];
-          
-          for (j = 0 ; j < permissionArr.length; j++)
+          for (i = 0 ; i < permissionGroupArr.length; i++)
           {
-            permission = permissionArr[j];
-            
-            if (permission === methodName)
+            group =
+              new aiagallery.dbif.ObjPermissionGroup(permissionGroupArr[i]);
+
+            permissionArr = group.getData()["permissions"];
+
+            for (j = 0 ; j < permissionArr.length; j++)
             {
-              return true; 
+              permission = permissionArr[j];
+
+              if (permission === methodName)
+              {
+                return true; 
+              }
+
             }
-            
           }
         }
       }
-      return true;
-      
+
+      return false;
     }
   }
 });
