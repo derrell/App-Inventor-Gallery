@@ -13,7 +13,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
 
   members :
   {
-    testAddAndDeleteComment : function()
+    "test: Addition, retrieval, and deletion of comment" : function()
     {
       // FIXME: NEEDS LOTS OF WORK
       // Get access to the RPC implementations. This includes the mixins for

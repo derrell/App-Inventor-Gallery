@@ -13,7 +13,7 @@ qx.Class.define("aiagallery.test.AppsTest",
 
   members :
   {
-    testAddAndDeleteApp : function()
+    "test: App addition and deletion" : function()
     {
       
       // Get access to the RPC implementations. This includes the mixins for
@@ -28,7 +28,7 @@ qx.Class.define("aiagallery.test.AppsTest",
       this.assert(dbifSim.deleteApp(myAppData.uid), "removing app");
     },
     
-    testGetAppListAll : function()
+    "test: MApps.getAppListAll()" : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
@@ -39,7 +39,7 @@ qx.Class.define("aiagallery.test.AppsTest",
       this.assertInteger(appList.apps[0].uid, "retrieving list of all apps");
     },
     
-    testRequestedFields : function()
+    "test: MApps._requestedFields()" : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
@@ -59,6 +59,12 @@ qx.Class.define("aiagallery.test.AppsTest",
         field3 : "fieldInfinity"       
       };
       
+      var requestedFieldsCopy = 
+      {
+        field1 : "field1",
+        field3 : "fieldInfinity"       
+      };
+      
       var expectedResult = 
       {
         field1 : "Hello,",
@@ -67,19 +73,38 @@ qx.Class.define("aiagallery.test.AppsTest",
       
       aiagallery.dbif.MApps._requestedFields(myApp, requestedFields);
       
+      this.assertJsonEquals(requestedFields, requestedFieldsCopy, "requestedFields parameter unmutated");
       this.assertJsonEquals(myApp, expectedResult, "requested fields");
     },
     
-    testGetAppInfo : function()
+    "test: MApps.getAppInfo()" : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
-      var appInfo = dbifSim.getAppInfo(105, false);
+      // Adding comment to app.
+      dbifSim.addComment(105, "I'm getting very test-y right now", null);
+            
+      var appInfo = dbifSim.getAppInfo(105, 
+                                       false, 
+                                       {
+                                         // Requested Fields
+                                         "comments" : "comments",
+                                         "title"    : "title",
+                                         "owner"    : "author",
+                                         "uid"      : "uid"
+                                       });
       
       this.assertInstance(appInfo, Object, "get app info");
-      this.assert(parseInt(appInfo.uid,10) == 105, "correct app returned");
+      this.assert(appInfo.uid == 105, "correct app returned");
+      
+      this.assertKeyInMap("comments", appInfo, "comments were returned");
+      this.assertArray(appInfo["comments"], "comments returned correctly");
+      
+      this.assertKeyInMap("author", appInfo, "requested fields successful");
+      this.assert(!appInfo["owner"], "requested fields very successful");
+      
     }
     
     
