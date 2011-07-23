@@ -97,13 +97,13 @@ qx.Class.define("aiagallery.test.AppsTest",
                                        });
       
       this.assertInstance(appInfo, Object, "get app info");
-      this.assert(appInfo.uid == 105, "correct app returned");
+      this.assert(appInfo.uid === 105, "correct app returned");
       
       this.assertKeyInMap("comments", appInfo, "comments were returned");
       this.assertArray(appInfo["comments"], "comments returned correctly");
       
       this.assertKeyInMap("author", appInfo, "requested fields successful");
-      this.assert(!appInfo["owner"], "requested fields very successful");
+      this.assert(typeof(appInfo["owner"]) === "undefined", "requested fields very successful");
       
     }
     
