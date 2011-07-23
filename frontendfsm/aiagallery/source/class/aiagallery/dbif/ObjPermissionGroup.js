@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2011 Reed Spool
  * 
@@ -42,7 +41,7 @@ qx.Class.define("aiagallery.dbif.ObjPermissionGroup",
         /** A simple description of the group, i.e. "The all powerful Admin" */
         "description" : "String",
 
-        /** The name of this group, i.e. Administrator, guest, moderator etc. */
+        /** The name of this group, i.e. Administrator, guest, moderator etc */
         "name"  : "Key"
       };
 

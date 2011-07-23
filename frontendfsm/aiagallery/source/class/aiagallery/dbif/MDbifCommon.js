@@ -135,17 +135,17 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       //
       // MApps
       //
+      case "getAppList":
       case "addOrEditApp":
         return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "deleteApp":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "getAppListAll":
           return true;          // TEMPORARY
-// FIXME: return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+// FIXME: return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
-      case "getAppList":
       case "appQuery":
       case "getAppInfo":
         return true;            // Anonymous access
@@ -157,7 +157,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "deleteComment":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "getComments":
         return true;            // Anonymous access
@@ -178,15 +178,15 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       // MVisitors
       //
       case "addOrEditVisitor":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "deleteVisitor":
-        return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "getVisitorList":
         if (qx.core.Environment.get("qx.debug"))
         {
-          return aiagallery.dbif.MDbifCommon.__deepPermissionCheck(methodName);
+          return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
         }
         else
         {
@@ -205,7 +205,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     },
 
 
-    __deepPermissionCheck : function(methodName)
+    _deepPermissionCheck : function(methodName)
     {
       var email = aiagallery.dbif.MDbifCommon.__whoami.email;
       var myObjData = new aiagallery.dbif.ObjVisitors(email).getData();;
@@ -213,39 +213,41 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var permissionGroupArr = myObjData["permissionGroups"];
       var permission;
       var group;
+      var data;
       var i, j;
-      
+
+      // Standard check: Does my permission list contain this method?
       if (permissionArr != null &&
           qx.lang.Array.contains(permissionArr, methodName))
       {
+        // Yes, allow me.
         return true;
       }
       
-      if (false)                // this needs testing before use...
+      // Deeper check: Do any of my permission groups give me access to this
+      // method?
+      if (permissionGroupArr != null)
       {
-        if (permissionGroupArr != null)
-        {
-          for (i = 0 ; i < permissionGroupArr.length; i++)
+        
+        // For every permission group of which I am a member...
+        permissionGroupArr.forEach(function (group) 
           {
-            group =
-              new aiagallery.dbif.ObjPermissionGroup(permissionGroupArr[i]);
-
-            permissionArr = group.getData()["permissions"];
-
-            for (j = 0 ; j < permissionArr.length; j++)
+            
+            // Retrieve the list of permissions it gives me
+            data = new aiagallery.dbif.ObjPermissonGriou(group).getData();
+            permissionArr = data["permissions"];
+            
+            // Same as standard check: does this group contain this method?
+            if (permissionArr != null &&
+                qx.lang.Array.contains(permissionArr, methodName))
             {
-              permission = permissionArr[j];
-
-              if (permission === methodName)
-              {
-                return true; 
-              }
-
+              // Yes, allow me.
+              return true;
             }
-          }
-        }
+          });
       }
-
+      
+      // Check failed, reject access. Sorry pal.
       return false;
     }
   }
