@@ -27,9 +27,10 @@ qx.Class.define("aiagallery.dbif.DbifSim",
       // Save the logged-in user
       this.setWhoAmI(
         {
-          email   : "jarjar@binks.org",
-          userId  : "obnoxious",
-          isAdmin : true
+          email     : "jarjar@binks.org",
+          userId    : "obnoxious",
+          isAdmin   : true,
+          logoutUrl : "javascript:alert(\"logout\")"
         });
     }
     else
@@ -37,9 +38,10 @@ qx.Class.define("aiagallery.dbif.DbifSim",
       // Save the logged-in user
       this.setWhoAmI(
         {
-          email   : "joe@blow.com",
-          userId  : "Joey",
-          isAdmin : false
+          email     : "joe@blow.com",
+          userId    : "Joey",
+          isAdmin   : false,
+          logoutUrl : "javascript:alert(\"logout\")"
         });
     }
   },

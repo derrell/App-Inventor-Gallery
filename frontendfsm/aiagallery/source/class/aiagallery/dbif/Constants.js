@@ -74,6 +74,13 @@ qx.Class.define("aiagallery.dbif.Constants",
       "addOrEditVisitor" : "Add and edit visitors",
       "deleteVisitor"    : "Delete visitors",
       "getVisitorList"   : "Retrieve list of visitors"
+      
+      //
+      // MWhoAmI
+      //
+      /* Anonymous access...
+      "whoAmI" : "Identify the current user id and permissions"
+       */
     }
   }
 });

@@ -232,7 +232,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     /**
      * Encode an integer as a string of base160 characters
      * 
-     * @param {Number}
+     * @param val {Number}
      *   An integer to base160 encode
      * 
      * @return {String}

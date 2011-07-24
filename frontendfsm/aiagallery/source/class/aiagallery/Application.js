@@ -118,14 +118,14 @@ qx.Class.define("aiagallery.Application",
       // Use the progress cursor now, until we're fully initialized
       qx.core.Init.getApplication().constructor.progressCursor(true);
 
+      // Start the RPC simulator by getting its singleton instance
+      this.dbif = aiagallery.dbif.DbifSim.getInstance();
+
       // Get the module list
       var moduleList = aiagallery.main.Module.getList();
 
       // Add the modules in the module list
       aiagallery.Application.addModules(moduleList);
-
-      // Start the RPC simulator by getting its singleton instance
-      this.dbif = aiagallery.dbif.DbifSim.getInstance();
     }
   }
 });

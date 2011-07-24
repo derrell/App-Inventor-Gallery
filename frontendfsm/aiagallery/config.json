@@ -17,6 +17,7 @@
       "build",
       "provider",
       "test",
+      "api",
       "source-all-script",
       "clean",
       "lint",
@@ -58,6 +59,7 @@
     "simulation-run",
     "test",
     "test-source",
+    "api",
     "translation"
   ],
   
