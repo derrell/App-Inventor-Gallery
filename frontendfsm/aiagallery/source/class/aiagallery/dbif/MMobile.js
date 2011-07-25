@@ -132,7 +132,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       
       // First I'm going to trade the displayName for the real owner Id
 
-      var ownerId = aiagallery.dbif.MVisitors._getOwnerId(displayName);
+      var ownerId = aiagallery.dbif.MVisitors._getVisitorId(displayName);
       
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
