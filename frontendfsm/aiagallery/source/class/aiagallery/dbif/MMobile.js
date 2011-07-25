@@ -81,12 +81,18 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getAll : function(offset, count, order, field)
     {
-      return rpcjs.dbif.Entity.query(
+      var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         // We want everything, so null search criteria
         null,
         // This is where resultCriteria goes
         this.__buildResultCriteria( offset, count, order, field));
+
+      results.forEach(function(obj)
+      {
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+      });
+      return results;
     },
     
     __getBySearch : function(keywordString, offset, count, order, field)
@@ -96,7 +102,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(tagName, offset, count, order, field)
     {
-      return rpcjs.dbif.Entity.query(
+      results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         {
           type  : "element",
@@ -105,6 +111,13 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         },
         // This is where resultCriteria goes
         this.__buildResultCriteria(offset, count, order, field));
+
+      results.forEach(function(obj)
+      {
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+      });
+      
+      return results;
     },
     
     __getByFeatured : function(offset, count, order, field)
@@ -118,16 +131,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       
       // First I'm going to trade the displayName for the real owner Id
-      var owners = rpcjs.dbif.Entity.query(
-        "aiagallery.dbif.ObjVisitors",
-        {
-          type  : "element",
-          field : "displayName", 
-          value : displayName
-        },
-        // No resultCriteria, just need 1
-        null);
-      var ownerId = owners[0].id;
+
+      var ownerId = aiagallery.dbif.MVisitors._getOwnerId(displayName);
       
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
@@ -138,8 +143,13 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           value : ownerId
         },
         // This is where resultCriteria goes
-        // FIXME: "uid" is a useless sort field
         this.__buildResultCriteria( offset, count, order, field));
+      
+      results.forEach(function(obj)
+      {
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+      });
+      
       return results;
                 
                                             

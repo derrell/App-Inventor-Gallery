@@ -29,12 +29,12 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
     _getDisplayName : function(userId)
     {
       
-      var owners = rpcjs.dbif.Entity.query(
-        "aiagallery.dbif.ObjVisitors", userId);
-      
-      return owners[0].displayName;
-    
-    
+      var visitor = new aiagallery.dbif.ObjVisitors(userId);
+     
+      if (!visitor.getBrandNew())
+      {
+        return visitor.getData().displayName;    
+      }
     },
     
     /**
@@ -59,9 +59,12 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
         },
         // No resultCriteria. Only need a single result
         null);
-            
-      return owners[0].id;
       
+      if (typeof owners[0] !== "undefined")
+      {
+        return owners[0].id;
+      }
+      // FIXME: There should be more error handling here
     }
             
   },
