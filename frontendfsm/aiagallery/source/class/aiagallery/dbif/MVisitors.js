@@ -14,7 +14,58 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
     this.registerService("deleteVisitor",    this.deleteVisitor);
     this.registerService("getVisitorList", this.getVisitorList);
   },
-
+  
+  statics :
+  {
+    /**
+     * Exchange userId for user's displayName
+     * 
+     *@param userId {String}
+     * Visitor's userId
+     * 
+     *@return {String}
+     * Visitor's display name 
+     */
+    _getDisplayName : function(userId)
+    {
+      
+      var owners = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjVisitors", userId);
+      
+      return owners[0].displayName;
+    
+    
+    },
+    
+    /**
+     * Exchange user's displayName for userId
+     * 
+     *@param displayName {String}
+     * Visitor's display name
+     * 
+     *@return {String} 
+     * Visitor's userId
+     */
+    _getVisitorId : function(displayName)
+    {
+      
+      var owners = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjVisitors",
+        {
+          type  : "element",
+          field : "displayName",
+          value : displayName
+          
+        },
+        // No resultCriteria. Only need a single result
+        null);
+            
+      return owners[0].id;
+      
+    }
+            
+  },
+  
   members :
   {
     addOrEditVisitor : function(userId, attributes)
