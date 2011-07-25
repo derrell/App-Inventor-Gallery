@@ -648,6 +648,15 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      * @param uid {Key}
      *   The unique identifier of an application.
      *
+     * @param bStringize {Boolean}
+     *   Whether some non-string parameters should be converted to a string
+     *   representation. For example, the "tags" and "previousAuthors" fields
+     *   are arrays, and are returned as an array if this parameter is false,
+     *   but are returned as a comma-separated string of the array values if
+     *   this parameter value is true. The status value, an integer, is
+     *   returned as a number when this parameter is false, and as the string
+     *   representing the status value when it is true.
+     *
      * @param requestedFields {Map?}
      *   If provided, this is a map containing, as the member names, the
      *   fields which should be returned in the results. The value of each
@@ -662,15 +671,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      *       tags   : "tags"
      *     }
      * 
-     * @param bStringize {Boolean}
-     *   Whether some non-string parameters should be converted to a string
-     *   representation. For example, the "tags" and "previousAuthors" fields
-     *   are arrays, and are returned as an array if this parameter is false,
-     *   but are returned as a comma-separated string of the array values if
-     *   this parameter value is true. The status value, an integer, is
-     *   returned as a number when this parameter is false, and as the string
-     *   representing the status value when it is true.
-     *
      * @param error {rpcjs.rpc.error.Error}
      *   All RPCs are passed, as their final argument, an error object. Most
      *   don't use it, but this one does. If the application being requested
@@ -741,14 +741,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         if (requestedFields["comments"])
         {
           
-          // Use function from Mixin MComments to add comments to app info object
+          // Use function from Mixin MComments to add comments to app info
+          // object
           app.comments = this.getComments(uid);
-          
         }
         
         // Send it to the requestedFields function for stripping and remapping
         aiagallery.dbif.MApps._requestedFields(app, requestedFields);
-      
       }
       
       // Give 'em what they came for

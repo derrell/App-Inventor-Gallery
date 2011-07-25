@@ -37,6 +37,8 @@ qx.Class.define("aiagallery.main.Gui",
       var             subPage;
       var             canvas;
       var             numModules;
+      var             whoAmI;
+      var             rpc;
 
       // Retrieve the previously-created top-level tab view
       var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
@@ -84,6 +86,15 @@ qx.Class.define("aiagallery.main.Gui",
         o = new qx.ui.core.Widget();
         header.add(o, { flex : 1 });
 
+        // Create a label to hold the user's login info and a logout button
+        this.whoAmI = new qx.ui.basic.Label("");
+        this.whoAmI.setRich(true);
+        header.add(this.whoAmI);
+
+        // Add a flexible spacer to take up the whole middle
+        o = new qx.ui.core.Widget();
+        header.add(o, { flex : 1 });
+
         // Add a checkbox to enable/disable RPC simulation.
         var simulate = new qx.ui.form.CheckBox(this.tr("Simulate"));
         simulate.addListener("changeValue",
@@ -115,6 +126,41 @@ qx.Class.define("aiagallery.main.Gui",
 
         // Make the tab view globally accessible
         qx.core.Init.getApplication().setUserData("mainTabs", mainTabs);
+
+        // Issue a side-band RPC to find out who we are, and a logout URL
+        var _this = this;
+        qx.util.TimerManager.getInstance().start(
+          function(userData, timerId)
+          {
+            rpc = new qx.io.remote.Rpc();
+            rpc.set(
+              {
+                url         : aiagallery.main.Constant.SERVICES_URL,
+                timeout     : 30000,
+                crossDomain : false,
+                serviceName : "aiagallery.features"
+              });
+            rpc.callAsync(
+              function(e)
+              {
+                _this.whoAmI.setValue(
+                  "<div style='font-weight:bold;'>" +
+                  "Welcome, " + 
+                  (e.isAdmin ? "administrator " : "") +
+                  e.email +
+                  " (" + e.userId + ")" +
+                  "<br />" +
+                  "Permissions: " + e.permissions.join(", ") +
+                  "</div>" +
+                  "<br />" +
+                  "<a href='" + e.logoutUrl + "'>Logout</a>");
+                
+                qx.core.Init.getApplication().setUserData(
+                  "permissions", e.permissions);
+              },
+              "whoAmI",
+              []);
+          });
       }
       
       // for each menu button...

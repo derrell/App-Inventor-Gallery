@@ -14,7 +14,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     aiagallery.dbif.MApps,
     aiagallery.dbif.MTags,
     aiagallery.dbif.MMobile,
-    aiagallery.dbif.MComments
+    aiagallery.dbif.MComments,
+    aiagallery.dbif.MWhoAmI
   ],
   
   construct : function()
@@ -197,6 +198,12 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       case "getCategoryTags":
         // Anonymous access.
         return true;
+
+      //
+      // MWhoAmI
+      //
+      case "whoAmI":
+        return true;            // Anonymous access
 
       default:
         // Do not allow access to unrecognized method names

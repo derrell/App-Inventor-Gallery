@@ -213,6 +213,9 @@ try
   $debugLoad("aiagallery.dbif.MComments");
   new Packages.aiagallery.dbif.MComments();
   
+  $debugLoad("aiagallery.dbif.MWhoAmI");
+  new Packages.aiagallery.dbif.MWhoAmI();
+  
   $debugLoad("aiagallery.dbif.MDbifCommon");
   new Packages.aiagallery.dbif.MDbifCommon();
   

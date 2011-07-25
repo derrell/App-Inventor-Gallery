@@ -45,9 +45,14 @@ function doPost(request, response)
   // Convert the input lines to a single string
   jsonInput = String(input.join("\n"));
 
+  // Get the database interface instance
+  dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+  
+  // Identify ourself (find out who's loged in)
+  dbif.identify();
+
   // Process this request
-  rpcResult = 
-    aiagallery.dbif.DbifAppEngine.getInstance().processRequest(jsonInput);
+  rpcResult = dbif.processRequest(jsonInput);
 
   // Ignore null results, which occur if the request is a notification.
   if (rpcResult !== null)

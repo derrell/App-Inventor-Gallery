@@ -18,32 +18,39 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   
   construct : function()
   {
-    var             UserServiceFactory;
-    var             userService;
-    var             user;
-    var             whoami;
-    var             userId;
-
     // Call the superclass constructor
     this.base(arguments, "aiagallery", "/rpc");
-
-    // Find out who is logged in
-    UserServiceFactory =
-      Packages.com.google.appengine.api.users.UserServiceFactory;
-    userService = UserServiceFactory.getUserService();
-    user = userService.getCurrentUser();
-    whoami = String(user.getEmail());
-    userId = String(user.getUserId());
-
-    // Save the logged-in user
-    this.setWhoAmI(
-      {
-        email   : whoami,
-        userId  : userId,
-        isAdmin : userService.isUserAdmin()
-      });
   },
   
+  members :
+  {
+    identify : function()
+    {
+      var             UserServiceFactory;
+      var             userService;
+      var             user;
+      var             whoami;
+      var             userId;
+
+      // Find out who is logged in
+      UserServiceFactory =
+        Packages.com.google.appengine.api.users.UserServiceFactory;
+      userService = UserServiceFactory.getUserService();
+      user = userService.getCurrentUser();
+      whoami = String(user.getEmail());
+      userId = String(user.getUserId());
+
+      // Save the logged-in user
+      this.setWhoAmI(
+        {
+          email     : whoami,
+          userId    : userId,
+          isAdmin   : userService.isUserAdmin(),
+          logoutUrl : userService.createLogoutURL("/")
+        });
+    }
+  },
+
   defer : function()
   {
     // Register our put & query functions

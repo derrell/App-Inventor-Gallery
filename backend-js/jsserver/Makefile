@@ -90,6 +90,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MTags.class		\
 	qxoo_classes/aiagallery/dbif/MMobile.class		\
 	qxoo_classes/aiagallery/dbif/MComments.class		\
+	qxoo_classes/aiagallery/dbif/MWhoAmI.class		\
 	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
