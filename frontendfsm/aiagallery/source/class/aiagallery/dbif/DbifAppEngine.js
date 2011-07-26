@@ -40,7 +40,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       whoami = String(user.getEmail());
       userId = String(user.getUserId());
 
-      // Save the logged-in user
+      // Save the logged-in user. The whoAmI property is in MDbifCommon.
       this.setWhoAmI(
         {
           email     : whoami,

@@ -17,6 +17,8 @@
       "build",
       "provider",
       "test",
+      "test-basic",
+      "test-source",
       "api",
       "source-all-script",
       "clean",
@@ -27,7 +29,8 @@
       "build-script",
       "build-files",
       "info",
-      "distclean"
+      "distclean",
+      "test-basic"
     ]
   },
   
@@ -60,7 +63,8 @@
     "test",
     "test-source",
     "api",
-    "translation"
+    "translation",
+    "test-basic"
   ],
   
   "default-job" : "source",
@@ -100,6 +104,25 @@
       ]
     },
 
+    "test-basic" :
+    {
+      "desc" : "create a basic (server-side/headless) test runner app for unit tests of the current library",
+      
+      "extend" : ["testrunner::build-basic"],
+      
+      "exclude" :
+      [
+        "qx.bom.*"
+      ],
+
+      "let" :
+      {
+        "TESTRUNNER_ROOT" : "${QOOXDOO_PATH}/component/testrunner",
+        "TEST_INCLUDE"    : "${APPLICATION}.test.*",
+        "BUILD_PATH"      : "${ROOT}/test"
+      }
+    },
+    
     "source" :
     {
       "compile-options" :
