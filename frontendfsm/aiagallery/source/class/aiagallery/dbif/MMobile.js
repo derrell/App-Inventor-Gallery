@@ -94,8 +94,13 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       results.forEach(function(obj)
       {
         obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
-                                                                error);
+                                                                 error);
+        if (obj["owner"] === error)
+        {
+          return error;
+        }
       });
+      
       return results;
     },
     
@@ -120,6 +125,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       {
         obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
                                                                 error);
+        if (obj["owner"] === error)
+        {
+          return error;
+        }
       });
       
       return results;
@@ -140,6 +149,11 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var ownerId = aiagallery.dbif.MVisitors._getVisitorId(displayName,
                                                            error);
       
+      if (ownerId === error)
+      {
+        return error;
+      }
+      
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
@@ -155,6 +169,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       {
         obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
                                                                 error);
+        if (obj["owner"] === error)
+        {
+          return error;
+        }
       });
       
       return results;
@@ -195,7 +213,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     {
       // FIXME: UNTESTED. At time of dev, no comments available to query on
       
-      return this.getComments(parseInt(appId,10));
+      return this.getComments(appId);
     },
     
     __getCategories : function()
