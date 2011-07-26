@@ -28,6 +28,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       
       // The first field is the command name
       field = fields.shift();
+      
+      // Add error as the last parameter to all commands
+      fields.push(error);
+      
       switch(field)
       {
       case "all":
@@ -62,7 +66,6 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         
       case "getinfo":
         // Get information about an application
-        fields.push(error);
         return this.__getAppInfo.apply(this, fields);
         
       case "comments":
@@ -79,7 +82,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       }
     },
     
-    __getAll : function(offset, count, order, field)
+    __getAll : function(offset, count, order, field, error)
     {
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
@@ -90,7 +93,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
 
       results.forEach(function(obj)
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
+                                                                error);
       });
       return results;
     },
@@ -100,7 +104,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       //FIXME: Waiting for back-end implementation
     },
     
-    __getByTag : function(tagName, offset, count, order, field)
+    __getByTag : function(tagName, offset, count, order, field, error)
     {
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
@@ -114,20 +118,21 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
 
       results.forEach(function(obj)
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
+                                                                error);
       });
       
       return results;
     },
     
-    __getByFeatured : function(offset, count, order, field)
+    __getByFeatured : function(offset, count, order, field, error)
     {
       // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
-      return this.__getByTag("*Featured*", offset, count, order, field);
+      return this.__getByTag("*Featured*", offset, count, order, field, error);
     },
     
-    __getByOwner : function(displayName, offset, count, order, field)
+    __getByOwner : function(displayName, offset, count, order, field, error)
     {
       
       // First I'm going to trade the displayName for the real owner Id
@@ -147,7 +152,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       
       results.forEach(function(obj)
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
+                                                                error);
       });
       
       return results;
