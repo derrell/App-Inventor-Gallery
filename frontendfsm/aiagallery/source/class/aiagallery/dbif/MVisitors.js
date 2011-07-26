@@ -38,6 +38,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
         // Yes, report the error
         error.setCode(1);
         error.setMessage("Unrecognized user ID in MVisitors");
+        return error;
       }
       
       // No problems, give them the display name
@@ -72,8 +73,9 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       if (typeof owners[0] === "undefined" || owners[0] === null)
       {
         // Yes, report the error
-        error.setCode(1);
+        error.setCode(2);
         error.setMessage("Unrecognized display name: " + displayName);
+        return error;
       }
       
       // No problems, give them the ID

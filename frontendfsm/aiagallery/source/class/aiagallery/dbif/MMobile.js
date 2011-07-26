@@ -158,8 +158,6 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       });
       
       return results;
-                
-                                            
     },
     
     __getAppInfo : function(appId, error)
