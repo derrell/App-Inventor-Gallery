@@ -13,7 +13,7 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
 
   members :
   {
-    testMobileRequests : function()
+    "test: Mobile Request Interface" : function()
     {
       
       // Get access to the RPC implementations. This includes the mixins for
@@ -47,19 +47,9 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       
       this.assertKeyInMap( "uid",
                            mobileRequest[0],
-                           "apps retrieved from mobile featured");
+                           "apps retrieved from mobile featured has uid");
       
-      // Getting display name for by_developer
-      var owners = rpcjs.dbif.Entity.query(
-        "aiagallery.dbif.ObjVisitors",
-        {
-          type  : "element",
-          field : "id", 
-          value : mobileRequest[0].owner
-        },
-        // No resultCriteria, just need a single result
-        null);
-      developer = owners[0].displayName;
+      developer = mobileRequest[0]["owner"];
 
       // testing by_developer
       mobileRequest = dbifSim.mobileRequest("by_developer:"+developer+":0:1");

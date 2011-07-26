@@ -17,6 +17,8 @@
       "build",
       "provider",
       "test",
+      "test-basic",
+      "test-source",
       "api",
       "source-all-script",
       "clean",

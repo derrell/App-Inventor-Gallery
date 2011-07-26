@@ -14,7 +14,61 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
     this.registerService("deleteVisitor",    this.deleteVisitor);
     this.registerService("getVisitorList", this.getVisitorList);
   },
-
+  
+  statics :
+  {
+    /**
+     * Exchange userId for user's displayName
+     * 
+     *@param userId {String}
+     * Visitor's userId
+     * 
+     *@return {String}
+     * Visitor's display name 
+     */
+    _getDisplayName : function(userId)
+    {
+      
+      var visitor = new aiagallery.dbif.ObjVisitors(userId);
+     
+      if (!visitor.getBrandNew())
+      {
+        return visitor.getData().displayName;    
+      }
+    },
+    
+    /**
+     * Exchange user's displayName for userId
+     * 
+     *@param displayName {String}
+     * Visitor's display name
+     * 
+     *@return {String} 
+     * Visitor's userId
+     */
+    _getVisitorId : function(displayName)
+    {
+      
+      var owners = rpcjs.dbif.Entity.query(
+        "aiagallery.dbif.ObjVisitors",
+        {
+          type  : "element",
+          field : "displayName",
+          value : displayName
+          
+        },
+        // No resultCriteria. Only need a single result
+        null);
+      
+      if (typeof owners[0] !== "undefined")
+      {
+        return owners[0].id;
+      }
+      // FIXME: There should be more error handling here
+    }
+            
+  },
+  
   members :
   {
     addOrEditVisitor : function(userId, attributes)
