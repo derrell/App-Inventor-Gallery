@@ -102,7 +102,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(tagName, offset, count, order, field)
     {
-      results = rpcjs.dbif.Entity.query(
+      var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         {
           type  : "element",
