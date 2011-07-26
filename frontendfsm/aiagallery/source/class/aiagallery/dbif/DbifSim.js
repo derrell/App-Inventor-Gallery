@@ -24,7 +24,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
         
     if (true)
     {
-      // Save the logged-in user
+      // Save the logged-in user. The whoAmI property is in MDbifCommon.
       this.setWhoAmI(
         {
           email     : "jarjar@binks.org",
@@ -35,7 +35,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     }
     else
     {
-      // Save the logged-in user
+      // Save the logged-in user. The whoAmI property is in MDbifCommon.
       this.setWhoAmI(
         {
           email     : "joe@blow.com",
