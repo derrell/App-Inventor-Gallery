@@ -34,15 +34,24 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
      *@return {String}
      * Visitor's display name 
      */
-    _getDisplayName : function(userId)
+    _getDisplayName : function(userId, error)
     {
       
       var visitor = new aiagallery.dbif.ObjVisitors(userId);
      
-      if (!visitor.getBrandNew())
+      // Was our userId faulty in some way?
+      if (typeof visitor === "undefined" || 
+          visitor === null ||
+          visitor.getBrandNew())
       {
-        return visitor.getData().displayName;    
+        // Yes, report the error
+        error.setCode(1);
+        error.setMessage("Unrecognized user ID in MVisitors");
+        return error;
       }
+      
+      // No problems, give them the display name
+      return visitor.getData().displayName;
     },
     
     /**
@@ -54,7 +63,7 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
      *@return {String} 
      * Visitor's userId
      */
-    _getVisitorId : function(displayName)
+    _getVisitorId : function(displayName, error)
     {
       
       var owners = rpcjs.dbif.Entity.query(
@@ -68,11 +77,18 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
         // No resultCriteria. Only need a single result
         null);
       
-      if (typeof owners[0] !== "undefined")
+      // Was there a problem with the query?
+      if (typeof owners[0] === "undefined" || owners[0] === null)
       {
-        return owners[0].id;
+        // Yes, report the error
+        error.setCode(2);
+        error.setMessage("Unrecognized display name: " + displayName);
+        return error;
       }
-      // FIXME: There should be more error handling here
+      
+      // No problems, give them the ID
+      return owners[0].id;
+      
     }
             
   },

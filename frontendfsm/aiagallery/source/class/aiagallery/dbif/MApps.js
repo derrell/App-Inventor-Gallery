@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
- * 
+ * Copyright (c) 2011 Reed Spool
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php

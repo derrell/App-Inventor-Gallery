@@ -30,6 +30,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       
       // The first field is the command name
       field = fields.shift();
+      
+      // Add error as the last parameter to all commands
+      fields.push(error);
+      
       switch(field)
       {
       case "all":
@@ -64,7 +68,6 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         
       case "getinfo":
         // Get information about an application
-        fields.push(error);
         return this.__getAppInfo(fields, error);
         
       case "comments":
@@ -81,32 +84,15 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       }
     },
     
-    /**
-     * Remove and return the first element from the parameter array if the
-     * array contains any element.
-     * 
-     * @param arr {Any}
-     *   The array from which to try to get the first element
-     * 
-     * @return {Any|null}
-     *   If there is an element on the array, it is removed and
-     *   returned. Otherwise, null is returned.
-     */
-    __getFirstElement : function(arr)
+    
+    __getAll : function(fields, error)
     {
-      // Is there anything in the array?
-      if (arr.length > 0)
+      var requiredParams = 4;
+      for (var i = requiredParams - fields.length; i > 0; i--)
       {
-        // Yup. Remove and return the first element.
-        return arr.unshift();
+        qx.lang.Array.insertBefore(fields, null, error);
       }
-      
-      // Nothing left on the array. Tell 'em so.
-      return null;
-    },
 
-    __getAll : function(arr, error)
-    {
       var offset = fields.shift();
       var count = fields.shift();
       var order = fields.shift();
@@ -119,15 +105,38 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         // This is where resultCriteria goes
         this.__buildResultCriteria( offset, count, order, field));
 
-      results.forEach(function(obj)
+      try
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
-      });
+        results.forEach(function(obj)
+        {
+          // Replace this owner with his display name
+          obj["owner"] =
+            aiagallery.dbif.MVisitors._getDisplayName(obj["owner"], error);
+
+          // Did we fail to find this owner?
+          if (obj["owner"] === error)
+          {
+            // Yup. Abort the request.
+            throw error;
+          }
+        });
+      }
+      catch(error)
+      {
+        return error;
+      }
+      
       return results;
     },
     
     __getBySearch : function(fields, error)
     {
+      var requiredParams = 5;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var keywordString = fields.shift();
       var offset = fields.shift();
       var count = fields.shift();
@@ -139,6 +148,12 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByTag : function(fields, error)
     {
+      var requiredParams = 5;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var tagName = fields.shift();
       var offset = fields.shift();
       var count = fields.shift();
@@ -155,16 +170,34 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         // This is where resultCriteria goes
         this.__buildResultCriteria(offset, count, order, field));
 
-      results.forEach(function(obj)
+      try
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
-      });
+        results.forEach(function(obj)
+        {
+          obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
+                                                                  error);
+          if (obj["owner"] === error)
+          {
+            throw error;
+          }
+        });
+      }
+      catch(error)
+      {
+        return error;
+      }
       
       return results;
     },
     
     __getByFeatured : function(fields, error)
     {
+      var requiredParams = 4;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var offset = fields.shift();
       var count = fields.shift();
       var order = fields.shift();
@@ -172,11 +205,17 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
 
       // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
-      return this.__getByTag("*Featured*", offset, count, order, field);
+      return this.__getByTag("*Featured*", offset, count, order, field, error);
     },
     
     __getByOwner : function(fields, error)
     {
+      var requiredParams = 5;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var displayName = fields.shift();
       var offset = fields.shift();
       var count = fields.shift();
@@ -184,7 +223,15 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var field = fields.shift();
       
       // First I'm going to trade the displayName for the real owner Id
-      var ownerId = aiagallery.dbif.MVisitors._getVisitorId(displayName);
+      var ownerId =
+        aiagallery.dbif.MVisitors._getVisitorId(displayName, error);
+      
+      // Was an error erturned?
+      if (ownerId === error)
+      {
+        // Yup. We need to return it.
+        return error;
+      }
       
       // Then use the ownerId to query for all Apps
       var results = rpcjs.dbif.Entity.query(
@@ -199,7 +246,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       
       results.forEach(function(obj)
       {
-        obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"]);
+        obj["owner"] = displayName;
       });
       
       return results;
@@ -207,6 +254,12 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getAppInfo : function(fields, error)
     {
+      var requiredParams = 1;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var appId = fields.shift();
 
       // Using the method included by mixin MApps
@@ -241,6 +294,12 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getComments : function(fields, error)
     {
+      var requiredParams = 1;
+      for (var i = requiredParams - fields.length; i > 0; i--)
+      {
+        qx.lang.Array.insertBefore(fields, null, error);
+      }
+
       var appId = fields.shift();
 
       // FIXME: UNTESTED. At time of dev, no comments available to query on
