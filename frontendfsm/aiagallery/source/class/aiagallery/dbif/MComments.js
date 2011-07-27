@@ -61,8 +61,10 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       var             whoami;
       var             commentObj;
       var             commentObjData;
-      var             parentObj;
-      var             parentObjData;
+      var             parentAppObj;
+      var             parentAppData;
+      var             parentCommentObj;
+      var             parentCommentData;
       var             parentTreeId;
       var             myTreeId;
       var             parentList;
@@ -88,33 +90,31 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       //   by the end of this if-else block. Where ever we got the numChildren
       //   from also needs to be incremented and updated.
       
+      // Need to get and increment the Parent App's numRootComments
+      // and numComments total
+      parentAppObj = new aiagallery.dbif.ObjAppData(appId);
+      
+      parentAppData = parentObj.getData();
+
       // Was a parent comment's UID provided?
       if (typeof(parentUID) === "undefined" || parentUID === null)
       {
         // No, we're going to have to use the default parent id "0000"
         parentTreeId = "";
         
-        // Need to get and increment the App's numRootComments
-        parentObj = new aiagallery.dbif.ObjAppData(appId);
-        
-        parentObjData = parentObj.getData();
-        
         // Get what we need
-        parentNumChildren = parentObjData.numRootComments || 0;
-         
-        // Increment parent's # of children
-        parentObjData.numRootComments = parentNumChildren + 1;
+        parentNumChildren = parentObjData.numRootComments || 0;         
         
       }
       else
       {
-        // Yes, use it to get the parent object.
-        parentObj = new aiagallery.dbif.ObjComments(parentUID);
+        // Yes, use it to get the parent comment object.
+        parentCommentObj = new aiagallery.dbif.ObjComments(parentUID);
         
-        parentObjData = parentObj.getData();
+        parentCommentData = parentCommentObj.getData();
         
         // Was our parentUID invalid, resulting in a new ObjComments?
-        if (parentObj.getBrandNew())
+        if (parentCommentObj.getBrandNew())
         {
           // We can't use an invalid UID as our parent UID!
           error.setCode(1);
@@ -126,12 +126,19 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         parentNumChildren = parentObjData.numChildren;
         parentTreeId = parentObjData.treeId;
         
-        // Increment parent's # of children
-        parentObjData.numChildren = parentNumChildren + 1;
+        // Increment parent comment's # of children
+        parentCommentData.numChildren = parentNumChildren + 1;
+        
+        // Save the new # children in the parent comment
+        parentCommentObj.put();
       }
-      
-      // Update the parent object. Congrats! a new baby comment!
-      parentObj.put();
+
+      // Increment parent app's # of children
+      parentAppData.numRootComments = parentNumChildren + 1;
+
+      // Update the parent app and/or comment object. 
+      // Congrats! a new baby comment!
+      parentAppObj.put();
 
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
@@ -160,17 +167,31 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     deleteComment : function(uid, error)
     {
       var             commentObj;
-
+      var             parentAppObj;
+      var             parentAppData;
+      
       // Retrieve an instance of this comment entity
       commentObj = new aiagallery.dbif.ObjComments(uid);
       
-      // Does this application exist?
+      // Does this comment exist?
       if (commentObj.getBrandNew())
       {
         // It doesn't. Let 'em know.
         return false;
       }
-
+      
+      
+      // Find out the App that was commented on and...
+      parentAppObj = new aiagallery.dbif.ObjAppData(commentObj["app"]);
+      
+      parentAppData = parentObj.getData();
+      
+      // Decrement the number of comments attached to this App.
+      parentAppData["numComments"]--;
+      
+      // Save this change
+      parentAppObj.put();
+      
       // Delete the app
       commentObj.removeSelf();
       
