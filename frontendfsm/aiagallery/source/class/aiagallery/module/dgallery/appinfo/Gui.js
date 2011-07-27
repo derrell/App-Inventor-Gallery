@@ -78,6 +78,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
 
         case "object":
+          var prop;
           str = "{"
           for (prop in value) 
           {

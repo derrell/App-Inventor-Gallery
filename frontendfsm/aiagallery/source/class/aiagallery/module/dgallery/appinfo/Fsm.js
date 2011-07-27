@@ -187,6 +187,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           var             appId;
           var             commentInput;
           var             guiWrapper;
+          var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
@@ -218,7 +219,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-
   /*
        * Transition: Idle to Idle
        *
@@ -240,6 +240,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // Get the event data
           var             commentWrapper;
           var             appId;
+          var             guiWrapper;
+          var             vbox;
+          var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
