@@ -10,12 +10,29 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 {
   construct : function()
   {
-    this.registerService("addOrEditApp", this.addOrEditApp);
-    this.registerService("deleteApp",    this.deleteApp);
-    this.registerService("getAppList", this.getAppList);
-    this.registerService("getAppListAll", this.getAppListAll);
-    this.registerService("appQuery", this.appQuery);
-    this.registerService("getAppInfo", this.getAppInfo);
+    this.registerService("addOrEditApp",
+                         this.addOrEditApp,
+                         [ "uid", "attributes" ]);
+
+    this.registerService("deleteApp",
+                         this.deleteApp,
+                         [ "uid" ]);
+
+    this.registerService("getAppList",
+                         this.getAppList,
+                         [ "bStringize", "sortCriteria", "offset", "limit" ]);
+
+    this.registerService("getAppListAll",
+                         this.getAppListAll,
+                         [ "bStringize", "sortCriteria", "offset", "limit" ]);
+
+    this.registerService("appQuery",
+                         this.appQuery,
+                         [ "criteria", "requestedFields" ]);
+
+    this.registerService("getAppInfo",
+                         this.getAppInfo,
+                         [ "uid", "bStringize", "requestedFields" ]);
   },
 
   statics :

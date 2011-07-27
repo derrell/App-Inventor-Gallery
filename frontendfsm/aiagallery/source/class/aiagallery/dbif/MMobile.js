@@ -11,7 +11,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
 {
   construct : function()
   {
-    this.registerService("mobileRequest", this.mobileRequest);
+    this.registerService("mobileRequest",
+                         this.mobileRequest,
+                         [ "command" ]);
   },
 
   members :
@@ -33,26 +35,26 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       case "all":
         // Retrieve a list of applications. Parameters are offset, count, and
         // sort order.
-        return this.__getAll.apply(this, fields);
+        return this.__getAll(fields, error);
         
       case "search":
         // Search for applications based on some criteria. Parameters are
         // keywordString, offset, count, and sort order.
-        return this.__getBySearch.apply(this, fields);
+        return this.__getBySearch(fields, error);
         
       case "tag":
         // Search by tag name. Parameters are the tag name, offset, count, and
         // sort order.
-        return this.__getByTag.apply(this, fields);
+        return this.__getByTag(fields, error);
         
       case "featured":
         // Get featured apps. Parameters are the offset, count, and sort order.
-        return this.__getByFeatured.apply(this, fields);
+        return this.__getByFeatured(fields, error);
         
       case "by_developer":
         // Get apps by their owner. Parameters are the owner's display name,
         // offset, count, and sort order.
-        return this.__getByOwner.apply(this, fields);
+        return this.__getByOwner(fields, error);
         
       case "uploads":
         // I don't understand what this one is supposed to do. Parameters are
@@ -63,24 +65,53 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       case "getinfo":
         // Get information about an application
         fields.push(error);
-        return this.__getAppInfo.apply(this, fields);
+        return this.__getAppInfo(fields, error);
         
       case "comments":
         // Get comments made about an application
-        return this.__getComments.apply(this, fields);
+        return this.__getComments(fields, error);
         
       case "get_categories":
         // Get the category list (top-level tags). There are no parameters to
         // this request.
-        return this.__getCategories();
+        return this.__getCategories(fields, error);
         
       default:
         break;
       }
     },
     
-    __getAll : function(offset, count, order, field)
+    /**
+     * Remove and return the first element from the parameter array if the
+     * array contains any element.
+     * 
+     * @param arr {Any}
+     *   The array from which to try to get the first element
+     * 
+     * @return {Any|null}
+     *   If there is an element on the array, it is removed and
+     *   returned. Otherwise, null is returned.
+     */
+    __getFirstElement : function(arr)
     {
+      // Is there anything in the array?
+      if (arr.length > 0)
+      {
+        // Yup. Remove and return the first element.
+        return arr.unshift();
+      }
+      
+      // Nothing left on the array. Tell 'em so.
+      return null;
+    },
+
+    __getAll : function(arr, error)
+    {
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
+
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         // We want everything, so null search criteria
@@ -95,13 +126,25 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       return results;
     },
     
-    __getBySearch : function(keywordString, offset, count, order, field)
+    __getBySearch : function(fields, error)
     {
+      var keywordString = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
+
       //FIXME: Waiting for back-end implementation
     },
     
-    __getByTag : function(tagName, offset, count, order, field)
+    __getByTag : function(fields, error)
     {
+      var tagName = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
+
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         {
@@ -120,18 +163,27 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       return results;
     },
     
-    __getByFeatured : function(offset, count, order, field)
+    __getByFeatured : function(fields, error)
     {
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
+
       // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
       return this.__getByTag("*Featured*", offset, count, order, field);
     },
     
-    __getByOwner : function(displayName, offset, count, order, field)
+    __getByOwner : function(fields, error)
     {
+      var displayName = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
       
       // First I'm going to trade the displayName for the real owner Id
-
       var ownerId = aiagallery.dbif.MVisitors._getVisitorId(displayName);
       
       // Then use the ownerId to query for all Apps
@@ -151,12 +203,12 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       });
       
       return results;
-                
-                                            
     },
     
-    __getAppInfo : function(appId, error)
+    __getAppInfo : function(fields, error)
     {
+      var appId = fields.shift();
+
       // Using the method included by mixin MApps
       
       // Requesting all fields except data URLs (source, apk, image1-3)
@@ -183,20 +235,26 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // case, we're pretending to be the server when we call a different RPC,
       // so pass its error object.
       
+      // The appId is passed in here as a string, but is a number in reality.
       return this.getAppInfo(parseInt(appId,10), false, requestedFields, error);
     },
     
-    __getComments : function(appId)
+    __getComments : function(fields, error)
     {
+      var appId = fields.shift();
+
       // FIXME: UNTESTED. At time of dev, no comments available to query on
       
+      // The appId is passed in here as a string, but is a number in reality.
       return this.getComments(parseInt(appId,10));
     },
     
-    __getCategories : function()
+    __getCategories : function(fields, error)
     {
+      // fields is expected to be empty
+
       // Use the method included by mixin MTags
-      return this.getCategoryTags();
+      return this.getCategoryTags(error);
     },
    
     /**

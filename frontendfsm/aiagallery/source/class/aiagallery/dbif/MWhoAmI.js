@@ -10,7 +10,9 @@ qx.Mixin.define("aiagallery.dbif.MWhoAmI",
 {
   construct : function()
   {
-    this.registerService("whoAmI", this.whoAmI);
+    this.registerService("whoAmI",
+                         this.whoAmI,
+                         []);
   },
 
   members :
