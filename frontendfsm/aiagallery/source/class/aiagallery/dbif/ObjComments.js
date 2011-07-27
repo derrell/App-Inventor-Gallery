@@ -11,7 +11,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
 {
   extend : aiagallery.dbif.Entity,
   
-  construct : function(uid)
+  construct : function(treeId)
   {
     // Pre-initialize the data
     this.setData(
@@ -19,9 +19,12 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "timestamp"  : (new Date()).toString(),
         "numChildren": 0
       });
-
+    
+    // Use treeId as the key field
+    this.setEntityKeyProperty("treeId");
+    
     // Call the superclass constructor
-    this.base(arguments, "comments", uid);
+    this.base(arguments, "comments", treeId);
   },
   
   defer : function(clazz)

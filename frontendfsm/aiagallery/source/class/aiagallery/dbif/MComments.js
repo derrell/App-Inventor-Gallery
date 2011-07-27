@@ -118,7 +118,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         {
           // We can't use an invalid UID as our parent UID!
           error.setCode(1);
-          error.setMessage("Unrecognized parent UID");
+          error.setMessage("Unrecognized parent app UID");
           return error;
         }
         
@@ -164,14 +164,14 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   Returns true if deletion was successful. If false is returned, nothing
      *   was deleted.
      */
-    deleteComment : function(uid, error)
+    deleteComment : function(treeId, error)
     {
       var             commentObj;
       var             parentAppObj;
       var             parentAppData;
       
       // Retrieve an instance of this comment entity
-      commentObj = new aiagallery.dbif.ObjComments(uid);
+      commentObj = new aiagallery.dbif.ObjComments(treeId);
       
       // Does this comment exist?
       if (commentObj.getBrandNew())
