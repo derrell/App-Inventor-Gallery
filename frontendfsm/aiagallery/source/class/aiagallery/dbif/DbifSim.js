@@ -39,7 +39,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
       this.setWhoAmI(
         {
           email     : "joe@blow.com",
-          userId    : "Joey",
+          userId    : "Joe Blow",
           isAdmin   : false,
           logoutUrl : "javascript:alert(\"logout\")"
         });
