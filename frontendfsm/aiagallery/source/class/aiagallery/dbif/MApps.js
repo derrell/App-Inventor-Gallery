@@ -328,7 +328,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       whoami = this.getWhoAmI();
 
       // Ensure that the logged-in user owns this application
-      if (appData.owner != whoami.email)
+      if (! whoami || appData.owner != whoami.email)
       {
         // He doesn't. Someone's doing something nasty!
         error.setCode(1);
@@ -728,7 +728,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.owner != whoami.email && app.status != 2)
+      if (app.status != 2 && (! whoami || app.owner != whoami.email))
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)

@@ -30,6 +30,19 @@ qx.Mixin.define("aiagallery.dbif.MWhoAmI",
       // Get the object indicating who we're logged in as
       whoami = aiagallery.dbif.MDbifCommon.__whoami;
       
+      // Are they logged in?
+      if (! whoami)
+      {
+        // Nope.
+        return({
+                 email       : "anonymous",
+                 userId      : "",
+                 isAdmin     : false,
+                 logoutUrl   : "",
+                 permissions : []
+               });
+      }
+      
       // Obtain this dude's Visitor record
       me = new aiagallery.dbif.ObjVisitors(whoami.email);
       

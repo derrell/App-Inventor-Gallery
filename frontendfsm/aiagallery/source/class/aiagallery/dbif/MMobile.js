@@ -80,7 +80,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         return this.__getCategories(fields, error);
         
       default:
-        break;
+        error.setCode(1);
+        error.setMessage("Unrecognized request: " + field);
+        return error;
       }
     },
     
