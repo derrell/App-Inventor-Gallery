@@ -112,7 +112,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
          
         // Increment parent's # of children
         parentObjData.numRootComments = parentNumChildren + 1;
-        
       }
       else
       {

@@ -33,6 +33,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/bom/client/Device.class			\
 	qxoo_classes/qx/bom/client/Event.class			\
 	qxoo_classes/qx/bom/client/Runtime.class		\
+	qxoo_classes/qx/bom/client/Json.class			\
 	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/Mixin.class				\
 	qxoo_classes/qx/Interface.class				\
