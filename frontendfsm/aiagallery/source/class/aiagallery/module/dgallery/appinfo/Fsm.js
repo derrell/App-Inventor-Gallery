@@ -67,6 +67,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           {
             "main.canvas" : 
               qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
+          },
+
+          "execute" :
+          {
+            
+            "submitCommentBtn" : 
+              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+          },
+          "appearComments" :
+          {
+            "ignoreMe" : 
+              "Transition_Idle_to_AwaitRpcResult_via_getComments"
           }
         }
       });
@@ -118,11 +130,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "getAppInfo",
-                         [ module.getUserData("app_uid"), true, null ]);
+                         [ module.getUserData("app_uid"), true, null]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "getAppInfo");
+  
         }
       });
 
@@ -146,6 +159,109 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "ontransition" : function(fsm, event)
         {
+        }
+      });
+
+      state.addTransition(trans);
+
+  /*
+       * Transition: Idle to Idle
+       *
+       * Cause: submitCommentBtn has been pressed
+       *
+       * Action:
+       *  Add a comment to the database and to the GUI
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+          var             commentWrapper;
+          var             appId;
+          var             commentInput;
+          var             guiWrapper;
+
+          commentWrapper = fsm.getObject("commentWrapper");
+          appId = commentWrapper.getUserData("appId");
+          commentInput = commentWrapper.getUserData("commentInput");
+          guiWrapper = fsm.getObject("guiWrapper");
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "addComment",
+                         [ 
+                         //Application ID
+                         appId,
+                         //The text of the comment 
+                         commentInput.getValue(), 
+                         //The parent thread's UID
+                         null
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "addComment");
+          request.setUserData("commentString", commentInput);
+          request.setUserData("guiInfo", guiWrapper);
+
+        }
+      });
+
+      state.addTransition(trans);
+
+
+  /*
+       * Transition: Idle to Idle
+       *
+       * Cause: 
+       *
+       * Action:
+       *  Gets comments from the database and adds them to the GUI
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_getComments",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+          var             commentWrapper;
+          var             appId;
+
+          commentWrapper = fsm.getObject("commentWrapper");
+          appId = commentWrapper.getUserData("appId");
+          guiWrapper = fsm.getObject("guiWrapper");
+          vbox = guiWrapper.getUserData("vbox");
+         
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "getComments",
+                         [ 
+                           appId,
+                           null,
+                           null
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "getComments");
+          request.setUserData("guiInfo", guiWrapper);
+
         }
       });
 
