@@ -194,20 +194,12 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getByFeatured : function(fields, error)
     {
-      var requiredParams = 4;
-      for (var i = requiredParams - fields.length; i > 0; i--)
-      {
-        qx.lang.Array.insertBefore(fields, null, error);
-      }
-
-      var offset = fields.shift();
-      var count = fields.shift();
-      var order = fields.shift();
-      var field = fields.shift();
+      // This is the same as __getByTag so just prepend the tag name
+      fields.unshift("*Featured*");
 
       // If the only quality of a Featured App is that it has a *Featured* tag
       //   then this works.
-      return this.__getByTag("*Featured*", offset, count, order, field, error);
+      return this.__getByTag(fields, error);
     },
     
     __getByOwner : function(fields, error)
