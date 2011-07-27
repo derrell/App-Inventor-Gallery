@@ -197,9 +197,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
           return false;
         }
         
-      case "getCategoryTags":
-        // Anonymous access.
-        return true;
+      case "editProfile":
+        return ! bAnonymous;    // Access is allowed if they're logged in
 
       //
       // MWhoAmI
