@@ -87,10 +87,10 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObjData = commentObj.getData();
       
       // Set up all the data we can at the moment (everything but treeId)
-      commentObjData.visitor     = whoami.userId;
-      commentObjData.text        = text;
       commentObjData.app         = appId;
       commentObjData.numChildren = 0;
+      commentObjData.visitor     = whoami.userId;
+      commentObjData.text        = text;
       
       // Regardless, we need to have parentNumChildren and parentTreeId filled
       //   by the end of this if-else block. Where ever we got the numChildren
@@ -99,7 +99,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Was a parent comment's UID provided?
       if (typeof(parentUID) === "undefined" || parentUID === null)
       {
-        // No, we're going to have to use the default parent id "0000"
+        // No, we're going to use the root parent id, ""
         parentTreeId = "";
         
         // Need to get and increment the App's numRootComments
@@ -149,7 +149,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       // Save this in the database
       commentObj.put();
-      
+
       // This includes newly-created key
       return commentObj.getData();  
     },
