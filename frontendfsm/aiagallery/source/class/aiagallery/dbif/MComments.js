@@ -96,11 +96,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       parentAppData = parentObj.getData();
 
-      // Was a parent comment's UID provided?
+      // Was the parent comment's UID provided?
       if (typeof(parentUID) === "undefined" || parentUID === null)
       {
         // No, we're going to have to use the default parent id "0000"
-        parentTreeId = "";
+        parentTreeId = appId + "/";
         
         // Get what we need
         parentNumChildren = parentObjData.numRootComments || 0;         
