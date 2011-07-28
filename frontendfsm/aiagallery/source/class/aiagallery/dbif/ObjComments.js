@@ -11,17 +11,24 @@ qx.Class.define("aiagallery.dbif.ObjComments",
 {
   extend : aiagallery.dbif.Entity,
   
-  construct : function(uid)
+  // keyArr must be an array with 2 elements. The first element is
+  // an appId and the second a treeId
+  construct : function(keyArr)
   {
     // Pre-initialize the data
     this.setData(
       {
         "timestamp"  : (new Date()).toString(),
-        "numChildren": 0
+        "numChildren": 0,
+        "app"        : keyArr[0],
+        "treeId"     : keyArr[1]
       });
-
+    
+    // Use appId and treeId are a composite key
+    this.setEntityKeyProperty([ "app", "treeId" ]);
+    
     // Call the superclass constructor
-    this.base(arguments, "comments", uid);
+    this.base(arguments, "comments", keyArr);
   },
   
   defer : function(clazz)
@@ -60,6 +67,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
 
     // Register our property types
     aiagallery.dbif.Entity.registerPropertyTypes("comments",
-                                                 databaseProperties);
+                                                 databaseProperties,
+                                                 [ "app", "treeId" ]);
   }
 });
