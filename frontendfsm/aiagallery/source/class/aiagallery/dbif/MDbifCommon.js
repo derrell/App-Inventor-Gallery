@@ -232,8 +232,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var permission;
       var group;
       var data;
-      var i, j;
-      var ret = false;
 
       // Standard check: Does my permission list contain this method?
       if (permissionArr != null &&
@@ -260,13 +258,13 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
                 qx.lang.Array.contains(permissionArr, methodName))
             {
               // Yes, allow me.
-              ret = true;
+              return true;
             }
           });
       }
       
-      // Return whether we found it.
-      return ret;
+      // Did not find this permission, dissalow.
+      return false;
     }
   }
 });

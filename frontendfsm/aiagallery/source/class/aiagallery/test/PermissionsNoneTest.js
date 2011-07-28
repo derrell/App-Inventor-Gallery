@@ -48,7 +48,16 @@ qx.Class.define("aiagallery.test.PermissionsNoneTest",
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.      
       this.dbifSim = aiagallery.dbif.DbifSim.getInstance();
-
+      
+      this.dbifSim.setWhoAmI(
+        {
+          email : "jarjar@binks.org",
+          isAdmin: false,
+          logoutUrl: "undefined",
+          permissions: [],
+          userId :  "nameSetWhoAmI"
+        });
+      
       // Use a personalized database
       rpcjs.sim.Dbif.setDb(this.__db);
       
@@ -57,6 +66,8 @@ qx.Class.define("aiagallery.test.PermissionsNoneTest",
 
     tearDown: function() 
     {
+      // Reset the db for other tests
+      rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
     },
     
     "test: attempt to getAppList" : function()
@@ -153,19 +164,7 @@ qx.Class.define("aiagallery.test.PermissionsNoneTest",
     {
       // Anonymous
       this.assert(aiagallery.dbif.MDbifCommon.authenticate("aiagallery.features.whoAmI"), "whoAmI with " + this.permissionLevel);
-    },
-    
-    "test: MDBifCommon._deepPermissionCheck()" : function()
-    {
-      
-      // Get access to the RPC implementations. This includes the mixins for
-      // all RPCs.
-      this.dbifSim;      
-      
-      
-      
-    }
-    
+    } 
     
   }
 });
