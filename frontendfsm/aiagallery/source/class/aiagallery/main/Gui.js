@@ -202,6 +202,25 @@ qx.Class.define("aiagallery.main.Gui",
         {
           // Yup.  Create a method to select this menu item.
           subTabs = new aiagallery.widget.radioview.RadioView();
+          
+          if (false)
+          {
+            // Use a single row if there are an odd number of submodules or two
+            // submodules; two rows if there are an even number greater than 2.
+            if (numModules == 2 || numModules % 2 == 1)
+            {
+              subTabs.setRowCount(1);
+            }
+            else
+            {
+              subTabs.setRowCount(2);
+            }
+          }
+          else
+          {
+            // Use a single row for subtabs
+            subTabs.setRowCount(1);
+          }
 
           subTabs.setContentPadding(0);
           page.add(subTabs, { flex : 1 });
