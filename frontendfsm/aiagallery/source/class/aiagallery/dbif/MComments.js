@@ -73,18 +73,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         
       // Determine who the logged-in user is
       whoami = this.getWhoAmI();
-
-      // Get a new ObjComments object.
-      commentObj = new aiagallery.dbif.ObjComments();
-      
-      // Retrieve a data object to manipulate.
-      commentObjData = commentObj.getData();
-      
-      // Set up all the data we can at the moment (everything but treeId)
-      commentObjData.visitor     = whoami.userId;
-      commentObjData.text        = text;
-      commentObjData.app         = appId;
-      commentObjData.numChildren = 0;
       
       // Regardless, we need to have parentNumChildren and parentTreeId filled
       //   by the end of this if-else block. Where ever we got the numChildren
@@ -94,16 +82,16 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // and numComments total
       parentAppObj = new aiagallery.dbif.ObjAppData(appId);
       
-      parentAppData = parentObj.getData();
+      parentAppData = parentAppObj.getData();
 
       // Was the parent comment's UID provided?
       if (typeof(parentUID) === "undefined" || parentUID === null)
       {
         // No, we're going to have to use the default parent id "0000"
-        parentTreeId = appId + "/";
+        parentTreeId = "";
         
         // Get what we need
-        parentNumChildren = parentObjData.numRootComments || 0;         
+        parentNumChildren = parentAppData.numRootComments || 0;         
         
       }
       else
@@ -123,8 +111,8 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         }
         
         // Get what we came for.
-        parentNumChildren = parentObjData.numChildren;
-        parentTreeId = parentObjData.treeId;
+        parentNumChildren = parentCommentData.numChildren;
+        parentTreeId = parentCommentData.treeId;
         
         // Increment parent comment's # of children
         parentCommentData.numChildren = parentNumChildren + 1;
@@ -144,14 +132,21 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       //   treeId
       myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
-      // Complete the comment record by giving it a treeId
-      commentObjData.treeId = myTreeId;
+      // Get a new ObjComments object, with our appId and newly generated treeId.
+      commentObj = new aiagallery.dbif.ObjComments([appId, myTreeId]);
       
+      // Retrieve a data object to manipulate.
+      commentObjData = commentObj.getData();
+      
+      // Set up all the rest of the data
+      commentObjData.visitor     = whoami.userId;
+      commentObjData.text        = text;
+
       // Save this in the database
       commentObj.put();
       
       // This includes newly-created key
-      return commentObj.getData();  
+      return commentObjData;  
     },
     
     /**
@@ -184,7 +179,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Find out the App that was commented on and...
       parentAppObj = new aiagallery.dbif.ObjAppData(commentObj["app"]);
       
-      parentAppData = parentObj.getData();
+      parentAppData = parentAppObj.getData();
       
       // Decrement the number of comments attached to this App.
       parentAppData["numComments"]--;

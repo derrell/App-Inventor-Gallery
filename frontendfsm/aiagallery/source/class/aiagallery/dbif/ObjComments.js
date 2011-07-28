@@ -11,20 +11,24 @@ qx.Class.define("aiagallery.dbif.ObjComments",
 {
   extend : aiagallery.dbif.Entity,
   
-  construct : function(treeId)
+  // keyArr must be an array with 2 elements. The first element is
+  // an appId and the second a treeId
+  construct : function(keyArr)
   {
     // Pre-initialize the data
     this.setData(
       {
         "timestamp"  : (new Date()).toString(),
-        "numChildren": 0
+        "numChildren": 0,
+        "app"        : keyArr[0],
+        "treeId"     : keyArr[1]
       });
     
-    // Use treeId as the key field
-    this.setEntityKeyProperty("treeId");
+    // Use treeId and appId as the key field
+    this.setEntityKeyProperty([ "appId", "treeId" ]);
     
     // Call the superclass constructor
-    this.base(arguments, "comments", treeId);
+    this.base(arguments, "comments", keyArr);
   },
   
   defer : function(clazz)
