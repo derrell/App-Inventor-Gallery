@@ -14,6 +14,85 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
   type : "singleton",
   extend : qx.core.Object,
 
+  statics: 
+  {
+    // Returns the type of the object passed as a parameter as a string
+    typeOf: function (value) 
+    {
+      var s = typeof value;
+      if (s === 'object') 
+        {
+          if (value) 
+          {
+            if (value instanceof Array) 
+            {
+              s = 'array';
+            }
+          } else 
+            {
+              s = 'null';
+            }
+        }
+      return s;
+    },
+
+        // Returns a string version of an arbitrary value
+    stringOf: function(value) 
+    {
+      // Determine the type of the value passed as a parameter
+      var ty = aiagallery.module.dgallery.appinfo.Gui.typeOf(value);
+      var stringOf =  aiagallery.module.dgallery.appinfo.Gui.stringOf;
+            
+      switch (ty)
+      {
+        case "string":
+          return "'" + value + "'";
+
+        case "boolean": 
+          if (value) 
+          {
+            return "true";
+          } else 
+          {
+            return "false";
+          }
+
+        case "number":
+          return value + "";
+    
+        case "array":
+          var len = value.length;
+          if (len == 0) 
+          {
+            return "[]";
+          } 
+            else 
+            {
+              var str = "[";
+              for ( var i = 0, len = value.length; i < len-1; ++i)
+              {
+                str += stringOf(value[i]) + ", \n";
+              }
+                str += stringOf(value[len-1]) + "]";
+                return str;
+            }
+
+        case "object":
+          var prop;
+          str = "{"
+          for (prop in value) 
+          {
+            str += prop + ":" + stringOf(value[prop]) + ", \n";
+          }
+            str += "}";
+            return str;
+          
+        default:
+          return ty;
+      }
+    }
+  },
+
   members :
   {
     /**
@@ -43,7 +122,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             canvas = module.canvas;
       var             response = rpcRequest.getUserData("rpc_response");
       var             requestType = rpcRequest.getUserData("requestType");
-      var             result;
+      var             result; 
+      var             commentData = rpcRequest.getUserData("commentData");
 
       if (response.type == "failed")
       {
@@ -93,61 +173,80 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a container for the application info, and use the grid layout.
         appInfoContainer = new qx.ui.container.Composite(layout);
         
+
         // Yes. We'll create a splitpane, with the application info on the
         // left, and comment viewing on the right.
         splitpane = new qx.ui.splitpane.Pane("horizontal");
         groupbox.add(splitpane, { edge : 10 });
 
+         
         // Add the application info container to the splitter
         splitpane.add(appInfoContainer, 1);
 
         // Create a group for the comment collapsable pannel
         radiogroup = new qx.ui.form.RadioGroup();
         radiogroup.setAllowEmptySelection(true);
-
+          
         // We'll put all of the collapsable panels in a scroll container
         scrollContainer = new qx.ui.container.Scroll();
         splitpane.add(scrollContainer, 1);
-
+          
         // Put a vbox container in the scroll container
         vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
         scrollContainer.add(vbox);
 
-        //Newly added code that implements basic comments in the UI. 
-        //The comments are currently unconnected to the database. All 
-        //changes made are only in the UI, and are not saved.
-        var commentInput = new qx.ui.form.TextField();
-        commentInput.setPlaceholder("Type your comment here:");
-        var allComments = new qx.ui.container.Composite(
-          new qx.ui.layout.VBox());
-        var submitComment = new qx.ui.form.Button("Submit Comment");
-        submitComment.addListener(
-          "execute", 
-          function(e) 
-          {
-            var newComment = commentInput.getValue();
-            if (newComment != null) 
-            {
-              cpanel = new collapsablepanel.Panel(newComment);
-              cpanel.setGroup(radiogroup);
-              label = new qx.ui.basic.Label(newComment);
-              label.set(
-                {
-                  rich : true,
-                  wrap : true
-                });
-              cpanel.add(label);
-              allComments.add(cpanel);
-            }
-          commentInput.setValue(null);
-          }, 
-          this);
+       // Sets the app's uid as a variable which can be passed to the FSM
+       var appId = result.uid;
 
+       // Creates an object on which to call the getComments event, in order
+       // to add them to the GUI
+       var emptyObject = new qx.core.Object();
+       emptyObject.setUserData("filler", new qx.core.Object());
+       fsm.addObject("ignoreMe", emptyObject);
+       fsm.fireImmediateEvent("appearComments", emptyObject, null);
+
+       // Adds the textfield for entering a comment
+       var commentInput = new qx.ui.form.TextField();
+       commentInput.setPlaceholder("Type your comment here:");
+
+       // Wrapping everything relevant to a comment in one object,
+       // to be passed to the FSM
+       var commentWrapper = new qx.core.Object();
+       commentWrapper.setUserData("appId", appId);
+       commentWrapper.setUserData("commentInput", commentInput);
+       fsm.addObject("commentWrapper", commentWrapper);
+
+       // Adds the button for submitting a comment to the FSM
+       var submitCommentBtn = new qx.ui.form.Button("Submit Comment");
+       fsm.addObject("submitCommentBtn", submitCommentBtn);
+       submitCommentBtn.addListener("execute", fsm.eventListener, fsm);
+          
+       // Lets the user call "execute" by pressing the enter key rather
+       // than by pressing the submitCommentBtn
+       commentInput.addListener(
+         "keypress",
+         function(e)
+         {
+           if (e.getKeyIdentifier() === "Enter")
+           {
+             submitCommentBtn.execute();
+           }
+         });       
+          
         // The textfield, all the existing comments, and the submit button
         // get added to the UI.
-        vbox.add(allComments);
         vbox.add(commentInput);
-        vbox.add(submitComment);
+        vbox.add(submitCommentBtn);
+
+        // Creates an object containing the parts of the GUI which will need 
+        // to be changed after the fsm call. This object is passed to the FSM.
+        var guiWrapper = new qx.core.Object();
+        guiWrapper.setUserData("vbox", vbox);
+        guiWrapper.setUserData("cpanel", cpanel);
+        guiWrapper.setUserData("radiogroup", radiogroup);
+        guiWrapper.setUserData("commentInput", commentInput);
+        fsm.addObject("guiWrapper", guiWrapper);
+
 
         appInfoContainer.add(new qx.ui.basic.Image(result.image1),
                              { row : 1, column : 1 });
@@ -187,6 +286,104 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         
         break;
         
+      case "addComment":
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+
+        // Gets the objects sent from the GUI to the FSM. 
+        var guiInfo = rpcRequest.getUserData("guiInfo");
+        var vbox = guiInfo.getUserData("vbox");
+        var cpanel = guiInfo.getUserData("cpanel");
+        var radiogroup = guiInfo.getUserData("radiogroup");
+        var commentInput = guiInfo.getUserData("commentInput");
+        var newComment = rpcRequest.getUserData("commentString"); 
+
+        // Adds the new comment to the GUI
+        // Currently, the 'reply' and 'flag as inappropiate' buttons 
+        // do not do anything
+        if (newComment.getValue() != null) 
+        {
+          cpanel = new collapsablepanel.Panel(newComment.getValue());
+          var vbox3 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+          var replyBtn = new qx.ui.form.Button("reply");
+          replyBtn.addListener("reply", 
+                               function(e)
+                               {    
+                               }, this);
+           var flagBtn = new qx.ui.form.Button("flag as inappropriate");
+           cpanel.setGroup(radiogroup);
+           label = new qx.ui.basic.Label(newComment.getValue());
+           label.set(
+             {
+               rich : true,
+               wrap : true
+             });
+           var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+           var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+           hbox.add(replyBtn);
+           hbox.add(flagBtn);
+           vbox2.add(label);
+           vbox2.add(hbox);
+           cpanel.add(vbox2);
+           cpanel.add(vbox3);
+           vbox.add(cpanel);
+        }
+        commentInput.setValue(null);
+        break;
+
+      case "getComments":
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+
+        // This alert shows that addComments is reusing uids 
+        //alert("getComments result is: " 
+              // + this.self(arguments).stringOf(result));
+
+        // Gets back the objects passed from the GUI to the FSM
+        var guiInfo = rpcRequest.getUserData("guiInfo");
+        var vbox = guiInfo.getUserData("vbox");       
+        var radiogroup = guiInfo.getUserData("radiogroup");
+          
+        // Adds the comments retrieved from the database to the GUI
+        // Currently, the 'reply' and 'flag as inappropiate' buttons 
+        // do not do anything
+        var ty = this.self(arguments).typeOf(result);
+        if (ty == "array") 
+        {
+          var len = result.length;
+          if (len != 0) 
+          {
+            var str = "";
+            for (var i = 0; i < result.length; ++i)
+            {
+              var newComment = result[i]["text"] + "";
+              cpanel = new collapsablepanel.Panel(newComment);
+              var replyBtn = new qx.ui.form.Button("reply");
+              replyBtn.addListener("reply", 
+                                   function(e) 
+                                   {
+                                   }, this);
+              var flagBtn = new qx.ui.form.Button("flag as inappropriate");
+              cpanel.setGroup(radiogroup);
+              label = new qx.ui.basic.Label(newComment);
+              label.set(
+                {
+                  rich : true,
+                  wrap : true
+                });
+              var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+              var box2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+              hbox.add(replyBtn);
+              hbox.add(flagBtn);
+              box2.add(label);
+              box2.add(hbox);
+              cpanel.add(box2);
+              vbox.add(cpanel);
+            }
+          }
+        }   
+        break;
+      
       default:
         throw new Error("Unexpected request type: " + requestType);
       }

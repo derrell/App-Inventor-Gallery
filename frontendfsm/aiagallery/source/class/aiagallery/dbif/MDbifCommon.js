@@ -33,8 +33,10 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
      */
     whoAmI :
     {
-      check : "Object",
-      apply : "_applyWhoAmI"
+      nullable : true,
+      init     : null,
+      check    : "Object",
+      apply    : "_applyWhoAmI"
     }
   },
 
@@ -195,9 +197,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
           return false;
         }
         
-      case "getCategoryTags":
-        // Anonymous access.
-        return true;
+      case "editProfile":
+        return ! bAnonymous;    // Access is allowed if they're logged in
 
       //
       // MWhoAmI
@@ -214,7 +215,17 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
     _deepPermissionCheck : function(methodName)
     {
-      var email = aiagallery.dbif.MDbifCommon.__whoami.email;
+      // Find out who we are.
+      var whoami = aiagallery.dbif.MDbifCommon.__whoami;
+      
+      // If no one is logged in...
+      if (! whoami)
+      {
+        // ... then they do not have permission
+        return false;
+      }
+
+      var email = whoami.email;
       var myObjData = new aiagallery.dbif.ObjVisitors(email).getData();;
       var permissionArr = myObjData["permissions"];
       var permissionGroupArr = myObjData["permissionGroups"];
@@ -222,6 +233,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var group;
       var data;
       var i, j;
+      var ret = false;
 
       // Standard check: Does my permission list contain this method?
       if (permissionArr != null &&
@@ -235,7 +247,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       // method?
       if (permissionGroupArr != null)
       {
-        
         // For every permission group of which I am a member...
         permissionGroupArr.forEach(function (group) 
           {
@@ -249,13 +260,13 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
                 qx.lang.Array.contains(permissionArr, methodName))
             {
               // Yes, allow me.
-              return true;
+              ret = true;
             }
           });
       }
       
-      // Check failed, reject access. Sorry pal.
-      return false;
+      // Return whether we found it.
+      return ret;
     }
   }
 });

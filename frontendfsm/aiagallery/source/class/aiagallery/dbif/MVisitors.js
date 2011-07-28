@@ -10,9 +10,21 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
 {
   construct : function()
   {
-    this.registerService("addOrEditVisitor", this.addOrEditVisitor);
-    this.registerService("deleteVisitor",    this.deleteVisitor);
-    this.registerService("getVisitorList", this.getVisitorList);
+    this.registerService("addOrEditVisitor",
+                         this.addOrEditVisitor,
+                         [ "userId", "attributes" ]);
+
+    this.registerService("deleteVisitor",
+                         this.deleteVisitor,
+                         [ "userId" ]);
+
+    this.registerService("getVisitorList",
+                         this.getVisitorList,
+                         [ "bStringize" ]);
+    
+    this.registerService("editProfile",
+                         this.editProfile,
+                         [ "profileParams" ]);
   },
   
   statics :
@@ -32,8 +44,9 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       var visitor = new aiagallery.dbif.ObjVisitors(userId);
      
       // Was our userId faulty in some way?
-      if (typeof visitor === "undefined" || visitor === null
-          || visitor.getBrandNew())
+      if (typeof visitor === "undefined" || 
+          visitor === null ||
+          visitor.getBrandNew())
       {
         // Yes, report the error
         error.setCode(1);
@@ -43,7 +56,6 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       
       // No problems, give them the display name
       return visitor.getData().displayName;
-
     },
     
     /**
@@ -171,6 +183,89 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       
       // We've built the whole list. Return it.
       return visitorList;
+    },
+    
+    editProfile : function(profileParams, error)
+    {
+      var             me;
+      var             meData;
+      var             whoami;
+      var             propertyTypes;
+      var             fields;
+      var             bValid = true;
+      var             validFields = 
+        [
+          "displayName"
+        ];
+      
+      // Find out who we are
+      whoami = this.getWhoAmI();
+
+      // Retrieve the current user's visitor object
+      me = new aiagallery.dbif.ObjVisitors(whoami.email);
+      
+      // Get my object data
+      meData = me.getData();
+
+      // Get the field names for this entity type
+      propertyTypes = rpcjs.dbif.Entity.propertyTypes;
+      fields = propertyTypes["visitors"].fields;
+
+      // For each of the valid field names...
+      try
+      {
+        validFields.forEach(
+          function(fieldName)
+          {
+
+            // Is this field being modified?
+            if (typeof profileParams[fieldName] == "undefined")
+            {
+              // Nope. Nothing to do with this one.
+              return;
+            }
+
+            // Ensure that the value being set is correct for the field
+            switch(typeof profileParams[fieldName])
+            {
+            case "string":
+              bValid = (fields[fieldName] == "String");
+              break;
+
+            case "number":
+              bValid = (fields[fieldName] == "Number");
+              break;
+
+            default:
+              bValid = false;
+              break;
+            }
+
+            // Is the new profile parameter of the correct type?
+            if (! bValid)
+            {
+              // Nope.
+              error.setCode(1);
+              error.setMessage("Unexpected parameter type. " +
+                               "Expected " + fields[fieldName] +
+                               ", got " + typeof profileParams[fieldName]);
+              throw error;
+            }
+
+            // Assign the new value.
+            meData[fieldName] = profileParams[fieldName];
+          });
+      }
+      catch(error)
+      {
+        return error;
+      }
+      
+      // Save the altered profile data
+      me.put();
+      
+      // We need to return something. true is as good as anything else.
+      return true;
     }
   }
 });

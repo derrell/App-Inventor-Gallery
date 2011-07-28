@@ -53,6 +53,9 @@ try
   $debugLoad("qx.bom.client.Runtime");
   new Packages.qx.bom.client.Runtime();
 
+  $debugLoad("qx.bom.client.Json");
+  new Packages.qx.bom.client.Json();
+
   $debugLoad("qx.core.Environment");
   new Packages.qx.core.Environment();
 

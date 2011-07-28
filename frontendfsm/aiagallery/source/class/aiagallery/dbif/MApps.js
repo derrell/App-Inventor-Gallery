@@ -10,12 +10,29 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 {
   construct : function()
   {
-    this.registerService("addOrEditApp", this.addOrEditApp);
-    this.registerService("deleteApp",    this.deleteApp);
-    this.registerService("getAppList", this.getAppList);
-    this.registerService("getAppListAll", this.getAppListAll);
-    this.registerService("appQuery", this.appQuery);
-    this.registerService("getAppInfo", this.getAppInfo);
+    this.registerService("addOrEditApp",
+                         this.addOrEditApp,
+                         [ "uid", "attributes" ]);
+
+    this.registerService("deleteApp",
+                         this.deleteApp,
+                         [ "uid" ]);
+
+    this.registerService("getAppList",
+                         this.getAppList,
+                         [ "bStringize", "sortCriteria", "offset", "limit" ]);
+
+    this.registerService("getAppListAll",
+                         this.getAppListAll,
+                         [ "bStringize", "sortCriteria", "offset", "limit" ]);
+
+    this.registerService("appQuery",
+                         this.appQuery,
+                         [ "criteria", "requestedFields" ]);
+
+    this.registerService("getAppInfo",
+                         this.getAppInfo,
+                         [ "uid", "bStringize", "requestedFields" ]);
   },
 
   statics :
@@ -311,7 +328,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       whoami = this.getWhoAmI();
 
       // Ensure that the logged-in user owns this application
-      if (appData.owner != whoami.email)
+      if (! whoami || appData.owner != whoami.email)
       {
         // He doesn't. Someone's doing something nasty!
         error.setCode(1);
@@ -711,7 +728,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.owner != whoami.email && app.status != 2)
+      if (app.status != 2 && (! whoami || app.owner != whoami.email))
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)

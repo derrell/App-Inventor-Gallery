@@ -138,57 +138,62 @@ qx.Class.define("aiagallery.Application",
  * as a previous one.
  */
 
-/*  Temporary work gallery */
+/*  The main Gallery */
 new aiagallery.main.Module(
-  "Test Gallery",
+  "Gallery",
   "aiagallery/test.png",
   "Home",
   aiagallery.module.dgallery.home.Home);
 
 new aiagallery.main.Module(
-  "Test Gallery",
+  "Gallery",
   null,
   "Find Apps",
   aiagallery.module.dgallery.findapps.FindApps);
 
 new aiagallery.main.Module(
-  "Test Gallery",
+  "Gallery",
   null,
   "My Stuff",
   aiagallery.module.dgallery.mystuff.MyStuff);
 
-new aiagallery.main.Module(
-  "Test Gallery",
-  null,
-  "Learn",
-  aiagallery.module.dgallery.learn.Learn);
+if (false)
+{
+  new aiagallery.main.Module(
+    "Gallery",
+    null,
+    "Learn",
+    aiagallery.module.dgallery.learn.Learn);
+}
 
-/* The main gallery */
+/* Helen's gallery */
 new aiagallery.main.Module(
-  "Gallery",
+  "Helen",
   "aiagallery/test.png",
   "Home",
   aiagallery.module.gallery.home.Home);
 
 new aiagallery.main.Module(
-  "Gallery",
+  "Helen",
   null,
   "Find Apps",
   aiagallery.module.gallery.findapps.FindApps);
 
 new aiagallery.main.Module(
-  "Gallery",
+  "Helen",
   null,
   "My Stuff",
   aiagallery.module.gallery.mystuff.MyStuff);
 
 new aiagallery.main.Module(
-  "Gallery",
+  "Helen",
   null,
   "Learn",
   aiagallery.module.gallery.learn.Learn);
 
 /* Management */
+if (false)
+{
 new aiagallery.main.Module(
   "Management",
   "aiagallery/test.png",
@@ -200,6 +205,15 @@ new aiagallery.main.Module(
   "aiagallery/test.png",
   "Applications",
   aiagallery.module.mgmt.applications.Applications);
+}
+else
+{
+new aiagallery.main.Module(
+  "User Management",
+  "aiagallery/test.png",
+  "Users",
+  aiagallery.module.mgmt.users.Users);
+}
 
 if (qx.core.Environment.get("qx.debug"))
 {
