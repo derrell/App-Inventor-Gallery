@@ -24,7 +24,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "treeId"     : keyArr[1]
       });
     
-    // Use treeId and appId as the key field
+    // Use appId and treeId are a composite key
     this.setEntityKeyProperty([ "app", "treeId" ]);
     
     // Call the superclass constructor
@@ -67,6 +67,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
 
     // Register our property types
     aiagallery.dbif.Entity.registerPropertyTypes("comments",
-                                                 databaseProperties);
+                                                 databaseProperties,
+                                                 [ "app", "treeId" ]);
   }
 });

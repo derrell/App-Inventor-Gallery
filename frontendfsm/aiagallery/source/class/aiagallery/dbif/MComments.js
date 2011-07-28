@@ -143,7 +143,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObj = new aiagallery.dbif.ObjComments([appId, myTreeId]);
       
       // Was a comment with this key already in the DB?
-      if (!commentObj.getBrand())
+      if (!commentObj.getBrandNew())
       {
         // That's an error
         error.setCode("comment with that key already in use");
