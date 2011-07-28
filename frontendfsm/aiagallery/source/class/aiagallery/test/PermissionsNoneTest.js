@@ -13,17 +13,40 @@ qx.Class.define("aiagallery.test.PermissionsNoneTest",
 
   members :
   {
+    __db : {
+      
+      visitors:
+      {
+        "jarjar@binks.org" :
+        {
+          displayName  : "mynewdisplayname",
+          id           : "jarjar@binks.org",
+          permissions  : [],
+          status       : 2
+        }
+        
+      
+      },
+      tags:     {},
+      search:   {},
+      likes:    {},
+      flags:    {},
+      downloads:{},
+      comments: {},
+      apps:     {}
+     
+    },
+    
+    // This string is to be appended to assertions, to be specific about test conditions
+    permissionLevel : "no permissions",
+    
     setUp: function()
     {
       // Start the RPC simulator by getting its singleton instance
       this.dbif = aiagallery.dbif.DbifSim.getInstance();
-
-    /*this.rpc = new qx.io.remote.Rpc();
-      this.rpc.setUrl(aiagallery.main.Constant.SERVICES_URL);
-      this.rpc.setTimeout(10000);
-      this.rpc.setCrossDomain(false);
-     
-     */
+      
+      // Use a personalized database
+      rpcjs.sim.Dbif.setDb(this.__db);
       
       this.currentPermissionsStr = "no permissions";
     },
@@ -40,8 +63,9 @@ qx.Class.define("aiagallery.test.PermissionsNoneTest",
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();      
            
-      assert(dbifSim.addOrEditApp(null), "addOrEditApp with " + this.currentPermissionsStr);
+      this.assert(aiagallery.dbif.MDbifCommon.authenticate("aiagallery.features.addOrEditApp"), "addOrEditApp with " + this.permissionLevel);
     },
+   
     "test: MDBifCommon._deepPermissionCheck()" : function()
     {
       
