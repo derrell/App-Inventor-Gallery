@@ -13,11 +13,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   {
     this.registerService("addComment",
                          this.addComment,
-                         [ "appId", "text", "parentUID" ]);
+                         [ "appId", "text", "parentTreeId" ]);
 
     this.registerService("deleteComment",
                          this.deleteComment,
-                         [ "uid" ]);
+                         [ "appId", "treeId" ]);
 
     this.registerService("getComments",
                          this.getComments,
@@ -56,15 +56,14 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   This is either a string or number which is the uid of the app to which
      *   this comment is associated.
      * 
-     * @param parentId {String}
-     *   The parent's treeId.
-     * 
      * @param text {String}
      *   The comment text itself.
      * 
+     * @param parentTreeId {String}
+     *   The parent's treeId.
      * 
      */
-    addComment : function(appId, text, parentUID, error)
+    addComment : function(appId, text, parentTreeId, error)
     {
       var             whoami;
       var             commentObj;
@@ -93,7 +92,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       parentAppData = parentAppObj.getData();
 
       // Was the parent comment's UID provided?
-      if (typeof(parentUID) === "undefined" || parentUID === null)
+      if (typeof(parentTreeId) === "undefined" || parentTreeId === null)
       {
         // No, we're going to use the root parent id, ""
         parentTreeId = "";
@@ -105,7 +104,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       else
       {
         // Yes, use it to get the parent comment object.
-        parentCommentObj = new aiagallery.dbif.ObjComments(parentUID);
+        parentCommentObj = new aiagallery.dbif.ObjComments([appId, parentTreeId]);
         
         parentCommentData = parentCommentObj.getData();
         
@@ -114,7 +113,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         {
           // We can't use an invalid UID as our parent UID!
           error.setCode(1);
-          error.setMessage("Unrecognized parent app UID");
+          error.setMessage("Unrecognized parent treeId");
           return error;
         }
         
@@ -143,6 +142,15 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Get a new ObjComments object, with our appId and newly generated treeId.
       commentObj = new aiagallery.dbif.ObjComments([appId, myTreeId]);
       
+      // Was a comment with this key already in the DB?
+      if (!commentObj.getBrand())
+      {
+        // That's an error
+        error.setCode("comment with that key already in use");
+        error.setMessage("Attempted to overwrite existing comment");
+        return error;
+      }
+      
       // Retrieve a data object to manipulate.
       commentObjData = commentObj.getData();
       
@@ -160,21 +168,24 @@ qx.Mixin.define("aiagallery.dbif.MComments",
     /**
      * Delete a specific individual comment
      * 
-     * @param uid {?}
-     *   This is the unique identifier for the comment which is to be deleted
+     * @param appId {Number}
+     *   This is the unique identifier for the app containing the comment to delete
+     * 
+     * @param treeId {String}
+     *   This is the thread tree identifier for the comment which is to be deleted
      * 
      * @return {Boolean}
      *   Returns true if deletion was successful. If false is returned, nothing
      *   was deleted.
      */
-    deleteComment : function(treeId, error)
+    deleteComment : function(appId, treeId, error)
     {
       var             commentObj;
       var             parentAppObj;
       var             parentAppData;
       
       // Retrieve an instance of this comment entity
-      commentObj = new aiagallery.dbif.ObjComments(treeId);
+      commentObj = new aiagallery.dbif.ObjComments([appId, treeId]);
       
       // Does this comment exist?
       if (commentObj.getBrandNew())
@@ -185,7 +196,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       
       // Find out the App that was commented on and...
-      parentAppObj = new aiagallery.dbif.ObjAppData(commentObj["app"]);
+      parentAppObj = new aiagallery.dbif.ObjAppData(appId);
       
       parentAppData = parentAppObj.getData();
       
