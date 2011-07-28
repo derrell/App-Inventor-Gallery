@@ -25,7 +25,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
       });
     
     // Use treeId and appId as the key field
-    this.setEntityKeyProperty([ "appId", "treeId" ]);
+    this.setEntityKeyProperty([ "app", "treeId" ]);
     
     // Call the superclass constructor
     this.base(arguments, "comments", keyArr);
