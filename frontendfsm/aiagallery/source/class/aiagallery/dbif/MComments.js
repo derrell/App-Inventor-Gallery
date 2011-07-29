@@ -91,7 +91,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       parentAppData = parentAppObj.getData();
 
-      // Was the parent comment's UID provided?
+      // Was the parent comment's treeId provided?
       if (typeof(parentTreeId) === "undefined" || parentTreeId === null)
       {
         // No, we're going to use the root parent id, ""
@@ -187,6 +187,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       var             commentObj;
       var             parentAppObj;
       var             parentAppData;
+      var             parentCommentObj;
+      var             parentCommentData;
+      var             parentTreeId;
       
       // Retrieve an instance of this comment entity
       commentObj = new aiagallery.dbif.ObjComments([appId, treeId]);
@@ -205,7 +208,24 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       
       // Decrement the number of comments attached to this App.
       parentAppData["numComments"]--;
+
+      // Is there a parent comment? or just an App?
+      if (treeId.length > 4)
+      {
+        // Find the parent comment's treeId
+        parentTreeId = treeId.substring(0, treeId.length-4);
+        
+        // Find the parent comment
+        parentCommentObj = new aiagallery.dbif.ObjComments([appId,
+                                                          parentTreeId]);
       
+        // Decrement its number of children
+        parentCommentObj.getData().numChildren--;
+        
+        // Save this change
+        parentCommentObj.put();
+      }  
+        
       // Save this change
       parentAppObj.put();
       
