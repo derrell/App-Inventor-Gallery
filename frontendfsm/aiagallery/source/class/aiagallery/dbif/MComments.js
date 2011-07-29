@@ -99,6 +99,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         
         // Get what we need
         parentNumChildren = parentAppData.numRootComments || 0;         
+
+        // Increment parent app's # of children
+        parentAppData.numRootComments = parentNumChildren + 1;
         
       }
       else
@@ -128,10 +131,10 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         // Save the new # children in the parent comment
         parentCommentObj.put();
       }
-
-      // Increment parent app's # of children
-      parentAppData.numRootComments = parentNumChildren + 1;
-
+      
+      // Increment the total number of comments on the App
+      parentAppData.numComments++;
+      
       // Update the parent app and/or comment object. 
       // Congrats! a new baby comment!
       parentAppObj.put();
@@ -187,8 +190,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       var             commentObj;
       var             parentAppObj;
       var             parentAppData;
-      var             parentCommentObj;
-      var             parentCommentData;
       var             parentTreeId;
       
       // Retrieve an instance of this comment entity
@@ -209,23 +210,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Decrement the number of comments attached to this App.
       parentAppData["numComments"]--;
 
-      // Is there a parent comment? or just an App?
-      if (treeId.length > 4)
-      {
-        // Find the parent comment's treeId
-        parentTreeId = treeId.substring(0, treeId.length-4);
-        
-        // Find the parent comment
-        parentCommentObj = new aiagallery.dbif.ObjComments([appId,
-                                                          parentTreeId]);
-      
-        // Decrement its number of children
-        parentCommentObj.getData().numChildren--;
-        
-        // Save this change
-        parentCommentObj.put();
-      }  
-        
       // Save this change
       parentAppObj.put();
       
