@@ -33,20 +33,23 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var             appNumComments = appObj.getData().numComments;
       var             appNumRootComments = appObj.getData().numRootComments;
       var             secondCommentData;
+      var             query = rpcjs.dbif.Entity.query;
       
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
 
-      myCommentData = this.dbifSim.addComment(appId,
-                                              "Hellooo",
-                                              null,
-                                              error);
+      // Add the first comment
+      myCommentData = this.dbifSim.addComment(appId, "Hellooo", null, error);
+      
+      // Save this top-level comment's tree id for later retrieval.
+      var topLevelCommentTreeId = myCommentData.treeId;
       
       // Did the parent app's numComments get incremented correctly?
       appObj = new aiagallery.dbif.ObjAppData(appId);
-      this.assertEquals(appNumComments + 1,
-                        appObj.getData().numComments, 
-                        "numComments being incremented");
+      this.assertEquals(
+        appNumComments + 1,
+        query("aiagallery.dbif.ObjAppData", appId)[0].numComments,
+        "numComments being incremented");
       
       secondCommentData = this.dbifSim.addComment(appId,
                                                   "Hiiii",
@@ -71,8 +74,9 @@ qx.Class.define("aiagallery.test.CommentsTest",
                         "numComments being incremented");
       
       // Did the parent's numRootComments increment correctly?
-      this.assert(appObj.getData().numRootComments == appNumRootComments + 1,
-                 "numRootComments being incremented");
+      this.assertEquals(appNumRootComments + 1,
+                        appObj.getData().numRootComments,
+                        "numRootComments being incremented");
       
       // Did the second comment's numChildren get incremented by the third?
       secondCommentData = 
@@ -86,19 +90,20 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assert(myCommentData.treeId.length >= 12, "threading working");
       
       // Retrieve the top-level comment
-      var retrievedComment = new aiagallery.dbif.ObjComments([appId, "0000"]);
+      var retrievedComment =
+        new aiagallery.dbif.ObjComments([ appId, topLevelCommentTreeId ]);
       
       // Ensure we got an object
-      this.assertObject(retrievedComment,
-                        "Comment instantiated");
+      this.assertObject(retrievedComment, "Comment instantiated");
       
       // Ensure that it is not brand new
       this.assertFalse(retrievedComment.getBrandNew(),
                        "first comment retrieved from db");
       
       // Did this top level comment get its numChildren properly incremented?
-      this.assert(retrievedComment.getData().numChildren == 1,
-                 "comment numChildren incremented");
+      this.assertEquals(1,
+                        retrievedComment.getData().numChildren,
+                        "comment numChildren incremented");
       
       // Save the number of comments for this appId
       var commentsArrLength = this.dbifSim.getComments(appId).length ;
