@@ -104,7 +104,8 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       else
       {
         // Yes, use it to get the parent comment object.
-        parentCommentObj = new aiagallery.dbif.ObjComments([appId, parentTreeId]);
+        parentCommentObj = 
+          new aiagallery.dbif.ObjComments([appId, parentTreeId]);
         
         parentCommentData = parentCommentObj.getData();
         
@@ -139,7 +140,8 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       //   treeId
       myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
-      // Get a new ObjComments object, with our appId and newly generated treeId.
+      // Get a new ObjComments object, with our appId and newly generated
+      // treeId.
       commentObj = new aiagallery.dbif.ObjComments([appId, myTreeId]);
       
       // Was a comment with this key already in the DB?
@@ -169,10 +171,12 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      * Delete a specific individual comment
      * 
      * @param appId {Number}
-     *   This is the unique identifier for the app containing the comment to delete
+     *   This is the unique identifier for the app containing the comment to
+     *   delete
      * 
      * @param treeId {String}
-     *   This is the thread tree identifier for the comment which is to be deleted
+     *   This is the thread tree identifier for the comment which is to be
+     *   deleted
      * 
      * @return {Boolean}
      *   Returns true if deletion was successful. If false is returned, nothing
@@ -193,7 +197,6 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         // It doesn't. Let 'em know.
         return false;
       }
-      
       
       // Find out the App that was commented on and...
       parentAppObj = new aiagallery.dbif.ObjAppData(appId);

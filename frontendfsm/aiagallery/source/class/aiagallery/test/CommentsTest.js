@@ -26,46 +26,78 @@ qx.Class.define("aiagallery.test.CommentsTest",
     
     "test: Addition, retrieval, and deletion of comment" : function()
     {
+      var             test;
+      var             myCommentData;
+
       // FIXME: NEEDS LOTS OF WORK
       
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
       
-      var myCommentData = this.dbifSim.addComment(105,
-                                                  "Hellooo",
-                                                  null,
-                                                  error);
+      myCommentData = this.dbifSim.addComment(105,
+                                              "Hellooo",
+                                              null,
+                                              error);
       
-      var myCommentData = this.dbifSim.addComment(105,
-                                                  "Hiiii",
-                                                  myCommentData.treeId,
-                                                  error);
+      myCommentData = this.dbifSim.addComment(105,
+                                              "Hiiii",
+                                              myCommentData.treeId,
+                                              error);
       
-      var myCommentData = this.dbifSim.addComment(105,
-                                                  "What's uuuuup",
-                                                  myCommentData.treeId,
-                                                  error);
+      myCommentData = this.dbifSim.addComment(105,
+                                              "What's uuuuup",
+                                              myCommentData.treeId,
+                                              error);
       
-                                                     
+      // Did treeId with three levels of threading get to the right length?
       this.assert(myCommentData.treeId.length >= 12, "threading working");
       
+      // Retrieve the top-level comment
       var retrievedComment = new aiagallery.dbif.ObjComments([105, "0000"]);
       
-      this.assertObject(retrievedComment, "Comment instantiated");
-      this.assertFalse(retrievedComment.getBrandNew(), "comment retrieved from db");
+      // Ensure we got an object
+      this.assertObject(retrievedComment,
+                        "Comment instantiated");
       
+      // Ensure that it is not brand new
+      this.assertFalse(retrievedComment.getBrandNew(),
+                       "first comment retrieved from db");
+      
+      // Save the number of comments for this appId
       var commentsArrLength = this.dbifSim.getComments(105).length ;
       
-      this.assert(commentsArrLength >= 3, "getComments() good input");
-      this.assert(this.dbifSim.getComments(-1).length == 0, "getComments() bad input");
+      // We added 3, so there should be at least 3
+      this.assert(commentsArrLength >= 3,
+                  "getComments() good input");
+      
+      // With an invalid appId, we should get no results
+      this.assert(this.dbifSim.getComments(-1).length == 0,
+                  "getComments() bad input");
 
-      this.assert(this.dbifSim.deleteComment(105, myCommentData.treeId), "last comment deleted, supposedly");
-      this.assert(this.dbifSim.getComments(105).length == commentsArrLength - 1, "last comment deleted successfully");
+      // Retrieve the third comment
+      var third = new aiagallery.dbif.ObjComments([105, myCommentData.treeId]);
       
-      var firstRandomDeletion = this.dbifSim.deleteComment(1); // May or may not have deleted something, don't care
-      var secondDeletionSame = this.dbifSim.deleteComment(1); // Def. shouldn't delete anything
+      // Ensure that it is not brand new
+      this.assertFalse(third.getBrandNew(),
+                       "third comment retrieved from db");
       
-      this.assertFalse(secondDeletionSame, "bad deleteComment() input, hopefully no deletion");
+      // Delete the third comment
+      test = this.dbifSim.deleteComment(105, myCommentData.treeId);
+      this.assertTrue(test, "last comment deleted, supposedly");
+      
+      // Ensure that there is now one fewer comment
+      test = this.dbifSim.getComments(105);
+      this.assert(test.length == commentsArrLength - 1,
+                  "last comment deleted successfully");
+      
+      // May or may not have deleted something, don't care
+      var firstRandomDeletion = this.dbifSim.deleteComment(1);
+
+      // Def. shouldn't delete anything
+      var secondDeletionSame = this.dbifSim.deleteComment(1);
+                                 
+      this.assertFalse(secondDeletionSame,
+                       "bad deleteComment() input, hopefully no deletion");
       
     }
   }
