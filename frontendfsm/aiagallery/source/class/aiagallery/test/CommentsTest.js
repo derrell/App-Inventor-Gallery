@@ -36,16 +36,28 @@ qx.Class.define("aiagallery.test.CommentsTest",
       
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
-      
+
       myCommentData = this.dbifSim.addComment(appId,
                                               "Hellooo",
                                               null,
                                               error);
       
+      // Did the parent app's numComments get incremented correctly?
+      appObj = new aiagallery.dbif.ObjAppData(appId);
+      this.assertEquals(appNumComments + 1,
+                        appObj.getData().numComments, 
+                        "numComments being incremented");
+      
       secondCommentData = this.dbifSim.addComment(appId,
-                                              "Hiiii",
-                                              myCommentData.treeId,
-                                              error);
+                                                  "Hiiii",
+                                                  myCommentData.treeId,
+                                                  error);
+      
+      // Did the parent app's numComments get incremented correctly?
+      appObj = new aiagallery.dbif.ObjAppData(appId);
+      this.assertEquals(appNumComments + 2,
+                        appObj.getData().numComments, 
+                        "numComments being incremented");
       
       myCommentData = this.dbifSim.addComment(appId,
                                               "What's uuuuup",
@@ -53,16 +65,22 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                               error);
       
       // Did the parent app's numComments get incremented correctly?
-      this.assert(appObj.getData().numComments == appNumComments + 3,
-                  "numComments being incremented");
+      appObj = new aiagallery.dbif.ObjAppData(appId);
+      this.assertEquals(appNumComments + 3,
+                        appObj.getData().numComments, 
+                        "numComments being incremented");
       
       // Did the parent's numRootComments increment correctly?
       this.assert(appObj.getData().numRootComments == appNumRootComments + 1,
                  "numRootComments being incremented");
       
       // Did the second comment's numChildren get incremented by the third?
-      this.assert(secondCommentData.numChildren == 1,
-                 "comment's numChildren incremented correctly");
+      secondCommentData = 
+        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments",
+                                [ appId, secondCommentData.treeId ])[0];
+      this.assertEquals(1,
+                        secondCommentData.numChildren,
+                        "comment's numChildren incremented correctly");
       
       // Did treeId with three levels of threading get to the right length?
       this.assert(myCommentData.treeId.length >= 12, "threading working");
@@ -106,6 +124,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assertTrue(test, "last comment deleted, supposedly");
       
       // Ensure that there is now one fewer comment
+      appObj = new aiagallery.dbif.ObjAppData(appId);
       test = this.dbifSim.getComments(appId);
       this.assert(test.length == commentsArrLength - 1,
                   "last comment deleted successfully");
