@@ -52,7 +52,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                               error);
       
       // Did the parent app's numComments get incremented correctly?
-      this.assert(appObj.getData().numComments == appNumComments +3,
+      this.assert(appObj.getData().numComments == appNumComments + 3,
                   "numComments being incremented");
       
       // Did the parent's numRootComments increment correctly?
@@ -113,10 +113,10 @@ qx.Class.define("aiagallery.test.CommentsTest",
                  "numRootComments decremented on deletion");
 
       // May or may not have deleted something, don't care
-      var firstRandomDeletion = this.dbifSim.deleteComment(appId, "0000");
+      var firstRandomDeletion = this.dbifSim.deleteComment(appId + 50, "0000");
 
       // Def. shouldn't delete anything
-      var secondDeletionSame = this.dbifSim.deleteComment(appId, "0000");
+      var secondDeletionSame = this.dbifSim.deleteComment(appId + 50, "0000");
                                  
       this.assertFalse(secondDeletionSame,
                        "bad deleteComment() input, hopefully no deletion");
