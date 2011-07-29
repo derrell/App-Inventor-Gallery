@@ -32,7 +32,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var             appObj = new aiagallery.dbif.ObjAppData(appId);
       var             appNumComments = appObj.getData().numComments;
       var             appNumRootComments = appObj.getData().numRootComments;
-
+      var             secondCommentData;
+      
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
       
@@ -41,14 +42,14 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                               null,
                                               error);
       
-      myCommentData = this.dbifSim.addComment(appId,
+      secondCommentData = this.dbifSim.addComment(appId,
                                               "Hiiii",
                                               myCommentData.treeId,
                                               error);
       
       myCommentData = this.dbifSim.addComment(appId,
                                               "What's uuuuup",
-                                              myCommentData.treeId,
+                                              secondCommentData.treeId,
                                               error);
       
       // Did the parent app's numComments get incremented correctly?
@@ -56,9 +57,13 @@ qx.Class.define("aiagallery.test.CommentsTest",
                   "numComments being incremented");
       
       // Did the parent's numRootComments increment correctly?
-      this.assert(appObj.getData().numRootComments == appNumRootComments + 3,
+      this.assert(appObj.getData().numRootComments == appNumRootComments + 1,
                  "numRootComments being incremented");
-
+      
+      // Did the second comment's numChildren get incremented by the third?
+      this.assert(secondCommentData.numChildren == 1,
+                 "comment's numChildren incremented correctly");
+      
       // Did treeId with three levels of threading get to the right length?
       this.assert(myCommentData.treeId.length >= 12, "threading working");
       
@@ -109,8 +114,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assert(appObj.getData().numComments == appNumComments + 2,
                   "numComments decremented on deletion");
       
-      this.assert(appObj.getData().numRootComments == appNumRootComments + 2,
-                 "numRootComments decremented on deletion");
+      this.assert(appObj.getData().numRootComments == appNumRootComments + 1,
+                 "numRootComments not affected on deletion");
 
       // May or may not have deleted something, don't care
       var firstRandomDeletion = this.dbifSim.deleteComment(appId + 50, "0000");
