@@ -35,6 +35,27 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var             secondCommentData;
       var             query = rpcjs.dbif.Entity.query;
       
+      var getApp = qx.lang.Function.bind(function(appId)
+      {
+        var o = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", appId);
+        this.assertArray(o, "getApp(" + appId + ")");
+        this.assert(o.length === 1, "getApp(" + appId + ") length=" + o.length);
+        return o[0];
+      },
+      this);
+
+      var getComment = qx.lang.Function.bind(function(appId, treeId)
+      {
+        var o = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments",
+                                        [ appId, treeId ]);
+        this.assertArray(o, "getComment(" + appId + ", " + treeId + ")");
+        this.assert(o.length === 1,
+                    "getComment(" + appId + ", " + treeId + ") " +
+                    "length=" + o.length);
+        return o[0];
+      },
+      this);
+
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
 
@@ -45,10 +66,9 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var topLevelCommentTreeId = myCommentData.treeId;
       
       // Did the parent app's numComments get incremented correctly?
-      appObj = new aiagallery.dbif.ObjAppData(appId);
       this.assertEquals(
         appNumComments + 1,
-        query("aiagallery.dbif.ObjAppData", appId)[0].numComments,
+        getApp(appId).numComments,
         "numComments being incremented");
       
       secondCommentData = this.dbifSim.addComment(appId,
