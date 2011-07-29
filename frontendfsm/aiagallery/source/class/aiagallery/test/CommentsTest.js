@@ -77,9 +77,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                                   error);
       
       // Did the parent app's numComments get incremented correctly?
-      appObj = new aiagallery.dbif.ObjAppData(appId);
       this.assertEquals(appNumComments + 2,
-                        appObj.getData().numComments, 
+                        getApp(appId).numComments, 
                         "numComments being incremented");
       
       myCommentData = this.dbifSim.addComment(appId,
@@ -88,20 +87,17 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                               error);
       
       // Did the parent app's numComments get incremented correctly?
-      appObj = new aiagallery.dbif.ObjAppData(appId);
       this.assertEquals(appNumComments + 3,
-                        appObj.getData().numComments, 
+                        getApp(appId).numComments, 
                         "numComments being incremented");
       
       // Did the parent's numRootComments increment correctly?
       this.assertEquals(appNumRootComments + 1,
-                        appObj.getData().numRootComments,
+                        getApp(appId).numRootComments,
                         "numRootComments being incremented");
       
       // Did the second comment's numChildren get incremented by the third?
-      secondCommentData = 
-        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments",
-                                [ appId, secondCommentData.treeId ])[0];
+      secondCommentData = getComment(appId, secondCommentData.treeId);
       this.assertEquals(1,
                         secondCommentData.numChildren,
                         "comment's numChildren incremented correctly");
@@ -125,12 +121,11 @@ qx.Class.define("aiagallery.test.CommentsTest",
                         retrievedComment.getData().numChildren,
                         "comment numChildren incremented");
       
-      // Save the number of comments for this appId
+      // Call the getComments() RPC and save the length of the result.
       var commentsArrLength = this.dbifSim.getComments(appId).length ;
       
       // We added 3, so there should be at least 3
-      this.assert(commentsArrLength >= 3,
-                  "getComments() good input");
+      this.assert(commentsArrLength >= 3, "getComments() good input");
       
       // With an invalid appId, we should get no results
       this.assert(this.dbifSim.getComments(-1).length == 0,
@@ -149,16 +144,15 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assertTrue(test, "last comment deleted, supposedly");
       
       // Ensure that there is now one fewer comment
-      appObj = new aiagallery.dbif.ObjAppData(appId);
       test = this.dbifSim.getComments(appId);
       this.assert(test.length == commentsArrLength - 1,
                   "last comment deleted successfully");
       
       // Ensure that the App numRootComments and numComments are decremented
-      this.assert(appObj.getData().numComments == appNumComments + 2,
+      this.assert(getApp(appId).numComments == appNumComments + 2,
                   "numComments decremented on deletion");
       
-      this.assert(appObj.getData().numRootComments == appNumRootComments + 1,
+      this.assert(getApp(appId).numRootComments == appNumRootComments + 1,
                  "numRootComments not affected on deletion");
 
       // May or may not have deleted something, don't care
@@ -169,7 +163,6 @@ qx.Class.define("aiagallery.test.CommentsTest",
                                  
       this.assertFalse(secondDeletionSame,
                        "bad deleteComment() input, hopefully no deletion");
-      
     }
   }
 });
