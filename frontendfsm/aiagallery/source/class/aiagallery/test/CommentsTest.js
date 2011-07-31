@@ -145,6 +145,29 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assertFalse(secondDeletionSame,
                        "bad deleteComment() input, hopefully no deletion");
       
-    }
+    },
+    
+    "test: Retrieve comment with invalid appId" : function()
+    {
+      var             test;
+      var             validAppId = 101;
+      var             invalidAppId = "101";
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+
+      // Add a comment
+      this.dbifSim.addComment(validAppId, "Hello world", null, error);
+      
+      test = this.dbifSim.getComments(validAppId);
+      this.assertEquals(1, 
+                        test.length,
+                        "Results received because appId was valid");
+
+      test = this.dbifSim.getComments(invalidAppId);
+      this.assertEquals(0,
+                        test.length,
+                        "No results because appId was invalid");
+    }    
   }
 });
