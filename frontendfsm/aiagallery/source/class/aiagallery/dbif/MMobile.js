@@ -146,6 +146,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var field = fields.shift();
 
       //FIXME: Waiting for back-end implementation
+      return [];
+    
     },
     
     __getByTag : function(fields, error)
