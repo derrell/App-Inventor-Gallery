@@ -81,6 +81,15 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Determine who the logged-in user is
       whoami = this.getWhoAmI();
       
+      // Is text empty or just whitespace?
+      if ( text === "" || text.match(/.*/gi) === null)
+      {
+        // Yes, discard the trash and let the user know.
+        error.setCode(3);
+        error.setMessage("Empty Comment");
+        return error;
+      }
+
       // Regardless, we need to have parentNumChildren and parentTreeId filled
       //   by the end of this if-else block. Where ever we got the numChildren
       //   from also needs to be incremented and updated.
