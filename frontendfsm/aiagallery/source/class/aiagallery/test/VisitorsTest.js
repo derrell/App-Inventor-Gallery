@@ -13,6 +13,7 @@ qx.Class.define("aiagallery.test.VisitorsTest",
 
   members :
   {
+/*
     "test: Owner Id and Display Name exchange" : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
@@ -25,6 +26,7 @@ qx.Class.define("aiagallery.test.VisitorsTest",
       // THIS TEST DOES NOTHING
       this.assertEquals("a valid test", "a test of nothing");
     },
+*/
     
     "test: edit profile with displayName" : function()
     {

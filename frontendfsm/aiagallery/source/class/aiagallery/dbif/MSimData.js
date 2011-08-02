@@ -286,7 +286,7 @@ qx.Mixin.define("aiagallery.dbif.MSimData",
           "numLikes" : 6,
           "numDownloads" : 1,
           "numViewed" : 28,
-          "numComments" : 7,
+          "numComments" : 0,
           "status" : 2
         },
         "106" : 
