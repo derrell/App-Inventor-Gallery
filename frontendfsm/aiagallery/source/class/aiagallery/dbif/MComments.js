@@ -13,11 +13,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
   {
     this.registerService("addComment",
                          this.addComment,
-                         [ "appId", "text", "parentUID" ]);
+                         [ "appId", "text", "parentTreeId" ]);
 
     this.registerService("deleteComment",
                          this.deleteComment,
-                         [ "uid" ]);
+                         [ "appId", "treeId" ]);
 
     this.registerService("getComments",
                          this.getComments,
@@ -56,21 +56,22 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   This is either a string or number which is the uid of the app to which
      *   this comment is associated.
      * 
-     * @param parentId {String}
-     *   The parent's treeId.
-     * 
      * @param text {String}
      *   The comment text itself.
      * 
+     * @param parentTreeId {String}
+     *   The parent's treeId.
      * 
      */
-    addComment : function(appId, text, parentUID, error)
+    addComment : function(appId, text, parentTreeId, error)
     {
       var             whoami;
       var             commentObj;
       var             commentObjData;
-      var             parentObj;
-      var             parentObjData;
+      var             parentAppObj;
+      var             parentAppData;
+      var             parentCommentObj;
+      var             parentCommentData;
       var             parentTreeId;
       var             myTreeId;
       var             parentList;
@@ -79,105 +80,138 @@ qx.Mixin.define("aiagallery.dbif.MComments",
         
       // Determine who the logged-in user is
       whoami = this.getWhoAmI();
-
-      // Get a new ObjComments object.
-      commentObj = new aiagallery.dbif.ObjComments();
-      
-      // Retrieve a data object to manipulate.
-      commentObjData = commentObj.getData();
-      
-      // Set up all the data we can at the moment (everything but treeId)
-      commentObjData.app         = appId;
-      commentObjData.numChildren = 0;
-      commentObjData.visitor     = whoami.userId;
-      commentObjData.text        = text;
       
       // Regardless, we need to have parentNumChildren and parentTreeId filled
       //   by the end of this if-else block. Where ever we got the numChildren
       //   from also needs to be incremented and updated.
       
-      // Was a parent comment's UID provided?
-      if (typeof(parentUID) === "undefined" || parentUID === null)
+      // Need to get and increment the Parent App's numRootComments
+      // and numComments total
+      parentAppObj = new aiagallery.dbif.ObjAppData(appId);
+      
+      parentAppData = parentAppObj.getData();
+
+      // Was the parent comment's treeId provided?
+      if (typeof(parentTreeId) === "undefined" || parentTreeId === null)
       {
         // No, we're going to use the root parent id, ""
         parentTreeId = "";
         
-        // Need to get and increment the App's numRootComments
-        parentObj = new aiagallery.dbif.ObjAppData(appId);
-        
-        parentObjData = parentObj.getData();
-        
         // Get what we need
-        parentNumChildren = parentObjData.numRootComments || 0;
-         
-        // Increment parent's # of children
-        parentObjData.numRootComments = parentNumChildren + 1;
+        parentNumChildren = parentAppData.numRootComments || 0;         
+
+        // Increment parent app's # of children
+        parentAppData.numRootComments = parentNumChildren + 1;
       }
       else
       {
-        // Yes, use it to get the parent object.
-        parentObj = new aiagallery.dbif.ObjComments(parentUID);
+        // Yes, use it to get the parent comment object.
+        parentCommentObj = 
+          new aiagallery.dbif.ObjComments([appId, parentTreeId]);
         
-        parentObjData = parentObj.getData();
+        parentCommentData = parentCommentObj.getData();
         
         // Was our parentUID invalid, resulting in a new ObjComments?
-        if (parentObj.getBrandNew())
+        if (parentCommentObj.getBrandNew())
         {
           // We can't use an invalid UID as our parent UID!
           error.setCode(1);
-          error.setMessage("Unrecognized parent UID");
+          error.setMessage("Unrecognized parent treeId");
           return error;
         }
         
         // Get what we came for.
-        parentNumChildren = parentObjData.numChildren;
-        parentTreeId = parentObjData.treeId;
+        parentNumChildren = parentCommentData.numChildren;
+        parentTreeId = parentCommentData.treeId;
         
-        // Increment parent's # of children
-        parentObjData.numChildren = parentNumChildren + 1;
+        // Increment parent comment's # of children
+        parentCommentData.numChildren = parentNumChildren + 1;
+        
+        // Save the new # children in the parent comment
+        parentCommentObj.put();
       }
       
-      // Update the parent object. Congrats! a new baby comment!
-      parentObj.put();
+      // Increment the total number of comments on the App
+      parentAppData.numComments++;
+      
+      // Update the parent app and/or comment object. 
+      // Congrats! a new baby comment!
+      parentAppObj.put();
 
       // Append our parent's number of children, base160 encoded, to parent's
       //   treeId
       myTreeId = parentTreeId + this._numToBase160(parentNumChildren);
       
-      // Complete the comment record by giving it a treeId
-      commentObjData.treeId = myTreeId;
+      // Get a new ObjComments object, with our appId and newly generated
+      // treeId.
+      commentObj = new aiagallery.dbif.ObjComments([appId, myTreeId]);
       
+      // Was a comment with this key already in the DB?
+      if (!commentObj.getBrandNew())
+      {
+        // That's an error
+        error.setCode("comment with that key already in use");
+        error.setMessage("Attempted to overwrite existing comment");
+        return error;
+      }
+      
+      // Retrieve a data object to manipulate.
+      commentObjData = commentObj.getData();
+      
+      // Set up all the rest of the data
+      commentObjData.visitor     = whoami.userId;
+      commentObjData.text        = text;
+
       // Save this in the database
       commentObj.put();
 
       // This includes newly-created key
-      return commentObj.getData();  
+      return commentObjData;  
     },
     
     /**
      * Delete a specific individual comment
      * 
-     * @param uid {?}
-     *   This is the unique identifier for the comment which is to be deleted
+     * @param appId {Number}
+     *   This is the unique identifier for the app containing the comment to
+     *   delete
+     * 
+     * @param treeId {String}
+     *   This is the thread tree identifier for the comment which is to be
+     *   deleted
      * 
      * @return {Boolean}
      *   Returns true if deletion was successful. If false is returned, nothing
      *   was deleted.
      */
-    deleteComment : function(uid, error)
+    deleteComment : function(appId, treeId, error)
     {
       var             commentObj;
-
-      // Retrieve an instance of this comment entity
-      commentObj = new aiagallery.dbif.ObjComments(uid);
+      var             parentAppObj;
+      var             parentAppData;
+      var             parentTreeId;
       
-      // Does this application exist?
+      // Retrieve an instance of this comment entity
+      commentObj = new aiagallery.dbif.ObjComments([appId, treeId]);
+      
+      // Does this comment exist?
       if (commentObj.getBrandNew())
       {
         // It doesn't. Let 'em know.
         return false;
       }
+      
+      // Find out the App that was commented on and...
+      parentAppObj = new aiagallery.dbif.ObjAppData(appId);
+      
+      parentAppData = parentAppObj.getData();
+      
+      // Decrement the number of comments attached to this App.
+      parentAppData["numComments"]--;
 
+      // Save this change
+      parentAppObj.put();
+      
       // Delete the app
       commentObj.removeSelf();
       

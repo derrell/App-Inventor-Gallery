@@ -232,8 +232,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       var permission;
       var group;
       var data;
-      var i, j;
-      var ret = false;
 
       // Standard check: Does my permission list contain this method?
       if (permissionArr != null &&
@@ -242,31 +240,35 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         // Yes, allow me.
         return true;
       }
-      
-      // Deeper check: Do any of my permission groups give me access to this
-      // method?
-      if (permissionGroupArr != null)
+
+// Permission Groups Untested, disabling for now
+      if(false)
       {
-        // For every permission group of which I am a member...
-        permissionGroupArr.forEach(function (group) 
-          {
-            
-            // Retrieve the list of permissions it gives me
-            data = new aiagallery.dbif.ObjPermissonGriou(group).getData();
-            permissionArr = data["permissions"];
-            
-            // Same as standard check: does this group contain this method?
-            if (permissionArr != null &&
-                qx.lang.Array.contains(permissionArr, methodName))
+        // Deeper check: Do any of my permission groups give me access to this
+        // method?
+        if (permissionGroupArr != null)
+        {
+          // For every permission group of which I am a member...
+          permissionGroupArr.forEach(function (group) 
             {
-              // Yes, allow me.
-              ret = true;
-            }
-          });
+        
+              // Retrieve the list of permissions it gives me
+              data = new aiagallery.dbif.ObjPermissonGriou(group).getData();
+              permissionArr = data["permissions"];
+          
+              // Same as standard check: does this group contain this method?
+              if (permissionArr != null &&
+              qx.lang.Array.contains(permissionArr, methodName))
+              {
+                // Yes, allow me.
+                return true;
+              }
+            });
+        }
       }
       
-      // Return whether we found it.
-      return ret;
+      // Did not find this permission, dissalow.
+      return false;
     }
   }
 });
