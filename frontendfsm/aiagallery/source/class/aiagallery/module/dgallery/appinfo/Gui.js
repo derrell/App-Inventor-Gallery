@@ -231,12 +231,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
            {
              submitCommentBtn.execute();
            }
-         });       
-          
+         });      
+  
         // The textfield, all the existing comments, and the submit button
         // get added to the UI.
         vbox.add(commentInput);
-        vbox.add(submitCommentBtn);
+        vbox.add(submitCommentBtn); 
 
         // Creates an object containing the parts of the GUI which will need 
         // to be changed after the fsm call. This object is passed to the FSM.
@@ -296,38 +296,39 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var cpanel = guiInfo.getUserData("cpanel");
         var radiogroup = guiInfo.getUserData("radiogroup");
         var commentInput = guiInfo.getUserData("commentInput");
-        var newComment = rpcRequest.getUserData("commentString"); 
+        var newComment;
+        var commentAuthor;
+
+        var ty = this.self(arguments).typeOf(result);
 
         // Adds the new comment to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
-        if (newComment.getValue() != null) 
+        if (ty != null) 
         {
-          cpanel = new collapsablepanel.Panel(newComment.getValue());
-          var vbox3 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-          var replyBtn = new qx.ui.form.Button("reply");
-          replyBtn.addListener("reply", 
-                               function(e)
-                               {    
-                               }, this);
-           var flagBtn = new qx.ui.form.Button("flag as inappropriate");
-           cpanel.setGroup(radiogroup);
-           label = new qx.ui.basic.Label(newComment.getValue());
-           label.set(
-             {
-               rich : true,
-               wrap : true
-             });
-           var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-           var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-           hbox.add(replyBtn);
-           hbox.add(flagBtn);
-           vbox2.add(label);
-           vbox2.add(hbox);
-           cpanel.add(vbox2);
-           cpanel.add(vbox3);
-           vbox.add(cpanel);
-        }
+          newComment = result["text"];
+          if (newComment != null) 
+          {
+            commentAuthor = result["visitor"];
+            cpanel = new collapsablepanel.Panel(commentAuthor);
+            var replyBtn = new qx.ui.form.Button("reply");
+            label = new qx.ui.basic.Label(newComment);
+            label.set(
+              {
+                rich : true,
+                wrap : true
+              });
+            var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+            var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+            var vbox3 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+            hbox.add(replyBtn);
+            vbox2.add(label);
+            vbox2.add(hbox);
+            cpanel.add(vbox2);
+            cpanel.add(vbox3);
+            vbox.add(cpanel);
+          }
+	}
         commentInput.setValue(null);
         break;
 
@@ -356,29 +357,26 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             var str = "";
             for (var i = 0; i < result.length; ++i)
             {
-              var newComment = result[i]["text"] + "";
-              cpanel = new collapsablepanel.Panel(newComment);
-              var replyBtn = new qx.ui.form.Button("reply");
-              replyBtn.addListener("reply", 
-                                   function(e) 
-                                   {
-                                   }, this);
-              var flagBtn = new qx.ui.form.Button("flag as inappropriate");
-              cpanel.setGroup(radiogroup);
-              label = new qx.ui.basic.Label(newComment);
-              label.set(
-                {
-                  rich : true,
-                  wrap : true
-                });
-              var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-              var box2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-              hbox.add(replyBtn);
-              hbox.add(flagBtn);
-              box2.add(label);
-              box2.add(hbox);
-              cpanel.add(box2);
-              vbox.add(cpanel);
+              var newComment = result[i]["text"];
+              if (newComment != null)
+              {
+                var commentAuthor = result[i]["visitor"];
+                cpanel = new collapsablepanel.Panel(commentAuthor);
+                var replyBtn = new qx.ui.form.Button("reply");
+                label = new qx.ui.basic.Label(newComment);
+                label.set(
+                  {
+                    rich : true,
+                    wrap : true
+                  });
+                var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+                var box2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+                hbox.add(replyBtn);
+                box2.add(label);
+                box2.add(hbox);
+                cpanel.add(box2);
+                vbox.add(cpanel);
+              }
             }
           }
         }   
