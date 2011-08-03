@@ -82,7 +82,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       whoami = this.getWhoAmI();
       
       // Is text empty or just whitespace?
-      if ( text === null || text === "" || text.match(/.*/gi) === null)
+      if ( text === null || text === "" || text.match(/\S/gi) === null)
       {
         // Yes, discard the trash and let the user know.
         error.setCode(3);
