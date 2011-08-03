@@ -128,7 +128,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         return error;
       }
       
-      return results;
+      return this.__stripDataURLs(results);
     },
     
     __getBySearch : function(fields, error)
@@ -146,6 +146,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var field = fields.shift();
 
       //FIXME: Waiting for back-end implementation
+      return [];
+    
     },
     
     __getByTag : function(fields, error)
@@ -189,7 +191,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         return error;
       }
       
-      return results;
+      return this.__stripDataURLs(results);
     },
     
     __getByFeatured : function(fields, error)
@@ -220,7 +222,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var ownerId =
         aiagallery.dbif.MVisitors._getVisitorId(displayName, error);
       
-      // Was an error erturned?
+      // Was an error returned?
       if (ownerId === error)
       {
         // Yup. We need to return it.
@@ -238,12 +240,13 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         // This is where resultCriteria goes
         this.__buildResultCriteria( offset, count, order, field));
       
+      // Then make sure the ownerId doesn't get returned
       results.forEach(function(obj)
-      {
-        obj["owner"] = displayName;
-      });
-      
-      return results;
+        {
+          obj["owner"] = displayName;
+        });
+     
+      return this.__stripDataURLs(results);
     },
     
     __getAppInfo : function(fields, error)
@@ -309,7 +312,32 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // Use the method included by mixin MTags
       return this.getCategoryTags(error);
     },
-   
+
+    /**
+     * Strip out dataURL fields from app object array
+     * 
+     * @param appArr {Array}
+     *   Array of App-dataish objects which need to be trimmed
+     * 
+     * @return {Array}
+     *   The mutated array that was passed in
+     */
+    __stripDataURLs : function(appArr)
+    {
+      appArr.forEach(
+        function(appObj)
+        {
+          delete appObj["image1"];
+          delete appObj["image2"];
+          delete appObj["image3"];
+          delete appObj["source"];
+          delete appObj["apk"];
+        });
+      
+      return appArr
+    },
+
+    
     /**
      * Build a correctly formatted Result Criteria array for rpc queries
      * 
