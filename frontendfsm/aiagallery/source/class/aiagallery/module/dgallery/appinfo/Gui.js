@@ -319,6 +319,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var replyBtn;
         var hbox;
         var vbox2;
+        var label2;
 
         ty = this.self(arguments).typeOf(result);
 
@@ -374,28 +375,36 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var vbox = guiInfo.getUserData("vbox");       
         var radiogroup = guiInfo.getUserData("radiogroup");
         var allCommentsBox = guiInfo.getUserData("allCommentsBox");
-          
+        var ty;
+        var len
+        var newComment;
+        var commentAuthor;
+        var commentTime;
+        var replyBtn;
+        var hbox;
+        var vbox2;
+        var label2;
+  
         // Adds the comments retrieved from the database to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
-        var ty = this.self(arguments).typeOf(result);
+        ty = this.self(arguments).typeOf(result);
         if (ty == "array") 
         {
-          var len = result.length;
+          len = result.length;
           if (len != 0) 
           {
-            var str = "";
             for (var i = 0; i < result.length; ++i)
             {
-              var newComment = result[i]["text"];
+              newComment = result[i]["text"];
               if (newComment != null)
               {
-                var commentAuthor = result[i]["visitor"];
-                var commentTime = result[i]["timestamp"];
+                commentAuthor = result[i]["visitor"];
+                commentTime = result[i]["timestamp"];
                 cpanel = new collapsablepanel.Panel(commentAuthor + ": " + newComment);
                 cpanel.setGroup(radiogroup);
 
-                var replyBtn = new qx.ui.form.Button("reply");
+                replyBtn = new qx.ui.form.Button("reply");
                 label = new qx.ui.basic.Label(newComment);
                 label.set(
                   {
@@ -408,8 +417,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                     rich : true,
                     wrap : true
                   });
-                var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-                var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+                hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+                vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
                 hbox.add(replyBtn);
                 vbox2.add(label);
                 hbox.add(label2);
