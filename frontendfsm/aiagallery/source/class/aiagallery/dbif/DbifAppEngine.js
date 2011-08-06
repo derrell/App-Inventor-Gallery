@@ -31,6 +31,7 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       var             user;
       var             whoami;
       var             userId;
+      var             visitor;
 
       // Find out who is logged in
       UserServiceFactory =
@@ -38,7 +39,19 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
       userService = UserServiceFactory.getUserService();
       user = userService.getCurrentUser();
       whoami = String(user.getEmail());
-      userId = String(user.getUserId());
+
+      // Try to get this user's display name. Does the visitor exist?
+      visitor = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", whoami);
+      if (visitor.length > 0)
+      {
+        // Yup, he exists.
+        userId = visitor[0].displayName || String(user.getUserId());
+      }
+      else
+      {
+        // He doesn't exist. Just use the unique number.
+        userId = String(user.getUserId());
+      }
 
       // Save the logged-in user. The whoAmI property is in MDbifCommon.
       this.setWhoAmI(
