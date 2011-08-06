@@ -169,7 +169,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
     {
       var             test;
       var             validAppId = 101;
-      var             invalidAppId = "101";
+      var             invalidAppId = "1";
       
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
