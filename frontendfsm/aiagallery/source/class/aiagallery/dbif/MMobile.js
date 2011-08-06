@@ -90,20 +90,18 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getAll : function(fields, error)
     {
       var requiredParams = 4;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var offset = parseInt(fields.shift(), 10);
-      var count = parseInt(fields.shift(), 10);
-      var order = fields.shift() || null;
-      var field = fields.shift() || null;
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
       
-      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
-                                                !isNaN(offset));
-      var countTypeCheck = count === null || (typeof count === "number" &&
-                                              !isNaN(count));
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -149,16 +147,16 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getBySearch : function(fields, error)
     {
       var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var keywordString = fields.shift() || null;
-      var offset = parseInt(fields.shift(), 10) || null;
-      var count = parseInt(fields.shift(), 10) || null;
-      var order = fields.shift() || null;
-      var field = fields.shift() || null;
+      var keywordString = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
       
       // keyword is required.
       if (typeof keywordString !== "string")
@@ -167,10 +165,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No search terms given");
         return error;
       }
-      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
-                                                !isNaN(offset));
-      var countTypeCheck = count === null || (typeof count === "number" &&
-                                              !isNaN(count));
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -191,16 +187,16 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getByTag : function(fields, error)
     {
       var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var tagName = fields.shift() || null;
-      var offset = parseInt(fields.shift(), 10) || null;
-      var count = parseInt(fields.shift(), 10) || null;
-      var order = fields.shift() || null;
-      var field = fields.shift() || null;
+      var tagName = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
       
       // tagName is required
       if (typeof tagName !== "string")
@@ -209,10 +205,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No tag name given");
         return error;
       }
-      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
-                                                !isNaN(offset));
-      var countTypeCheck = count === null || (typeof count === "number" &&
-                                              !isNaN(count));
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -267,16 +261,16 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getByOwner : function(fields, error)
     {
       var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var displayName = fields.shift() || null;
-      var offset = parseInt(fields.shift(), 10) || null;
-      var count = parseInt(fields.shift(), 10) || null;
-      var order = fields.shift() || null;
-      var field = fields.shift() || null;
+      var displayName = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      var order = fields.shift();
+      var field = fields.shift();
       
       // displayName is required
       if (typeof displayName !== "string")
@@ -285,10 +279,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No developer's name given");
         return error;
       }
-      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
-                                                !isNaN(offset));
-      var countTypeCheck = count === null || (typeof count === "number" &&
-                                              !isNaN(count));
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset,10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count,10));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -334,7 +326,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getAppInfo : function(fields, error)
     {
       var requiredParams = 1;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
@@ -382,7 +374,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getComments : function(fields, error)
     {
       var requiredParams = 1;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
