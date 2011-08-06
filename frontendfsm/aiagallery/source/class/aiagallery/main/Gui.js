@@ -143,6 +143,10 @@ qx.Class.define("aiagallery.main.Gui",
             rpc.callAsync(
               function(e)
               {
+                var             bAllowed;
+                var             moduleList;
+                var             module;
+
                 _this.whoAmI.setValue(
                   "<div style='font-weight:bold;'>" +
                   "Welcome, " + 
@@ -157,6 +161,40 @@ qx.Class.define("aiagallery.main.Gui",
                 
                 qx.core.Init.getApplication().setUserData(
                   "permissions", e.permissions);
+
+                // Determine whether they have access to the user management
+                // page.
+                bAllowed = false;
+                [ 
+                  // These permissions allow access to the page
+                  "addOrEditVisitor",
+                  "deleteVisitor",
+                  "getVisitorList"
+                ].forEach(
+                  function(rpcFunc)
+                  {
+                    if (qx.lang.Array.contains(e.permissions, rpcFunc))
+                    {
+                      bAllowed = true;
+                    }
+                  });
+
+                // If they're allowed access to the page...
+                if (e.isAdmin || bAllowed)
+                {
+                  // ... then create it
+                  module = new aiagallery.main.Module(
+                    "User Management",
+                    "aiagallery/test.png",
+                    "User Management",
+                    aiagallery.module.mgmt.users.Users);
+
+                  // Start up the new module
+                  moduleList = {};
+                  moduleList["User Management"] = {};
+                  moduleList["User Management"]["User Management"] = module;
+                  aiagallery.Application.addModules(moduleList);
+                }
               },
               "whoAmI",
               []);
@@ -183,7 +221,7 @@ qx.Class.define("aiagallery.main.Gui",
         }
 
         var DebugFlags = qx.util.fsm.FiniteStateMachine.DebugFlags;
-        var bInitialDebug = true;
+        var bInitialDebug = false;
         if (bInitialDebug)
         {
           var initialDebugFlags =
