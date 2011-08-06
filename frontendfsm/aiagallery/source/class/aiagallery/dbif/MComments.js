@@ -168,7 +168,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObjData = commentObj.getData();
       
       // Set up all the rest of the data
-      commentObjData.visitor     = whoami.userId;
+      commentObjData.visitor     = whoami.email;
       commentObjData.text        = text;
 
       // Save this in the database
@@ -276,6 +276,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                         },
                                         resultCriteria);
 
+      commentList.forEach(function(obj)
+        {
+          obj.visitor = aiagallery.dbif.MVisitors._getDisplayName(obj.visitor);
+        });
+      
       return commentList;
     },
    

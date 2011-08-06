@@ -34,6 +34,14 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var             appNumRootComments = appObj.getData().numRootComments;
       var             secondCommentData;
       var             query = rpcjs.dbif.Entity.query;
+
+      this.dbifSim.setWhoAmI(
+        {
+          email     : "joe@blow.com",
+          userId    : "Joe Blow",
+          isAdmin   : false
+        });
+
       
       var getApp = qx.lang.Function.bind(function(appId)
       {
@@ -121,6 +129,11 @@ qx.Class.define("aiagallery.test.CommentsTest",
                         retrievedComment.getData().numChildren,
                         "comment numChildren incremented");
       
+      // Ensure that the userId, not display name is stored in this comment
+      this.assertEquals(retrievedComment.getData().visitor,
+                        "joe@blow.com",
+                       "comment.visitor is whoami.email, not whoami.userId");
+      
       // Call the getComments() RPC and save the length of the result.
       var commentsArrLength = this.dbifSim.getComments(appId).length ;
       
@@ -186,6 +199,6 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this.assertEquals(0,
                         test.length,
                         "No results because appId was invalid");
-    }    
+    }
   }
 });

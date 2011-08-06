@@ -73,7 +73,8 @@ qx.Class.define("aiagallery.test.AppsTest",
       
       aiagallery.dbif.MApps._requestedFields(myApp, requestedFields);
       
-      this.assertJsonEquals(requestedFields, requestedFieldsCopy, "requestedFields parameter unmutated");
+      this.assertJsonEquals(requestedFields, requestedFieldsCopy, 
+                            "requestedFields parameter unmutated");
       this.assertJsonEquals(myApp, expectedResult, "requested fields");
     },
     
@@ -83,6 +84,13 @@ qx.Class.define("aiagallery.test.AppsTest",
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
+      dbifSim.setWhoAmI(
+        {
+          email     : "joe@blow.com",
+          userId    : "Joe Blow",
+          isAdmin   : false
+        });
+
       // Adding comment to app.
       dbifSim.addComment(105, "I'm getting very test-y right now", null);
             
@@ -103,7 +111,8 @@ qx.Class.define("aiagallery.test.AppsTest",
       this.assertArray(appInfo["comments"], "comments returned correctly");
       
       this.assertKeyInMap("author", appInfo, "requested fields successful");
-      this.assert(typeof(appInfo["owner"]) === "undefined", "requested fields very successful");
+      this.assert(typeof(appInfo["owner"]) === "undefined", 
+                  "requested fields very successful");
       
     }
     
