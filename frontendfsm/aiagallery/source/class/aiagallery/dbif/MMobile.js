@@ -95,13 +95,15 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var offset = parseInt(fields.shift(), 10) || null;
-      var count = parseInt(fields.shift(), 10) || null;
+      var offset = parseInt(fields.shift(), 10);
+      var count = parseInt(fields.shift(), 10);
       var order = fields.shift() || null;
       var field = fields.shift() || null;
       
-      var offsetTypeCheck = offset === null || typeof offset === "number";
-      var countTypeCheck = count === null || typeof count === "number";
+      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
+                                                !isNaN(offset));
+      var countTypeCheck = count === null || (typeof count === "number" &&
+                                              !isNaN(count));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -165,8 +167,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No search terms given");
         return error;
       }
-      var offsetTypeCheck = offset === null || typeof offset === "number";
-      var countTypeCheck = count === null || typeof count === "number";
+      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
+                                                !isNaN(offset));
+      var countTypeCheck = count === null || (typeof count === "number" &&
+                                              !isNaN(count));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -205,8 +209,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No tag name given");
         return error;
       }
-      var offsetTypeCheck = offset === null || typeof offset === "number";
-      var countTypeCheck = count === null || typeof count === "number";
+      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
+                                                !isNaN(offset));
+      var countTypeCheck = count === null || (typeof count === "number" &&
+                                              !isNaN(count));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -279,8 +285,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No developer's name given");
         return error;
       }
-      var offsetTypeCheck = offset === null || typeof offset === "number";
-      var countTypeCheck = count === null || typeof count === "number";
+      var offsetTypeCheck = offset === null || (typeof offset === "number" &&
+                                                !isNaN(offset));
+      var countTypeCheck = count === null || (typeof count === "number" &&
+                                              !isNaN(count));
       var orderTypeCheck = order === null || typeof order === "string";
       var fieldTypeCheck = field === null || typeof field === "string";
       
@@ -331,10 +339,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var appId = parseInt(fields.shift(), 10) || null;
+      var appId = parseInt(fields.shift(), 10);
       
       // appId is required
-      if (typeof appId !== "number")
+      if (isNaN(appId))
       {
         error.setCode(3);
         error.setMessage("No App UID given");
@@ -380,10 +388,10 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       }
       
       // Make sure appId is an integer
-      var appId = parseInt(fields.shift(), 10) || null;
+      var appId = parseInt(fields.shift(), 10);
 
       // appId is required
-      if (typeof appId !== "number")
+      if (isNaN(appId))
       {
         error.setCode(3);
         error.setMessage("No App UID given");

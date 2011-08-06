@@ -23,6 +23,9 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       var uid;
       var developer;
       
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+      
       // testing all
       mobileRequest = dbifSim.mobileRequest("all:0:1:asc:uid");
       
@@ -71,6 +74,15 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       this.assertKeyInMap( "owner",
                            mobileRequest,
                            "apps retrieved from mobile getinfo");
+
+      // testing bad parameter type
+      
+      mobileRequest = dbifSim.mobileRequest("all:uid", error);
+      
+      
+      this.assert(mobileRequest.basename === "Error", "bad request returns" + 
+                 "error");
+      
     }
   }
 });
