@@ -21,11 +21,36 @@ qx.Class.define("aiagallery.test.AppsTest",
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
       // Adding then deleting an App to see it go smoothly.
-      var myAppData = dbifSim.addOrEditApp(null, {owner: "hi"});
-      var myAppInfo;
-      this.assertInstance(myAppData, Object, "correctly adding app");
+      var myAppData = dbifSim.addOrEditApp(null, 
+                                           {
+                                             owner      : "me",
+                                             description: "A bunch of words"
+                                           });
+
+      // Something was returned, and it has a new UID assigned
+      this.assertObject(myAppData, "correctly adding app");
       this.assertInteger(myAppData.uid, "new app uid");
+      
+      // Check that ObjSearch's were correctly created
+      var searchObj = new aiagallery.dbif.ObjSearch(["bunch",
+                                                     myAppData.uid,
+                                                     "description"]);
+      
+      console.log( rpcjs.sim.Dbif.db);
+      // Was this ObjSearch already in there?
+      this.assertFalse(searchObj.getBrandNew(),
+                       "Search object inserted correctly");
+
       this.assert(dbifSim.deleteApp(myAppData.uid), "removing app");
+      
+      // Was the ObjSearch correctly cleared?
+      var searchObj = new aiagallery.dbif.ObjSearch(["bunch",
+                                                     myAppData.uid,
+                                                     "description"]);
+      // Now this should be "brand new", because it was deleted w/ the app
+      this.assert(searchObj.getBrandNew(),
+                  "Search objects deleted correctly");
+      
     },
     
     "test: MApps.getAppListAll()" : function()

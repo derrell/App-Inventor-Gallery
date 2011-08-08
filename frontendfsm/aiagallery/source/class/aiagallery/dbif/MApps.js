@@ -134,22 +134,34 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         switch (appDataField)
         {
         // If it's one of the text fields...
-        case "owner":
         case "title":
         case "description":
-        case "tags":
           // Split up the words and...
           wordsToAdd = dataObj[appDataField].split(" ");
           wordsToAdd.forEach(function(word)
               {
                 // Add each one to the db                
-                searchObj = new aiagallery.dbif.ObjSearch([appId,
-                                                          word,
+                searchObj = new aiagallery.dbif.ObjSearch([word,
+                                                          appId,
                                                          appDataField]);
                 // Save the record in the DB.
                 searchObj.put();
               });
           break;
+
+        case "tags":
+          wordsToAdd = dataObj[appDataField];
+          wordsToAdd.forEach(function(word)
+              {
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch([word,
+                                                          appId,
+                                                         appDataField]);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+          
         }
       }
     },
