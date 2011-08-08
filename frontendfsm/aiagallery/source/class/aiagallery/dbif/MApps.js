@@ -143,9 +143,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           wordsToAdd.forEach(function(word)
               {
                 // Add each one to the db                
-                searchObj = new aiagallery.dbif.ObjSearch(appId,
+                searchObj = new aiagallery.dbif.ObjSearch([appId,
                                                           word,
-                                                         appDataField);
+                                                         appDataField]);
                 // Save the record in the DB.
                 searchObj.put();
               });
@@ -177,9 +177,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Remove every record found
       results.forEach(function(obj)
                       {
-                        searchObj = new aiagallery.dbif.ObjSearch(obj["word"],
+                        searchObj = new aiagallery.dbif.ObjSearch([obj["word"],
                                                       obj["appId"],
-                                                      obj["appField"]);
+                                                      obj["appField"]]);
                         searchObj.removeSelf();
                       });
     }
