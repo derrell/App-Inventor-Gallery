@@ -111,6 +111,77 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           delete app[field];
         }
       }
+    },
+    
+    /**
+     * Add or confirm existence of each word in each field of given App Data
+     * 
+     *@param dataObj {Object}
+     *  The result of getData() on the app object. Contains all the info in the
+     *  database recorded for this App
+     * 
+     */
+    _populateSearch : function(dataObj)
+    {
+      var appDataField;
+      var wordsToAdd;
+      var searchObj;
+      var appId = dataObj["uid"];
+      
+      for (appDataField in dataObj)
+      {
+        // Go through each field in the App Data Object
+        switch (appDataField)
+        {
+        // If it's one of the text fields...
+        case "owner":
+        case "title":
+        case "description":
+        case "tags":
+          // Split up the words and...
+          wordsToAdd = dataObj[appDataField].split(" ");
+          wordsToAdd.forEach(function(word)
+              {
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch(appId,
+                                                          word,
+                                                         appDataField);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+        }
+      }
+    },
+    
+    /**
+     * Ensure that there are no Search records from App with this uid
+     * 
+     *@param uid {Integer}
+     * This is the app's uid whose Search records are to be wiped
+     */
+    _removeAppFromSearch : function(uid)
+    {
+      var results;
+      var resultObj;
+      var searchObj;
+      
+      // Get all Search Objects with this uid then...
+      results = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch",
+                                        {
+                                          type : "element",
+                                          field: "appId",
+                                          value: uid
+                                        },
+                                       null);
+      // Remove every record found
+      results.forEach(function(obj)
+                      {
+                        searchObj = new aiagallery.dbif.ObjSearch(obj["word"],
+                                                      obj["appId"],
+                                                      obj["appField"]);
+                        searchObj.removeSelf();
+                      });
     }
   },
   
@@ -300,6 +371,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save this record in the database
       appObj.put();
       
+      // Add all words in text fields to word Search record
+      aiagallery.dbif.MApps._populateSearch(appObj.getData());
+      
       return appObj.getData();  // This includes newly-created key (if adding)
     },
     
@@ -364,6 +438,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       // Delete the app
       appObj.removeSelf();
+      
+      aiagallery.dbif.MApps._removeAppFromSearch(uid);
       
       // We were successful
       return true;

@@ -15,12 +15,14 @@ qx.Class.define("aiagallery.dbif.ObjSearch",
     // Need all data for the key regardless, so might as well store it
     this.setData(
       {
-        "word"  : keyArr[0],
-        "appId" : keyArr[1]
+        "word"     : keyArr[0],
+        "appId"    : keyArr[1],
+        "appField" : keyArr[2]
       });
 
-    // Use the composite of "word" and "appId" properties as the entity key
-    this.setEntityKeyProperty(["word", "appId"]);
+    // Use the composite of "word", "appId", and "appField" properties as 
+    // the entity key
+    this.setEntityKeyProperty(["word", "appId", "appField"]);
     
     // Call the superclass constructor
     this.base(arguments, "search", keyArr);
@@ -36,12 +38,15 @@ qx.Class.define("aiagallery.dbif.ObjSearch",
         "word" : "String",
 
         /** The App in which this word appears */
-        "appId"  : "Key"
+        "appId"  : "Key",
+                
+        /** The App data field within which this word appeared */
+        "appField" : "String"
       };
 
     // Register our property types
     aiagallery.dbif.Entity.registerPropertyTypes("search",
                                                  databaseProperties,
-                                                 ["word", "appId"]);
+                                                 ["word", "appId", "appField"]);
   }
 });
