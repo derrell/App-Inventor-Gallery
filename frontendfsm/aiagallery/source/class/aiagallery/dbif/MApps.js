@@ -140,8 +140,12 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           wordsToAdd = dataObj[appDataField].split(" ");
           wordsToAdd.forEach(function(word)
               {
+                // Make sure to only add lower case words to the search
+                // database
+                var wordLC = word.toLowerCase();
+
                 // Add each one to the db                
-                searchObj = new aiagallery.dbif.ObjSearch([word,
+                searchObj = new aiagallery.dbif.ObjSearch([wordLC,
                                                           appId,
                                                          appDataField]);
                 // Save the record in the DB.
