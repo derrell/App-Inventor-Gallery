@@ -38,7 +38,6 @@ qx.Class.define("aiagallery.main.Gui",
       var             canvas;
       var             numModules;
       var             whoAmI;
-      var             rpc;
 
       // Retrieve the previously-created top-level tab view
       var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
@@ -132,6 +131,8 @@ qx.Class.define("aiagallery.main.Gui",
         qx.util.TimerManager.getInstance().start(
           function(userData, timerId)
           {
+            var             rpc;
+
             rpc = new qx.io.remote.Rpc();
             rpc.set(
               {
@@ -146,13 +147,23 @@ qx.Class.define("aiagallery.main.Gui",
                 var             bAllowed;
                 var             moduleList;
                 var             module;
+                var             editProfile;
+                
+                // Temporary kludge to set the profile
+                window.editProfile = function()
+                {
+                  _this._editProfile();
+                };
 
                 _this.whoAmI.setValue(
                   "<div style='font-weight:bold;'>" +
                   "Welcome, " + 
                   (e.isAdmin ? "administrator " : "") +
                   e.email +
-                  " (" + e.userId + ")" +
+                  " (" + 
+                  "<a href='javascript:editProfile();'>" +
+                  e.userId +
+                  "</a>)" +
                   "<br />" +
                   "Permissions: " + e.permissions.join(", ") +
                   "</div>" +
@@ -352,6 +363,117 @@ qx.Class.define("aiagallery.main.Gui",
           }
         }
       }
+    },
+    
+    _editProfile : function()
+    {
+      var             win;
+      var             grid;
+      var             container;
+      var             displayName;
+      var             hBox;
+      var             ok;
+      var             cancel;
+  
+      // Create a modal window for editing the profile
+      if (! this._win)
+      {
+        win = new qx.ui.window.Window(this.tr("Edit Profile"));
+        win.set(
+          {
+            layout : new qx.ui.layout.VBox(30),
+            modal  : true
+          });
+        this.getApplicationRoot().add(win);
+
+        // We'll use a grid to layout the property editor
+        grid = new qx.ui.layout.Grid();
+        grid.setSpacingX(5);
+        grid.setSpacingY(15);
+        grid.setColumnAlign(0, "right", "middle");
+
+        // Create a container for the grid
+        container = new qx.ui.container.Composite(grid);
+        win.add(container);
+
+        // Add the label
+        container.add(new qx.ui.basic.Label(this.tr("Display Name")), 
+                      { row : 0, column : 0 });
+
+        // Add the text field
+        this._displayName = new qx.ui.form.TextField();
+        _displayName.set(
+          {
+            width  : 120,
+            filter : /[a-zA-Z0-9 _-]/
+          });
+        container.add(_displayName, { row : 0, column : 1 });
+
+        // Create a horizontal box to hold the buttons
+        hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+
+        // Add spacer to right-align the buttons
+        hBox.add(new qx.ui.core.Spacer(null, 1), { flex : 1 });
+
+        // Add the Ok button
+        ok = new qx.ui.form.Button(this.tr("Ok"));
+        ok.setWidth(100);
+        ok.setHeight(30);
+        hBox.add(ok);
+
+        ok.addListener(
+          "execute", 
+          function(e)
+          {
+            var             rpc;
+            var             _this = this;
+
+            rpc = new qx.io.remote.Rpc();
+            rpc.set(
+              {
+                url         : aiagallery.main.Constant.SERVICES_URL,
+                timeout     : 30000,
+                crossDomain : false,
+                serviceName : "aiagallery.features"
+              });
+            rpc.callAsync(
+              function(e)
+              {
+                win.close();
+              },
+              "editProfile",
+              [
+                {
+                  displayName : _this._displayName.getValue()
+                }
+              ]);
+          },
+          this);
+
+        // Add the Cancel button
+        cancel = new qx.ui.form.Button(this.tr("Cancel"));
+        cancel.setWidth(100);
+        cancel.setHeight(30);
+        hBox.add(cancel);
+
+        // Close the window if the cancel button is pressed
+        cancel.addListener(
+          "execute",
+          function(e)
+          {
+            win.close();
+          },
+          this);
+
+        // Add the button bar to the window
+        win.add(hBox);
+        
+        // We only want to create this window once.
+        this._win = win;
+      }
+      
+      // Show the window
+      this._win.show();
     }
   }
 });
