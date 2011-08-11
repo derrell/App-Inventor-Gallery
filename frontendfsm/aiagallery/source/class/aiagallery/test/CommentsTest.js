@@ -181,9 +181,9 @@ qx.Class.define("aiagallery.test.CommentsTest",
     "test: Retrieve comment with invalid appId" : function()
     {
       var             test;
-      var             validAppId = 101;
-      var             invalidAppId = "1";
-      
+      var             validAppId = 151;
+      var             invalidAppId = "101";
+    
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
 
