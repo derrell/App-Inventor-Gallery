@@ -151,6 +151,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
       case "appQuery":
       case "getAppInfo":
+      case "getAppListByList"
         return true;            // Anonymous access
       
       //
@@ -205,11 +206,18 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       //
       case "whoAmI":
         return true;            // Anonymous access
-
+        
+      //
+      // MSearch
+      //
+      case "keywordSearch"
+        return true;          // Anonymous access
+        
       default:
         // Do not allow access to unrecognized method names
         return false;
       }
+      
     },
 
 

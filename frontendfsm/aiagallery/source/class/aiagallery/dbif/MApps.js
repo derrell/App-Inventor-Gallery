@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Derrell Lipma
  * Copyright (c) 2011 Reed Spool
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -29,7 +29,12 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
+    
+    this.registerService("getAppListByList",
+                         this.getAppListByList,
+                         [ "uidArr", "requestedFields" ]);
 
+    
     this.registerService("getAppInfo",
                          this.getAppInfo,
                          [ "uid", "bStringize", "requestedFields" ]);
@@ -749,6 +754,65 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                      });
 
       return { apps : appList, categories : categoryNames };
+    },
+    
+    /**
+     * Get a list of Apps from a discrete list of App UIDs
+     * 
+     * @param uidArr {Array}
+     * An Array containing App UIDs which are to be exhanged for actual App Data
+     * 
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
+     * @return {Array}
+     *  An array of maps. Each map contains data about one of the Apps whose
+     *  UIDs were specified.
+     * 
+     */
+    getAppListByList : function( uidArr, requestedFields)
+    {
+      var             appList = [];
+      var             owners;
+      
+      uidArr.forEach(function(uid)
+          {
+            appList.push(rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                                 uid)[0]);
+          });
+      
+      // Manipulate each App individually
+      appList.forEach(
+        function(app)
+        {
+          // Issue a query for this visitor
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                       app.owner);
+
+          // Replace the (private) owner id with his display name
+          app.owner = owners[0].displayName;
+          
+          // If there were requested fields specified...
+          if (requestedFields)
+          {
+            // Send to the requestedFields function for removal and remapping
+            aiagallery.dbif.MApps._requestedFields(app, requestedFields);
+          }
+          
+        });
+
+      return appList;
     },
     
     /**

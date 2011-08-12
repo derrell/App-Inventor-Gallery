@@ -140,6 +140,28 @@ qx.Class.define("aiagallery.test.AppsTest",
       this.assert(typeof(appInfo["owner"]) === "undefined", 
                   "requested fields very successful");
       
+    },
+    
+    "test: MApps.getAppListByList()" : function()
+    {
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var appList = dbifSim.getAppListByList([105,107,120]);
+      console.log(appList);
+      
+      var someUID = parseInt(appList[0]["uid"], 10);
+      
+      
+      this.assert(someUID === 105 ||
+                  someUID === 107 || 
+                  someUID || 120,
+                  "appListByList gets correct result");
+      
+      this.assertEquals(3,
+                        appList.length,
+                       "appListByList gets correct # of results");
+      
     }
     
     
