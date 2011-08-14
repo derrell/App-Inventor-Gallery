@@ -106,8 +106,12 @@ qx.Class.define("aiagallery.main.WhoAmI",
       var control = this.getChildControl("permissions");
       if (control) 
       {
-        control.setValue("Permissions: " +
-                         (value.length === 0 ? "None" : value));
+        control.setValue((this.getIsAdmin()
+                          ? "Explicit permissions: " 
+                          : "Permissions: ") +
+                         (value.length === 0 
+                          ?  "None" 
+                          : value));
       }
     },
 
