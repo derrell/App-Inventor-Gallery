@@ -86,8 +86,15 @@ qx.Class.define("aiagallery.main.Gui",
         header.add(o, { flex : 1 });
 
         // Create a label to hold the user's login info and a logout button
-        this.whoAmI = new qx.ui.basic.Label("");
-        this.whoAmI.setRich(true);
+        if (false)
+        {
+          this.whoAmI = new qx.ui.basic.Label("");
+          this.whoAmI.setRich(true);
+        }
+        else
+        {
+          this.whoAmI = new aiagallery.main.WhoAmI();
+        }
         header.add(this.whoAmI);
 
         // Add a flexible spacer to take up the whole middle
@@ -147,28 +154,19 @@ qx.Class.define("aiagallery.main.Gui",
                 var             bAllowed;
                 var             moduleList;
                 var             module;
-                var             editProfile;
                 
-                // Temporary kludge to set the profile
+                // Create a global function accessible via <a href=
                 window.editProfile = function()
                 {
                   _this._editProfile();
                 };
 
-                _this.whoAmI.setValue(
-                  "<div style='font-weight:bold;'>" +
-                  "Welcome, " + 
-                  (e.isAdmin ? "administrator " : "") +
-                  e.email +
-                  " (" + 
-                  "<a href='javascript:editProfile();'>" +
-                  e.userId +
-                  "</a>)" +
-                  "<br />" +
-                  "Permissions: " + e.permissions.join(", ") +
-                  "</div>" +
-                  "<br />" +
-                  "<a href='" + e.logoutUrl + "'>Logout</a>");
+                // Set the header to display just-retrieved values
+                _this.whoAmI.setIsAdmin(e.isAdmin);
+                _this.whoAmI.setEmail(e.email);
+                _this.whoAmI.setDisplayName(e.userId);
+                _this.whoAmI.setPermissions(e.permissions.join(", "));
+                _this.whoAmI.setLogoutUrl(e.logoutUrl);
                 
                 qx.core.Init.getApplication().setUserData(
                   "permissions", e.permissions);
@@ -374,6 +372,7 @@ qx.Class.define("aiagallery.main.Gui",
       var             hBox;
       var             ok;
       var             cancel;
+      var             command;
   
       // Create a modal window for editing the profile
       if (! this._win)
@@ -401,14 +400,14 @@ qx.Class.define("aiagallery.main.Gui",
                       { row : 0, column : 0 });
 
         // Add the text field
-        this._displayName = new qx.ui.form.TextField();
-        _displayName.set(
+        win._displayName = new qx.ui.form.TextField();
+        win._displayName.set(
           {
             width  : 120,
             filter : /[a-zA-Z0-9 _-]/
           });
-        container.add(_displayName, { row : 0, column : 1 });
-
+        container.add(win._displayName, { row : 0, column : 1 });
+        
         // Create a horizontal box to hold the buttons
         hBox = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
@@ -420,7 +419,12 @@ qx.Class.define("aiagallery.main.Gui",
         ok.setWidth(100);
         ok.setHeight(30);
         hBox.add(ok);
-
+        
+        // Allow 'Enter' to confirm entry
+        command = new qx.ui.core.Command("Enter");
+        ok.setCommand(command);
+        
+        // When the Ok button is pressed, issue an editProfile request
         ok.addListener(
           "execute", 
           function(e)
@@ -428,6 +432,7 @@ qx.Class.define("aiagallery.main.Gui",
             var             rpc;
             var             _this = this;
 
+            // Get and configure a new RPC object
             rpc = new qx.io.remote.Rpc();
             rpc.set(
               {
@@ -436,17 +441,21 @@ qx.Class.define("aiagallery.main.Gui",
                 crossDomain : false,
                 serviceName : "aiagallery.features"
               });
+            
+            // Issue the request. When we get the result...
             rpc.callAsync(
               function(e)
               {
+                // Set the display name in the application header
+                _this.whoAmI.setDisplayName(win._displayName.getValue());
+                
+                // Close the window
                 win.close();
               },
               "editProfile",
-              [
-                {
-                  displayName : _this._displayName.getValue()
-                }
-              ]);
+              {
+                displayName : win._displayName.getValue()
+              });
           },
           this);
 
@@ -455,6 +464,10 @@ qx.Class.define("aiagallery.main.Gui",
         cancel.setWidth(100);
         cancel.setHeight(30);
         hBox.add(cancel);
+
+        // Allow 'Escape' to cancel
+        command = new qx.ui.core.Command("Esc");
+        cancel.setCommand(command);
 
         // Close the window if the cancel button is pressed
         cancel.addListener(
@@ -472,7 +485,14 @@ qx.Class.define("aiagallery.main.Gui",
         this._win = win;
       }
       
+      // Clear out the display name field
+      this._win._displayName.setValue("");
+                
+      // Set the focus to the display name field
+      this._win._displayName.focus();
+
       // Show the window
+      this._win.center();
       this._win.show();
     }
   }
