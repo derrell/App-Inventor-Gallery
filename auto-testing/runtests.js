@@ -52,8 +52,10 @@ cmd =
   "-m TESTRUNNER_VIEW:testrunner.view.Console" +
   "\n";
 runCommand("/usr/bin/python",
-           "./generate.py",
+           "/home/derrell/ME/qooxdoo.git/trunk/qooxdoo/tool/bin/generator.py",
            "test-source",
+           "-m",
+           "QOOXDOO_PATH:/home/derrell/ME/qooxdoo.git/trunk/qooxdoo",
            "-m",
            "TESTRUNNER_VIEW:testrunner.view.Console",
            opt);
