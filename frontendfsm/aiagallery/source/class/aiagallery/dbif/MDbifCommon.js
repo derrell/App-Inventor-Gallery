@@ -15,7 +15,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     aiagallery.dbif.MTags,
     aiagallery.dbif.MMobile,
     aiagallery.dbif.MComments,
-    aiagallery.dbif.MWhoAmI
+    aiagallery.dbif.MWhoAmI,
+    aiagallery.dbif.MSearch
   ],
   
   construct : function()
@@ -151,8 +152,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
       case "appQuery":
       case "getAppInfo":
-      case "getAppListByList"
-        return true;            // Anonymous access
+      case "getAppListByList":
+          return true;            // Anonymous access
       
       //
       // MComments
@@ -210,7 +211,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       //
       // MSearch
       //
-      case "keywordSearch"
+      case "keywordSearch":
         return true;          // Anonymous access
         
       default:
