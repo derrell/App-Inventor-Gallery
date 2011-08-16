@@ -159,7 +159,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       if (!commentObj.getBrandNew())
       {
         // That's an error
-        error.setCode("comment with that key already in use");
+        error.setCode(3);
         error.setMessage("Attempted to overwrite existing comment");
         return error;
       }
