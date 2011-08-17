@@ -32,8 +32,6 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
           userId :  "Billy The Kid"
         });
 
-      // Adding a bunch of Apps with various words in their text fields
-
       // Handcrafting a bunch of Apps with various words in their text fields
       var myApps = 
         [
@@ -74,6 +72,17 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
                      {
                          dbifSim.addOrEditApp(null, obj, error);
                      });
+
+      // Test with one word present in title of 1 app
+      queryResults = dbifSim.keywordSearch("mother", null, null, error);
+
+      // Ensure that an error was not returned
+      this.assert(queryResults !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+
+      this.assert(queryResults.length === 1,
+                  "Returned correct # results with 1 title keyword");
+
 
       // Test with one word present in 2 apps
       queryResults = dbifSim.keywordSearch("beautiful", null, null, error);

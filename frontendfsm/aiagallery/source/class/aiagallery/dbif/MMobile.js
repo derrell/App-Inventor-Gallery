@@ -42,8 +42,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         return this.__getAll(fields, error);
         
       case "search":
-        // Search for applications based on some criteria. Parameters are
-        // keywordString, offset, count, and sort order.
+        // Search for applications based on some criteria. Lone parameter is
+        // keywordString.
         return this.__getBySearch(fields, error);
         
       case "tag":
@@ -146,17 +146,13 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getBySearch : function(fields, error)
     {
-      var requiredParams = 5;
+      var requiredParams = 1;
       for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
       var keywordString = fields.shift();
-      var offset = fields.shift();
-      var count = fields.shift();
-      var order = fields.shift();
-      var field = fields.shift();
       
       // keyword is required.
       if (typeof keywordString !== "string")
@@ -165,22 +161,28 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         error.setMessage("No search terms given");
         return error;
       }
-      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
-      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
-      var orderTypeCheck = order === null || typeof order === "string";
-      var fieldTypeCheck = field === null || typeof field === "string";
       
-      if (!offsetTypeCheck || !countTypeCheck || !orderTypeCheck ||
-          !fieldTypeCheck)
+      // Requesting all fields except data URLs (source, apk, image1-3)
+      var requestedFields = 
       {
-        error.setCode(5);
-        error.setMessage("Malformed mobile request: Incorrect parameter type.");
-        return error;
-      }
-
-
-      //FIXME: Waiting for back-end implementation
-      return [];
+        owner              : "owner",
+        title              : "title",
+        description        : "description",
+        //FIXME: Uncomment next line when previous authors are implemented
+        //previousAuthors    : "previousAuthors",
+        tags               : "tags",
+        uploadTime         : "uploadTime",
+        creationTime       : "creationTime",
+        numLikes           : "numLikes",
+        numDownloads       : "numDownloads",
+        numViewed          : "numViewed",
+        numRootComments    : "numRootComments",
+        numComments        : "numComments",
+        status             : "status"
+      };
+    
+      // Use MSearch Mixin
+      return this.keywordSearch(keywordString, null, requestedFields, error);
     
     },
     
