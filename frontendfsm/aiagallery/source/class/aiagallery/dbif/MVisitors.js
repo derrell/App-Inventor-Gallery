@@ -43,6 +43,14 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
       
       var visitor = new aiagallery.dbif.ObjVisitors(userId);
      
+      if (qx.core.Environment.get("qx.debug"))
+      {
+        // Ensure that an error object is passed
+        qx.core.Assert.assertInstance(error,
+                                      rpcjs.rpc.error.Error,
+                                      "Need error object");
+      }
+
       // Was our userId faulty in some way?
       if (typeof visitor === "undefined" || 
           visitor === null ||
