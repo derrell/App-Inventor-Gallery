@@ -184,7 +184,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
 
       // Create a vertical box layout for the bottom pane
       vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
-      splitpane.add(vBox, 1);
+      splitpane.add(vBox, 2);
       
       // Display 
       gallery = new aiagallery.widget.virtual.Gallery();
