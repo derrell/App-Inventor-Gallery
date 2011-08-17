@@ -14,10 +14,14 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
   {
     "test: Keyword Search" : function()
     {
+      var queryResults;
       
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      
+      // We need an error object
+      var error = new rpcjs.rpc.error.Error("2.0");
       
       dbifSim.setWhoAmI(
         {
@@ -37,10 +41,12 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
             owner       : "billy@thekid.edu",
             description : "This one's beautiful",
             title       : "The Shooting Game",
-            tags        : ["shooter", "shooting", "game", "Games"]
+            tags        : ["shooter", "shooting", "game", "Games"],
+            source      : "somerandomstring"
           },
           
           {
+            source      : "somerandomstring",
             owner       : "billy@thekid.edu",
             description : "This one's sexy and beautiful",
             title       : "Your Mother Jokes",
@@ -48,6 +54,7 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
           },
 
           {
+            source      : "somerandomstring",
             owner       : "billy@thekid.edu",
             description : "This one's sexy",
             title       : "Laughapalooza",
@@ -55,6 +62,7 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
           },
             
           {
+            source      : "somerandomstring",
             owner       : "billy@thekid.edu",
             description : "This one's not interesting in any way",
             title       : "Microsoft Windows for Android",
@@ -64,11 +72,53 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
 
       myApps.forEach(function(obj)
                      {
-                       var somedata = dbifSim.addOrEditApp(null, obj);
-console.log(somedata);
+                         dbifSim.addOrEditApp(null, obj, error);
                      });
-      console.log("KeywordSearch: beautiful");
-      console.log(dbifSim.keywordSearch("beautiful"));
+
+      // Test with one word present in 2 apps
+      queryResults = dbifSim.keywordSearch("beautiful", null, null, error);
+
+      // Ensure that an error was not returned
+      this.assert(queryResults !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+
+      this.assert(queryResults.length === 2, "Returned correct # results with 1 keyword");
+
+      // Test with 2 words present in 1 app, each present in 4 total
+      queryResults = dbifSim.keywordSearch("this not", null, null, error);
+
+      // Ensure that an error was not returned
+      this.assert(queryResults !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assert(queryResults.length === 4, "Returned correct # results with 2 keywords");
+
+      // Test with 2 words present in 1 app, each present in 3 total
+      queryResults = dbifSim.keywordSearch("beautiful sexy", null, null, error);
+
+      // Ensure that an error was not returned
+      this.assert(queryResults !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assert(queryResults.length === 3, "Returned correct # results with 2 keywords");
+    
+      var firstResultDescription = queryResults[0]["description"];
+      var descSplit = firstResultDescription.split(" ");
+      
+      // First result should contain both keywords
+      this.assert(qx.lang.Array.contains(descSplit, "beautiful") &&
+                  qx.lang.Array.contains(descSplit, "sexy"),
+                  "Results ordered correctly for 2 keyword search");
+      
+      //Test with 1 word not present in any app
+      queryResults = dbifSim.keywordSearch("meowmeowmeowcatshisss", null, null, error);
+
+      // Ensure that an error was not returned
+      this.assert(queryResults !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assert(queryResults.length === 0, "Correctly returned zero results");
+      
     }
   }
 });  

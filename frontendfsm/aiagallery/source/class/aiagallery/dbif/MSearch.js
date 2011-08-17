@@ -62,9 +62,11 @@ qx.Mixin.define("aiagallery.dbif.MSearch",
       var criteriaChild;
       var searchResults;
       var uidArr = [];
-      var andQueryResults;
+      var queryResultsMap = {};
       var queryResult;
-      var individualQueryResults = [];
+      var allWordResults = [];
+      var otherResults = [];
+      var curUID;
       
       // Make sure there is at least 1 keyword given
       if (keywordString === null || typeof keywordString === "undefined" ||
@@ -79,56 +81,55 @@ qx.Mixin.define("aiagallery.dbif.MSearch",
       // all entries in lowercase
       keywordString = keywordString.toLowerCase();
            
+      // The keyword string is space delimited, let's tokenize
       keywordArr = keywordString.split(" ");
-
-      // Build the complex Criteria object
-      criteria = 
-        {
-          type    : "op",
-          method  : "and",
-          children : []
-        };
         
-      // Adding AND criteria for each word, and doing individual word query
+      // Doing individual word queries
       keywordArr.forEach(function(keyword)
         {
       
-          criteriaChild = 
+          criteria = 
             {
               type  : "element",
               field : "word",
               value : keyword
-              };
+            };
           
-          criteria.children.push(criteriaChild);
-              
           queryResult = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch",
-                                                criteriaChild);
+                                                criteria,
+                                                null);
           
-          // Collect all the single word queries
-          individualQueryResults.concat(queryResult);
-          
+          // Collect all the single word queries in a map
+          queryResult.forEach(function(obj)
+                              {
+                                if (typeof queryResultsMap[obj.appId] === "undefined")
+                                {
+                                  // First we create an array
+                                  queryResultsMap[obj.appId] = [];
+                                }
+                                // Push this keyword into the array
+                                queryResultsMap[obj.appId].push(keyword);
+                              });
         });
       
-      // Search for all keywords AND'd together
-      // That is, only return Apps which have all words.
-      andQueryResults = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch", 
-                                                criteria);
-
-      // Add the individual results to the end of the list that contains all
-      // words
-      andQueryResults.concat(individualQueryResults);
+      // All Apps which contained all keywords in the keyword string should come first
+      for (var curUID in queryResultsMap)
+      {
+        // So seperate those with all keywords and those without
+        if (queryResultsMap[curUID].length === keywordArr.length)
+        {
+          allWordResults.push(parseInt(curUID, 10));
+        }
+        else
+        {
+          otherResults.push(parseInt(curUID, 10));
+        }
+      }
       
-      // Make sure there are no duplicates
-      andQueryResults = qx.lang.Array.unique(andQueryResults);
-      
-      // Create a UID list to exchange for App Data objects
-      andQueryResults.forEach(function(searchObj)
-                              {
-                                uidArr.push(parseInt(searchObj.appId, 10));
-                              });
-
-      // Exchange array of UIDs for array of App Data objects using
+      // And place them in the proper order
+      uidArr = allWordResults.concat(otherResults);
+        
+      // Finally, exchange array of UIDs for array of App Data objects using
       // MApps.getAppListByList() and return that
       return this.getAppListByList(uidArr, requestedFields);
       

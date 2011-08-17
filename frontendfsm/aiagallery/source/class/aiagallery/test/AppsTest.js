@@ -19,15 +19,26 @@ qx.Class.define("aiagallery.test.AppsTest",
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+
+      // We need an error object
+      var error = new rpcjs.rpc.error.Error("2.0");
       
       // Adding then deleting an App to see it go smoothly.
       var myAppData = dbifSim.addOrEditApp(null, 
                                            {
                                              owner      : "me",
                                              description: 
-                                             "A bunch of Totally Awesome words"
-                                           });
-
+                                             "A bunch of Totally Awesome words",
+                                             title : "some title",
+                                             tags  : ["some tag"],
+                                             source : "somesource"
+                                           },
+                                          error);
+      
+      // Ensure that an error was not returned
+      this.assert(myAppData !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
       // Something was returned, and it has a new UID assigned
       this.assertObject(myAppData, "correctly adding app");
       this.assertInteger(myAppData.uid, "new app uid");
@@ -37,7 +48,6 @@ qx.Class.define("aiagallery.test.AppsTest",
                                                      myAppData.uid,
                                                      "description"]);
       
-      console.log( rpcjs.sim.Dbif.db);
       // Was this ObjSearch already in there?
       this.assertFalse(searchObj.getBrandNew(),
                        "Search object inserted correctly");
@@ -148,8 +158,6 @@ qx.Class.define("aiagallery.test.AppsTest",
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       var appList = dbifSim.getAppListByList([105,107,120]);
-      console.log(appList);
-      
       var someUID = parseInt(appList[0]["uid"], 10);
       
       
