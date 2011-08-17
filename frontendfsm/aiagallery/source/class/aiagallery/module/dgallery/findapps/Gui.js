@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -217,14 +218,26 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Store some attributes in it
       attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
       attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
+      attrSelect.add(new qx.ui.form.ListItem("Description", null,
+                                             "description"));
+      attrSelect.add(new qx.ui.form.ListItem("# Liked", null, "numLikes"));
+      attrSelect.add(new qx.ui.form.ListItem("# Downloaded", null,
+                                             "numDownloads"));
+      attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
+                                             "creationTime"));
+
+      
+      // Change qualifier choices when attribute is selected
       
       // Create the Qualifier Select Box
       var qualSelect = new qx.ui.form.SelectBox();
       
       // Store some qualifiers in it
-      // NOTE: unsure how to use model here, so using empty string
-      var myQual = new qx.ui.form.ListItem("is exactly", null, "") ;
-      qualSelect.add(myQual);
+      // NOTE: Attempting to use the model as a switch for which OP to use
+      qualSelect.add(new qx.ui.form.ListItem("is exactly", null, "="));
+      qualSelect.add(new qx.ui.form.ListItem("contains", null, "~"));
+      qualSelect.add(new qx.ui.form.ListItem("less than", null, "<"));
+      qualSelect.add(new qx.ui.form.ListItem("greater than", null, ">"));
       
       // Create the field for the value to compare against
       var valueField = new qx.ui.form.TextField();
