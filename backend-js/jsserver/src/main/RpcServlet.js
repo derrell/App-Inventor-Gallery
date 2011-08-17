@@ -100,6 +100,65 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
+  case "flushDB":               // flush the entire database
+    var             entities;
+
+    // AppData
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjAppData(entity.uid);
+        obj.removeSelf();
+      });
+
+    // Comments
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments");
+    entities.forEach(
+      function(entity)
+      {
+        var obj = 
+          new aiagallery.dbif.ObjComments([ entity.app, entity.treeId ]);
+        obj.removeSelf();
+      });
+
+    // Search
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch");
+    entities.forEach(
+      function(entity)
+      {
+        var obj = 
+          new aiagallery.dbif.ObjSearch([ 
+                                          entity.word,
+                                          entity.appId,
+                                          entity.appField
+                                        ]);
+        obj.removeSelf();
+      });
+
+    // Tags
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjTags(entity.value);
+        obj.removeSelf();
+      });
+
+    // Visitors
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjVisitors(entity.id);
+        obj.removeSelf();
+      });
+
+    break;
+
   case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
