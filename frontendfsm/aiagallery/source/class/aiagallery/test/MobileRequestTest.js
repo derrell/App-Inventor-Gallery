@@ -13,7 +13,149 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
 
   members :
   {
-    "test: Mobile Request Interface" : function()
+    "test: Mobile Request all" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+      
+      // testing all
+      mobileRequest = dbifSim.mobileRequest("all:0:1:asc:uid", error);
+      
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assertArray(mobileRequest, "mobile request all returns array");
+
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile all");
+
+    },
+    
+    "test: Mobile Request tag" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+
+      // testing tag
+      mobileRequest = dbifSim.mobileRequest("tag:Games:0:1", error);
+
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+
+      
+      this.assertArray(mobileRequest, "mobile request tag returns array");
+      
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile tag");
+      
+    },
+    
+    "test: Mobile Request featured" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+
+      // testing featured
+      mobileRequest = dbifSim.mobileRequest("featured:0:1:desc:uid", error);
+      
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assertArray(mobileRequest, "mobile request featured returns array");
+      
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile featured has uid");
+      
+    },
+    
+    "test: Mobile Request developer" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      var developer;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+      
+      // testing by_developer
+      mobileRequest = dbifSim.mobileRequest("by_developer:Joe Blow:0:1",
+                                           error);
+
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+
+      
+      this.assertArray(mobileRequest, "mobile request developer returns array");
+      
+      this.assertKeyInMap( "uid",
+                           mobileRequest[0],
+                           "apps retrieved from mobile developer");
+    },
+    
+    "test: Mobile Request getinfo" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      var uid;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+
+      // testing getinfo
+     
+      // Need an app uid
+      uid = dbifSim.mobileRequest("featured:0:1:desc:uid",
+                                 error)[0]["uid"];
+
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+     
+      mobileRequest = dbifSim.mobileRequest("getinfo:"+uid, error);
+      
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      this.assertObject(mobileRequest, "mobile request getinfo returns object");
+      
+      this.assertKeyInMap( "owner",
+                           mobileRequest,
+                           "apps retrieved from mobile getinfo");
+    },
+    
+    "test: Mobile Request search" : function()
     {
       
       // Get access to the RPC implementations. This includes the mixins for
@@ -23,54 +165,117 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       var uid;
       var developer;
       
-      // testing all
-      mobileRequest = dbifSim.mobileRequest("all:0:1:asc:uid");
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
       
-      this.assertArray(mobileRequest, "mobile request all returns array");
+      //FIXXXXX
+            
+      dbifSim.setWhoAmI(
+        {
+          email : "billy@thekid.edu",
+          isAdmin: false,
+          logoutUrl: "undefined",
+          permissions: [],
+          userId :  "Billy The Kid"
+        });
 
-      this.assertKeyInMap( "uid",
-                           mobileRequest[0],
-                           "apps retrieved from mobile all");
-      // testing tag
-      mobileRequest = dbifSim.mobileRequest("tag:Games:0:1");
-      
-      this.assertArray(mobileRequest, "mobile request tag returns array");
-      
-      this.assertKeyInMap( "uid",
-                           mobileRequest[0],
-                           "apps retrieved from mobile tag");
-      
-      // testing featured
-      mobileRequest = dbifSim.mobileRequest("featured:0:1:desc:uid");
-      
-      this.assertArray(mobileRequest, "mobile request featured returns array");
-      
-      this.assertKeyInMap( "uid",
-                           mobileRequest[0],
-                           "apps retrieved from mobile featured has uid");
-      
-      developer = mobileRequest[0]["owner"];
+      // Handcrafting a bunch of Apps with various words in their text fields
+      var myApps = 
+        [
+          {
+            owner       : "billy@thekid.edu",
+            description : "This one's beautiful",
+            title       : "The Shooting Game",
+            tags        : ["shooter", "shooting", "game", "Games"],
+            source      : "somerandomstring"
+          },
+          
+          {
+            source      : "somerandomstring",
+            owner       : "billy@thekid.edu",
+            description : "This one's scoop and poop",
+            title       : "Your Mother Jokes",
+            tags        : ["funny"]
+          },
 
-      // testing by_developer
-      mobileRequest = dbifSim.mobileRequest("by_developer:"+developer+":0:1");
+          {
+            source      : "somerandomstring",
+            owner       : "billy@thekid.edu",
+            description : "This one's sexy",
+            title       : "Laughapalooza",
+            tags        : ["Educational"]
+          },
+            
+          {
+            source      : "somerandomstring",
+            owner       : "billy@thekid.edu",
+            description : "This one's scoop interesting in any way",
+            title       : "Microsoft Windows for Android",
+            tags        : ["Development", "broken"]
+          }
+        ];
+
+      myApps.forEach(function(obj)
+                     {
+                         dbifSim.addOrEditApp(null, obj, error);
+                     });
+
+
       
-      this.assertArray(mobileRequest, "mobile request developer returns array");
+      mobileRequest = dbifSim.mobileRequest("search:poop scoop", error);
+
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
       
-      this.assertKeyInMap( "uid",
-                           mobileRequest[0],
-                           "apps retrieved from mobile developer");
-     
-      // testing getinfo
-     
-      uid = mobileRequest[0].uid
+      this.assertArray(mobileRequest, "mobile request getinfo returns array");
       
-      mobileRequest = dbifSim.mobileRequest("getinfo:"+uid);
+      this.assert( "This one's scoop and poop" ===
+                   mobileRequest[0]["description"],
+                   "First result search correct");
       
-      this.assertObject(mobileRequest, "mobile request getinfo returns array");
+      this.assert( "This one's scoop interesting in any way" ===
+                   mobileRequest[1]["description"],
+                   "Second result search correct");
       
-      this.assertKeyInMap( "owner",
-                           mobileRequest,
-                           "apps retrieved from mobile getinfo");
+      mobileRequest = dbifSim.mobileRequest("search:Laughapalooza", error);
+
+      // Ensure that an error was not returned
+      this.assert(mobileRequest !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+
+      this.assertArray(mobileRequest, "mobile request getinfo returns array");
+
+      this.assert( "This one's sexy" ===
+                   mobileRequest[0]["description"],
+                   "third result search correct");
+      
+      mobileRequest = dbifSim.mobileRequest("search:someinnaneword", error);
+      
+      this.assert( mobileRequest.length === 0 , "bad search query returned"
+                                                + " zero results");
+
+    },
+    
+    
+    "test: Mobile Request bad parameters fail" : function()
+    {
+      
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var mobileRequest;
+      
+      // Need an error object to call RPCs with
+      var error = new rpcjs.rpc.error.Error("2.0");
+
+      // testing bad parameter type
+      
+      mobileRequest = dbifSim.mobileRequest("all:uid", error);
+      
+      // Ensure that an error was returned
+      this.assert(mobileRequest === error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
     }
   }
 });

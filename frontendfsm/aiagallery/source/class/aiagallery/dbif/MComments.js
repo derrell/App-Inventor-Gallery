@@ -82,7 +82,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       whoami = this.getWhoAmI();
       
       // Is text empty or just whitespace?
-      if ( text === null || text === "" || text.match(/.*/gi) === null)
+      if ( text === null || text === "" || text.match(/\S/gi) === null)
       {
         // Yes, discard the trash and let the user know.
         error.setCode(3);
@@ -159,7 +159,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       if (!commentObj.getBrandNew())
       {
         // That's an error
-        error.setCode("comment with that key already in use");
+        error.setCode(3);
         error.setMessage("Attempted to overwrite existing comment");
         return error;
       }
@@ -168,7 +168,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObjData = commentObj.getData();
       
       // Set up all the rest of the data
-      commentObjData.visitor     = whoami.userId;
+      commentObjData.visitor     = whoami.email;
       commentObjData.text        = text;
 
       // Save this in the database
@@ -276,6 +276,11 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                         },
                                         resultCriteria);
 
+      commentList.forEach(function(obj)
+        {
+          obj.visitor = aiagallery.dbif.MVisitors._getDisplayName(obj.visitor);
+        });
+      
       return commentList;
     },
    

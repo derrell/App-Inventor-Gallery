@@ -19,13 +19,49 @@ qx.Class.define("aiagallery.test.AppsTest",
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+
+      // We need an error object
+      var error = new rpcjs.rpc.error.Error("2.0");
       
       // Adding then deleting an App to see it go smoothly.
-      var myAppData = dbifSim.addOrEditApp(null, {owner: "hi"});
-      var myAppInfo;
-      this.assertInstance(myAppData, Object, "correctly adding app");
+      var myAppData = dbifSim.addOrEditApp(null, 
+                                           {
+                                             owner      : "me",
+                                             description: 
+                                             "A bunch of Totally Awesome words",
+                                             title : "some title",
+                                             tags  : ["some tag"],
+                                             source : "somesource"
+                                           },
+                                          error);
+      
+      // Ensure that an error was not returned
+      this.assert(myAppData !== error,
+                  "Error: " + error.getCode() + ": " + error.getMessage());
+      
+      // Something was returned, and it has a new UID assigned
+      this.assertObject(myAppData, "correctly adding app");
       this.assertInteger(myAppData.uid, "new app uid");
+      
+      // Check that ObjSearch's were correctly created
+      var searchObj = new aiagallery.dbif.ObjSearch(["awesome",
+                                                     myAppData.uid,
+                                                     "description"]);
+      
+      // Was this ObjSearch already in there?
+      this.assertFalse(searchObj.getBrandNew(),
+                       "Search object inserted correctly");
+
       this.assert(dbifSim.deleteApp(myAppData.uid), "removing app");
+      
+      // Was the ObjSearch correctly cleared?
+      var searchObj = new aiagallery.dbif.ObjSearch(["awesome",
+                                                     myAppData.uid,
+                                                     "description"]);
+      // Now this should be "brand new", because it was deleted w/ the app
+      this.assert(searchObj.getBrandNew(),
+                  "Search objects deleted correctly");
+      
     },
     
     "test: MApps.getAppListAll()" : function()
@@ -73,7 +109,8 @@ qx.Class.define("aiagallery.test.AppsTest",
       
       aiagallery.dbif.MApps._requestedFields(myApp, requestedFields);
       
-      this.assertJsonEquals(requestedFields, requestedFieldsCopy, "requestedFields parameter unmutated");
+      this.assertJsonEquals(requestedFields, requestedFieldsCopy, 
+                            "requestedFields parameter unmutated");
       this.assertJsonEquals(myApp, expectedResult, "requested fields");
     },
     
@@ -83,6 +120,13 @@ qx.Class.define("aiagallery.test.AppsTest",
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
+      dbifSim.setWhoAmI(
+        {
+          email     : "joe@blow.com",
+          userId    : "Joe Blow",
+          isAdmin   : false
+        });
+
       // Adding comment to app.
       dbifSim.addComment(105, "I'm getting very test-y right now", null);
             
@@ -103,7 +147,28 @@ qx.Class.define("aiagallery.test.AppsTest",
       this.assertArray(appInfo["comments"], "comments returned correctly");
       
       this.assertKeyInMap("author", appInfo, "requested fields successful");
-      this.assert(typeof(appInfo["owner"]) === "undefined", "requested fields very successful");
+      this.assert(typeof(appInfo["owner"]) === "undefined", 
+                  "requested fields very successful");
+      
+    },
+    
+    "test: MApps.getAppListByList()" : function()
+    {
+      // Get access to the RPC implementations. This includes the mixins for
+      // all RPCs.
+      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
+      var appList = dbifSim.getAppListByList([105,107,120]);
+      var someUID = parseInt(appList[0]["uid"], 10);
+      
+      
+      this.assert(someUID === 105 ||
+                  someUID === 107 || 
+                  someUID || 120,
+                  "appListByList gets correct result");
+      
+      this.assertEquals(3,
+                        appList.length,
+                       "appListByList gets correct # of results");
       
     }
     

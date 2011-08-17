@@ -13,20 +13,37 @@ qx.Class.define("aiagallery.test.VisitorsTest",
 
   members :
   {
-/*
+
     "test: Owner Id and Display Name exchange" : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
-      console.log(dbifSim.whoAmI());
-      console.log(dbifSim.__whoAmI);
+      dbifSim.setWhoAmI(
+        {
+          email     : "joe@blow.com",
+          userId    : "Joe Blow",
+          isAdmin   : false
+        });
       
-      // THIS TEST DOES NOTHING
-      this.assertEquals("a valid test", "a test of nothing");
+      var whoAmI = dbifSim.whoAmI();
+
+      // We need an error object
+      var error = new rpcjs.rpc.error.Error("2.0");
+      
+      var requestEmail = aiagallery.dbif.MVisitors._getVisitorId(whoAmI.userId,
+                                                                error);
+
+      var requestDisplayName = aiagallery.dbif.MVisitors._getDisplayName(
+        whoAmI.email, error);
+
+      this.assertEquals(whoAmI.email, requestEmail, "Proper email returned");
+
+      this.assertEquals(whoAmI.userId, requestDisplayName, "display name");
+
     },
-*/
+
     
     "test: edit profile with displayName" : function()
     {

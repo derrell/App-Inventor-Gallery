@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
  * Copyright (c) 2011 Reed Spool
+ * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
@@ -29,7 +30,12 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
+    
+    this.registerService("getAppListByList",
+                         this.getAppListByList,
+                         [ "uidArr", "requestedFields" ]);
 
+    
     this.registerService("getAppInfo",
                          this.getAppInfo,
                          [ "uid", "bStringize", "requestedFields" ]);
@@ -111,6 +117,104 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           delete app[field];
         }
       }
+    },
+    
+    /**
+     * Add or confirm existence of each word in each field of given App Data
+     * 
+     *@param dataObj {Object}
+     *  The result of getData() on the app object. Contains all the info in the
+     *  database recorded for this App
+     * 
+     */
+    _populateSearch : function(dataObj)
+    {
+      var appDataField;
+      var wordsToAdd;
+      var searchObj;
+      var appId = dataObj["uid"];
+      
+      for (appDataField in dataObj)
+      {
+        // Go through each field in the App Data Object
+        switch (appDataField)
+        {
+        // If it's one of the text fields...
+        case "title":
+        case "description":
+          // Split up the words and...
+          wordsToAdd = dataObj[appDataField].split(" ");
+          wordsToAdd.forEach(function(word)
+              {
+                // Make sure to only add lower case words to the search
+                // database
+                var wordLC = word.toLowerCase();
+                
+                // If the word is a stop word, discard it
+                if (qx.lang.Array.contains(aiagallery.dbif.MSearch.stopWordArr,
+                                           word))
+                {
+                  return;
+                }
+
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch([wordLC,
+                                                          appId,
+                                                         appDataField]);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+
+        case "tags":
+          wordsToAdd = dataObj[appDataField];
+          wordsToAdd.forEach(function(word)
+              {
+                
+                // Make sure to only add lower case words to the search database
+                var wordLC = word.toLowerCase();
+                
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch([wordLC,
+                                                          appId,
+                                                         appDataField]);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+          
+        }
+      }
+    },
+    
+    /**
+     * Ensure that there are no Search records from App with this uid
+     * 
+     *@param uid {Integer}
+     * This is the app's uid whose Search records are to be wiped
+     */
+    _removeAppFromSearch : function(uid)
+    {
+      var results;
+      var resultObj;
+      var searchObj;
+      
+      // Get all Search Objects with this uid then...
+      results = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch",
+                                        {
+                                          type : "element",
+                                          field: "appId",
+                                          value: uid
+                                        },
+                                       null);
+      // Remove every record found
+      results.forEach(function(obj)
+                      {
+                        searchObj = new aiagallery.dbif.ObjSearch([obj["word"],
+                                                      obj["appId"],
+                                                      obj["appField"]]);
+                        searchObj.removeSelf();
+                      });
     }
   },
   
@@ -300,6 +404,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save this record in the database
       appObj.put();
       
+      // Add all words in text fields to word Search record
+      aiagallery.dbif.MApps._populateSearch(appObj.getData());
+      
       return appObj.getData();  // This includes newly-created key (if adding)
     },
     
@@ -364,6 +471,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       // Delete the app
       appObj.removeSelf();
+      
+      aiagallery.dbif.MApps._removeAppFromSearch(uid);
       
       // We were successful
       return true;
@@ -657,6 +766,65 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                                      });
 
       return { apps : appList, categories : categoryNames };
+    },
+    
+    /**
+     * Get a list of Apps from a discrete list of App UIDs
+     * 
+     * @param uidArr {Array}
+     * An Array containing App UIDs which are to be exhanged for actual App Data
+     * 
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
+     * @return {Array}
+     *  An array of maps. Each map contains data about one of the Apps whose
+     *  UIDs were specified.
+     * 
+     */
+    getAppListByList : function( uidArr, requestedFields)
+    {
+      var             appList = [];
+      var             owners;
+      
+      uidArr.forEach(function(uid)
+          {
+            appList.push(rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                                 uid)[0]);
+          });
+      
+      // Manipulate each App individually
+      appList.forEach(
+        function(app)
+        {
+          // Issue a query for this visitor
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                       app.owner);
+
+          // Replace the (private) owner id with his display name
+          app.owner = owners[0].displayName;
+          
+          // If there were requested fields specified...
+          if (requestedFields)
+          {
+            // Send to the requestedFields function for removal and remapping
+            aiagallery.dbif.MApps._requestedFields(app, requestedFields);
+          }
+          
+        });
+
+      return appList;
     },
     
     /**
