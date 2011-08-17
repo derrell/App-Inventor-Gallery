@@ -82,7 +82,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
       this.assert(queryResults !== error,
                   "Error: " + error.getCode() + ": " + error.getMessage());
 
-      this.assert(queryResults.length === 2, "Returned correct # results with 1 keyword");
+      this.assert(queryResults.length === 2,
+                  "Returned correct # results with 1 keyword");
 
       // Test with 2 words present in 1 app, each present in 4 total
       queryResults = dbifSim.keywordSearch("this not", null, null, error);
@@ -91,7 +92,9 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
       this.assert(queryResults !== error,
                   "Error: " + error.getCode() + ": " + error.getMessage());
       
-      this.assert(queryResults.length === 4, "Returned correct # results with 2 keywords");
+      this.assert(queryResults.length === 0,
+                  "Should fail to return anything because both words are" +
+                  " stop words");
 
       // Test with 2 words present in 1 app, each present in 3 total
       queryResults = dbifSim.keywordSearch("beautiful sexy", null, null, error);
@@ -100,7 +103,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
       this.assert(queryResults !== error,
                   "Error: " + error.getCode() + ": " + error.getMessage());
       
-      this.assert(queryResults.length === 3, "Returned correct # results with 2 keywords");
+      this.assert(queryResults.length === 3,
+                  "Returned correct # results with 2 keywords");
     
       var firstResultDescription = queryResults[0]["description"];
       var descSplit = firstResultDescription.split(" ");
@@ -111,7 +115,10 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
                   "Results ordered correctly for 2 keyword search");
       
       //Test with 1 word not present in any app
-      queryResults = dbifSim.keywordSearch("meowmeowmeowcatshisss", null, null, error);
+      queryResults = dbifSim.keywordSearch("meowmeowmeowcatshisss",
+                                           null,
+                                           null,
+                                           error);
 
       // Ensure that an error was not returned
       this.assert(queryResults !== error,

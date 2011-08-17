@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2011 Derrell Lipma
  * Copyright (c) 2011 Reed Spool
+ * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
@@ -148,6 +149,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                 // Make sure to only add lower case words to the search
                 // database
                 var wordLC = word.toLowerCase();
+                
+                // If the word is a stop word, discard it
+                if (qx.lang.Array.contains(aiagallery.dbif.MSearch.stopWordArr,
+                                           word))
+                {
+                  return;
+                }
 
                 // Add each one to the db                
                 searchObj = new aiagallery.dbif.ObjSearch([wordLC,
