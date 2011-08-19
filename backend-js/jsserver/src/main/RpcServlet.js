@@ -75,6 +75,7 @@ function doPost(request, response)
  */
 function doGet(request, response)
 {
+  var             dbif;
   var             entry;
   var             entity;
   var             queryString = request.getQueryString();
@@ -102,6 +103,19 @@ function doGet(request, response)
   {
   case "flushDB":               // flush the entire database
     var             entities;
+
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
 
     // AppData
     entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData");
@@ -163,6 +177,19 @@ function doGet(request, response)
     //
     // Add the simulation data to the App Engine database
     //
+
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
     Db = aiagallery.dbif.MSimData.Db;
@@ -228,6 +255,19 @@ function doGet(request, response)
     //
     // Remove ALL data sitting in simulation database.
     //
+
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
     Db = aiagallery.dbif.MSimData.Db;
