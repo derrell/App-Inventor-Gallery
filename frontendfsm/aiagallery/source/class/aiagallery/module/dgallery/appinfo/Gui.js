@@ -137,6 +137,111 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       switch(requestType)
       {
       case "getAppInfo":
+  
+        var                 vboxLeft;
+        var                 vboxRight;
+        var                 hbox;
+
+        hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+              
+        vboxLeft = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        vboxLeft.setBackgroundColor("#ff0000");
+        hbox.add(vboxLeft, { flex : 1 });
+
+        vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        vboxRight.setBackgroundColor("#00ff00");
+        hbox.add(vboxRight);
+
+        var o = new qx.ui.core.Widget();
+        o.set(
+          {
+            backgroundColor : "#0000ff"
+          });
+        vboxLeft.add(o);
+            
+        var o = new qx.ui.core.Widget();
+        o.set(
+          {
+            minWidth : 150,
+            width : 150
+          });
+        vboxRight.add(o);
+        
+        canvas.setLayout(new qx.ui.layout.Canvas());
+        canvas.add(hbox, { edge : 10 } ); 
+        /*
+        var                 vboxLeft; 
+        var                 vboxRight;
+        var                 hbox;
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+        
+        // Create a hbox container to outline the look of the page.
+        // This will contain 2 vboxes.
+        hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+        
+        // Create a vbox for the left of the display. 
+        // This vbox will hold the app title, images, actions, and comments
+        // in a vertical manner in that order.
+        vboxLeft = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+  
+        // Create a vbox for the right of the display.
+        // This vbox will hold the download link, description, tags, 
+        // external link, and similar projects elements
+        vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+
+        // Add a groupbox with the application title. This will 
+        // store the images related to the app and allow cycling
+        var imageGroupBox = new qx.ui.groupbox.GroupBox(result.title);
+        
+        // Add an image to the imageGroupBox
+        imageGroupBox.add(new qx.ui.basic.Image(result.image1));
+        
+        // Add this groupbox to the left vbox
+        vboxLeft.add(imageGroupBox);
+
+        // Add a groupbox entitled actions
+        // This will be where people can "like", "bookmark", "flag", or
+        // add it to a "collection"
+        var actionGroupBox = new qx.ui.groupbox.GroupBox("Actions");
+
+        actionGroupBox.add(new qx.ui.basic.Label("Love it!"));
+        actionGroupBox.add(new qx.ui.basic.Label("Favorite?"));
+        actionGroupBox.add(new qx.ui.basic.Label("Flag as bad?"));
+        actionGroupBox.add(new qx.ui.basic.Label("Add to a collection"));
+
+        // Add the actions groupbox to the left side of the display
+        vboxLeft.add(actionGroupBox);
+
+        // Add a groupbox entitled Comments
+        var commentsGroupBox = new qx.ui.groupbox.GroupBox("Comments");
+
+        //FILLMEIN: Load comments here
+  
+        // Add the comments to the left display
+        vboxLeft.add(commentsGroupBox);
+  
+        // Add the left display to the canvas's hbox
+        hbox.add(vboxLeft);
+
+        // Build the right display
+        
+        // Add a groupbox entitled download
+        var downloadGroupBox = new qx.ui.groupbox.GroupBox("Download");
+
+        // Leave it empty for now
+        
+        // Add it to the right display
+        vboxRight.add(downloadGroupBox);
+
+        // Add the right display to the canvas's hbox
+        hbox.add(vboxRight);
+
+        canvas.setLayout(new qx.ui.layout.Canvas());
+        canvas.add(hbox);
+        */
+
+        /*
         var             o;
         var             groupbox;
         var             appInfoContainer;
@@ -298,7 +403,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             appInfoContainer.add(new qx.ui.basic.Label(field.data + ""),
                                  { row : field.row, column : 1, colSpan : 2 });
           });
-        
+        */
         break;
         
       case "addComment":
@@ -320,7 +425,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var hbox;
         var vbox2;
         var label2;
-
+        var label;
         ty = this.self(arguments).typeOf(result);
 
         // Adds the new comment to the GUI
