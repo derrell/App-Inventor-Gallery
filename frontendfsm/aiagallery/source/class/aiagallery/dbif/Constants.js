@@ -73,7 +73,7 @@ qx.Class.define("aiagallery.dbif.Constants",
       //
       "addOrEditVisitor" : "Add and edit visitors",
       "deleteVisitor"    : "Delete visitors",
-      "getVisitorList"   : "Retrieve list of visitors"
+      "getVisitorList"   : "Retrieve list of visitors",
       
       //
       // MWhoAmI
@@ -81,6 +81,11 @@ qx.Class.define("aiagallery.dbif.Constants",
       /* Anonymous access...
       "whoAmI" : "Identify the current user id and permissions"
        */
+
+      //
+      // MLikes
+      //
+      "likesPlusOne"     : "Like an app"
     }
   }
 });
