@@ -341,13 +341,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             label.set(
               {
                 rich : true,
-                wrap : true
+                wrap : true,
+                selectable: true // Allow user to select text
               });
             label2 = new qx.ui.basic.Label("   posted: " + commentTime);
             label2.set(
               {
                 rich : true,
-                wrap : true
+                wrap : true,
+                selectable: true // Allow user to select text
               });
             hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
             vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
@@ -409,13 +411,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                 label.set(
                   {
                     rich : true,
-                    wrap : true
+                    wrap : true,
+                    selectable: true // Allow user to select text
                   });
                 label2 = new qx.ui.basic.Label("   posted: " + commentTime);
                 label2.set(
                   {
                     rich : true,
-                    wrap : true
+                    wrap : true,
+                    selectable: true // Allow user to select text
                   });
                 hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
                 vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
