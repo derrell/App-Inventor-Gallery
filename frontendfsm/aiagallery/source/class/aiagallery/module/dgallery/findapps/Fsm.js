@@ -353,57 +353,74 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                 criterium = 
                   {
                     type  : "element",
-                    field : myAttr
+                    field : null
                   };
                 
-                // Value needs to be of the correct type per the field being
-                // queried on, but everything comes in as text
+                // Pick the appropriate filterOp, 
                 switch (myAttr)
                 {
-                  
-                case "tags":
-                case "title":
-                case "creationTime":
-                case "description":
-                  criterium["value"] = myVal;
-                  break;
-
-                case "numLikes":
-                case "numDownloads":
-                  criterium["value"] = parseInt(myVal, 10);
+                case "likesGT":
+                  criterium["filterOp"] = ">";
                   break;
                   
-
-                }
-              
-                // Use the qualifier selection's model to determine what
-                // filterOp should be used
-                switch (myQual)
-                {
-                case "=":
-                  // use default "="
-                  break;
-
-                case "~":    
-                  
-                  // NEEDS TO RUN SEPARATE QUERY FOR CONTAINS
-                  break;
-                  
-                case "<":
+                case "likesLT":
                   criterium["filterOp"] = "<";
                   break;
                   
-                case ">":
+                case "likesEQ":             
+                  // use default "=" filterOP
+                  break;
+                                    
+                case "downloadsGT":
                   criterium["filterOp"] = ">";
                   break;
+                                    
+                case "downloadsLT":
+                  criterium["filterOp"] = "<";
+                  break;
+                                    
+                case "downloadsEQ":         
+                  // use default "=" filterOp
+                  break;
                 }
-              
-                // Add it to the list of criteria being ANDed
-                criteria.children.push(criterium);
                 
+                // Value needs to be of the correct type per the field being
+                // queried on, but everything comes in as text
+                // Also set up criterium.field correctly
+                switch (myAttr)
+                {
+                  // These are keyword search items, and will not set
+                  // criterium.field, thus won't be added to the query
+                case "tags":
+                case "title":
+                case "description":
+                  keywordString = keywordString + " " + myVal;
+                  break;
+
+                case "likesGT":
+                case "likesLT":
+                case "likesEQ":
+                  criterium["field"] = "numLikes";
+                  criterium["value"] = parseInt(myVal, 10);
+                  break;
+                  
+                case "downloadsGT":
+                case "downloadsLT":
+                case "downloadsEQ":
+                  criterium["field"] = "numDownloads";
+                  criterium["value"] = parseInt(myVal, 10);
+                  break;
+                }
+                
+                // If this is a search criteria, not a keyword search item...
+                if (criterium["field"] !== null)
+                {
+                  // Add it to the list of criteria being ANDed
+                  criteria.children.push(criterium);
+                }
               }
             });
-
+          
           // Issue the remote procedure call to execute the query
           request =
             this.callRpc(fsm,
@@ -411,21 +428,21 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                          "intersectKeywordAndQuery",
                          [{
                            criteria : criteria,
-                           keywordString : "description",
+                           keywordString : keywordString,
                            requestedFields : 
-                           // Requested fields and the return field name
-                           {
-                             uid    : "uid",
-                             title  : "label", // remap name for Gallery
-                             image1 : "icon",  // remap name for Gallery
-                             tags   : "tags"
-                           },
+                             // Requested fields and the return field name
+                             {
+                               uid    : "uid",
+                               title  : "label", // remap name for Gallery
+                               image1 : "icon",  // remap name for Gallery
+                               tags   : "tags"
+                             },
                            queryFields : null // not yet implemented
                          }]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "appQuery");
+          request.setUserData("requestType", "intersectKeywordAndQuery");
           
           // And where that request came from.
           request.setUserData("querySource", friendly);

@@ -231,10 +231,14 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
                                              "likesGT"));
       attrSelect.add(new qx.ui.form.ListItem("Liked less than", null,
                                              "likesLT"));
+      attrSelect.add(new qx.ui.form.ListItem("Liked exactly", null,
+                                             "likesEQ"));
       attrSelect.add(new qx.ui.form.ListItem("Downloaded more than", null,
                                              "downloadsGT"));
       attrSelect.add(new qx.ui.form.ListItem("Downloaded less than", null,
                                              "downloadsLT"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloaded exactly", null,
+                                             "downloadsEQ"));
       
       //attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
       //"creationTime"));

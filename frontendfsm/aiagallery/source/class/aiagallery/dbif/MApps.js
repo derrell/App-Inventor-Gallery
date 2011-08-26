@@ -807,7 +807,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var               appQueryResults;
       var               appQueryArr;
       var               intersectionArr = [];
-      
+                                            
       
       // Perform appQuery first, using supplied criteria
       appQueryResults = this.appQuery(queryArgs["criteria"],
@@ -826,6 +826,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       
       keywordString = queryArgs["keywordString"];
       
+      
+      console.log("keyword at MApps.intersect:" ,keywordString);
+      
       // If there was no keyword string provided
       if (keywordString === null || typeof keywordString === "undefined" ||
           keywordString === "")
@@ -842,11 +845,20 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // If there was a problem
       if (keywordSearchResults === error)
       {
+      console.log("results of keyword search" , keywordSearchResults);
+      
+
         // Propegate the failure
         return error;
       }
       
-      // Perform intersection operation
+      // If there were no keyword search results, then there is no intersection
+      if (keywordSearchResults.length === 0)
+      {
+        return [];
+      }
+      
+      // Perform intersection operation            
       keywordSearchResults.forEach(function(appObj)
                           {
                             if (qx.lang.Array.contains(appQueryArr, appObj))
