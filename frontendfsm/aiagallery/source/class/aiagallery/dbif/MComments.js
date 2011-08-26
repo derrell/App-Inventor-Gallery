@@ -174,6 +174,9 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       // Save this in the database
       commentObj.put();
 
+      // Replace the visitor id with his display name.
+      commentObjData.visitor     = whoami.userId;
+      
       // This includes newly-created key
       return commentObjData;  
     },
@@ -243,11 +246,19 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   An integer value > 0 indicating the maximum number of records to return
      *   in the result set.
      * 
+     * @param error {rpcjs.rpc.error.Error}
+     *   All RPCs are passed, as their final argument, an error object. Most
+     *   don't use it, but this one does. If the application being requested
+     *   is not found (which, since the uid of the specific application is
+     *   provided as a parameter, likely means that it was just deleted), an
+     *   error is generated back to the client by setting the code and message
+     *   in this object.
+     * 
      * @return {Array}
      *   An array containing all of the comments related to this app
      *   
      */
-    getComments : function(appId, offset, limit)
+    getComments : function(appId, offset, limit, error)
     {
       var             commentList;
       var             resultCriteria = [];
@@ -276,10 +287,26 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                         },
                                         resultCriteria);
 
-      commentList.forEach(function(obj)
-        {
-          obj.visitor = aiagallery.dbif.MVisitors._getDisplayName(obj.visitor);
-        });
+      try
+      {
+        commentList.forEach(function(obj)
+          {
+            // Replace this owner with his display name
+            obj.visitor = 
+              aiagallery.dbif.MVisitors._getDisplayName(obj.visitor, error);
+            
+            // Did we fail to find this owner?
+            if (obj.visitor === error)
+            {
+              // Yup. Abort the request.
+              throw error;
+            }
+          });
+      }
+      catch(error)
+      {
+        return error;
+      }
       
       return commentList;
     },

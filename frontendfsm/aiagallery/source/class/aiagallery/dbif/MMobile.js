@@ -234,10 +234,14 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       {
         results.forEach(function(obj)
         {
-          obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
-                                                                  error);
+          // Replace this owner with his display name
+          obj["owner"] =
+            aiagallery.dbif.MVisitors._getDisplayName(obj["owner"], error);
+
+          // Did we fail to find this owner?
           if (obj["owner"] === error)
           {
+            // Yup. Abort the request.
             throw error;
           }
         });

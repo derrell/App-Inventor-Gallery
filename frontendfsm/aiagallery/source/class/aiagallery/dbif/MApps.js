@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 Derrell Lipma
+ * Copyright (c) 2011 Derrell Lipman
  * Copyright (c) 2011 Reed Spool
  * 
  * License:

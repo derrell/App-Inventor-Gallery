@@ -92,12 +92,14 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MMobile.class		\
 	qxoo_classes/aiagallery/dbif/MComments.class		\
 	qxoo_classes/aiagallery/dbif/MWhoAmI.class		\
+	qxoo_classes/aiagallery/dbif/MSearch.class		\
 	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
 	qxoo_classes/aiagallery/dbif/ObjDownloads.class		\
 	qxoo_classes/aiagallery/dbif/ObjFlags.class		\
 	qxoo_classes/aiagallery/dbif/ObjLikes.class		\
+	qxoo_classes/aiagallery/dbif/ObjSearch.class		\
 	qxoo_classes/aiagallery/dbif/ObjTags.class		\
 	qxoo_classes/aiagallery/dbif/ObjVisitors.class		\
 	qxoo_classes/aiagallery/dbif/ObjPermissionGroup.class	\

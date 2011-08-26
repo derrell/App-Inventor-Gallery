@@ -213,6 +213,9 @@ try
   $debugLoad("aiagallery.dbif.MMobile");
   new Packages.aiagallery.dbif.MMobile();
   
+  $debugLoad("aiagallery.dbif.MSearch");
+  new Packages.aiagallery.dbif.MSearch();
+  
   $debugLoad("aiagallery.dbif.MComments");
   new Packages.aiagallery.dbif.MComments();
   
@@ -236,6 +239,9 @@ try
   
   $debugLoad("aiagallery.dbif.ObjLikes");
   new Packages.aiagallery.dbif.ObjLikes();
+  
+  $debugLoad("aiagallery.dbif.ObjSearch");
+  new Packages.aiagallery.dbif.ObjSearch();
   
   $debugLoad("aiagallery.dbif.ObjTags");
   new Packages.aiagallery.dbif.ObjTags();
