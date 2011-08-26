@@ -31,6 +31,11 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
     
+    this.registerService("intersectKeywordAndQuery",
+                         this.intersectKeywordAndQuery,
+                         [ "queryArgs" ]);
+
+
     this.registerService("getAppListByList",
                          this.getAppListByList,
                          [ "uidArr", "requestedFields" ]);
@@ -767,7 +772,94 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       return { apps : appList, categories : categoryNames };
     },
-    
+
+    /**
+     * Perform a keyword search on the given string, as well as an appQuery on
+     * the given criteria, and return the intersection of the results.
+     * 
+     * @param queryArgs {Map}
+     *   This is a map containing member names that are the 4 unique parameters
+     *   to MApps.appQuery(criteria, requestedFields) and 
+     *   keywordSearch(keywordString, queryFields, requestedFields)
+     *  
+     *   The value of each of those members is the argument to be passed upon
+     *   calling that RPC
+     *  
+     *   For example:
+     *  
+     *     {
+     *       criteria         : {....(see MApps.appQuery() docu....},
+     *       requestedFields  : {....(see MApps.appQuery() docu....},
+     *       keywordString    : "Some words to search on",
+     *       queryFields      : null // not implemented yet,
+     *                               // pass null for safety
+     *     }
+     * 
+     * @return {Map}
+     *   The return value is an array of maps, each providing information
+     *   about one application.
+     *
+     */
+    intersectKeywordAndQuery : function(queryArgs, error)
+    {      
+      var               keywordSearchResults;
+      var               keywordString;
+      var               appQueryResults;
+      var               appQueryArr;
+      var               intersectionArr = [];
+      
+      
+      // Perform appQuery first, using supplied criteria
+      appQueryResults = this.appQuery(queryArgs["criteria"],
+                                      queryArgs["requestedFields"],
+                                      error);
+      
+      // If there was a problem
+      if (appQueryResults === error)
+      {
+        // Propegate the failure
+        return error; 
+      }
+      
+      // Unwrap the appQuery results
+      appQueryArr = appQueryResults["apps"];
+      
+      keywordString = queryArgs["keywordString"];
+      
+      // If there was no keyword string provided
+      if (keywordString === null || typeof keywordString === "undefined" ||
+          keywordString === "")
+      {
+        // Then just return the appQueryResults
+        return appQueryArr;
+      }
+      
+      // Perform keyword search next
+      keywordSearchResults = this.keywordSearch(keywordString,
+                                                queryArgs["queryFields"],
+                                                queryArgs["requestedFields"],
+                                                error);
+      // If there was a problem
+      if (keywordSearchResults === error)
+      {
+        // Propegate the failure
+        return error;
+      }
+      
+      // Perform intersection operation
+      keywordSearchResults.forEach(function(appObj)
+                          {
+                            if (qx.lang.Array.contains(appQueryArr, appObj))
+                            {
+                              intersectionArr.push(appObj);
+                            }
+                          });
+
+      // Return the intersection between the two result sets
+      return intersectionArr;    
+      
+    },
+      
     /**
      * Get a list of Apps from a discrete list of App UIDs
      * 

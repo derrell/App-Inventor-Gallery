@@ -151,6 +151,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 // FIXME: return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "appQuery":
+      case "intersectKeywordAndQuery":
       case "getAppInfo":
       case "getAppListByList":
           return true;            // Anonymous access

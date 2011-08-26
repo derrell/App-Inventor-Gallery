@@ -42,6 +42,8 @@ qx.Class.define("aiagallery.dbif.Constants",
       "getAppList"    : "Get logged in user application list",
       "appQuery"      : "Query for applications",
       "getAppInfo"    : "Get application detail information",
+      "intersectKeywordAndQuery" : "Get intersection of keyword search and" +
+                                   "appQuery"
       ... */
       
       //

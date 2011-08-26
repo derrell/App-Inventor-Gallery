@@ -222,17 +222,24 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Create the Attribute Select Box
       attrSelect = new qx.ui.form.SelectBox();
       
-      // Store some attributes in it
-      attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
-      attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
-      attrSelect.add(new qx.ui.form.ListItem("Description", null,
+      // Store some attributes in it, using the model for a switch in the FSM
+      attrSelect.add(new qx.ui.form.ListItem("has Tag", null, "tags"));
+      attrSelect.add(new qx.ui.form.ListItem("Title contains", null, "title"));
+      attrSelect.add(new qx.ui.form.ListItem("Description contains", null,
                                              "description"));
-      attrSelect.add(new qx.ui.form.ListItem("# Liked", null, "numLikes"));
-      attrSelect.add(new qx.ui.form.ListItem("# Downloaded", null,
-                                             "numDownloads"));
-      attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
-                                             "creationTime"));
-
+      attrSelect.add(new qx.ui.form.ListItem("Liked more than", null,
+                                             "likesGT"));
+      attrSelect.add(new qx.ui.form.ListItem("Liked less than", null,
+                                             "likesLT"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloaded more than", null,
+                                             "downloadsGT"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloaded less than", null,
+                                             "downloadsLT"));
+      
+      //attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
+      //"creationTime"));
+      
+/*      
       // Change qualifier choices when attribute is selected
       attrSelect.addListener("changeSelection",
         function()
@@ -266,17 +273,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
                 "is exactly"   : "="
               };
             break;
-          
-          case "creationTime":
-            qualMap = 
-              {
-                "before"    : "<",
-                "after"     : ">",
-                "exactly"   : "="
-              };
-            break;
+
           }
-          
+         
           // Add the qualifiers as described in the map
           for (qualifier in qualMap)
           {
@@ -286,7 +285,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
           }
           
         });
-
+*/
       
       // Create the Qualifier Select Box
       qualSelect = new qx.ui.form.SelectBox();
@@ -314,8 +313,8 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       // Add boxes in the correct order, with a little space separating them.
       lineHBox.add(attrSelect);
       lineHBox.add(new qx.ui.core.Spacer(5));
-      lineHBox.add(qualSelect);
-      lineHBox.add(new qx.ui.core.Spacer(5));
+//      lineHBox.add(qualSelect);
+//      lineHBox.add(new qx.ui.core.Spacer(5));
       lineHBox.add(valueField);
       lineHBox.add(new qx.ui.core.Spacer(10));
       lineHBox.add(deletebtn);
