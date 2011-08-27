@@ -225,11 +225,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
          function(e) 
          {
            var comment = commentInput.getValue();
-           // Checks that the submitted comment is not null or empty spaces
+           // Is the submitted comment null, or empty spaces?
            if ((comment != null) 
               && ((comment.replace(/\s/g, '')) != ""))
+           // No: submit it
            {
              fsm.eventListener(e);
+           }
+           // Yes: clear input box and do nothing
+           else
+           {
+             commentInput.setValue(null);
            }
          },
          fsm);
