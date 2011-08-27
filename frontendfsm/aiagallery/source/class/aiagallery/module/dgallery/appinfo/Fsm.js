@@ -164,8 +164,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
-       * Transition: Idle to Idle
+      /*
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: submitCommentBtn has been pressed
        *
@@ -219,8 +219,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
-       * Transition: Idle to Idle
+      /*
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: 
        *
