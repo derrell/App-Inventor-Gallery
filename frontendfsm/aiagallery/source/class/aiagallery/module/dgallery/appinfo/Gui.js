@@ -143,20 +143,21 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var                 hbox;
 
         hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-              
+        hbox.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));      
         vboxLeft = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        vboxLeft.setBackgroundColor("#ff0000");
+        vboxLeft.setBackgroundColor("#f3f3f3");
         hbox.add(vboxLeft, { flex : 1 });
 
         vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        vboxRight.setBackgroundColor("#00ff00");
+        vboxRight.setBackgroundColor("#f3f3f3");
         hbox.add(vboxRight);
 
         var o = new qx.ui.core.Widget();
         o.set(
           {
-            backgroundColor : "#0000ff"
+            backgroundColor : "#f3f3f3",
           });
+        o.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));
         vboxLeft.add(o);
             
         var o = new qx.ui.core.Widget();
