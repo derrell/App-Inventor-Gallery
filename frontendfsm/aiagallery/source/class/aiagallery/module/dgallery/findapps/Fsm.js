@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -300,16 +301,19 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
           var             browse2;
           var             criteria;
           var             criterium;
+          var             keywordString = "";
           var             and;
           var             request;
           var             criteriaArray;
-
+          
+          
           // Determine on which widget we received the event
           var friendly = fsm.getFriendlyName(event.getTarget());
           
           // Clear all Finder lists
           fsm.getObject("browse1").removeAll();
           fsm.getObject("browse2").removeAll();
+
           // Don't clear the Categories one, just blank its selection
           fsm.getObject("browse0").resetSelection();
             
@@ -322,50 +326,132 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
             };
           
           // Aggregating all of the form information for the search.
+
+          // Get all of the criteria from the wrapper
           criteriaArray = fsm.getObject("searchCriteria").getUserData("array");
-          var crit = {};
-          for (var i = 0 ; i < criteriaArray.length ; i++)
-          {
-            crit = criteriaArray[i];
-            if (!crit.deleted)
+          
+          // For every criteria that wasn't deleted, add appropriate
+          // criteria as the children of the search criteria object
+          criteriaArray.forEach(
+            function(criteriaObj)
             {
-              criterium = 
-              {
-                type  : "element", 
-                field : crit.attributeBox.getSelection()[0].getModel(),
-                value : crit.valueBox.getValue()
-              };
+              var myAttr;
+              var myQual;
+              var myVal;
+              var myFilterOp = "="; // default '='
               
-              // Add it to the list of criteria being ANDed
-              criteria.children.push(criterium);
-            }
-          
-          }
-          
-        
+              // Don't do anything with objects where "deleted" is true,
+              // They were deleted in the GUI, and should be disregarded.
+              if (!criteriaObj.deleted)
+              {
+                // Gather all info for this criterium
+                myAttr = criteriaObj.attributeBox.getSelection()[0].getModel();
+                //myQual = criteriaObj.qualifierBox.getSelection()[0].getModel();
+                myVal = criteriaObj.valueBox.getValue();
+                
+                // Build object with everything we know so far, to be added onto
+                criterium = 
+                  {
+                    type  : "element",
+                    field : null
+                  };
+                
+                // Pick the appropriate filterOp, 
+                switch (myAttr)
+                {
+                case "likesGT":
+                  criterium["filterOp"] = ">";
+                  break;
+                  
+                case "likesLT":
+                  criterium["filterOp"] = "<";
+                  break;
+                  
+                case "likesEQ":             
+                  // use default "=" filterOP
+                  break;
+                                    
+                case "downloadsGT":
+                  criterium["filterOp"] = ">";
+                  break;
+                                    
+                case "downloadsLT":
+                  criterium["filterOp"] = "<";
+                  break;
+                                    
+                case "downloadsEQ":         
+                  // use default "=" filterOp
+                  break;
+                }
+                
+                // Value needs to be of the correct type per the field being
+                // queried on, but everything comes in as text
+                // Also set up criterium.field correctly
+                switch (myAttr)
+                {
+                  // These are keyword search items, and will not set
+                  // criterium.field, thus won't be added to the query
 
-
+                  // FIX: Right now all text fields are searched every time
+                  // this needs to be fixed in the future.
+                case "alltext":
+                case "title":
+                case "description":
+                  keywordString = keywordString + " " + myVal;
+                  break;
+                  
+                case "tags":
+                  criterium["field"] = "tags";
+                  criterium["value"] = myVal;
+                  break;
+                  
+                case "likesGT":
+                case "likesLT":
+                case "likesEQ":
+                  criterium["field"] = "numLikes";
+                  criterium["value"] = parseInt(myVal, 10);
+                  break;
+                  
+                case "downloadsGT":
+                case "downloadsLT":
+                case "downloadsEQ":
+                  criterium["field"] = "numDownloads";
+                  criterium["value"] = parseInt(myVal, 10);
+                  break;
+                }
+                
+                // If this is a search criteria, not a keyword search item...
+                if (criterium["field"] !== null)
+                {
+                  // Add it to the list of criteria being ANDed
+                  criteria.children.push(criterium);
+                }
+              }
+            });
+          
+          
           // Issue the remote procedure call to execute the query
           request =
             this.callRpc(fsm,
                          "aiagallery.features",
-                         "appQuery",
-                         [
-                           // Root of the criteria tree
-                           criteria,
-                           
-                           // Requested fields and the return field name
-                           {
-                             uid    : "uid",
-                             title  : "label", // remap name for Gallery
-                             image1 : "icon",  // remap name for Gallery
-                             tags   : "tags"
-                           }
-                         ]);
+                         "intersectKeywordAndQuery",
+                         [{
+                           criteria : criteria,
+                           keywordString : keywordString,
+                           requestedFields : 
+                             // Requested fields and the return field name
+                             {
+                               uid    : "uid",
+                               title  : "label", // remap name for Gallery
+                               image1 : "icon",  // remap name for Gallery
+                               tags   : "tags"
+                             },
+                           queryFields : null // not yet implemented
+                         }]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "appQuery");
+          request.setUserData("requestType", "intersectKeywordAndQuery");
           
           // And where that request came from.
           request.setUserData("querySource", friendly);

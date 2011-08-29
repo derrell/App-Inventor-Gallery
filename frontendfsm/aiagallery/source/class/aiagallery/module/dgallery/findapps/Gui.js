@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Reed Spool
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -48,7 +49,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       hBox.add(new qx.ui.core.Spacer(10));
 
       // Create a set of finder-style multi-level browsing lists
-      groupbox = new qx.ui.groupbox.GroupBox("Browse");
+      groupbox = new qx.ui.groupbox.GroupBox("Browse by Category");
       groupbox.setLayout(new qx.ui.layout.HBox());
       groupbox.setContentPadding(0);
       hBox.add(groupbox);
@@ -75,7 +76,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
        
       // Begin creating the search gui
       // groupbox contains the whole rest of the shabang
-      groupbox = new qx.ui.groupbox.GroupBox("Search") ;
+      groupbox = new qx.ui.groupbox.GroupBox("Search Apps") ;
       groupbox.setLayout( new qx.ui.layout.VBox()) ;
 
       // criteria will house all of the "lines of refinement"
@@ -203,34 +204,108 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
     
     buildSearchRefineLine : function() {
       
+      var       lineHBox;
+      var       attrSelect;
+      var       qualSelect;
+      var       valueField;
+      var       deletebtn;
+      var       criteriaObject;
+      
       // This HBox will contain an entire line of refinement
-      var groupbox = new qx.ui.groupbox.GroupBox();
-      groupbox.set(
+      lineHBox = new qx.ui.groupbox.GroupBox();
+      lineHBox.set(
         {
           layout          : new qx.ui.layout.HBox(),
           padding         : 0
         });
       
       // Create the Attribute Select Box
-      var attrSelect = new qx.ui.form.SelectBox();
+      attrSelect = new qx.ui.form.SelectBox();
       
-      // Store some attributes in it
+      // Store some attributes in it, using the model for a switch in the FSM
+      attrSelect.add(new qx.ui.form.ListItem("All Text Fields", null,
+                                             "alltext"));      
       attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
       attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
+      attrSelect.add(new qx.ui.form.ListItem("Description", null,
+                                             "description"));
+      attrSelect.add(new qx.ui.form.ListItem("Likes >", null,
+                                             "likesGT"));
+      attrSelect.add(new qx.ui.form.ListItem("Likes <", null,
+                                             "likesLT"));
+      attrSelect.add(new qx.ui.form.ListItem("Likes =", null,
+                                             "likesEQ"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloads >", null,
+                                             "downloadsGT"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloads <", null,
+                                             "downloadsLT"));
+      attrSelect.add(new qx.ui.form.ListItem("Downloads =", null,
+                                             "downloadsEQ"));
+      
+      //attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
+      //"creationTime"));
+      
+/*      
+      // Change qualifier choices when attribute is selected
+      attrSelect.addListener("changeSelection",
+        function()
+        {
+          var qualMap = {};
+          var qualifier;
+          
+          // Remove all existing qualifiers first                      
+          qualSelect.removeAll();
+
+          // Supply appropriate qualifiers, depending on the attribute selected
+          // Mapping qualifier label to model, for clarity
+          switch (attrSelect.getSelection()[0].getModel())
+          {
+          case "tags":
+          case "title":
+          case "description":
+            qualMap = 
+              {
+                "contains"   : "~",
+                "is exactly" : "="
+              };
+            break;
+
+          case "numLikes":
+          case "numDownloads":
+            qualMap = 
+              {
+                "greater than" : ">",
+                "less than"    : "<",
+                "is exactly"   : "="
+              };
+            break;
+
+          }
+         
+          // Add the qualifiers as described in the map
+          for (qualifier in qualMap)
+          {
+            qualSelect.add(new qx.ui.form.ListItem(qualifier,
+                                                   null,
+                                                  qualMap[qualifier]));
+          }
+          
+        });
+*/
       
       // Create the Qualifier Select Box
-      var qualSelect = new qx.ui.form.SelectBox();
+      qualSelect = new qx.ui.form.SelectBox();
       
       // Store some qualifiers in it
-      // NOTE: unsure how to use model here, so using empty string
-      var myQual = new qx.ui.form.ListItem("is exactly", null, "") ;
-      qualSelect.add(myQual);
+      // NOTE: Attempting to use the model as a switch for which OP to use
+      qualSelect.add(new qx.ui.form.ListItem("is exactly", null, "="));
+      qualSelect.add(new qx.ui.form.ListItem("contains", null, "~"));
       
       // Create the field for the value to compare against
-      var valueField = new qx.ui.form.TextField();
+      valueField = new qx.ui.form.TextField();
       
       // Create a button to delete this line
-      var deletebtn = new qx.ui.form.Button("-");
+      deletebtn = new qx.ui.form.Button("-");
       deletebtn.addListener("execute", function() {
         
         // Hit the "deleted" switch, to make sure this isn't part of the query
@@ -238,20 +313,20 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
         // Remove this from the GUI
         this.destroy();
         
-      // Add groupbox as the context, so we can manipulate it.
-      }, groupbox);
+      // Add lineHBox as the context, so we can manipulate it.
+      }, lineHBox);
       
       // Add boxes in the correct order, with a little space separating them.
-      groupbox.add(attrSelect);
-      groupbox.add(new qx.ui.core.Spacer(5));
-      groupbox.add(qualSelect);
-      groupbox.add(new qx.ui.core.Spacer(5));
-      groupbox.add(valueField);
-      groupbox.add(new qx.ui.core.Spacer(10));
-      groupbox.add(deletebtn);
+      lineHBox.add(attrSelect);
+      lineHBox.add(new qx.ui.core.Spacer(5));
+//      lineHBox.add(qualSelect);
+//      lineHBox.add(new qx.ui.core.Spacer(5));
+      lineHBox.add(valueField);
+      lineHBox.add(new qx.ui.core.Spacer(10));
+      lineHBox.add(deletebtn);
       
       // Create an object to easily access all of the selections
-      var criteriaObject = 
+      criteriaObject = 
       {
         attributeBox  : attrSelect,
         qualifierBox  : qualSelect,
@@ -260,11 +335,11 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       };
      
       // Give a reference to the groupbox so that it can deal with a delete.
-      groupbox.setUserData("myCriteria", criteriaObject);
+      lineHBox.setUserData("myCriteria", criteriaObject);
      
       // Finally give'm what they came for.
       return {
-        "widget"   : groupbox,
+        "widget"   : lineHBox,
         "criteria" : criteriaObject
       };
       
@@ -322,6 +397,21 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
             browse0.add(new qx.ui.form.ListItem(tag));
           });
         break;
+      
+      case "intersectKeywordAndQuery":
+        gallery = fsm.getObject("gallery");
+        
+        apps = response.data.result;
+        
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        var parent = gallery.getLayoutParent();
+        parent.remove(gallery);
+        gallery = new aiagallery.widget.virtual.Gallery(apps);
+        gallery.addListener("changeSelection", fsm.eventListener, fsm);
+        fsm.addObject("gallery", gallery);
+        parent.add(gallery);
+        break;
+        
         
       case "appQuery":
         // Get the gallery object

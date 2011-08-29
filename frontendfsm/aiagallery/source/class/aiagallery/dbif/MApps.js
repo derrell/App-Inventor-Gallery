@@ -31,6 +31,11 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
     
+    this.registerService("intersectKeywordAndQuery",
+                         this.intersectKeywordAndQuery,
+                         [ "queryArgs" ]);
+
+
     this.registerService("getAppListByList",
                          this.getAppListByList,
                          [ "uidArr", "requestedFields" ]);
@@ -767,7 +772,137 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       return { apps : appList, categories : categoryNames };
     },
-    
+
+    /**
+     * Perform a keyword search on the given string, as well as an appQuery on
+     * the given criteria, and return the intersection of the results.
+     * 
+     * @param queryArgs {Map}
+     *   This is a map containing member names that are the 4 unique parameters
+     *   to MApps.appQuery(criteria, requestedFields) and 
+     *   keywordSearch(keywordString, queryFields, requestedFields)
+     *  
+     *   The value of each of those members is the argument to be passed upon
+     *   calling that RPC
+     *  
+     *   For example:
+     *  
+     *     {
+     *       criteria         : {....(see MApps.appQuery() docu....},
+     *       requestedFields  : {....(see MApps.appQuery() docu....},
+     *       keywordString    : "Some words to search on",
+     *       queryFields      : null // not implemented yet,
+     *                               // pass null for safety
+     *     }
+     * 
+     * @return {Map}
+     *   The return value is an array of maps, each providing information
+     *   about one application.
+     *
+     */
+    intersectKeywordAndQuery : function(queryArgs, error)
+    {      
+
+      var               keywordString;
+      var               appQueryResults;
+      var               appQueryResultArr = [];
+      var               bQueryUsed = true;
+      var               keywordSearchResultArr = [];
+      var               bKeywordUsed = true;
+      var               intersectionArr = [];
+      
+      // Going to perform keyword search first
+      keywordString = queryArgs["keywordString"];
+      
+      // If there was no keyword string provided
+      if (keywordString === null || typeof keywordString === "undefined" ||
+          keywordString === "")
+      {
+        // Then just use the results of appQuery
+        bKeywordUsed = false;
+      }
+      else
+      {
+        // Perform keyword search
+        keywordSearchResultArr = this.keywordSearch(keywordString,
+                                                queryArgs["queryFields"],
+                                                queryArgs["requestedFields"],
+                                                error);
+        // If there was a problem
+        if (keywordSearchResultArr === error)
+        {
+          // Propegate the failure
+          return error;
+        }
+      }
+      
+      // Was there any criteria given to perform appQuery on?
+      if (queryArgs["criteria"]["method"] === "and" &&
+          queryArgs["criteria"]["children"].length === 0)
+      {
+        // No, just use the keyword results
+        bQueryUsed = false;
+      }
+      else
+      {
+        // Yes, use it to perform appQuery
+        appQueryResults = this.appQuery(queryArgs["criteria"],
+                                      queryArgs["requestedFields"],
+                                      error);
+      
+        // If there was a problem
+        if (appQueryResults === error)
+        {
+          // Propegate the failure
+          return error; 
+        }
+
+        // Unwrap the appQuery results
+        appQueryResultArr = appQueryResults["apps"];
+      }
+      
+      // Was nothing given to search on?
+      if (!bKeywordUsed && !bQueryUsed)
+      {
+        // This is an error
+        error.setCode(1);
+        error.setMessage("No keyword or search criteria given");
+        return error;
+      }
+      
+      // Was just appQuery used?
+      if (!bKeywordUsed)
+      {
+        // Then just return its results
+        return appQueryResultArr;
+      }
+      
+      // Was just keyword search used?
+      if (!bQueryUsed)
+      {
+        // Then just return its results
+        return keywordSearchResultArr;
+      }
+      
+      // If we got here, then both keyword search and app query ran so...
+      
+      // Perform intersection operation            
+      keywordSearchResultArr.forEach(function(keywordAppObj)
+        {
+          appQueryResultArr.forEach(function(appQueryAppObj)
+            {
+              if (keywordAppObj["uid"] === appQueryAppObj["uid"])
+              {
+                intersectionArr.push(appQueryAppObj);
+              }              
+            });
+        });
+                                     
+      // Return the intersection between the two result sets
+      return intersectionArr;    
+      
+    },
+      
     /**
      * Get a list of Apps from a discrete list of App UIDs
      * 
