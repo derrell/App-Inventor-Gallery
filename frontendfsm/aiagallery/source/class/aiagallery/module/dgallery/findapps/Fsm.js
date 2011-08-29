@@ -346,7 +346,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
               {
                 // Gather all info for this criterium
                 myAttr = criteriaObj.attributeBox.getSelection()[0].getModel();
-                myQual = criteriaObj.qualifierBox.getSelection()[0].getModel();
+                //myQual = criteriaObj.qualifierBox.getSelection()[0].getModel();
                 myVal = criteriaObj.valueBox.getValue();
                 
                 // Build object with everything we know so far, to be added onto
@@ -391,12 +391,16 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                 {
                   // These are keyword search items, and will not set
                   // criterium.field, thus won't be added to the query
-                case "tags":
                 case "title":
                 case "description":
                   keywordString = keywordString + " " + myVal;
                   break;
-
+                  
+                case "tags":
+                  criterium["field"] = "tags";
+                  criterium["value"] = myVal;
+                  break;
+                  
                 case "likesGT":
                 case "likesLT":
                 case "likesEQ":
@@ -420,6 +424,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                 }
               }
             });
+          
           
           // Issue the remote procedure call to execute the query
           request =

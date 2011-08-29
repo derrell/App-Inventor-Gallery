@@ -395,6 +395,21 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
             browse0.add(new qx.ui.form.ListItem(tag));
           });
         break;
+      
+      case "intersectKeywordAndQuery":
+        gallery = fsm.getObject("gallery");
+        
+        apps = response.data.result;
+        
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        var parent = gallery.getLayoutParent();
+        parent.remove(gallery);
+        gallery = new aiagallery.widget.virtual.Gallery(apps);
+        gallery.addListener("changeSelection", fsm.eventListener, fsm);
+        fsm.addObject("gallery", gallery);
+        parent.add(gallery);
+        break;
+        
         
       case "appQuery":
         // Get the gallery object
