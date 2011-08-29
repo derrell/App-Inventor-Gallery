@@ -391,6 +391,10 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                 {
                   // These are keyword search items, and will not set
                   // criterium.field, thus won't be added to the query
+
+                  // FIX: Right now all text fields are searched every time
+                  // this needs to be fixed in the future.
+                case "alltext":
                 case "title":
                 case "description":
                   keywordString = keywordString + " " + myVal;

@@ -49,7 +49,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       hBox.add(new qx.ui.core.Spacer(10));
 
       // Create a set of finder-style multi-level browsing lists
-      groupbox = new qx.ui.groupbox.GroupBox("Browse");
+      groupbox = new qx.ui.groupbox.GroupBox("Browse by Category");
       groupbox.setLayout(new qx.ui.layout.HBox());
       groupbox.setContentPadding(0);
       hBox.add(groupbox);
@@ -76,7 +76,7 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
        
       // Begin creating the search gui
       // groupbox contains the whole rest of the shabang
-      groupbox = new qx.ui.groupbox.GroupBox("Search") ;
+      groupbox = new qx.ui.groupbox.GroupBox("Search Apps") ;
       groupbox.setLayout( new qx.ui.layout.VBox()) ;
 
       // criteria will house all of the "lines of refinement"
@@ -223,21 +223,23 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Gui",
       attrSelect = new qx.ui.form.SelectBox();
       
       // Store some attributes in it, using the model for a switch in the FSM
-      attrSelect.add(new qx.ui.form.ListItem("has Tag", null, "tags"));
-      attrSelect.add(new qx.ui.form.ListItem("Title contains", null, "title"));
-      attrSelect.add(new qx.ui.form.ListItem("Description contains", null,
+      attrSelect.add(new qx.ui.form.ListItem("All Text Fields", null,
+                                             "alltext"));      
+      attrSelect.add(new qx.ui.form.ListItem("Tag", null, "tags"));
+      attrSelect.add(new qx.ui.form.ListItem("Title", null, "title"));
+      attrSelect.add(new qx.ui.form.ListItem("Description", null,
                                              "description"));
-      attrSelect.add(new qx.ui.form.ListItem("Liked more than", null,
+      attrSelect.add(new qx.ui.form.ListItem("Likes >", null,
                                              "likesGT"));
-      attrSelect.add(new qx.ui.form.ListItem("Liked less than", null,
+      attrSelect.add(new qx.ui.form.ListItem("Likes <", null,
                                              "likesLT"));
-      attrSelect.add(new qx.ui.form.ListItem("Liked exactly", null,
+      attrSelect.add(new qx.ui.form.ListItem("Likes =", null,
                                              "likesEQ"));
-      attrSelect.add(new qx.ui.form.ListItem("Downloaded more than", null,
+      attrSelect.add(new qx.ui.form.ListItem("Downloads >", null,
                                              "downloadsGT"));
-      attrSelect.add(new qx.ui.form.ListItem("Downloaded less than", null,
+      attrSelect.add(new qx.ui.form.ListItem("Downloads <", null,
                                              "downloadsLT"));
-      attrSelect.add(new qx.ui.form.ListItem("Downloaded exactly", null,
+      attrSelect.add(new qx.ui.form.ListItem("Downloads =", null,
                                              "downloadsEQ"));
       
       //attrSelect.add(new qx.ui.form.ListItem("Date Created", null,
