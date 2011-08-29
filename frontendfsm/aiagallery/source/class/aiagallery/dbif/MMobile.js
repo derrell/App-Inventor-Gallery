@@ -178,7 +178,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         numViewed          : "numViewed",
         numRootComments    : "numRootComments",
         numComments        : "numComments",
-        status             : "status"
+        status             : "status",
+        uid                : "uid"
       };
     
       // Use MSearch Mixin
