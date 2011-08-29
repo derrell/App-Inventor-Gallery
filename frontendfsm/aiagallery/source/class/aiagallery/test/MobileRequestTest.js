@@ -37,6 +37,13 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
                            mobileRequest[0],
                            "apps retrieved from mobile all");
 
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("all:0:uid:uid", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request all!");
+
     },
     
     "test: Mobile Request tag" : function()
@@ -64,6 +71,15 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
                            mobileRequest[0],
                            "apps retrieved from mobile tag");
       
+
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("tag:schmoooch:abcd", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request tag!");
+
+
     },
     
     "test: Mobile Request featured" : function()
@@ -89,6 +105,15 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       this.assertKeyInMap( "uid",
                            mobileRequest[0],
                            "apps retrieved from mobile featured has uid");
+
+
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("featured:0:awef", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request featured!");
+
       
     },
     
@@ -118,6 +143,14 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       this.assertKeyInMap( "uid",
                            mobileRequest[0],
                            "apps retrieved from mobile developer");
+
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("by_developer:Joe Blow:badef", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request developer!");
+
     },
     
     "test: Mobile Request getinfo" : function()
@@ -153,6 +186,17 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       this.assertKeyInMap( "owner",
                            mobileRequest,
                            "apps retrieved from mobile getinfo");
+
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("getinfo:abcd", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request getinfo!");
+
+
+
+
     },
     
     "test: Mobile Request search" : function()
@@ -254,6 +298,15 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
       
       this.assert( mobileRequest.length === 0 , "bad search query returned"
                                                 + " zero results");
+
+
+
+      // Now a bad request
+      mobileRequest = dbifSim.mobileRequest("search:", error);      
+      
+      // Ensure that an error WAS returned on bad request
+      this.assert(mobileRequest === error,
+                 "Error not properly returned from bad request 'search'!");
 
     },
     

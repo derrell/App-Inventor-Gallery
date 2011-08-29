@@ -1032,7 +1032,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           
           // Use function from Mixin MComments to add comments to app info
           // object
-          app.comments = this.getComments(uid);
+          app.comments = this.getComments(uid, null, null, error);
         }
         
         // Send it to the requestedFields function for stripping and remapping
