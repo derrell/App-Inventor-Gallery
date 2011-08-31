@@ -148,10 +148,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
  
         // Sets the app's uid as a variable which can be passed to the FSM.
         var appId = result.uid;
- 
+
+// vvvvvvv COMMENTS vvvvvvv
         // Create a group for the comment collapsable panel
         var radiogroup = new qx.ui.form.RadioGroup();
         radiogroup.setAllowEmptySelection(true);
+// ^^^^^^^ COMMENTS ^^^^^^^
 
         // Create a horizontal box layout to store two vboxes in.
         var hboxLayout = new qx.ui.layout.HBox();
@@ -261,6 +263,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
 
+// vvvvvvv COMMENTS vvvvvvv
        // Creates an object on which to call the getComments event, in order
        // to add them to the GUI
        var emptyObject = new qx.core.Object();
@@ -329,6 +332,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Put a vbox container in the scroll container
         var vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
         scrollContainer.add(vbox);
+// ^^^^^^^ COMMENTS ^^^^^^^
 
         // Create a label to represent a link to download the app.
         // FIXME: Add a link here
@@ -415,6 +419,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the right vbox.
         vboxRight.add(tags);
 
+// vvvvvvv COMMENTS vvvvvvv
         // Creates an object containing the parts of the GUI which will need 
         // to be changed after the fsm call. This object is passed to the FSM.
 
@@ -425,6 +430,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
         fsm.addObject("guiWrapper", guiWrapper);
+// ^^^^^^^ COMMENTS ^^^^^^^
 
         canvas.setLayout(new qx.ui.layout.Canvas());
         
@@ -603,7 +609,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           });
         */
         break;
-        
+
+// vvvvvvv COMMENTS vvvvvvv
       case "addComment":
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
@@ -758,7 +765,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           }
         }   
         break;
-      
+// ^^^^^^^ COMMENTS ^^^^^^^
+
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
