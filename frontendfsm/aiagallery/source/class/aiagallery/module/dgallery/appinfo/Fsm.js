@@ -219,6 +219,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
+
       /*
        * Transition: Idle to AwaitRpcResult
        *
