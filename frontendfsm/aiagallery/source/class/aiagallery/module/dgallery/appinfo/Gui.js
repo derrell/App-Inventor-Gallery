@@ -141,106 +141,284 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var                 vboxLeft;
         var                 vboxRight;
         var                 hbox;
+        var                 cpanel;
 
-        hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-        hbox.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));      
-        vboxLeft = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        vboxLeft.setBackgroundColor("#f3f3f3");
-        hbox.add(vboxLeft, { flex : 1 });
-
-        vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        vboxRight.setBackgroundColor("#f3f3f3");
-        hbox.add(vboxRight);
-
-        var o = new qx.ui.core.Widget();
-        o.set(
-          {
-            backgroundColor : "#f3f3f3",
-          });
-        o.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));
-        vboxLeft.add(o);
-            
-        var o = new qx.ui.core.Widget();
-        o.set(
-          {
-            minWidth : 150,
-            width : 150
-          });
-        vboxRight.add(o);
-        
-        canvas.setLayout(new qx.ui.layout.Canvas());
-        canvas.add(hbox, { edge : 10 } ); 
-        /*
-        var                 vboxLeft; 
-        var                 vboxRight;
-        var                 hbox;
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
-        
-        // Create a hbox container to outline the look of the page.
-        // This will contain 2 vboxes.
-        hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-        
-        // Create a vbox for the left of the display. 
-        // This vbox will hold the app title, images, actions, and comments
-        // in a vertical manner in that order.
+ 
+        // Sets the app's uid as a variable which can be passed to the FSM.
+        var appId = result.uid;
+ 
+        // Create a group for the comment collapsable panel
+        var radiogroup = new qx.ui.form.RadioGroup();
+        radiogroup.setAllowEmptySelection(true);
+
+        // Create a horizontal box layout to store two vboxes in.
+        var hboxLayout = new qx.ui.layout.HBox();
+
+        // Add a nice little seperation between the two. 
+        hboxLayout.setSpacing(4);
+
+        // Apply the layout to a container then set some properties on it.
+        hbox = new qx.ui.container.Composite(hboxLayout);
+        hbox.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));
+        hbox.set( 
+          {
+            maxWidth:640,
+            width: 640,
+            minWidth: 400
+          });
+
+        // Create the left vertical box container.
         vboxLeft = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-  
-        // Create a vbox for the right of the display.
-        // This vbox will hold the download link, description, tags, 
-        // external link, and similar projects elements
+
+        // Make it purty.
+        vboxLeft.setBackgroundColor("#f3f3f3");
+
+        // Add it to the horizontal box, with the flex property to use all unused space.
+        hbox.add(vboxLeft, { flex : 1 });
+
+        // Create the right vertical box container.
         vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+      
+        // Make it purty as well.
+        vboxRight.setBackgroundColor("#f3f3f3");
 
-        // Add a groupbox with the application title. This will 
-        // store the images related to the app and allow cycling
-        var imageGroupBox = new qx.ui.groupbox.GroupBox(result.title);
-        
-        // Add an image to the imageGroupBox
-        imageGroupBox.add(new qx.ui.basic.Image(result.image1));
-        
-        // Add this groupbox to the left vbox
-        vboxLeft.add(imageGroupBox);
-
-        // Add a groupbox entitled actions
-        // This will be where people can "like", "bookmark", "flag", or
-        // add it to a "collection"
-        var actionGroupBox = new qx.ui.groupbox.GroupBox("Actions");
-
-        actionGroupBox.add(new qx.ui.basic.Label("Love it!"));
-        actionGroupBox.add(new qx.ui.basic.Label("Favorite?"));
-        actionGroupBox.add(new qx.ui.basic.Label("Flag as bad?"));
-        actionGroupBox.add(new qx.ui.basic.Label("Add to a collection"));
-
-        // Add the actions groupbox to the left side of the display
-        vboxLeft.add(actionGroupBox);
-
-        // Add a groupbox entitled Comments
-        var commentsGroupBox = new qx.ui.groupbox.GroupBox("Comments");
-
-        //FILLMEIN: Load comments here
-  
-        // Add the comments to the left display
-        vboxLeft.add(commentsGroupBox);
-  
-        // Add the left display to the canvas's hbox
-        hbox.add(vboxLeft);
-
-        // Build the right display
-        
-        // Add a groupbox entitled download
-        var downloadGroupBox = new qx.ui.groupbox.GroupBox("Download");
-
-        // Leave it empty for now
-        
-        // Add it to the right display
-        vboxRight.add(downloadGroupBox);
-
-        // Add the right display to the canvas's hbox
+        // Make it take up 200 pixels of space.
+        vboxRight.set(
+          {
+            minWidth:200,
+            width:200,
+            maxWidth:200
+          });
+          
+        // Add it the horizontal box.
         hbox.add(vboxRight);
+ 
+        // Store a nice title.
+        var title = new qx.ui.basic.Label('<b style="font-size:25px">' + result.title + '</b>');
+
+        // Set it to use rich formatting and center it in the vbox.
+        title.set(
+          {
+            rich:true,
+            alignX:"center"
+          });
+
+        // Add it to the left display.
+        vboxLeft.add(title);
+
+        // Create an image widget with the image1 image stored for the app.
+        var appIcon = new qx.ui.basic.Image(result.image1);
+      
+        // Center it.
+        appIcon.setAlignX("center");
+    
+        // Add it to the left display.
+        vboxLeft.add(appIcon);
+
+        // Create a label describing who created the app.
+        var createdBy = new qx.ui.basic.Label('Created by <b>' + result.owner + '</b>');
+
+        // Make it purty with rich formatting.
+        createdBy.set(
+          {
+            rich:true 
+          });
+
+        // Center it.
+        createdBy.setAlignX("center");
+
+        // Add it to the left vbox.
+        vboxLeft.add(createdBy);
+
+        // Create a label to display number of views and likes.
+        var viewsLikes = new qx.ui.basic.Label('<b>' + result.numViewed + ' views, ' + result.numLikes+ ' likes</b>');
+
+        // Set the viewsLikes label to use rich formatting.
+        viewsLikes.set(
+          {
+            rich:true 
+          });
+
+        // Center the viewLikes label. 
+        viewsLikes.setAlignX("center");
+
+        // Add it to the left vbox.
+        vboxLeft.add(viewsLikes);
+
+        // Create a button to allow users to "like" things.
+        var likeItButton = new qx.ui.form.Button("Like it!");
+
+        // Add it to the left vbox.
+        vboxLeft.add(likeItButton);
+
+        // Create a button to allow users to "flag" things.
+        var flagItButton = new qx.ui.form.Button("Flag it!");
+
+        // Add it to the left vbox.
+        vboxLeft.add(flagItButton);
+
+       // Creates an object on which to call the getComments event, in order
+       // to add them to the GUI
+       var emptyObject = new qx.core.Object();
+       emptyObject.setUserData("filler", new qx.core.Object());
+       fsm.addObject("ignoreMe", emptyObject);
+       fsm.fireImmediateEvent("appearComments", emptyObject, null);
+
+       // Adds the textfield for entering a comment
+       var commentInput = new qx.ui.form.TextField();
+       commentInput.setPlaceholder("Type your comment here:");
+       var allCommentsBox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+
+       // Wrapping everything relevant to a comment in one object,
+       // to be passed to the FSM
+       var commentWrapper = new qx.core.Object();
+       commentWrapper.setUserData("appId", appId);
+       commentWrapper.setUserData("commentInput", commentInput);
+       fsm.addObject("commentWrapper", commentWrapper);
+
+       // Adds the button for submitting a comment to the FSM
+       var submitCommentBtn = new qx.ui.form.Button("Submit Comment");
+       fsm.addObject("submitCommentBtn", submitCommentBtn);
+
+       submitCommentBtn.addListener(
+         "execute",
+         function(e)
+         {
+           var comment = commentInput.getValue();
+           // Checks that the submitted comment is not null or empty spaces
+           if ((comment != null)
+              && ((comment.replace(/\s/g, '')) != ""))
+           {
+             fsm.eventListener(e);
+           }
+         },
+         fsm);
+        
+       // Lets the user call "execute" by pressing the enter key rather
+       // than by pressing the submitCommentBtn
+       commentInput.addListener(
+         "keypress",
+         function(e)
+         {
+           if (e.getKeyIdentifier() === "Enter")
+           {
+             submitCommentBtn.execute();
+           }
+         });
+
+        // The textfield, all the existing comments, and the submit button
+        // get added to the UI.
+        vboxLeft.add(commentInput);
+        vboxLeft.add(submitCommentBtn);
+        vboxLeft.add(allCommentsBox);
+ 
+       // We'll put all of the collapsable panels in a scroll container
+        var scrollContainer = new qx.ui.container.Scroll();
+        vboxLeft.add(scrollContainer);
+
+        // Put a vbox container in the scroll container
+        var vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        scrollContainer.add(vbox);
+
+        // Create a label to represent a link to download the app.
+        var downloadLabel = new qx.ui.basic.Label('<b>Download ' + result.title + '!</b>');
+
+        // Set it to use rich formatting
+        downloadLabel.set(
+          {
+            rich:true 
+          });
+
+        // Add it to the right vbox.
+        vboxRight.add(downloadLabel);
+
+        // Create a label to store the number of downloads
+        var download = new qx.ui.basic.Label(result.title + ' has been downloaded ' + result.numDownloads + ' times.');
+
+        // Set it to use rich formatting and to wrap text.
+        download.set(
+          {
+            rich:true,
+            wrap:true
+          });
+        vboxRight.add(download);
+
+        // Create a label just to space things out a bit.
+        var spacer = new qx.ui.basic.Label('');
+
+        // Add it to the right vbox.
+        vboxRight.add(spacer);
+        
+        // Create a label to store the header "Description".
+        var descriptionHeader = new qx.ui.basic.Label('<b>Description</b>');
+
+        // Set it to use rich formatting.
+        descriptionHeader.set(
+          {
+            rich:true 
+          });
+
+        // Add it to the right vbox.
+        vboxRight.add(descriptionHeader);
+
+        // Create a label to store the actual description of the app.
+        var description = new qx.ui.basic.Label(result.description);
+
+        // Set the label to use rich formatting and automatically wrap text.
+        description.set(
+          {
+            rich:true,
+            wrap:true
+          });
+
+        // Add it to the right vbox.
+        vboxRight.add(description);
+
+        // Create a label to use as a spacer.
+        var spacer = new qx.ui.basic.Label('');
+
+        // Add it to the right vbox.
+        vboxRight.add(spacer);
+
+        // Create a label to store the "Tags" header
+        var tagsHeader = new qx.ui.basic.Label('<b>Tags</b>');
+        
+        // Set it to use rich formatting.
+        tagsHeader.set(
+          {
+            rich:true 
+          });
+
+        // Add it to the right vbox.
+        vboxRight.add(tagsHeader);
+
+        // Create a label with the actual tags.
+        var tags = new qx.ui.basic.Label(result.tags);
+
+        // Set it to use rich formatting.
+        tags.set(
+          {
+            rich:true 
+          });
+
+        // Add it to the right vbox.
+        vboxRight.add(tags);
+
+        // Creates an object containing the parts of the GUI which will need 
+        // to be changed after the fsm call. This object is passed to the FSM.
+
+        var guiWrapper = new qx.core.Object();
+        guiWrapper.setUserData("vbox", vbox);
+        guiWrapper.setUserData("cpanel", cpanel);
+        guiWrapper.setUserData("radiogroup", radiogroup);
+        guiWrapper.setUserData("allCommentsBox", allCommentsBox);
+        guiWrapper.setUserData("commentInput", commentInput);
+        fsm.addObject("guiWrapper", guiWrapper);
 
         canvas.setLayout(new qx.ui.layout.Canvas());
-        canvas.add(hbox);
-        */
+        canvas.add(hbox, { edge : 10 } );
 
         /*
         var             o;
