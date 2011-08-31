@@ -174,7 +174,7 @@ qx.Mixin.define("aiagallery.dbif.MSearch",
         });
       
       // All Apps which contained all keywords in the string should come first
-      for (var curUID in queryResultsMap)
+      for ( curUID in queryResultsMap)
       {
         // So seperate those with all keywords and those without
         if (queryResultsMap[curUID].length === keywordArr.length)
