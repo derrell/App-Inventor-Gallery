@@ -248,12 +248,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(viewsLikes);
 
         // Create a button to allow users to "like" things.
+        // FIXME: Implement this
         var likeItButton = new qx.ui.form.Button("Like it!");
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
 
         // Create a button to allow users to "flag" things.
+        // FIXME: Implement this
         var flagItButton = new qx.ui.form.Button("Flag it!");
 
         // Add it to the left vbox.
@@ -290,8 +292,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
            // Checks that the submitted comment is not null or empty spaces
            if ((comment != null)
               && ((comment.replace(/\s/g, '')) != ""))
+           // No: submit it
            {
              fsm.eventListener(e);
+           }
+           //Yes: clear input box and do nothing
+           else
+           {
+             commentInput.setValue(null);
            }
          },
          fsm);
@@ -323,6 +331,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         scrollContainer.add(vbox);
 
         // Create a label to represent a link to download the app.
+        // FIXME: Add a link here
         var downloadLabel = new qx.ui.basic.Label('<b>Download ' + result.title + '!</b>');
 
         // Set it to use rich formatting
@@ -418,6 +427,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         fsm.addObject("guiWrapper", guiWrapper);
 
         canvas.setLayout(new qx.ui.layout.Canvas());
+        
+        // FIXME: Get this guy in the center of the screen, not sure why he won't
+        // move over.
+        hbox.setAlignX("center");
         canvas.add(hbox, { edge : 10 } );
 
         /*
@@ -618,24 +631,39 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             commentAuthor = result["visitor"];
             commentTime = result["timestamp"];
             cpanel = new collapsablepanel.Panel(commentAuthor + ": " + newComment);
-            cpanel.setGroup(radiogroup);
             
+            // Don't force all but one panel to be closed.  Eventually remove cpanels.
+            // Note: Shouldn't "cpanel.setEnabled(false);" do this?  It didn't.
+            // cpanel.setGroup(radiogroup);     
             replyBtn = new qx.ui.form.Button("reply");
             label = new qx.ui.basic.Label(newComment);
             label.set(
               {
                 rich : true,
-                wrap : true
+                wrap : true,
+                selectable : true
               });
-            label2 = new qx.ui.basic.Label("   posted: " + commentTime);
+
+            
+            var dateObj = new Date(commentTime);
+            var dateString = dateObj.toDateString();
+            var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+            var dateTimeString = dateString + " " + timeString + " ET";            
+            // FIXME: font tag deprecated!
+            // And, there must be a Qooxdoo way!;
+            // I'll shorten the line, too!
+            var postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
+            label2 = new qx.ui.basic.Label(postedLabel);
+
             label2.set(
               {
                 rich : true,
-                wrap : true
+                wrap : true,
+                selectable : true
               });
             hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
             vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-            hbox.add(replyBtn);
+            // hbox.add(replyBtn);
             vbox2.add(label);
             hbox.add(label2);
             vbox2.add(hbox);
@@ -686,24 +714,33 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                 commentAuthor = result[i]["visitor"];
                 commentTime = result[i]["timestamp"];
                 cpanel = new collapsablepanel.Panel(commentAuthor + ": " + newComment);
-                cpanel.setGroup(radiogroup);
+                //cpanel.setGroup(radiogroup);
 
                 replyBtn = new qx.ui.form.Button("reply");
                 label = new qx.ui.basic.Label(newComment);
                 label.set(
                   {
                     rich : true,
-                    wrap : true
+                    wrap : true,
+                    selectable : true // Allow user to select text
                   });
-                label2 = new qx.ui.basic.Label("   posted: " + commentTime);
+                
+                dateObj = new Date(commentTime);
+                dateString = dateObj.toDateString();
+                timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+                dateTimeString = dateString + " " + timeString + " ET";
+                // See above
+                postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
+                label2 = new qx.ui.basic.Label(postedLabel);
                 label2.set(
                   {
                     rich : true,
-                    wrap : true
+                    wrap : true,
+                    selectable : true // Allow user to select text
                   });
                 hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
                 vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-                hbox.add(replyBtn);
+                // hbox.add(replyBtn);
                 vbox2.add(label);
                 hbox.add(label2);
                 vbox2.add(hbox);

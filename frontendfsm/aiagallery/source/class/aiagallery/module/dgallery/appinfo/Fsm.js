@@ -164,7 +164,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
+       /*
        * Transition: Idle to Idle
        *
        * Cause: submitCommentBtn has been pressed
@@ -219,7 +219,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
+       /*
        * Transition: Idle to Idle
        *
        * Cause: 
