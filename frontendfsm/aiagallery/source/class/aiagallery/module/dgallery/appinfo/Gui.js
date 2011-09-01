@@ -125,6 +125,57 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             result; 
       var             commentData = rpcRequest.getUserData("commentData");
 
+// vvvvvvv COMMENTS vvvvvvv
+      // Add panel containing comment info to the GUI
+      // comment: the comment object
+      function addCommentPanel(comment)
+      {
+        // Comment info to be displayed
+        var commentText = comment["text"];
+        var commentAuthor = comment["visitor"];
+        var commentTime = comment["timestamp"];
+        // var treeId = comment["treeId"];
+        // New cpanel to be returned
+        // var cpanel = new collapsablepanel.Panel(commentAuthor + ": [" + treeId + "] " + commentText);
+        var cpanel = new collapsablepanel.Panel(commentAuthor + ": " + commentText);
+        //cpanel.setGroup(radiogroup);
+        
+
+        var textLabel = new qx.ui.basic.Label(newComment);
+        textLabel.set(
+          {
+            rich : true,
+            wrap : true,
+            selectable : true
+          });
+            
+            var dateObj = new Date(commentTime);
+            var dateString = dateObj.toDateString();
+            var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+            var dateTimeString = dateString + " " + timeString + " ET";            
+            // FIXME: font tag deprecated!
+            // And, there must be a Qooxdoo way!;
+            // I'll shorten the line, too!
+            var postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
+            var dateLabel = new qx.ui.basic.Label(postedLabel);
+            dateLabel.set(
+              {
+                rich : true,
+                wrap : true,
+                selectable : true
+              });
+        var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+        var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        vbox2.add(textLabel);
+        hbox.add(dateLabel);
+        vbox2.add(hbox);
+        cpanel.add(vbox2);
+        allCommentsBox.addAt(cpanel, 0, null);
+        vbox.add(allCommentsBox);  //??????????????????
+      }
+// ^^^^^^^ COMMENTS ^^^^^^^
+
+
       if (response.type == "failed")
       {
         // FIXME: Add the failure to someplace reasonable, instead of alert()
@@ -637,52 +688,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
         if (ty != null) 
+
         {
           newComment = result["text"];
           if (newComment != null) 
           {
-            commentAuthor = result["visitor"];
-            commentTime = result["timestamp"];
-            cpanel = new collapsablepanel.Panel(commentAuthor + ": " + newComment);
-
-            // Don't force all but one panel to be closed.  Eventually remove cpanels.
-            // Note: Shouldn't "cpanel.setEnabled(false);" do this?  It didn't.
-            // cpanel.setGroup(radiogroup);     
-            replyBtn = new qx.ui.form.Button("reply");
-            label = new qx.ui.basic.Label(newComment);
-            label.set(
-              {
-                rich : true,
-                wrap : true,
-                selectable : true
-              });
-
-            
-            var dateObj = new Date(commentTime);
-            var dateString = dateObj.toDateString();
-            var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-            var dateTimeString = dateString + " " + timeString + " ET";            
-            // FIXME: font tag deprecated!
-            // And, there must be a Qooxdoo way!;
-            // I'll shorten the line, too!
-            var postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
-            label2 = new qx.ui.basic.Label(postedLabel);
-
-            label2.set(
-              {
-                rich : true,
-                wrap : true,
-                selectable : true
-              });
-            hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-            vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-            // hbox.add(replyBtn);
-            vbox2.add(label);
-            hbox.add(label2);
-            vbox2.add(hbox);
-            cpanel.add(vbox2);
-            allCommentsBox.addAt(cpanel, 0, null);
-            vbox.add(allCommentsBox);
+            addCommentPanel(result);
           }
         }
         commentInput.setValue(null);
@@ -724,42 +735,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               newComment = result[i]["text"];
               if (newComment != null)
               {
-                commentAuthor = result[i]["visitor"];
-                commentTime = result[i]["timestamp"];
-                cpanel = new collapsablepanel.Panel(commentAuthor + ": " + newComment);
-                //cpanel.setGroup(radiogroup);
-
-                replyBtn = new qx.ui.form.Button("reply");
-                label = new qx.ui.basic.Label(newComment);
-                label.set(
-                  {
-                    rich : true,
-                    wrap : true,
-                    selectable : true // Allow user to select text
-                  });
-                
-                dateObj = new Date(commentTime);
-                dateString = dateObj.toDateString();
-                timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-                dateTimeString = dateString + " " + timeString + " ET";
-                // See above
-                postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
-                label2 = new qx.ui.basic.Label(postedLabel);
-                label2.set(
-                  {
-                    rich : true,
-                    wrap : true,
-                    selectable : true // Allow user to select text
-                  });
-                hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-                vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-                // hbox.add(replyBtn);
-                vbox2.add(label);
-                hbox.add(label2);
-                vbox2.add(hbox);
-                cpanel.add(vbox2);
-                allCommentsBox.addAt(cpanel, 0, null);
-                vbox.add(allCommentsBox);
+                addCommentPanel(result[i]);
               }
             }
           }
