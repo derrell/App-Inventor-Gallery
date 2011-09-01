@@ -135,12 +135,32 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var commentAuthor = comment["visitor"];
         var commentTime = comment["timestamp"];
         // var treeId = comment["treeId"];
+
+        var commentBox = new qx.ui.basic.Label(null);
+
+        var dateObj = new Date(commentTime);
+        var dateString = dateObj.toDateString();
+        var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+        var dateTimeString = dateString + " " + timeString + " ET"; 
+
+        // FIXME: line length
+        // font-size does not work; presumably all text in a label is the same size.
+        var commentString = '<b>' + commentAuthor + ': </b>' + commentText + '<br>' + '<span style="color:grey; font-size:50%">Posted: ' + dateTimeString + '</span>' + '<br>';
+
+        commentBox.set(
+          {
+            rich : true,
+            wrap : true,
+            selectable : true,
+//            value : "<b>123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 </b>"
+            value : commentString
+          });
+/*
         // New cpanel to be returned
         // var cpanel = new collapsablepanel.Panel(commentAuthor + ": [" + treeId + "] " + commentText);
         var cpanel = new collapsablepanel.Panel(commentAuthor + ": " + commentText);
         //cpanel.setGroup(radiogroup);
         
-
         var textLabel = new qx.ui.basic.Label(newComment);
         textLabel.set(
           {
@@ -170,7 +190,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         hbox.add(dateLabel);
         vbox2.add(hbox);
         cpanel.add(vbox2);
-        allCommentsBox.addAt(cpanel, 0, null);
+*/
+        allCommentsBox.addAt(commentBox, 0, null);
         vbox.add(allCommentsBox);  //??????????????????
       }
 // ^^^^^^^ COMMENTS ^^^^^^^
@@ -192,7 +213,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var                 vboxLeft;
         var                 vboxRight;
         var                 hbox;
-        var                 cpanel;
+        //var                 cpanel;
+        var                 commentBox;
 
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
@@ -476,7 +498,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         var guiWrapper = new qx.core.Object();
         guiWrapper.setUserData("vbox", vbox);
-        guiWrapper.setUserData("cpanel", cpanel);
+        guiWrapper.setUserData("commentBox", commentBox);
         guiWrapper.setUserData("radiogroup", radiogroup);
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
@@ -499,7 +521,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var             vbox;
         var             splitpane;
         var             radiogroup;
-        var             cpanel;
+        var             commentBox;
         var             text;
         var             label;
 
@@ -669,7 +691,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Gets the objects sent from the GUI to the FSM. 
         var guiInfo = rpcRequest.getUserData("guiInfo");
         var vbox = guiInfo.getUserData("vbox");
-        var cpanel = guiInfo.getUserData("cpanel");
+        var commentBox = guiInfo.getUserData("commentBox");
         var radiogroup = guiInfo.getUserData("radiogroup");
         var commentInput = guiInfo.getUserData("commentInput");
         var allCommentsBox = guiInfo.getUserData("allCommentsBox");
