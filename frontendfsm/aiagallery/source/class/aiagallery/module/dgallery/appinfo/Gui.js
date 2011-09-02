@@ -36,7 +36,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       return s;
     },
 
-        // Returns a string version of an arbitrary value
+    // Returns a string version of an arbitrary value
+    // Note:  JSON.stringify does the same thing.
     stringOf: function(value) 
     {
       // Determine the type of the value passed as a parameter
@@ -126,73 +127,64 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             commentData = rpcRequest.getUserData("commentData");
 
 // vvvvvvv COMMENTS vvvvvvv
-      // Add panel containing comment info to the GUI
-      // comment: the comment object
+      // Add panel containing a single comment to the GUI
+      // comment: the comment object to be added
+      //
+      // Comment will be shown as a 2-element vbox:
+      // Top line: visitor: comment text
+      // 2nd line: time stamp (grey, small)
+
       function addCommentPanel(comment)
       {
         // Comment info to be displayed
+        // These are the 3 fields of interest to a viewer
+        // (the rest is metadata -- app ID, tree ID, numChildren)
         var commentText = comment["text"];
         var commentAuthor = comment["visitor"];
         var commentTime = comment["timestamp"];
         // var treeId = comment["treeId"];
 
-        var commentBox = new qx.ui.basic.Label(null);
-
-        var dateObj = new Date(commentTime);
-        var dateString = dateObj.toDateString();
-        var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-        var dateTimeString = dateString + " " + timeString + " ET"; 
-
-        // FIXME: line length
-        // font-size does not work; presumably all text in a label is the same size.
-        var commentString = '<b>' + commentAuthor + ': </b>' + commentText + '<br>' + '<span style="color:grey; font-size:50%">Posted: ' + dateTimeString + '</span>' + '<br>';
-
-        commentBox.set(
-          {
-            rich : true,
-            wrap : true,
-            selectable : true,
-//            value : "<b>123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 </b>"
-            value : commentString
-          });
-/*
-        // New cpanel to be returned
-        // var cpanel = new collapsablepanel.Panel(commentAuthor + ": [" + treeId + "] " + commentText);
-        var cpanel = new collapsablepanel.Panel(commentAuthor + ": " + commentText);
-        //cpanel.setGroup(radiogroup);
-        
-        var textLabel = new qx.ui.basic.Label(newComment);
-        textLabel.set(
+        // Top line
+        var visitorAndComment =  '<b>' + commentAuthor + ': </b>' + commentText;
+        var visitorAndCommentLabel = new qx.ui.basic.Label(visitorAndComment);
+        visitorAndCommentLabel.set(
           {
             rich : true,
             wrap : true,
             selectable : true
           });
-            
-            var dateObj = new Date(commentTime);
-            var dateString = dateObj.toDateString();
-            var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-            var dateTimeString = dateString + " " + timeString + " ET";            
-            // FIXME: font tag deprecated!
-            // And, there must be a Qooxdoo way!;
-            // I'll shorten the line, too!
-            var postedLabel = '<font color="grey">' + 'posted: ' + dateTimeString + '</font>'
-            var dateLabel = new qx.ui.basic.Label(postedLabel);
-            dateLabel.set(
-              {
-                rich : true,
-                wrap : true,
-                selectable : true
-              });
-        var hbox = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-        var vbox2 = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        vbox2.add(textLabel);
-        hbox.add(dateLabel);
-        vbox2.add(hbox);
-        cpanel.add(vbox2);
-*/
+
+        // Timestamp, easier on the eye than the default.
+        // (which could use some additional tweaking, perhaps)
+        var dateObj = new Date(commentTime);
+        var dateString = dateObj.toDateString();
+        var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+        var dateTimeString = dateString + " " + timeString + " ET"; 
+
+        // 2nd line
+        var postedStringStart = '<span style="color:grey;font-size:75%">Posted: ';
+        var postedString = postedStringStart + dateTimeString + '</span>';
+        var postedStringLabel = new qx.ui.basic.Label(postedString);
+        postedStringLabel.set(
+          {
+            rich : true,
+            wrap : true,
+            selectable : true
+          });
+
+        // Entire comment box
+        var commentLayout = new qx.ui.layout.VBox();
+        var commentBox = new qx.ui.container.Composite(commentLayout);
+        // Thin grey solid border
+        commentBox.setDecorator(new qx.ui.decoration.Single(1,'solid','#cccccc'));
+        // Add the pieces
+        commentBox.add(visitorAndCommentLabel);
+        commentBox.add(postedStringLabel);
+
+        // Insert the new comment at the top of the list
         allCommentsBox.addAt(commentBox, 0, null);
-        vbox.add(allCommentsBox);  //??????????????????
+        // Following line confirmed to be needed--but why??
+        vbox.add(allCommentsBox);
       }
 // ^^^^^^^ COMMENTS ^^^^^^^
 
