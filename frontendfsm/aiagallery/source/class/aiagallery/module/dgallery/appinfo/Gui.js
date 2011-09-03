@@ -43,6 +43,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // Determine the type of the value passed as a parameter
       var ty = aiagallery.module.dgallery.appinfo.Gui.typeOf(value);
       var stringOf =  aiagallery.module.dgallery.appinfo.Gui.stringOf;
+      var str;
             
       switch (ty)
       {
@@ -69,8 +70,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           } 
             else 
             {
-              var str = "[";
-              for ( var i = 0, len = value.length; i < len-1; ++i)
+              str = "[";
+              var i;
+              for ( i = 0, len = value.length; i < len-1; ++i)
               {
                 str += stringOf(value[i]) + ", \n";
               }
@@ -80,7 +82,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         case "object":
           var prop;
-          var str = "{"
+          str = "{";
           for (prop in value) 
           {
             str += prop + ":" + stringOf(value[prop]) + ", \n";
@@ -697,17 +699,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Gets the objects sent from the GUI to the FSM. 
         var guiInfo = rpcRequest.getUserData("guiInfo");
-        var vbox = guiInfo.getUserData("vbox");
-        var commentBox = guiInfo.getUserData("commentBox");
-        var radiogroup = guiInfo.getUserData("radiogroup");
-        var commentInput = guiInfo.getUserData("commentInput");
-        var allCommentsBox = guiInfo.getUserData("allCommentsBox");
+        vbox = guiInfo.getUserData("vbox");
+        commentBox = guiInfo.getUserData("commentBox");
+        radiogroup = guiInfo.getUserData("radiogroup");
+        commentInput = guiInfo.getUserData("commentInput");
+        allCommentsBox = guiInfo.getUserData("allCommentsBox");
         var newComment;
         var commentAuthor;
         var commentTime;
         var ty; 
         var replyBtn;
-        var hbox;
         var vbox2;
         var label2;
         var label;
