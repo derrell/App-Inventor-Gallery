@@ -14,88 +14,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
   type : "singleton",
   extend : qx.core.Object,
 
-  statics: 
-  {
-    // Returns the type of the object passed as a parameter as a string
-    typeOf: function (value) 
-    {
-      var s = typeof value;
-      if (s === 'object') 
-        {
-          if (value) 
-          {
-            if (value instanceof Array) 
-            {
-              s = 'array';
-            }
-          } else 
-            {
-              s = 'null';
-            }
-        }
-      return s;
-    },
-
-    // Returns a string version of an arbitrary value
-    // Note:  JSON.stringify does the same thing.
-    stringOf: function(value) 
-    {
-      // Determine the type of the value passed as a parameter
-      var ty = aiagallery.module.dgallery.appinfo.Gui.typeOf(value);
-      var stringOf =  aiagallery.module.dgallery.appinfo.Gui.stringOf;
-      var str;
-            
-      switch (ty)
-      {
-        case "string":
-          return "'" + value + "'";
-
-        case "boolean": 
-          if (value) 
-          {
-            return "true";
-          } else 
-          {
-            return "false";
-          }
-
-        case "number":
-          return value + "";
-    
-        case "array":
-          var len = value.length;
-          if (len == 0) 
-          {
-            return "[]";
-          } 
-            else 
-            {
-              str = "[";
-              var i;
-              for ( i = 0, len = value.length; i < len-1; ++i)
-              {
-                str += stringOf(value[i]) + ", \n";
-              }
-                str += stringOf(value[len-1]) + "]";
-                return str;
-            }
-
-        case "object":
-          var prop;
-          str = "{";
-          for (prop in value) 
-          {
-            str += prop + ":" + stringOf(value[prop]) + ", \n";
-          }
-            str += "}";
-            return str;
-          
-        default:
-          return ty;
-      }
-    }
-  },
-
   members :
   {
     /**
@@ -158,6 +76,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Timestamp, easier on the eye than the default.
         // (which could use some additional tweaking, perhaps)
+        // FIXME: This needs to be internationalized. There are existing
+        // functions to do so.
         var dateObj = new Date(commentTime);
         var dateString = dateObj.toDateString();
         var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
@@ -712,19 +632,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var vbox2;
         var label2;
         var label;
-        ty = this.self(arguments).typeOf(result);
 
         // Adds the new comment to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
-        if (ty != null) 
-
+        newComment = result["text"];
+        if (newComment != null) 
         {
-          newComment = result["text"];
-          if (newComment != null) 
-          {
-            addCommentPanel(result);
-          }
+          addCommentPanel(result);
         }
         commentInput.setValue(null);
         break;
@@ -735,7 +650,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // This alert shows that addComments is reusing uids 
 //        alert("getComments result is: " +
-//              this.self(arguments).stringOf(result));
+//              qx.lang.Json.stringify(result));
 
         // Gets back the objects passed from the GUI to the FSM
         guiInfo = rpcRequest.getUserData("guiInfo");
@@ -747,8 +662,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Adds the comments retrieved from the database to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
-        ty = this.self(arguments).typeOf(result);
-        if (ty == "array") 
+        ty = qx.lang.Type.getClass(result);
+        if (ty == "Array") 
         {
           len = result.length;
           if (len != 0) 
