@@ -120,6 +120,9 @@ qx.Class.define("aiagallery.test.AppsTest",
       // all RPCs.
       var dbifSim = aiagallery.dbif.DbifSim.getInstance();
       
+      // We need an error object
+      var error = new rpcjs.rpc.error.Error("2.0");
+      
       dbifSim.setWhoAmI(
         {
           email     : "joe@blow.com",
@@ -138,7 +141,8 @@ qx.Class.define("aiagallery.test.AppsTest",
                                          "title"    : "title",
                                          "owner"    : "author",
                                          "uid"      : "uid"
-                                       });
+                                       },
+                                      error);
       
       this.assertInstance(appInfo, Object, "get app info");
       this.assert(appInfo.uid === 105, "correct app returned");
