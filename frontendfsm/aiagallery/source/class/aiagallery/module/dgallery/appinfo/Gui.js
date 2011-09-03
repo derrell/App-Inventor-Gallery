@@ -80,7 +80,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         case "object":
           var prop;
-          str = "{"
+          var str = "{"
           for (prop in value) 
           {
             str += prop + ":" + stringOf(value[prop]) + ", \n";
@@ -162,7 +162,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var dateTimeString = dateString + " " + timeString + " ET"; 
 
         // 2nd line
-        var postedStringStart = '<span style="color:grey;font-size:75%">Posted: ';
+        var postedStringStart = 
+          '<span style="color:grey;font-size:75%">Posted: ';
         var postedString = postedStringStart + dateTimeString + '</span>';
         var postedStringLabel = new qx.ui.basic.Label(postedString);
         postedStringLabel.set(
@@ -176,7 +177,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var commentLayout = new qx.ui.layout.VBox();
         var commentBox = new qx.ui.container.Composite(commentLayout);
         // Thin grey solid border
-        commentBox.setDecorator(new qx.ui.decoration.Single(1,'solid','#cccccc'));
+        commentBox.setDecorator(new qx.ui.decoration.Single(1, 
+                                                            'solid',
+                                                            '#cccccc'));
         // Add the pieces
         commentBox.add(visitorAndCommentLabel);
         commentBox.add(postedStringLabel);
@@ -231,9 +234,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         hbox.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));
         hbox.set( 
           {
-            maxWidth:640,
-            width: 640,
-            minWidth: 400
+            maxWidth:1024,
+            width: 1024
           });
 
         // Create the left vertical box container.
@@ -242,7 +244,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Make it purty.
         vboxLeft.setBackgroundColor("#f3f3f3");
 
-        // Add it to the horizontal box, with the flex property to use all unused space.
+        // Add it to the horizontal box, with the flex property to use all
+        // unused space.
         hbox.add(vboxLeft, { flex : 1 });
 
         // Create the right vertical box container.
@@ -251,19 +254,21 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Make it purty as well.
         vboxRight.setBackgroundColor("#f3f3f3");
 
-        // Make it take up 200 pixels of space.
+/*
+        // Make it take up between 200 and 400 pixels of space.
         vboxRight.set(
           {
-            minWidth:200,
-            width:200,
-            maxWidth:200
+            width:400,
+            maxWidth:400
           });
+*/
           
         // Add it the horizontal box.
-        hbox.add(vboxRight);
+        hbox.add(vboxRight, { flex : 2 });
  
         // Store a nice title.
-        var title = new qx.ui.basic.Label('<b style="font-size:25px">' + result.title + '</b>');
+        var title = new qx.ui.basic.Label('<b style="font-size:25px">' +
+                                          result.title + '</b>');
 
         // Set it to use rich formatting and center it in the vbox.
         title.set(
@@ -285,7 +290,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(appIcon);
 
         // Create a label describing who created the app.
-        var createdBy = new qx.ui.basic.Label('Created by <b>' + result.owner + '</b>');
+        var createdBy = new qx.ui.basic.Label('Created by <b>' +
+                                              result.owner + '</b>');
 
         // Make it purty with rich formatting.
         createdBy.set(
@@ -300,7 +306,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
-        var viewsLikes = new qx.ui.basic.Label('<b>' + result.numViewed + ' views, ' + result.numLikes+ ' likes</b>');
+        var viewsLikes = new qx.ui.basic.Label('<b>' +
+                                               result.numViewed +
+                                               ' views, ' +
+                                               result.numLikes+
+                                               ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
         viewsLikes.set(
@@ -339,7 +349,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
        // Adds the textfield for entering a comment
        var commentInput = new qx.ui.form.TextField();
        commentInput.setPlaceholder("Type your comment here:");
-       var allCommentsBox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        var allCommentsBox = 
+          new qx.ui.container.Composite(new qx.ui.layout.VBox());
 
        // Wrapping everything relevant to a comment in one object,
        // to be passed to the FSM
@@ -401,7 +412,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a label to represent a link to download the app.
         // FIXME: Add a link here
-        var downloadLabel = new qx.ui.basic.Label('<b>Download ' + result.title + '!</b>');
+        var downloadLabel =
+          new qx.ui.basic.Label('<b>Download ' + result.title + '!</b>');
 
         // Set it to use rich formatting
         downloadLabel.set(
@@ -413,7 +425,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxRight.add(downloadLabel);
 
         // Create a label to store the number of downloads
-        var download = new qx.ui.basic.Label(result.title + ' has been downloaded ' + result.numDownloads + ' times.');
+        var download = new qx.ui.basic.Label(result.title +
+                                             ' has been downloaded ' +
+                                             result.numDownloads +
+                                             ' times.');
 
         // Set it to use rich formatting and to wrap text.
         download.set(
@@ -455,7 +470,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxRight.add(description);
 
         // Create a label to use as a spacer.
-        var spacer = new qx.ui.basic.Label('');
+        spacer = new qx.ui.basic.Label('');
 
         // Add it to the right vbox.
         vboxRight.add(spacer);
@@ -497,14 +512,13 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         fsm.addObject("guiWrapper", guiWrapper);
 // ^^^^^^^ COMMENTS ^^^^^^^
 
-        canvas.setLayout(new qx.ui.layout.Canvas());
+        canvas.setLayout(new qx.ui.layout.HBox());
         
-        // FIXME: Get this guy in the center of the screen, not sure why he won't
-        // move over.
-        hbox.setAlignX("center");
-        canvas.add(hbox, { edge : 10 } );
+        canvas.add(new qx.ui.core.Widget(), { flex : 1 });
+        canvas.add(hbox);
+        canvas.add(new qx.ui.core.Widget(), { flex : 1 });
 
-        /*
+/*
         var             o;
         var             groupbox;
         var             appInfoContainer;
@@ -576,7 +590,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
        // Adds the textfield for entering a comment
        var commentInput = new qx.ui.form.TextField();
        commentInput.setPlaceholder("Type your comment here:");
-       var allCommentsBox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+       var allCommentsBox = 
+         new qx.ui.container.Composite(new qx.ui.layout.VBox());
 
        // Wrapping everything relevant to a comment in one object,
        // to be passed to the FSM
@@ -672,7 +687,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             appInfoContainer.add(new qx.ui.basic.Label(field.data + ""),
                                  { row : field.row, column : 1, colSpan : 2 });
           });
-        */
+*/
         break;
 
 // vvvvvvv COMMENTS vvvvvvv
@@ -718,22 +733,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         result = response.data.result;
 
         // This alert shows that addComments is reusing uids 
-        //alert("getComments result is: " + this.self(arguments).stringOf(result));
+//        alert("getComments result is: " +
+//              this.self(arguments).stringOf(result));
 
         // Gets back the objects passed from the GUI to the FSM
-        var guiInfo = rpcRequest.getUserData("guiInfo");
-        var vbox = guiInfo.getUserData("vbox");       
-        var radiogroup = guiInfo.getUserData("radiogroup");
-        var allCommentsBox = guiInfo.getUserData("allCommentsBox");
-        var ty;
-        var len
-        var newComment;
-        var commentAuthor;
-        var commentTime;
-        var replyBtn;
-        var hbox;
-        var vbox2;
-        var label2;
+        guiInfo = rpcRequest.getUserData("guiInfo");
+        vbox = guiInfo.getUserData("vbox");       
+        radiogroup = guiInfo.getUserData("radiogroup");
+        allCommentsBox = guiInfo.getUserData("allCommentsBox");
+        var len;
   
         // Adds the comments retrieved from the database to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 

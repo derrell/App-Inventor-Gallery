@@ -242,13 +242,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           var             commentWrapper;
           var             appId;
           var             guiWrapper;
-          var             vbox;
           var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
           guiWrapper = fsm.getObject("guiWrapper");
-          vbox = guiWrapper.getUserData("vbox");
          
           // Issue the remote procedure call to execute the query
           request =
@@ -265,7 +263,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // we made.
           request.setUserData("requestType", "getComments");
           request.setUserData("guiInfo", guiWrapper);
-
         }
       });
 
