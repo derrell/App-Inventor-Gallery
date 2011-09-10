@@ -227,11 +227,10 @@ qx.Mixin.define("aiagallery.dbif.MApps",
   {
     addOrEditApp : function(uid, attributes, error)
     {
+      var             i;
       var             title;
       var             description;
-      var             image1;
-      var             image2;
-      var             image3;
+      var             image;
       var             previousAuthors;
       var             source;
       var             apk;
@@ -239,6 +238,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             tagObj;
       var             tagData;
       var             oldTags;
+      var             bHasCategory;
+      var             categories;
       var             uploadTime;
       var             status;
       var             statusIndex;
@@ -273,7 +274,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "title",
           "description",
           "tags",
-          "source"
+          "source",
+          "image1"
         ];
       
       // Don't let the caller override the owner
@@ -318,6 +320,32 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save the existing tags list
       oldTags = appData.tags;
 
+      // If there's no image1 value...
+      if (! attributes.image1)
+      {
+        // ... then move image3 or image2 to image1
+        if (attributes.image3)
+        {
+          attributes.image1 = attributes.image3;
+          attributes.image3 = null;
+        }
+        else
+        {
+          // image2 may not exist either, which will be caught in the
+          // code that detects missing fields.
+          attributes.image1 = attributes.image2;
+          attributes.image2 = null;
+        }
+      }
+      
+      // Similarly, if there's no image2 value...
+      if (! attributes.image2)
+      {
+        // ... then move image3 to image2. (Again, it may not exist.)
+        attributes.image2 = attributes.image3;
+        attributes.image3 = null;
+      }
+
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
         function(field)
@@ -337,11 +365,52 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      // Issue a query for all category tags
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           {
+                                             type  : "element",
+                                             field : "type",
+                                             value : "category"
+                                           },
+                                           null);
+      
+      // We want to look at only the value field of each category
+      categories = categories.map(
+        function(o)
+        {
+          return o.value;
+        });
+
+      // Ensure that at least one of the specified tags is a category
+      bHasCategory = false;
+      tags = appData.tags;
+      for (i = 0; i < tags.length; i++)
+      {
+        // Is this tag a category?
+        if (qx.lang.Array.contains(categories, tags[i]))
+        {
+          // Yup. Mark it.
+          bHasCategory = true;
+          
+          // No need to look further.
+          break;
+        }
+      }
+      
+      // Did we find at least one category tag?
+      if (! bHasCategory)
+      {
+        // Nope. Let 'em know.
+        error.setCode(3);
+        error.setMessage("At least one category is required");
+        return error;
+      }
+
       // Were there any missing, required fields?
       if (missing.length > 0)
       {
         // Yup. Let 'em know.
-        error.setCode(3);
+        error.setCode(4);
         error.setMessage("Missing required attributes: " + missing.join(", "));
         return error;
       }
