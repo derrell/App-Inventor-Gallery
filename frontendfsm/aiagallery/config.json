@@ -5,13 +5,12 @@
   {
     "job-shadowing" :
     [
-      "source-hybrid",
-      "source",
       "build",
       "provider-deps",
       "migration",
       "source",
       "source-hybrid",
+      "source-each",
       "libraries",
       "source-all",
       "build",
@@ -58,6 +57,7 @@
     "profiling",
     "source",
     "source-all",
+    "source-each",
     "source-hybrid",
     "simulation-build",
     "simulation-run",
