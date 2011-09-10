@@ -11,6 +11,9 @@ try
   $debugLoad("qx.Bootstrap");
   new Packages.qx.Bootstrap();
 
+  $debugLoad("qx.core.Environment");
+  new Packages.qx.core.Environment();
+
   $debugLoad("qx.bom.client.OperatingSystem");
   new Packages.qx.bom.client.OperatingSystem();
 
@@ -122,6 +125,15 @@ try
   $debugLoad("qx.core.MAssert");
   new Packages.qx.core.MAssert();
 
+  $debugLoad("qx.core.MEvents");
+  new Packages.qx.core.MEvents();
+
+  $debugLoad("qx.core.MLogging");
+  new Packages.qx.core.MLogging();
+
+  $debugLoad("qx.core.MProperty");
+  new Packages.qx.core.MProperty();
+
   $debugLoad("qx.core.Object");
   new Packages.qx.core.Object();
 
@@ -215,6 +227,9 @@ try
   
   $debugLoad("aiagallery.dbif.MSearch");
   new Packages.aiagallery.dbif.MSearch();
+  
+  $debugLoad("aiagallery.dbif.MLiking");
+  new Packages.aiagallery.dbif.MLiking();
   
   $debugLoad("aiagallery.dbif.MComments");
   new Packages.aiagallery.dbif.MComments();

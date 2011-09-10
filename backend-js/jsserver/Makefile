@@ -19,6 +19,7 @@ qxoo_jar := war/WEB-INF/lib/qxoo.jar
 
 qxoo_classes :=							\
 	qxoo_classes/qx/Bootstrap.class				\
+	qxoo_classes/qx/core/Environment.class			\
 	qxoo_classes/qx/bom/client/OperatingSystem.class	\
 	qxoo_classes/qx/bom/client/Locale.class			\
 	qxoo_classes/qx/bom/client/Html.class			\
@@ -56,6 +57,9 @@ qxoo_classes :=							\
 	qxoo_classes/qx/log/Logger.class			\
 	qxoo_classes/qx/core/Assert.class			\
 	qxoo_classes/qx/core/MAssert.class			\
+	qxoo_classes/qx/core/MEvents.class			\
+	qxoo_classes/qx/core/MLogging.class			\
+	qxoo_classes/qx/core/MProperty.class			\
 	qxoo_classes/qx/core/Object.class			\
 	qxoo_classes/qx/event/type/Event.class			\
 	qxoo_classes/qx/event/type/Data.class			\
@@ -93,6 +97,7 @@ app_classes :=							\
 	qxoo_classes/aiagallery/dbif/MComments.class		\
 	qxoo_classes/aiagallery/dbif/MWhoAmI.class		\
 	qxoo_classes/aiagallery/dbif/MSearch.class		\
+	qxoo_classes/aiagallery/dbif/MLiking.class		\
 	qxoo_classes/aiagallery/dbif/MDbifCommon.class		\
 	qxoo_classes/aiagallery/dbif/ObjAppData.class		\
 	qxoo_classes/aiagallery/dbif/ObjComments.class		\
