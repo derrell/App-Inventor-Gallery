@@ -103,7 +103,7 @@ function doGet(request, response)
   {
   case "flushDB":               // flush the entire database
     var             entities;
-
+    
     // Get the database interface instance
     dbif = aiagallery.dbif.DbifAppEngine.getInstance();
 
@@ -170,6 +170,24 @@ function doGet(request, response)
           new aiagallery.dbif.ObjVisitors(entity.id);
         obj.removeSelf();
       });
+
+    // Now add the category tags, required for uploading an application
+    qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
+    Db = aiagallery.dbif.MSimData.Db;
+
+    for (entry in Db.visitors)
+    {
+      entity = new aiagallery.dbif.ObjVisitors(entry);
+      entity.setData(Db.visitors[entry]);
+      entity.put();
+    }
+
+    for (entry in Db.tags)
+    {
+      entity = new aiagallery.dbif.ObjTags(entry);
+      entity.setData(Db.tags[entry]);
+      entity.put();
+    }
 
     break;
 
