@@ -56,11 +56,11 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         /** Authorship chain */
         "previousAuthors" : "StringArray",
 
-        /** Source ZIP file (base64-encoded) */
-        "source" : "LongString",
+        /** Blob ids of source ZIP file (base64-encoded), newest first */
+        "source" : "StringArray",
 
-        /** Executable APK file (base64-encoded) */
-        "apk" : "LongString",
+        /** Blob ids of executable APK file (base64-encoded), newest first */
+        "apk" : "StringArray",
 
         /** Tags assigned to this application */
         "tags" : "StringArray",

@@ -432,7 +432,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           delete appObj["apk"];
         });
       
-      return appArr
+      return appArr;
     },
 
     

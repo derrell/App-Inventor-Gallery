@@ -248,6 +248,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             bNew;
       var             whoami;
       var             missing = [];
+      var             sourceData;
+      var             apkData;
+      var             key;
       var             allowableFields =
         [
           "uid",
@@ -353,8 +356,38 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           // Was this field provided in the parameter attributes?
           if (attributes[field])
           {
-            // Yup. Replace what's in the db entry
-            appData[field] = attributes[field];
+            // Handle source and apk fields specially
+            switch(field)
+            {
+            case "source":
+              // Save the field data
+              sourceData = attributes.source;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.source)
+              {
+                appData.source = [];
+              }
+              break;
+              
+            case "apk":
+              // Save the field data
+              apkData = attributes.apk;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.apk)
+              {
+                appData.apk = [];
+              }
+              break;
+
+            default:
+              // Replace what's in the db entry
+              appData[field] = attributes[field];
+              break;
+            }
           }
 
           // If this field is required and not available...
@@ -416,11 +449,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       }
       
       // If a new source file was uploaded...
-      if (attributes.source)
+      if (sourceData)
       {
         // ... then update the upload time to now
         appData.uploadTime = String((new Date()).getTime());
       }
+
+      // FIXME: Begin a transaction here
 
       // Add new tags to the database, and update counts of formerly-existing
       // tags. Remove "normal" tags with a count of 0.
@@ -475,9 +510,37 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      try
+      {
+        // Save the new source data (if there is any)
+        if (sourceData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(sourceData);
+          appData.source.unshift(key);
+        }
+        
+        // Similarly for apk data
+        if (apkData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(apkData);
+          appData.apk.unshift(key);
+        }
+      }
+      catch(e)
+      {
+        error.setCode(5);
+        error.setMessage(e.toString());
+        // FIXME: roll back transaction here
+        return error;
+      }
+
       // Save this record in the database
       appObj.put();
       
+      // FIXME: Commit the transaction here
+
       // Add all words in text fields to word Search record
       aiagallery.dbif.MApps._populateSearch(appObj.getData());
       
@@ -542,6 +605,26 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             tagObj.removeSelf();
           }
         });
+
+      // Remove any apk blobs associated with this app
+      if (appData.apk)
+      {
+        appData.apk.forEach(
+          function(apkBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(apkBlobId);
+          });
+      }
+
+      // Similarly for any source blobs
+      if (appData.source)
+      {
+        appData.source.forEach(
+          function(sourceBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(sourceBlobId);
+          });
+      }
 
       // Delete the app
       appObj.removeSelf();
@@ -1100,7 +1183,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.status != 2 && (! whoami || app.owner != whoami.email))
+      if (app.status != aiagallery.dbif.Constants.Status.Active &&
+          (! whoami || app.owner != whoami.email))
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)

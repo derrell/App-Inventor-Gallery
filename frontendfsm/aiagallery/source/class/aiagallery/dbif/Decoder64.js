@@ -19,19 +19,31 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       var           mimeType;
       var           contents;
       var           decodedContents;
+      var           blobId;
       
       // Get an instance of the object whose field is requested
       myObj = new aiagallery.dbif.ObjAppData(parseInt(appId,10));
       
-      // Get the contents of that field
-      fieldContent = myObj.getData()[base64field];
+      // Get the contents of that field, which, if it exists, is a blob id
+      blobId = myObj.getData()[base64field];
       
       // Was there any data in the field?
-      if (!fieldContent)
+      if (! blobId)
       {
         // No, return null and let the caller decide how to handle that.
         return null;
       }
+      
+      // Retrieve the blob data, which is the base64-encoded data
+      fieldContent = rpcjs.dbif.Entity.getBlob(blobId);
+
+      // Was there any blob data?
+      if (! fieldContent)
+      {
+        // No, return null and let the caller decide how to handle that.
+        return null;
+      }
+
       // Parse out the mimeType. This always starts at index 5 and ends with a 
       // semicolon
       mimeType = fieldContent.substring(5, fieldContent.indexOf(";"));
@@ -44,7 +56,6 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       
       // Give 'em what they want
       return {mime: mimeType, content: decodedContents};
-        
     }
   }
 

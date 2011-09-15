@@ -85,6 +85,9 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     rpcjs.dbif.Entity.registerDatabaseProvider(
       rpcjs.appengine.Dbif.query,
       rpcjs.appengine.Dbif.put,
-      rpcjs.appengine.Dbif.remove);
+      rpcjs.appengine.Dbif.remove,
+      rpcjs.appengine.Dbif.getBlob,
+      rpcjs.appengine.Dbif.putBlob,
+      rpcjs.appengine.Dbif.removeBlob);
   }
 });
