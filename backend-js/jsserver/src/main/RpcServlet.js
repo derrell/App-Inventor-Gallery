@@ -175,15 +175,18 @@ function doGet(request, response)
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
     Db = aiagallery.dbif.MSimData.Db;
 
-    for (entry in Db.visitors)
-    {
-      entity = new aiagallery.dbif.ObjVisitors(entry);
-      entity.setData(Db.visitors[entry]);
-      entity.put();
-    }
-
     for (entry in Db.tags)
     {
+      // Exclude normal tags. We want only special and category tags
+      if (Db.tags[entry].type == "normal")
+      {
+        continue;
+      }
+      
+      // Reset the count
+      Db.tags[entry].count = 0;
+      
+      // Create and save an entity
       entity = new aiagallery.dbif.ObjTags(entry);
       entity.setData(Db.tags[entry]);
       entity.put();
