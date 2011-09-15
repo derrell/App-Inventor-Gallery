@@ -539,11 +539,11 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save this record in the database
       appObj.put();
       
-      // FIXME: Commit the transaction here
-
       // Add all words in text fields to word Search record
       aiagallery.dbif.MApps._populateSearch(appObj.getData());
       
+      // FIXME: Commit the transaction here
+
       return appObj.getData();  // This includes newly-created key (if adding)
     },
     

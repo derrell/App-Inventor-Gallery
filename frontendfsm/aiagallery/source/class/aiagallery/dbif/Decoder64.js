@@ -19,24 +19,36 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       var           mimeType;
       var           contents;
       var           decodedContents;
-      var           blobId;
+      var           blobIds;
       
       // Get an instance of the object whose field is requested
       myObj = new aiagallery.dbif.ObjAppData(parseInt(appId,10));
       
-      // Get the contents of that field, which, if it exists, is a blob id
-      blobId = myObj.getData()[base64field];
-      
-      // Was there any data in the field?
-      if (! blobId)
+      switch(base64field)
       {
-        // No, return null and let the caller decide how to handle that.
-        return null;
+      case "source":
+      case "apk":
+        // Get the contents of that field, which, if it exists, is a blob id
+        blobIds = myObj.getData()[base64field];
+
+        // Was there any data in the field?
+        if (! blobIds)
+        {
+          // No, return null and let the caller decide how to handle that.
+          return null;
+        }
+
+        // Retrieve the blob data, which is the base64-encoded data. We want
+        // the most recent entry, so use index 0.
+        fieldContent = rpcjs.dbif.Entity.getBlob(blobIds[0]);
+        break;
+        
+      default:
+        // Retrieve the field data, which is the base64-encoded data
+        fieldContent = myObj.getData()[base64field];
+        break;
       }
       
-      // Retrieve the blob data, which is the base64-encoded data
-      fieldContent = rpcjs.dbif.Entity.getBlob(blobId);
-
       // Was there any blob data?
       if (! fieldContent)
       {
