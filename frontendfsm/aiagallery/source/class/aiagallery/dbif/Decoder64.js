@@ -64,11 +64,101 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       contents = fieldContent.substring(fieldContent.indexOf(",") + 1);
       
       // Send the url to the decoder function
-      decodedContents = qx.util.Base64.decode(contents, true);
+//      decodedContents = qx.util.Base64.decode(contents, true);
+      decodedContents = aiagallery.dbif.Decoder64.__decode(contents);
       
       // Give 'em what they want
-      return {mime: mimeType, content: decodedContents};
+      return { mime: mimeType, content: decodedContents };
+    },
+
+    /**
+     * Copyright: Dr Alexander J Turner - all rights reserved.
+     * Please feel free to use this any way you want as long as you
+     * mention I wrote it!
+     * 
+     * Modification history:
+     *   - Sept. 2011, Derrell Lipman
+     *     Converted to static method in qooxdoo class
+     */
+    __decode : function(encStr)
+    {
+      var             i;
+      var             l;
+      var             c;
+      var             el;
+      var             ar2;
+      var             bits24;
+      var             decStr;
+      var             linelen;
+      var             decArray;
+      var             base64chars;
+      var             base64charToInt;
+      
+      base64chars = 
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      base64charToInt = {};
+      for (var i = 0; i < 64; i++)
+      {
+        base64charToInt[base64chars.substr(i,1)] = i;
+      }
+
+      encStr = encStr.replace(/\s+/g, "");
+      decStr = "";
+      decArray = [];
+      linelen = 0;
+      el = encStr.length;
+      
+      for (i = 0; i < el; i += 4) 
+      {
+        bits24  = ( base64charToInt[encStr.charAt(i)] & 0xFF  ) <<  18;
+        bits24 |= ( base64charToInt[encStr.charAt(i+1)] & 0xFF  ) <<  12;
+        bits24 |= ( base64charToInt[encStr.charAt(i+2)] & 0xFF  ) <<   6;
+        bits24 |= ( base64charToInt[encStr.charAt(i+3)] & 0xFF  ) <<   0;
+        decStr += String.fromCharCode((bits24 & 0xFF0000) >> 16);
+
+        if (encStr.charAt(i + 2) != '=')  // check for padding character =
+        {
+          decStr += String.fromCharCode((bits24 &   0xFF00) >>  8);
+        }
+
+        if (encStr.charAt(i + 3) != '=')  // check for padding character =
+        {
+          decStr += String.fromCharCode((bits24 &     0xFF) >>  0);
+        }
+
+        if (decStr.length>1024)
+        {
+          decArray.push(decStr);
+          decStr='';
+        }
+      }
+
+      if (decStr.length>0)
+      {
+        decArray.push(decStr);
+      }
+
+      ar2 = [];
+
+      while (decArray.length > 1)
+      {
+        l=decArray.length;
+        for(c = 0; c < l; c += 2)
+        {
+          if (c + 1 == l)
+          {
+            ar2.push(decArray[c]);
+          }
+          else
+          {
+            ar2.push('' +decArray[c] + decArray[c+1]);
+          }
+        }
+        decArray = ar2;
+        ar2 = [];
+      }
+      
+      return decArray[0];
     }
   }
-
 });
