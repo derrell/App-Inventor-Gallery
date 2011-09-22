@@ -275,7 +275,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(submitCommentBtn);
         vboxLeft.add(allCommentsBox);
  
-       // We'll put all of the collapsable panels in a scroll container
+        // We'll put all of the collapsable panels in a scroll container
         scrollContainer = new qx.ui.container.Scroll();
         vboxLeft.add(scrollContainer);
 
