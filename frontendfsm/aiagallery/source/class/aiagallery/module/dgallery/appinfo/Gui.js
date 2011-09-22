@@ -50,7 +50,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             hbox;
       var             commentBox;
       var             appId;
-      var             radiogroup;
       var             hboxLayout;
       var             title;
       var             appIcon;
@@ -103,10 +102,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
  
         // Sets the app's uid as a variable which can be passed to the FSM.
         appId = result.uid;
-
-        // Create a group for the comment collapsable panel
-        radiogroup = new qx.ui.form.RadioGroup();
-        radiogroup.setAllowEmptySelection(true);
 
         // Create a horizontal box layout to store two vboxes in.
         hboxLayout = new qx.ui.layout.HBox();
@@ -378,7 +373,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiWrapper = new qx.core.Object();
         guiWrapper.setUserData("vbox", vbox);
         guiWrapper.setUserData("commentBox", commentBox);
-        guiWrapper.setUserData("radiogroup", radiogroup);
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
         fsm.addObject("guiWrapper", guiWrapper);
@@ -398,7 +392,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiInfo = rpcRequest.getUserData("guiInfo");
         vbox = guiInfo.getUserData("vbox");
         commentBox = guiInfo.getUserData("commentBox");
-        radiogroup = guiInfo.getUserData("radiogroup");
         commentInput = guiInfo.getUserData("commentInput");
         allCommentsBox = guiInfo.getUserData("allCommentsBox");
 
@@ -424,14 +417,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
 
-        // This alert shows that addComments is reusing uids 
-//        alert("getComments result is: " +
-//              qx.lang.Json.stringify(result));
-
         // Gets back the objects passed from the GUI to the FSM
         guiInfo = rpcRequest.getUserData("guiInfo");
         vbox = guiInfo.getUserData("vbox");       
-        radiogroup = guiInfo.getUserData("radiogroup");
         allCommentsBox = guiInfo.getUserData("allCommentsBox");
   
         // Adds the comments retrieved from the database to the GUI
