@@ -46,15 +46,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             result; 
       var             commentData = rpcRequest.getUserData("commentData");
 
-// vvvvvvv COMMENTS vvvvvvv
-      // Add panel containing a single comment to the GUI
-      // comment: the comment object to be added
+      // Create a panel containing a single comment to the GUI
       //
       // Comment will be shown as a 2-element vbox:
       // Top line: visitor: comment text
       // 2nd line: time stamp (grey, small)
-
-      function addCommentPanel(comment)
+      function createCommentPanel(comment)
       {
         // Comment info to be displayed
         // These are the 3 fields of interest to a viewer
@@ -105,13 +102,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add the pieces
         commentBox.add(visitorAndCommentLabel);
         commentBox.add(postedStringLabel);
-
-        // Insert the new comment at the top of the list
-        allCommentsBox.addAt(commentBox, 0, null);
-        // Following line confirmed to be needed--but why??
-        vbox.add(allCommentsBox);
+        
+        // Return the box we just created.
+        return commentBox;
       }
-// ^^^^^^^ COMMENTS ^^^^^^^
 
 
       if (response.type == "failed")
@@ -139,11 +133,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Sets the app's uid as a variable which can be passed to the FSM.
         var appId = result.uid;
 
-// vvvvvvv COMMENTS vvvvvvv
         // Create a group for the comment collapsable panel
         var radiogroup = new qx.ui.form.RadioGroup();
         radiogroup.setAllowEmptySelection(true);
-// ^^^^^^^ COMMENTS ^^^^^^^
 
         // Create a horizontal box layout to store two vboxes in.
         var hboxLayout = new qx.ui.layout.HBox();
@@ -176,15 +168,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Make it purty as well.
         vboxRight.setBackgroundColor("#f3f3f3");
 
-/*
-        // Make it take up between 200 and 400 pixels of space.
-        vboxRight.set(
-          {
-            width:400,
-            maxWidth:400
-          });
-*/
-          
         // Add it the horizontal box.
         hbox.add(vboxRight, { flex : 2 });
  
@@ -260,7 +243,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
 
-// vvvvvvv COMMENTS vvvvvvv
        // Creates an object on which to call the getComments event, in order
        // to add them to the GUI
        var emptyObject = new qx.core.Object();
@@ -330,7 +312,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Put a vbox container in the scroll container
         var vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
         scrollContainer.add(vbox);
-// ^^^^^^^ COMMENTS ^^^^^^^
 
         // Create a label to represent a link to download the app.
         // FIXME: Add a link here
@@ -421,7 +402,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the right vbox.
         vboxRight.add(tags);
 
-// vvvvvvv COMMENTS vvvvvvv
         // Creates an object containing the parts of the GUI which will need 
         // to be changed after the fsm call. This object is passed to the FSM.
 
@@ -432,187 +412,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
         fsm.addObject("guiWrapper", guiWrapper);
-// ^^^^^^^ COMMENTS ^^^^^^^
 
         canvas.setLayout(new qx.ui.layout.HBox());
         
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
         canvas.add(hbox);
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
-
-/*
-        var             o;
-        var             groupbox;
-        var             appInfoContainer;
-        var             commentContainer;
-        var             scrollContainer;
-        var             vbox;
-        var             splitpane;
-        var             radiogroup;
-        var             commentBox;
-        var             text;
-        var             label;
-
-        // Get the result data. It's an object with all of the application info.
-        result = response.data.result;
-
-        // Add a groupbox with the application title
-        groupbox = new qx.ui.groupbox.GroupBox(result.title);
-        groupbox.setLayout(new qx.ui.layout.Canvas());
-        canvas.setLayout(new qx.ui.layout.Canvas());
-        canvas.add(groupbox, { edge : 10 });
-
-        // Create a grid layout for the application info
-        var layout = new qx.ui.layout.Grid(10, 10);
-        layout.setColumnAlign(0, "right", "middle");
-        layout.setColumnAlign(1, "left", "middle");
-        layout.setColumnAlign(2, "left", "middle");
-
-        layout.setColumnWidth(0, 200);
-        layout.setColumnWidth(1, 200);
-        layout.setColumnWidth(2, 200);
-
-        layout.setSpacing(10);
-
-        // Create a container for the application info, and use the grid layout.
-        appInfoContainer = new qx.ui.container.Composite(layout);
-        
-
-        // Yes. We'll create a splitpane, with the application info on the
-        // left, and comment viewing on the right.
-        splitpane = new qx.ui.splitpane.Pane("horizontal");
-        groupbox.add(splitpane, { edge : 10 });
-
-         
-        // Add the application info container to the splitter
-        splitpane.add(appInfoContainer, 1);
-
-        // Create a group for the comment collapsable pannel
-        radiogroup = new qx.ui.form.RadioGroup();
-        radiogroup.setAllowEmptySelection(true);
-          
-        // We'll put all of the collapsable panels in a scroll container
-        scrollContainer = new qx.ui.container.Scroll();
-        splitpane.add(scrollContainer, 1);
-          
-        // Put a vbox container in the scroll container
-        vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        scrollContainer.add(vbox);
-
-       // Sets the app's uid as a variable which can be passed to the FSM
-       var appId = result.uid;
-
-       // Creates an object on which to call the getComments event, in order
-       // to add them to the GUI
-       var emptyObject = new qx.core.Object();
-       emptyObject.setUserData("filler", new qx.core.Object());
-       fsm.addObject("ignoreMe", emptyObject);
-       fsm.fireImmediateEvent("appearComments", emptyObject, null);
-
-       // Adds the textfield for entering a comment
-       var commentInput = new qx.ui.form.TextField();
-       commentInput.setPlaceholder("Type your comment here:");
-       var allCommentsBox = 
-         new qx.ui.container.Composite(new qx.ui.layout.VBox());
-
-       // Wrapping everything relevant to a comment in one object,
-       // to be passed to the FSM
-       var commentWrapper = new qx.core.Object();
-       commentWrapper.setUserData("appId", appId);
-       commentWrapper.setUserData("commentInput", commentInput);
-       fsm.addObject("commentWrapper", commentWrapper);
-
-       // Adds the button for submitting a comment to the FSM
-       var submitCommentBtn = new qx.ui.form.Button("Submit Comment");
-       fsm.addObject("submitCommentBtn", submitCommentBtn);
-       submitCommentBtn.addListener(
-         "execute", 
-         function(e) 
-         {
-           var comment = commentInput.getValue();
-           // Is the submitted comment null, or empty spaces?
-           if ((comment != null) 
-              && ((comment.replace(/\s/g, '')) != ""))
-           // No: submit it
-           {
-             fsm.eventListener(e);
-           }
-           // Yes: clear input box and do nothing
-           else
-           {
-             commentInput.setValue(null);
-           }
-         },
-         fsm);
-          
-       // Lets the user call "execute" by pressing the enter key rather
-       // than by pressing the submitCommentBtn
-       commentInput.addListener(
-         "keypress",
-         function(e)
-         {
-           if (e.getKeyIdentifier() === "Enter")
-           {
-             submitCommentBtn.execute();
-           }
-         });      
-  
-        // The textfield, all the existing comments, and the submit button
-        // get added to the UI.
-        vbox.add(commentInput);
-        vbox.add(submitCommentBtn);
-        vbox.add(allCommentsBox); 
-
-        // Creates an object containing the parts of the GUI which will need 
-        // to be changed after the fsm call. This object is passed to the FSM.
-        var guiWrapper = new qx.core.Object();
-        guiWrapper.setUserData("vbox", vbox);
-        guiWrapper.setUserData("cpanel", cpanel);
-        guiWrapper.setUserData("radiogroup", radiogroup);
-        guiWrapper.setUserData("commentInput", commentInput);
-        guiWrapper.setUserData("allCommentsBox", allCommentsBox);
-        fsm.addObject("guiWrapper", guiWrapper);
-
-
-        appInfoContainer.add(new qx.ui.basic.Image(result.image1),
-                             { row : 1, column : 1 });
-        appInfoContainer.add(new qx.ui.basic.Image(result.image2),
-                             { row : 1, column : 0 });
-        appInfoContainer.add(new qx.ui.basic.Image(result.image3),
-                             { row : 1, column : 2 });
-        
-        appInfoContainer.add(new qx.ui.basic.Label("Description: "),
-                             { row : 2, column : 0 });
-        o = new qx.ui.basic.Label(result.description);
-        o.set(
-          {
-            rich : true,
-            wrap : true
-          });
-        appInfoContainer.add(o,
-                             { row : 2, column : 1, colSpan : 3 });
-        
-        [
-          { label : "Owner",     data : result.owner,        row : 3 },
-          { label : "Uploaded",  data : result.uploadTime,   row : 4 },
-          { label : "Tags",      data : result.tags,         row : 5 },
-          { label : "Status",    data : result.status,       row : 6 },
-          { label : "Likes",     data : result.numLikes,     row : 7 },
-          { label : "Downloads", data : result.numDownloads, row : 8 },
-          { label : "Views",     data : result.numViewed,    row : 9 },
-          { label : "Comments",  data : result.numComments,  row : 10 }
-        ].forEach(
-          function(field)
-          {
-            appInfoContainer.add(new qx.ui.basic.Label(field.label + ": "),
-                                 { row : field.row, column : 0 });
-            appInfoContainer.add(new qx.ui.basic.Label(field.data + ""),
-                                 { row : field.row, column : 1, colSpan : 2 });
-          });
-*/
         break;
 
-// vvvvvvv COMMENTS vvvvvvv
       case "addComment":
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
@@ -632,6 +439,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var vbox2;
         var label2;
         var label;
+        var newBox;
 
         // Adds the new comment to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
@@ -639,8 +447,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         newComment = result["text"];
         if (newComment != null) 
         {
-          addCommentPanel(result);
+          newBox = createCommentPanel(result);
+
+          // Insert the new comment at the top of the list
+          allCommentsBox.addAt(newBox, 0, null);
+
+          // Following line confirmed to be needed--but why??
+          vbox.add(newBox);
         }
+
         commentInput.setValue(null);
         break;
 
@@ -673,13 +488,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               newComment = result[i]["text"];
               if (newComment != null)
               {
-                addCommentPanel(result[i]);
+                newBox = createCommentPanel(result[i]);
+
+                // Insert the new comment at the top of the list
+                allCommentsBox.addAt(newBox, 0, null);
+
+                // Following line confirmed to be needed--but why??
+                vbox.add(newBox);
               }
             }
           }
         }   
         break;
-// ^^^^^^^ COMMENTS ^^^^^^^
 
       default:
         throw new Error("Unexpected request type: " + requestType);
