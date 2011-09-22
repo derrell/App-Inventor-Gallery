@@ -38,6 +38,21 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
         Packages.com.google.appengine.api.users.UserServiceFactory;
       userService = UserServiceFactory.getUserService();
       user = userService.getCurrentUser();
+      
+      // If no one is logged in...
+      if (! user)
+      {
+        this.setWhoAmI(
+          {
+            email       : "anonymous",
+            userId      : "",
+            isAdmin     : false,
+            logoutUrl   : "",
+            permissions : []
+          });
+        return;
+      }
+
       whoami = String(user.getEmail());
 
       // Try to get this user's display name. Does the visitor exist?
@@ -70,6 +85,9 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
     rpcjs.dbif.Entity.registerDatabaseProvider(
       rpcjs.appengine.Dbif.query,
       rpcjs.appengine.Dbif.put,
-      rpcjs.appengine.Dbif.remove);
+      rpcjs.appengine.Dbif.remove,
+      rpcjs.appengine.Dbif.getBlob,
+      rpcjs.appengine.Dbif.putBlob,
+      rpcjs.appengine.Dbif.removeBlob);
   }
 });

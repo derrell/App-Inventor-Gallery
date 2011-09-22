@@ -227,11 +227,10 @@ qx.Mixin.define("aiagallery.dbif.MApps",
   {
     addOrEditApp : function(uid, attributes, error)
     {
+      var             i;
       var             title;
       var             description;
-      var             image1;
-      var             image2;
-      var             image3;
+      var             image;
       var             previousAuthors;
       var             source;
       var             apk;
@@ -239,6 +238,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             tagObj;
       var             tagData;
       var             oldTags;
+      var             bHasCategory;
+      var             categories;
       var             uploadTime;
       var             status;
       var             statusIndex;
@@ -247,6 +248,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             bNew;
       var             whoami;
       var             missing = [];
+      var             sourceData;
+      var             apkData;
+      var             key;
       var             allowableFields =
         [
           "uid",
@@ -273,7 +277,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "title",
           "description",
           "tags",
-          "source"
+          "source",
+          "image1"
         ];
       
       // Don't let the caller override the owner
@@ -318,6 +323,32 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save the existing tags list
       oldTags = appData.tags;
 
+      // If there's no image1 value...
+      if (! attributes.image1)
+      {
+        // ... then move image3 or image2 to image1
+        if (attributes.image3)
+        {
+          attributes.image1 = attributes.image3;
+          attributes.image3 = null;
+        }
+        else
+        {
+          // image2 may not exist either, which will be caught in the
+          // code that detects missing fields.
+          attributes.image1 = attributes.image2;
+          attributes.image2 = null;
+        }
+      }
+      
+      // Similarly, if there's no image2 value...
+      if (! attributes.image2)
+      {
+        // ... then move image3 to image2. (Again, it may not exist.)
+        attributes.image2 = attributes.image3;
+        attributes.image3 = null;
+      }
+
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
         function(field)
@@ -325,8 +356,38 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           // Was this field provided in the parameter attributes?
           if (attributes[field])
           {
-            // Yup. Replace what's in the db entry
-            appData[field] = attributes[field];
+            // Handle source and apk fields specially
+            switch(field)
+            {
+            case "source":
+              // Save the field data
+              sourceData = attributes.source;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.source)
+              {
+                appData.source = [];
+              }
+              break;
+              
+            case "apk":
+              // Save the field data
+              apkData = attributes.apk;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.apk)
+              {
+                appData.apk = [];
+              }
+              break;
+
+            default:
+              // Replace what's in the db entry
+              appData[field] = attributes[field];
+              break;
+            }
           }
 
           // If this field is required and not available...
@@ -337,21 +398,64 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      // Issue a query for all category tags
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           {
+                                             type  : "element",
+                                             field : "type",
+                                             value : "category"
+                                           },
+                                           null);
+      
+      // We want to look at only the value field of each category
+      categories = categories.map(
+        function(o)
+        {
+          return o.value;
+        });
+
+      // Ensure that at least one of the specified tags is a category
+      bHasCategory = false;
+      tags = appData.tags;
+      for (i = 0; i < tags.length; i++)
+      {
+        // Is this tag a category?
+        if (qx.lang.Array.contains(categories, tags[i]))
+        {
+          // Yup. Mark it.
+          bHasCategory = true;
+          
+          // No need to look further.
+          break;
+        }
+      }
+      
+      // Did we find at least one category tag?
+      if (! bHasCategory)
+      {
+        // Nope. Let 'em know.
+        error.setCode(3);
+        error.setMessage("At least one category is required");
+        return error;
+      }
+
       // Were there any missing, required fields?
       if (missing.length > 0)
       {
         // Yup. Let 'em know.
-        error.setCode(3);
+        error.setCode(4);
         error.setMessage("Missing required attributes: " + missing.join(", "));
         return error;
       }
       
       // If a new source file was uploaded...
-      if (attributes.source)
+      if (sourceData)
       {
         // ... then update the upload time to now
         appData.uploadTime = String((new Date()).getTime());
       }
+
+      // FIXME: Begin a transaction here
 
       // Add new tags to the database, and update counts of formerly-existing
       // tags. Remove "normal" tags with a count of 0.
@@ -406,12 +510,40 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      try
+      {
+        // Save the new source data (if there is any)
+        if (sourceData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(sourceData);
+          appData.source.unshift(key);
+        }
+        
+        // Similarly for apk data
+        if (apkData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(apkData);
+          appData.apk.unshift(key);
+        }
+      }
+      catch(e)
+      {
+        error.setCode(5);
+        error.setMessage(e.toString());
+        // FIXME: roll back transaction here
+        return error;
+      }
+
       // Save this record in the database
       appObj.put();
       
       // Add all words in text fields to word Search record
       aiagallery.dbif.MApps._populateSearch(appObj.getData());
       
+      // FIXME: Commit the transaction here
+
       return appObj.getData();  // This includes newly-created key (if adding)
     },
     
@@ -473,6 +605,26 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             tagObj.removeSelf();
           }
         });
+
+      // Remove any apk blobs associated with this app
+      if (appData.apk)
+      {
+        appData.apk.forEach(
+          function(apkBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(apkBlobId);
+          });
+      }
+
+      // Similarly for any source blobs
+      if (appData.source)
+      {
+        appData.source.forEach(
+          function(sourceBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(sourceBlobId);
+          });
+      }
 
       // Delete the app
       appObj.removeSelf();
@@ -1031,7 +1183,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.status != 2 && (! whoami || app.owner != whoami.email))
+      if (app.status != aiagallery.dbif.Constants.Status.Active &&
+          (! whoami || app.owner != whoami.email))
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)

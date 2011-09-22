@@ -1,0 +1,122 @@
+{
+  "let" :
+  {
+    // QOOXDOO_PATH should point to the directory which contains "framework",
+    // "tool", "application", and "component"
+    "QOOXDOO_PATH" : "/home/derrell/ME/qooxdoo.git/trunk/qooxdoo",
+
+    // CONTRIB_PATH should point to the directory that contains "Dialog",
+    // "RpcJs" and "UploadWidget"
+    "CONTRIB_PATH" : "/home/derrell/ME/qooxdoo.git/qooxdoo-contrib/trunk/qooxdoo-contrib"
+  },
+
+  "jobs" :
+  {
+    "source-script" :
+    {
+      "compile-options" :
+      {
+        "uris" :
+        {
+          "add-nocache-param" : false
+        }
+      }
+    },
+
+    // These empty jobs allow the global "let" variables be used with them
+    "source" :
+    {
+    },
+
+    "source-all-script" :
+    {
+    },
+
+    "source-all" :
+    {
+    },
+
+    "source-hybrid" :
+    {
+    },
+
+    "source-each" :
+    {
+    },
+
+    "build-script" :
+    {
+    },
+
+    "build-files" :
+    {
+    },
+
+    "build-resources" :
+    {
+    },
+
+    "build" :
+    {
+    },
+
+    "provider" :
+    {
+    },
+
+    "provider-deps" :
+    {
+    },
+
+    "translation" :
+    {
+    },
+
+    "clean" :
+    {
+    },
+
+    "distclean" :
+    {
+    },
+
+    "lint" :
+    {
+    },
+
+    "migration" :
+    {
+    },
+
+    "info" :
+    {
+    },
+
+    "api" :
+    {
+    },
+
+    "test" :
+    {
+    },
+
+    "test-source" :
+    {
+      "compile-options" :
+      {
+        "uris" :
+        {
+          "add-nocache-param" : false
+        }
+      }
+    },
+
+    "test-basic" :
+    {
+    },
+
+    "test-basic-source" :
+    {
+    }
+  }
+}
