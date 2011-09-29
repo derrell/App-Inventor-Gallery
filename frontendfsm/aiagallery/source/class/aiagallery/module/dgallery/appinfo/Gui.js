@@ -196,8 +196,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(viewsLikes);
 
         // Create a button to allow users to "like" things.
-        // FIXME: Implement this
+        // FIXME: Implementing this
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
+
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
