@@ -358,8 +358,8 @@ qx.Class.define("aiagallery.main.AbstractModuleFsm",
       rpc.setServiceName(rpcRequest.service);
 
       // The default timeout is only 5 seconds.  That may not be long enough
-      // for some longish requests
-      rpc.setTimeout(30000);
+      // for some longish requests. Make it excessively long for now.
+      rpc.setTimeout(90000);
 
       // Issue the request
       rpcRequest.request =
