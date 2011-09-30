@@ -195,7 +195,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             rich:true 
           });
 
-
         // Center the viewLikes label. 
         viewsLikes.setAlignX("center");
 
@@ -208,7 +207,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         /*
 
-        // I'm not deleting this section because yet, because it
+        // I'm not deleting this section yet, because it
         // illustrates my question about using member variables versus
         // passing objects through the fsm, which seems convoluted.
 
@@ -447,7 +446,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         commentInput.setValue(null);
         break;
-
 
       case "getComments":
         // Get the result data. It's an object with all of the application info.

@@ -72,17 +72,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           "execute" :
           {
             "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+            "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+
+            "likeItButton" : 
+              "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           },
           "appearComments" :
           {
             "ignoreMe" : 
               "Transition_Idle_to_AwaitRpcResult_via_getComments"
-          },
-          "execute" :
-          {
-            "likeItButton" : 
-              "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           }
         }
       });
