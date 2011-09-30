@@ -72,7 +72,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           "execute" :
           {
             "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+              "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+            "likeItButton" :
+              "Transition_Idle_to_AwaitRpcResult_via_likeIt"
           },
           "appearComments" :
           {
@@ -206,6 +208,55 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // we made.
           request.setUserData("requestType", "addComment");
           request.setUserData("commentString", commentInput);
+          request.setUserData("guiInfo", guiWrapper);
+
+        }
+      });
+
+      state.addTransition(trans);
+
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause: likeItButton has been pressed
+       *
+       * Action:
+       *  Add like to the database and to the GUI
+       */
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_likeIt",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+          var             likeItWrapper;
+          var             appId;
+          var             guiWrapper;
+          var             request;
+
+          likeItWrapper = fsm.getObject("likeItWrapper");
+          appId = likeItWrapper.getUserData("appId");
+          guiWrapper = fsm.getObject("guiWrapper");
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "likesPlusOne",
+                         [ 
+                         //Application ID
+                         appId, 
+                         //The parent thread's UID
+                         null
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "likesPlusOne");
           request.setUserData("guiInfo", guiWrapper);
 
         }
