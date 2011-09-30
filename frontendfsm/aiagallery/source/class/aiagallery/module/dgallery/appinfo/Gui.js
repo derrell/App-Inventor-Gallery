@@ -16,11 +16,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
-    // Member variables.
+    // Private member variables.
     // Wouldn't it simplify things if there were more of these,
     // rather than passing lots of objects through the FSM?
-    views : null,
-    likes : null,
+    __views : null,
+    __likes : null,
 
     /**
      * Build the raw graphical user interface.
@@ -108,8 +108,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
  
         // Get some app data
         appId = result.uid;
-        likes = result.numLikes;
-        views = result.numViewed;
+        this.__likes = result.numLikes;
+        this.__views = result.numViewed;
 
         // Create a horizontal box layout to store two vboxes in.
         hboxLayout = new qx.ui.layout.HBox();
@@ -185,9 +185,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' + this.views +
+        viewsLikes = new qx.ui.basic.Label('<b>' + this.__views +
                                            ' views, ' +
-                                           this.likes + ' likes</b>');
+                                           this.__likes + ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
         viewsLikes.set(
@@ -206,18 +206,30 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // back to handleResponse()
         fsm.addObject("viewsLikes", viewsLikes);
 
-/*
-       // Wrap views and likes into one object to send to FSM
-       // Only need views now but might need likes in future
-       // FIXME:  Just make one object to carry data to FSM?
-       viewsLikesWrapper = new qx.core.Object();
-       viewsLikesWrapper.setUserData("views", this.views);
-       viewsLikesWrapper.setUserData("likes", this.likes);
-       fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
-*/
+        /*
+
+        // I'm not deleting this section because yet, because it
+        // illustrates my question about using member variables versus
+        // passing objects through the fsm, which seems convoluted.
+
+        // I was going to do it this way until Derrell mentioned
+        // using member variables for views and likes.  Why not do that
+        // more generally, avoiding the need to pass things through
+        // the fsm using the complicated "friendly name" trick?
+
+
+        // Wrap views and likes into one object to send to FSM
+        // Only need views now, since we get likes from the RPC call,
+        // but might need likes in the future.
+        // FIXME:  Just make one big object to carry data to FSM?
+        
+        viewsLikesWrapper = new qx.core.Object();
+        viewsLikesWrapper.setUserData("views", views);
+        viewsLikesWrapper.setUserData("likes", likes);
+        fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
+        */
 
         // Create a button to allow users to "like" things.
-        // FIXINGME: Implementing this
         likeItButton = new qx.ui.form.Button("Like it!");
         fsm.addObject("likeItButton", likeItButton);
         likeItButton.addListener("execute", fsm.eventListener, fsm);
@@ -436,6 +448,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         commentInput.setValue(null);
         break;
 
+
       case "getComments":
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
@@ -470,6 +483,23 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           }
         }   
+        break;
+
+
+      case "likesPlusOne":
+        // Update like count from RPC (not just incrementing, which 
+        // might be wrong)
+        this.__likes = response.data.result;
+
+        // Retrieve viewsLikes label from the FSM
+        viewsLikes = rpcRequest.getUserData("viewsLikes");
+
+        // Rewrite label to reflect new # of likes
+        // maybeFIXMEbutprobablynot:  Duplicated code snippet
+        // between here and initial creation of this label.
+        viewsLikes.setValue('<b>' + this.__views + ' views, ' +
+                            this.__likes + ' likes</b>');
+   
         break;
 
       default:
