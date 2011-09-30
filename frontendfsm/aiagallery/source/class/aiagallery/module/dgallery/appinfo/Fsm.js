@@ -78,6 +78,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           {
             "ignoreMe" : 
               "Transition_Idle_to_AwaitRpcResult_via_getComments"
+          },
+          "execute" :
+          {
+            "likeItButton" : 
+              "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           }
         }
       });
@@ -262,7 +267,51 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-      
+
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause: likeItButton has been pressed
+       *
+       * Action:
+       *  Add a "Like" for this app to the database and to the GUI
+       */
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_likeItButton",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Event data
+          // FIXME:  Need to reorganize code -- this has
+          // nothing to do with comments
+          var commentWrapper = fsm.getObject("commentWrapper");
+          var viewsLikes = fsm.getObject("viewsLikes");
+          var appId = commentWrapper.getUserData("appId");
+
+          // Issue the remote procedure call to execute the query
+          var request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "likesPlusOne",
+                         [ 
+                         //Application ID
+                         appId
+                         ]);
+
+          // Tell Gui the request type and give it the viewLikes label
+          request.setUserData("requestType", "likesPlusOne");
+          request.setUserData("viewsLikes", viewsLikes);
+
+        }
+      });
+
+      state.addTransition(trans);
+
+
       // ------------------------------------------------------------ //
       // State: AwaitRpcResult
       // ------------------------------------------------------------ //

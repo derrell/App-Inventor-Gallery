@@ -16,6 +16,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
+    // Member variables.
+    // Wouldn't it simplify things if there were more of these,
+    // rather than passing lots of objects through the FSM?
+    views : null,
+    likes : null,
+
     /**
      * Build the raw graphical user interface.
      *
@@ -100,8 +106,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
  
-        // Sets the app's uid as a variable which can be passed to the FSM.
+        // Get some app data
         appId = result.uid;
+        likes = result.numLikes;
+        views = result.numViewed;
 
         // Create a horizontal box layout to store two vboxes in.
         hboxLayout = new qx.ui.layout.HBox();
@@ -177,11 +185,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
-                                               ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
+        viewsLikes = new qx.ui.basic.Label('<b>' + this.views +
+                                           ' views, ' +
+                                           this.likes + ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
         viewsLikes.set(
@@ -189,18 +195,32 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             rich:true 
           });
 
+
         // Center the viewLikes label. 
         viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
         vboxLeft.add(viewsLikes);
 
+        // Send views and likes label to FSM to then pass
+        // back to handleResponse()
+        fsm.addObject("viewsLikes", viewsLikes);
+
+/*
+       // Wrap views and likes into one object to send to FSM
+       // Only need views now but might need likes in future
+       // FIXME:  Just make one object to carry data to FSM?
+       viewsLikesWrapper = new qx.core.Object();
+       viewsLikesWrapper.setUserData("views", this.views);
+       viewsLikesWrapper.setUserData("likes", this.likes);
+       fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
+*/
+
         // Create a button to allow users to "like" things.
-        // FIXME: Implementing this
+        // FIXINGME: Implementing this
         likeItButton = new qx.ui.form.Button("Like it!");
         fsm.addObject("likeItButton", likeItButton);
         likeItButton.addListener("execute", fsm.eventListener, fsm);
-
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
