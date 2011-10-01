@@ -71,6 +71,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
           "execute" :
           {
+            "likeItButton" :
+              "Transistion_Idle_to_AwaitRpcResult_via_likeIt_button",
+
             "submitCommentBtn" : 
               "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
           },
@@ -156,6 +159,55 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
         {
         }
       });
+
+      state.addTransition(trans);
+
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause: likeItButton has been pressed
+       *
+       * Action:
+       *  Increment likeIt count for an app on database and gui
+       */
+
+	trans = new qx.util.fsm.Transition(
+	    "Transistion_Idle_to_AwaitRpcResult_via_likeIt_button",
+	    {
+		"nextState" : "State_AwaitRpcResult",
+
+		"context" : this,
+
+		"ontransition" : function(fsm, event)
+		{
+                    //Get the event data
+                    var         guiWrapper
+		    var         likeItWrapper
+                    var         appId;
+                    var         request;
+                    
+		    likeItWrapper = fsm.getObject("commentWrapper");  
+                    appId = likeItWrapper.getUserData("appId");
+                    guiWrapper = fsm.getObject("guiWrapper");
+
+		    request =
+			this.callRpc(fsm,
+				     "aiagallery.features",
+				     "likesPlusOne",
+				     [ 
+					 //Application ID
+					 appId,
+					 //The parent thread's UID
+					 null
+				     ]);
+
+		    // When we get the result, we'll need to know what type of request
+		    // we made and update the GUI
+		    request.setUserData("requestType", "likeItButton");
+                    request.setUserData("guiInfo", guiWrapper);
+
+		}
+	    });
 
       state.addTransition(trans);
 
