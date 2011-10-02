@@ -16,11 +16,94 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
-    // Private member variables.
-    // Wouldn't it simplify things if there were more of these,
-    // rather than passing lots of objects through the FSM?
+    // Private instance variables.
     __views : null,
     __likes : null,
+    __viewsLikesLabel : null,
+
+    // Helper methods
+    
+    /*
+     * Update views and likes label to reflect current values
+     * of views and likes
+     */
+    __updateViewsLikesLabel : function()
+    {
+      this.__viewsLikesLabel.setValue('<b>' + this.__views +
+                                       ' views, ' +
+                                       this.__likes + ' likes</b>');
+    },
+
+    /**
+     * Create a panel containing a single comment to the GUI
+     *
+     * Comment will be shown as a 2-element vbox:
+     * Top line: visitor: comment text
+     * 2nd line: time stamp (grey, small)
+     *
+     * @param comment {String}
+     *   The comment to be displayed
+     *
+     * @return {qx.ui.container.Composite}
+     *   A container with a vertical box layout, containing the information
+     *   about this comment.
+     */
+    __createCommentPanel : function(comment)
+    {
+      // Comment info to be displayed
+      // These are the 3 fields of interest to a viewer
+      // (the rest is metadata -- app ID, tree ID, numChildren)
+      var commentText = comment["text"];
+      var commentAuthor = comment["visitor"];
+      var commentTime = comment["timestamp"];
+      // var treeId = comment["treeId"];
+
+      // Top line
+      var visitorAndComment =  '<b>' + commentAuthor + ': </b>' + commentText;
+      var visitorAndCommentLabel = new qx.ui.basic.Label(visitorAndComment);
+      visitorAndCommentLabel.set(
+        {
+          rich : true,
+          wrap : true,
+          selectable : true
+        });
+
+      // Timestamp, easier on the eye than the default.
+      // (which could use some additional tweaking, perhaps)
+      // FIXME: This needs to be internationalized. There are existing
+      // functions to do so.
+      var dateObj = new Date(commentTime);
+      var dateString = dateObj.toDateString();
+      var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+      var dateTimeString = dateString + " " + timeString + " ET"; 
+
+      // 2nd line
+      var postedStringStart = 
+        '<span style="color:grey;font-size:75%">Posted: ';
+      var postedString = postedStringStart + dateTimeString + '</span>';
+      var postedStringLabel = new qx.ui.basic.Label(postedString);
+      postedStringLabel.set(
+        {
+          rich : true,
+          wrap : true,
+          selectable : true
+        });
+
+      // Entire comment box
+      var commentLayout = new qx.ui.layout.VBox();
+      var commentBox = new qx.ui.container.Composite(commentLayout);
+      // Thin grey solid border
+      commentBox.setDecorator(new qx.ui.decoration.Single(1, 
+                                                          'solid',
+                                                          '#cccccc'));
+      // Add the pieces
+      commentBox.add(visitorAndCommentLabel);
+      commentBox.add(postedStringLabel);
+
+      // Return the box we just created.
+      return commentBox;
+    },
+
 
     /**
      * Build the raw graphical user interface.
@@ -60,7 +143,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             title;
       var             appIcon;
       var             createdBy;
-      var             viewsLikes;
       var             likeItButton;
       var             flagItButton;
       var             emptyObject;
@@ -122,8 +204,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         hbox.setDecorator(new qx.ui.decoration.Single(3,'solid','#afafaf'));
         hbox.set( 
           {
-            maxWidth:1024,
-            width: 1024
+            maxWidth : 1024,
+            width : 1024
           });
 
         // Create the left vertical box container.
@@ -152,8 +234,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting and center it in the vbox.
         title.set(
           {
-            rich:true,
-            alignX:"center"
+            rich : true,
+            alignX : "center"
           });
 
         // Add it to the left display.
@@ -175,7 +257,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Make it purty with rich formatting.
         createdBy.set(
           {
-            rich:true 
+            rich : true 
           });
 
         // Center it.
@@ -185,48 +267,21 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' + this.__views +
-                                           ' views, ' +
-                                           this.__likes + ' likes</b>');
+        this.__viewsLikesLabel = new qx.ui.basic.Label();
 
-        // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        // Initialize it
+        this.__updateViewsLikesLabel();
+
+        // Set the views and likes label to use rich formatting,
+        // and center it.
+        this.__viewsLikesLabel.set(
           {
-            rich:true 
+            rich : true,
+            AlignX : "center"
           });
 
-        // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
-
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
-
-        // Send views and likes label to FSM to then pass
-        // back to handleResponse()
-        fsm.addObject("viewsLikes", viewsLikes);
-
-        /*
-
-        // I'm not deleting this section yet, because it
-        // illustrates my question about using member variables versus
-        // passing objects through the fsm, which seems convoluted.
-
-        // I was going to do it this way until Derrell mentioned
-        // using member variables for views and likes.  Why not do that
-        // more generally, avoiding the need to pass things through
-        // the fsm using the complicated "friendly name" trick?
-
-
-        // Wrap views and likes into one object to send to FSM
-        // Only need views now, since we get likes from the RPC call,
-        // but might need likes in the future.
-        // FIXME:  Just make one big object to carry data to FSM?
-        
-        viewsLikesWrapper = new qx.core.Object();
-        viewsLikesWrapper.setUserData("views", views);
-        viewsLikesWrapper.setUserData("likes", likes);
-        fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
-        */
+        vboxLeft.add(this.__viewsLikesLabel);
 
         // Create a button to allow users to "like" things.
         likeItButton = new qx.ui.form.Button("Like it!");
@@ -320,7 +375,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting
         downloadLabel.set(
           {
-            rich:true 
+            rich : true 
           });
 
         // Add it to the right vbox.
@@ -335,8 +390,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting and to wrap text.
         download.set(
           {
-            rich:true,
-            wrap:true
+            rich : true,
+            wrap : true
           });
         vboxRight.add(download);
 
@@ -352,7 +407,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting.
         descriptionHeader.set(
           {
-            rich:true 
+            rich : true 
           });
 
         // Add it to the right vbox.
@@ -364,8 +419,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set the label to use rich formatting and automatically wrap text.
         description.set(
           {
-            rich:true,
-            wrap:true
+            rich : true,
+            wrap : true
           });
 
         // Add it to the right vbox.
@@ -383,7 +438,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting.
         tagsHeader.set(
           {
-            rich:true 
+            rich : true 
           });
 
         // Add it to the right vbox.
@@ -395,7 +450,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Set it to use rich formatting.
         tags.set(
           {
-            rich:true 
+            rich : true 
           });
 
         // Add it to the right vbox.
@@ -485,94 +540,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
 
       case "likesPlusOne":
-        // Update like count from RPC (not just incrementing, which 
+        // Update like count from RPC (don't just increment it; that
         // might be wrong)
         this.__likes = response.data.result;
 
-        // Retrieve viewsLikes label from the FSM
-        viewsLikes = rpcRequest.getUserData("viewsLikes");
+        // Update views and likes label
+        this.__updateViewsLikesLabel();
 
-        // Rewrite label to reflect new # of likes
-        // maybeFIXMEbutprobablynot:  Duplicated code snippet
-        // between here and initial creation of this label.
-        viewsLikes.setValue('<b>' + this.__views + ' views, ' +
-                            this.__likes + ' likes</b>');
-   
         break;
 
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
-    },
-
-    /**
-     * Create a panel containing a single comment to the GUI
-     *
-     * Comment will be shown as a 2-element vbox:
-     * Top line: visitor: comment text
-     * 2nd line: time stamp (grey, small)
-     *
-     * @param comment {String}
-     *   The comment to be displayed
-     *
-     * @return {qx.ui.container.Composite}
-     *   A container with a vertical box layout, containing the information
-     *   about this comment.
-     */
-    __createCommentPanel : function(comment)
-    {
-      // Comment info to be displayed
-      // These are the 3 fields of interest to a viewer
-      // (the rest is metadata -- app ID, tree ID, numChildren)
-      var commentText = comment["text"];
-      var commentAuthor = comment["visitor"];
-      var commentTime = comment["timestamp"];
-      // var treeId = comment["treeId"];
-
-      // Top line
-      var visitorAndComment =  '<b>' + commentAuthor + ': </b>' + commentText;
-      var visitorAndCommentLabel = new qx.ui.basic.Label(visitorAndComment);
-      visitorAndCommentLabel.set(
-        {
-          rich : true,
-          wrap : true,
-          selectable : true
-        });
-
-      // Timestamp, easier on the eye than the default.
-      // (which could use some additional tweaking, perhaps)
-      // FIXME: This needs to be internationalized. There are existing
-      // functions to do so.
-      var dateObj = new Date(commentTime);
-      var dateString = dateObj.toDateString();
-      var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-      var dateTimeString = dateString + " " + timeString + " ET"; 
-
-      // 2nd line
-      var postedStringStart = 
-        '<span style="color:grey;font-size:75%">Posted: ';
-      var postedString = postedStringStart + dateTimeString + '</span>';
-      var postedStringLabel = new qx.ui.basic.Label(postedString);
-      postedStringLabel.set(
-        {
-          rich : true,
-          wrap : true,
-          selectable : true
-        });
-
-      // Entire comment box
-      var commentLayout = new qx.ui.layout.VBox();
-      var commentBox = new qx.ui.container.Composite(commentLayout);
-      // Thin grey solid border
-      commentBox.setDecorator(new qx.ui.decoration.Single(1, 
-                                                          'solid',
-                                                          '#cccccc'));
-      // Add the pieces
-      commentBox.add(visitorAndCommentLabel);
-      commentBox.add(postedStringLabel);
-
-      // Return the box we just created.
-      return commentBox;
     }
   }
 });

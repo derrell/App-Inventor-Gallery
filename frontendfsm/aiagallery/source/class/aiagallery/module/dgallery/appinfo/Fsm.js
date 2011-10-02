@@ -287,7 +287,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // FIXME:  Need to reorganize code -- this has
           // nothing to do with comments
           var commentWrapper = fsm.getObject("commentWrapper");
-          var viewsLikes = fsm.getObject("viewsLikes");
           var appId = commentWrapper.getUserData("appId");
 
           // Issue the remote procedure call to execute the query
@@ -300,10 +299,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
                          appId
                          ]);
 
-          // Tell Gui the request type and give it the viewLikes label
+          // Tell Gui the request type
           request.setUserData("requestType", "likesPlusOne");
-          request.setUserData("viewsLikes", viewsLikes);
-
         }
       });
 
