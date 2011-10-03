@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
- * 
+ *
  * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html 
+ *   LGPL: http://www.gnu.org/licenses/lgpl.html
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
@@ -44,7 +44,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           {
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
-
+	    
             // Otherwise, call the standard result handler
             var gui = aiagallery.module.dgallery.appinfo.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
@@ -65,21 +65,21 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // to determine if it's necessary.
           "appear"    :
           {
-            "main.canvas" : 
+            "main.canvas" :
               qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
           },
 
           "execute" :
           {
-            "submitCommentBtn" : 
+            "submitCommentButton" :
             "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
 
-            "likeItButton" : 
+            "likeItButton" :
               "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           },
           "appearComments" :
           {
-            "ignoreMe" : 
+            "ignoreMe" :
               "Transition_Idle_to_AwaitRpcResult_via_getComments"
           }
         }
@@ -112,10 +112,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             // Yup. Don't accept this transition and no need to check further.
             return null;
           }
-          
+
           // Prevent this transition from being taken next time.
           fsm.setUserData("noUpdate", true);
-          
+
           // Accept this transition
           return true;
         },
@@ -134,7 +134,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "getAppInfo");
-  
+
         }
       });
 
@@ -165,7 +165,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       /*
        * Transition: Idle to AwaitRpcResult
        *
-       * Cause: submitCommentBtn has been pressed
+       * Cause: submitCommentButton has been pressed
        *
        * Action:
        *  Add a comment to the database and to the GUI
@@ -196,11 +196,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "addComment",
-                         [ 
+                         [
                          //Application ID
                          appId,
-                         //The text of the comment 
-                         commentInput.getValue(), 
+                         //The text of the comment
+                         commentInput.getValue(),
                          //The parent thread's UID
                          null
                          ]);
@@ -220,7 +220,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       /*
        * Transition: Idle to AwaitRpcResult
        *
-       * Cause: 
+       * Cause:
        *
        * Action:
        *  Gets comments from the database and adds them to the GUI
@@ -244,13 +244,13 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
           guiWrapper = fsm.getObject("guiWrapper");
-         
+
           // Issue the remote procedure call to execute the query
           request =
             this.callRpc(fsm,
                          "aiagallery.features",
                          "getComments",
-                         [ 
+                         [
                            appId,
                            null,
                            null
@@ -294,7 +294,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "likesPlusOne",
-                         [ 
+                         [
                          //Application ID
                          appId
                          ]);
