@@ -497,7 +497,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           allCommentsBox.addAt(newBox, 0, null);
 
           // Following line confirmed to be needed--but why??
-          vbox.add(newBox);
+          vbox.add(allCommentsBox);
         }
 
         commentInput.setValue(null);
@@ -532,7 +532,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                 allCommentsBox.addAt(newBox, 0, null);
 
                 // Following line confirmed to be needed--but why??
-                vbox.add(newBox);
+                vbox.add(allCommentsBox);
               }
             }
           }
