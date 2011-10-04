@@ -44,7 +44,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           {
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
-	    
+
             // Otherwise, call the standard result handler
             var gui = aiagallery.module.dgallery.appinfo.Gui.getInstance();
             gui.handleResponse(module, rpcRequest);
@@ -182,14 +182,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // Get the event data
           var             commentWrapper;
           var             appId;
-          var             commentInput;
-          var             guiWrapper;
+          var             commentInputField;
           var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
-          commentInput = commentWrapper.getUserData("commentInput");
-          guiWrapper = fsm.getObject("guiWrapper");
+          commentInputField = commentWrapper.getUserData("commentInputField");
 
           // Issue the remote procedure call to execute the query
           request =
@@ -200,7 +198,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
                          //Application ID
                          appId,
                          //The text of the comment
-                         commentInput.getValue(),
+                         commentInputField.getValue(),
                          //The parent thread's UID
                          null
                          ]);
@@ -208,9 +206,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "addComment");
-          request.setUserData("commentString", commentInput);
-          request.setUserData("guiInfo", guiWrapper);
-
         }
       });
 
@@ -238,12 +233,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // Get the event data
           var             commentWrapper;
           var             appId;
-          var             guiWrapper;
           var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
-          guiWrapper = fsm.getObject("guiWrapper");
 
           // Issue the remote procedure call to execute the query
           request =
@@ -259,7 +252,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // When we get the result, we'll need to know what type of request
           // we made.
           request.setUserData("requestType", "getComments");
-          request.setUserData("guiInfo", guiWrapper);
         }
       });
 

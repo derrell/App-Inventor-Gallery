@@ -20,6 +20,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     __views : null,
     __likes : null,
     __viewsLikesLabel : null,
+    __vbox : null,
+    __allCommentsBox : null,
+    __commentInputField : null,
 
     // Helper methods
 
@@ -133,11 +136,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             response = rpcRequest.getUserData("rpc_response");
       var             requestType = rpcRequest.getUserData("requestType");
       var             result;
-      var             commentData = rpcRequest.getUserData("commentData");
+      var             comment;
+      var             comments;
+//      var             commentData = rpcRequest.getUserData("commentData");
       var             vboxLeft;
       var             vboxRight;
       var             hbox;
-      var             commentBox;
       var             appId;
       var             hboxLayout;
       var             title;
@@ -146,12 +150,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             likeItButton;
       var             flagItButton;
       var             emptyObject;
-      var             commentInput;
-      var             allCommentsBox;
       var             commentWrapper;
       var             submitCommentButton;
       var             scrollContainer;
-      var             vbox;
       var             downloadLabel;
       var             download;
       var             spacer;
@@ -159,13 +160,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             description;
       var             tagsHeader;
       var             tags;
-      var             guiWrapper;
       var             guiInfo;
-      var             newComment;
-      var             commentAuthor;
-      var             commentTime;
+//      var             newComment;
+//      var             commentAuthor;
+//      var             commentTime;
       var             ty;
-      var             replyBtn;
+//      var             replyBtn;
       var             vbox2;
       var             label2;
       var             label;
@@ -298,75 +298,86 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
 
-       // Creates an object on which to call the getComments event, in order
-       // to add them to the GUI
-       emptyObject = new qx.core.Object();
-       emptyObject.setUserData("filler", new qx.core.Object());
-       fsm.addObject("ignoreMe", emptyObject);
-       fsm.fireImmediateEvent("appearComments", emptyObject, null);
+        // Creates an object on which to call the getComments event, in order
+        // to add them to the GUI
+        emptyObject = new qx.core.Object();
+        emptyObject.setUserData("filler", new qx.core.Object());
+        fsm.addObject("ignoreMe", emptyObject);
+        fsm.fireImmediateEvent("appearComments", emptyObject, null);
 
-       // Adds the textfield for entering a comment
-       commentInput = new qx.ui.form.TextField();
-       commentInput.setPlaceholder("Type your comment here:");
-       allCommentsBox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        // Adds the textfield for entering a comment
+        this.__commentInputField = new qx.ui.form.TextField();
+        this.__commentInputField.setPlaceholder("Type your comment here:");
 
-       // Wrapping everything relevant to a comment in one object,
-       // to be passed to the FSM
-       commentWrapper = new qx.core.Object();
-       commentWrapper.setUserData("appId", appId);
-       commentWrapper.setUserData("commentInput", commentInput);
-       fsm.addObject("commentWrapper", commentWrapper);
+        this.__allCommentsBox = new qx.ui.container.Composite(
+          new qx.ui.layout.VBox());
+        // INDENTATION?? ^^
 
-       // Adds the button for submitting a comment to the FSM
-       submitCommentButton = new qx.ui.form.Button("Submit Comment");
-       fsm.addObject("submitCommentButton", submitCommentButton);
+        // Wrapping everything relevant to a comment in one object,
+        // to be passed to the FSM
+        commentWrapper = new qx.core.Object();
+        commentWrapper.setUserData("appId", appId);
+        commentWrapper.setUserData("commentInputField", this.__commentInputField);
+        fsm.addObject("commentWrapper", commentWrapper);
 
-       submitCommentButton.addListener(
-         "execute",
-         function(e)
-         {
-           var comment = commentInput.getValue();
-           // Checks that the submitted comment is not null or empty spaces
-           if ((comment != null)
-              && ((comment.replace(/\s/g, '')) != ""))
-           // No: submit it
-           {
-             fsm.eventListener(e);
-           }
-           //Yes: clear input box and do nothing
-           else
-           {
-             commentInput.setValue(null);
-           }
-         },
-         fsm);
+        // Adds the button for submitting a comment to the FSM
+        submitCommentButton = new qx.ui.form.Button("Submit Comment");
+        fsm.addObject("submitCommentButton", submitCommentButton);
 
-       // Lets the user call "execute" by pressing the enter key rather
-       // than by pressing the submitCommentButton
-       commentInput.addListener(
-         "keypress",
-         function(e)
-         {
-           if (e.getKeyIdentifier() === "Enter")
-           {
-             submitCommentButton.execute();
-           }
-         });
+        submitCommentButton.addListener(
+          "execute",
+          function(e)
+          {
+// alert(this.__commentInputField !== undefined); // TRUE--UNDEFINED!
+// alert('submit comment btn listenter start: ' +
+//      qx.lang.Type.getClass(this.__commentInputField)); // UNDEFINED!
+
+            // Next var was called "comment" at first.  Oops.
+            // Next choice, commentText, also would have conflicted.
+
+            //  JS ERROR NEXT LINE, "this.__commentInputField is undefined"
+            var commentInputText = this.__commentInputField.getValue();
+
+            // Is the submitted comment null or whitespace?
+            if ((commentInputText != null)
+              && ((commentInputText.replace(/\s/g, '')) != ""))
+            // No: submit it
+            {
+              fsm.eventListener(e);
+            }
+            //Yes: clear input box and do nothing.
+            else
+            {
+              this.__commentInputField.setValue(null);
+            }
+          },
+          fsm);
+
+        // Lets the user call "execute" by pressing the enter key rather
+        // than by pressing the submitCommentButton
+        this.__commentInputField.addListener(
+          "keypress",
+          function(e)
+          {
+            if (e.getKeyIdentifier() === "Enter")
+            {
+              submitCommentButton.execute();
+            }
+          });
 
         // The textfield, all the existing comments, and the submit button
         // get added to the UI.
-        vboxLeft.add(commentInput);
-        vboxLeft.add(submitCommentButton
-);
-        vboxLeft.add(allCommentsBox);
+        vboxLeft.add(this.__commentInputField);
+        vboxLeft.add(submitCommentButton);
+        vboxLeft.add(this.__allCommentsBox);
 
         // We'll put all of the collapsable panels in a scroll container
         scrollContainer = new qx.ui.container.Scroll();
         vboxLeft.add(scrollContainer);
 
         // Put a vbox container in the scroll container
-        vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-        scrollContainer.add(vbox);
+        this.__vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        scrollContainer.add(this.__vbox);
 
         // Create a label to represent a link to download the app.
         // FIXME: Add a link here
@@ -457,88 +468,66 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the right vbox.
         vboxRight.add(tags);
 
-        // Creates an object containing the parts of the GUI which will need
-        // to be changed after the fsm call. This object is passed to the FSM.
-
-        guiWrapper = new qx.core.Object();
-        guiWrapper.setUserData("vbox", vbox);
-        guiWrapper.setUserData("commentBox", commentBox);
-        guiWrapper.setUserData("allCommentsBox", allCommentsBox);
-        guiWrapper.setUserData("commentInput", commentInput);
-        fsm.addObject("guiWrapper", guiWrapper);
-
         canvas.setLayout(new qx.ui.layout.HBox());
 
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
         canvas.add(hbox);
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
+// alert(this.__commentInputField != null); // TRUE -- EXISTS
         break;
 
       case "addComment":
-        // Get the result data. It's an object with all of the application info.
-        result = response.data.result;
-
-        // Gets the objects sent from the GUI to the FSM.
-        guiInfo = rpcRequest.getUserData("guiInfo");
-        vbox = guiInfo.getUserData("vbox");
-        commentBox = guiInfo.getUserData("commentBox");
-        commentInput = guiInfo.getUserData("commentInput");
-        allCommentsBox = guiInfo.getUserData("allCommentsBox");
+// alert(this.__commentInputField != null); // NEVER GETS HERE
+        // Get result data--in this case, the comment that was added.
+        comment = response.data.result;
 
         // Adds the new comment to the GUI
-        // Currently, the 'reply' and 'flag as inappropiate' buttons
-        // do not do anything
-        newComment = result["text"];
-        if (newComment != null)
+        if (comment["text"] != null)
         {
-          newBox = this.__createCommentPanel(result);
+          newBox = this.__createCommentPanel(comment);
 
           // Insert the new comment at the top of the list
-          allCommentsBox.addAt(newBox, 0, null);
+          this.__allCommentsBox.addAt(newBox, 0, null);
 
           // Following line confirmed to be needed--but why??
-          vbox.add(allCommentsBox);
+          this.__vbox.add(this.__allCommentsBox);
         }
 
-        commentInput.setValue(null);
+        this.__commentInputField.setValue(null);
         break;
 
       case "getComments":
-        // Get the result data. It's an object with all of the application info.
-        result = response.data.result;
+        // Get the result data--here, the list of comments for this app.
+        comments = response.data.result;
 
-        // Gets back the objects passed from the GUI to the FSM
-        guiInfo = rpcRequest.getUserData("guiInfo");
-        vbox = guiInfo.getUserData("vbox");
-        allCommentsBox = guiInfo.getUserData("allCommentsBox");
-
-        // Adds the comments retrieved from the database to the GUI
-        // Currently, the 'reply' and 'flag as inappropiate' buttons
-        // do not do anything
-        ty = qx.lang.Type.getClass(result);
+        // Add comments retrieved from the database to the GUI
+        ty = qx.lang.Type.getClass(comments);
         if (ty == "Array")
         {
-          len = result.length;
+          len = comments.length;
           if (len != 0)
           {
-            for (i = 0; i < result.length; ++i)
+            for (i = 0; i < len; ++i)
             {
-              newComment = result[i]["text"];
-              if (newComment != null)
+              comment = comments[i];
+              if (comment["text"] != null)
               {
-                newBox = this.__createCommentPanel(result[i]);
+                newBox = this.__createCommentPanel(comment);
 
                 // Insert the new comment at the top of the list
-                allCommentsBox.addAt(newBox, 0, null);
+                this.__allCommentsBox.addAt(newBox, 0, null);
 
                 // Following line confirmed to be needed--but why??
-                vbox.add(allCommentsBox);
+                this.__vbox.add(this.__allCommentsBox);
               }
             }
           }
         }
-        break;
+// alert(this.__commentInputField != null); // TRUE -- EXISTS
+// NEXT LINE -- OBJECT
+// alert('addComment end: ' + qx.lang.Type.getClass(this.__commentInputField));
 
+        break;
 
       case "likesPlusOne":
         // Update like count from RPC (don't just increment it; that
