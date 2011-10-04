@@ -351,7 +351,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               this.__commentInputField.setValue(null);
             }
           },
-          fsm);
+          // Following was fsm, erroneously and incorrectly.
+          // This caused problems when the comment input field
+          // was turned into an instance variable.
+          this);
 
         // Lets the user call "execute" by pressing the enter key rather
         // than by pressing the submitCommentButton
