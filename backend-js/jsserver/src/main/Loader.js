@@ -203,6 +203,9 @@ try
   $debugLoad("qx.util.Base64");
   new Packages.qx.util.Base64();
   
+  $debugLoad("qx.util.Serializer");
+  new Packages.qx.util.Serializer();
+  
 // not yet
 //  $debugLoad("qx.dev.DebugObject");
 //  new Packages.qx.dev.DebugObject();
