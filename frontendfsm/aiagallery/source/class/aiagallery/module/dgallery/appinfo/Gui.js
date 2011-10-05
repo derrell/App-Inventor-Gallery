@@ -14,6 +14,37 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
   type : "singleton",
   extend : qx.core.Object,
 
+  construct : function()
+  {
+    // The following non-primitive instance variables must be initialized
+    // in the constructor so that different instances don't
+    // point to the same object.
+    // Before this was done, when multiple app modules were open,
+    // commenting and liking in one app changed the corresponding
+    // fields in another!
+    // See the "Primitive Types vs. Reference Types" section of
+    // http://manual.qooxdoo.org/1.5.x/pages/core/classes.html
+
+    // Label to display number of views and likes.
+    this.__viewsLikesLabel = new qx.ui.basic.Label();
+
+    // FIXME: Clean up the GUI elements related to comments.  The
+    // relationship between such elements as this.__allCommentsBox,
+    // this.__vbox, scrollContainer, etc. is obscure, possibly redundant,
+    //  and may contain errors.
+
+    // Vbox container for comments, inside scrollContainer, outside
+    // this.__allCommentsBox
+    this.__vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+
+    // Yet another container that holds comments
+    this.__allCommentsBox = new qx.ui.container.Composite(
+      new qx.ui.layout.VBox());
+
+    // Text field for entering a comment
+    this.__commentInputField = new qx.ui.form.TextField();
+  },
+
   members :
   {
     // Private instance variables.
@@ -138,7 +169,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             result;
       var             comment;
       var             comments;
-//      var             commentData = rpcRequest.getUserData("commentData");
       var             vboxLeft;
       var             vboxRight;
       var             hbox;
@@ -161,11 +191,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             tagsHeader;
       var             tags;
       var             guiInfo;
-//      var             newComment;
-//      var             commentAuthor;
-//      var             commentTime;
       var             ty;
-//      var             replyBtn;
       var             vbox2;
       var             label2;
       var             label;
@@ -266,9 +292,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
-        // Create a label to display number of views and likes.
-        this.__viewsLikesLabel = new qx.ui.basic.Label();
-
         // Initialize it
         this.__updateViewsLikesLabel();
 
@@ -305,13 +328,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         fsm.addObject("ignoreMe", emptyObject);
         fsm.fireImmediateEvent("appearComments", emptyObject, null);
 
-        // Adds the textfield for entering a comment
-        this.__commentInputField = new qx.ui.form.TextField();
+        // Placeholder text
         this.__commentInputField.setPlaceholder("Type your comment here:");
-
-        this.__allCommentsBox = new qx.ui.container.Composite(
-          new qx.ui.layout.VBox());
-        // INDENTATION?? ^^
 
         // Wrapping everything relevant to a comment in one object,
         // to be passed to the FSM
@@ -328,14 +346,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           "execute",
           function(e)
           {
-// alert(this.__commentInputField !== undefined); // TRUE--UNDEFINED!
-// alert('submit comment btn listenter start: ' +
-//      qx.lang.Type.getClass(this.__commentInputField)); // UNDEFINED!
-
-            // Next var was called "comment" at first.  Oops.
-            // Next choice, commentText, also would have conflicted.
-
-            //  JS ERROR NEXT LINE, "this.__commentInputField is undefined"
             var commentInputText = this.__commentInputField.getValue();
 
             // Is the submitted comment null or whitespace?
@@ -378,8 +388,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         scrollContainer = new qx.ui.container.Scroll();
         vboxLeft.add(scrollContainer);
 
-        // Put a vbox container in the scroll container
-        this.__vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
+        // Put the vbox container in the scroll container
         scrollContainer.add(this.__vbox);
 
         // Create a label to represent a link to download the app.
@@ -476,11 +485,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
         canvas.add(hbox);
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
-// alert(this.__commentInputField != null); // TRUE -- EXISTS
         break;
 
       case "addComment":
-// alert(this.__commentInputField != null); // NEVER GETS HERE
         // Get result data--in this case, the comment that was added.
         comment = response.data.result;
 
@@ -526,10 +533,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           }
         }
-// alert(this.__commentInputField != null); // TRUE -- EXISTS
-// NEXT LINE -- OBJECT
-// alert('addComment end: ' + qx.lang.Type.getClass(this.__commentInputField));
-
         break;
 
       case "likesPlusOne":
