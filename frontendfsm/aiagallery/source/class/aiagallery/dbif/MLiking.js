@@ -39,6 +39,7 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
     {
       var            appObj;
       var            appDataObj;
+      var            objLikes; 
       
       appObj = new aiagallery.dbif.ObjAppData(appId);
       
@@ -51,7 +52,44 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
         return error;
       }
       
+      var criteria = {
+		type : "op",
+		method : "and", 
+                children : [
+			{
+                              type: "element",
+                              field: "app",
+                              value: appId
+                	}, 
+                        {
+                              type: "element",
+                              field: "visitor",
+                              value: this.whoAmI().email  
+                      }]}; 
+
+      //execute search and put in searchResponse
+      var searchResponse = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes", criteria);
+
+      //Inspect searchResponse, if it has an element than the user has liked before, if null than the
+      //the user has not liked it before.
+      if (searchResponse.length == 1){
+            //return -1; 
+            return appDataObj.numLikes;
+      }
+
       appDataObj.numLikes++;
+
+
+      //create and add an ObjLikes object to the database
+      objLikes = new aiagallery.dbif.ObjLikes();
+      //make a map for the data
+      data = {
+            "app"     :    appId,
+            "visitor" :    this.whoAmI().email
+      }; 
+
+      objLikes.setData(data); 
+      objLikes.put(); 
       
       appObj.put();
 
