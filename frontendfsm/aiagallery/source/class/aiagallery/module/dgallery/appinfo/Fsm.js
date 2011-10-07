@@ -72,8 +72,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           "execute" :
           {
             "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+              "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+
+            "likeItButton" :
+              "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           },
+
           "appearComments" :
           {
             "ignoreMe" : 
@@ -84,6 +88,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       // Replace the initial Idle state with this one
       fsm.replaceState(state, true);
+
 
 
       /*
@@ -213,6 +218,48 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause: like it button has been pressed
+       *
+       * Action:
+       *  increment the like count when button pressed
+       */
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_likeItButton",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+     
+        "ontransition" : function(fsm, event)
+        {
+          // get the event data
+          var commentWrapper;
+          var appId;
+          var request;
+
+        commentWrapper = fsm.getObject("commentWrapper");
+        appId = commentWrapper.getUserData("appId");
+
+        //issue the remote call to query
+         request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "likesPlusOne",
+                         [
+                           appId                    
+                         ]);
+
+          // result of request
+          request.setUserData("requestType", "likesPlusOne");
+  
+        }
+      });
+
+        state.addTransition(trans);
 
       /*
        * Transition: Idle to AwaitRpcResult
