@@ -84,6 +84,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             newBox;
       var             len;
       var             i;
+      var             numLikes;
+      var             numViewed;
+      var             likeItWrapper;
 
       if (response.type == "failed")
       {
@@ -126,7 +129,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Add it to the horizontal box, with the flex property to use all
         // unused space.
-        hbox.add(vboxLeft, { flex : 1 });
+        hbox.add(vboxLeft, {flex : 1});
 
         // Create the right vertical box container.
         vboxRight = new qx.ui.container.Composite(new qx.ui.layout.VBox());
@@ -135,7 +138,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxRight.setBackgroundColor("#f3f3f3");
 
         // Add it the horizontal box.
-        hbox.add(vboxRight, { flex : 2 });
+        hbox.add(vboxRight, {flex : 2});
  
         // Store a nice title.
         title = new qx.ui.basic.Label('<b style="font-size:25px">' +
@@ -177,10 +180,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
+        numViewed = result.numViewed;
+        numLikes = result.numLikes
         viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
+                                               numViewed +
                                                ' views, ' +
-                                               result.numLikes+
+                                               numLikes+
                                                ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
@@ -197,7 +202,13 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
+        likeItWrapper = new qx.core.Object();
+        likeItWrapper.setUserData("appId", appId);
+        fsm.addObject("likeItWrapper", likeItWrapper);
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -375,13 +386,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiWrapper.setUserData("commentBox", commentBox);
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
+        guiWrapper.setUserData("viewsLikes", viewsLikes);
+        guiWrapper.setUserData("numViewed", numViewed);
+        guiWrapper.setUserData("numLikes", numLikes);
         fsm.addObject("guiWrapper", guiWrapper);
 
         canvas.setLayout(new qx.ui.layout.HBox());
         
-        canvas.add(new qx.ui.core.Widget(), { flex : 1 });
+        canvas.add(new qx.ui.core.Widget(), {flex : 1});
         canvas.add(hbox);
-        canvas.add(new qx.ui.core.Widget(), { flex : 1 });
+        canvas.add(new qx.ui.core.Widget(), {flex : 1});
         break;
 
       case "addComment":
@@ -446,7 +460,25 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               }
             }
           }
-        }   
+        }
+        
+        break;
+        
+      case "likesPlusOne":
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+
+        // Gets the objects sent from the GUI to the FSM. 
+        guiInfo = rpcRequest.getUserData("guiInfo");
+        viewsLikes = guiInfo.getUserData("viewsLikes");
+        numViewed = guiInfo.getUserData("numViewed");
+        
+        viewsLikes.setValue('<b>' +
+                                   numViewed +
+                                   ' views, ' +
+                                   result +
+                                   ' likes</b>');
+        
         break;
 
       default:
