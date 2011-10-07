@@ -205,7 +205,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
          "execute",
          function(e)
          {
+             //call database to increment numOfLikes by 1. 
              fsm.eventListener(e);
+             //User pressed button, can only do this once so disable it.
+             //likeItButton.setEnabled(false); 
          },
          fsm);
 
@@ -473,13 +476,19 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         var viewsLikesLabel = guiInfo.getUserData("viewsLikesLabel"); 
         var numViewed = guiInfo.getUserData("numViewed"); 
 
-        viewsLikesLabel.setValue('<b>' +
-                                               numViewed +
-                                               ' views, ' +
-                                               result +
-                                               ' likes</b>'); 
-
-        break;
+        if (numViewed == -1){
+            //user has already tried liking this app, disable button
+            viewsLikesLabel.setEnabled(false); 
+        } else {
+	    //create new viewsLikesLabel with new number of likes, but same number of views. 
+            viewsLikesLabel.setValue('<b>' +
+		                                     numViewed +
+		                                     ' views, ' +
+		                                     result +
+		                                     ' likes</b>'); 
+       }
+       
+       break;      
 
       default:
         throw new Error("Unexpected request type: " + requestType);
