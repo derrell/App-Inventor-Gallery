@@ -39,9 +39,13 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "onentry" : function(fsm, event)
         {
-          // Did we just return from an RPC request?
+	    this.info("IDLE........................");
+
+
+	    // Did we just return from an RPC request?
           if (fsm.getPreviousState() == "State_AwaitRpcResult")
           {
+	      this.info("we just returned from an RPC request");
             // Yup.  Display the result.  We need to get the request object
             var rpcRequest = this.popRpcRequest();
 
@@ -60,7 +64,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "events" :
         {
-          // When we get an appear event, retrieve the application info. We
+	    
+	  // When we get an appear event, retrieve the application info. We
           // only want to do it the first time, though, so we use a predicate
           // to determine if it's necessary.
           "appear"    :
@@ -73,15 +78,23 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           {
             
             "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+	    "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+	    
+	    "likeItButton" :
+	     "Transition_Idle_to_AwaitRpcResult_via_submit_likes"
+
           },
           "appearComments" :
           {
             "ignoreMe" : 
               "Transition_Idle_to_AwaitRpcResult_via_getComments"
           }
+	 
+
+
         }
-      });
+      }); 
+
 
       // Replace the initial Idle state with this one
       fsm.replaceState(state, true);
@@ -97,6 +110,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Start our timer
        */
+
+	    this.info("RPCawaits........................");
 
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_appear",
@@ -194,6 +209,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           commentInput = commentWrapper.getUserData("commentInput");
           guiWrapper = fsm.getObject("guiWrapper");
 
+
+	  this.info("inside addComment....");
+
+
+
           // Issue the remote procedure call to execute the query
           request =
             this.callRpc(fsm,
@@ -218,6 +238,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       });
 
       state.addTransition(trans);
+
+
+
+
+
+
+
+
 
 
       /*
@@ -267,6 +295,67 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       });
 
       state.addTransition(trans);
+
+
+      //likeItButton Transition
+      
+
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause: likeItButton has been pressed
+       *
+       * Action:
+       *  Update number of likes
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_submit_likes",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+	    var           buttoninfo;
+	  var             appId;
+          var             guiWrapper;
+          var             request;
+	  this.info("LIKES TRANSITION");
+	    buttoninfo = fsm.getObject("likeItButton");
+	    appId = buttoninfo.getUserData("appId");
+	 
+	  guiWrapper = fsm.getObject("guiWrapper");
+
+
+	  this.info("inside likesItButton state...");
+
+
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "likesPlusOne",
+                         [ 
+                         //Application ID
+                         appId
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "likesPlusOne");
+
+
+        }
+      });
+
+      state.addTransition(trans);
+
+
+      //likeItButton Transition end...
 
       
       // ------------------------------------------------------------ //
