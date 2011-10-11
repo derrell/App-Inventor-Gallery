@@ -72,8 +72,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           "execute" :
           {
             "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+              "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+            "likeItButton" :
+                "Transition_Idle_to_AwaitRpcResult_via_LikeItButton"
           },
+
           "appearComments" :
           {
             "ignoreMe" : 
@@ -211,13 +214,51 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
         }
       });
 
-      state.addTransition(trans);
-
+       state.addTransition(trans);
 
       /*
        * Transition: Idle to AwaitRpcResult
        *
-       * Cause: 
+       * Cause: Like it button has been pressed
+       *
+       * Action:
+       *  Gets comments from the database and adds them to the GUI
+       */
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_likeItButton",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event){
+            var commentWrapper;
+            var appId;
+            var request;
+
+            commentWrapper = fsm.getObject("commentWrapper");
+            appId = commentWrapper.getUserData("appId");
+
+            // Issue the RPC
+            request =
+                this.callRpc(fsm,
+                            "aiagallery.features",
+                            "likesPlusOne",
+                            [
+                                appId
+                            ]);
+
+             request.setUserData("requestType", "likesPlusOne");
+           }
+         });
+
+         state.addTransition(trans);
+
+      /*
+       * Transition: Idle to AwaitRpcResult
+       *
+       * Cause:
        *
        * Action:
        *  Gets comments from the database and adds them to the GUI
