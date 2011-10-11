@@ -184,16 +184,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 	this.__updateViewsAndLikes();
 
         // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        this.viewsLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.viewsLikes);
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
