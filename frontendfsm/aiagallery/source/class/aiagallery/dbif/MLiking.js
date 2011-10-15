@@ -39,7 +39,10 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
     {
       var            appObj;
       var            appDataObj;
-      
+      var            ObjLikes;
+      var            queryCriteria;
+      var            queryAndRespond;
+      var            data;
       appObj = new aiagallery.dbif.ObjAppData(appId);
       
       appDataObj = appObj.getData();
@@ -47,15 +50,80 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
       if (appObj.getBrandNew())
       {
         error.setCode(1);
-        error.setMessage("App with that ID not found. Unable to like.");
+        error.setMessage("App with that ID not found. Unable to like. :(");
         return error;
       }
-      
+           queryCriteria = {
+
+    type : "op",
+
+    method : "and", 
+
+                children : [
+
+      {
+
+                              type: "element",
+
+                              field: "app",
+
+                              value: appId
+
+                  }, 
+
+                        {
+
+                              type: "element",
+
+                             field: "visitor",
+
+                              value: this.whoAmI().email  
+
+                      }
+                     ]
+                    }; 
+
+
+
+      //query and respond
+
+      queryAndRespond = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes", queryCriteria);
+
+
+
+      //query and see if it has an element
+
+
+      if (queryAndRespond.length == 1){
+
+
+            return appDataObj.numLikes;
+
+      }
+
+
+
+      //create and add an ObjLikes object to the database
+
+      ObjLikes = new aiagallery.dbif.ObjLikes();
+
+
+      data = {
+
+            "app"     :    appId,
+
+            "visitor" :    this.whoAmI().email
+
+      }; 
+
+
       appDataObj.numLikes++;
-      
+      ObjLikes.setData(data); 
+      ObjLikes.put(); 
       appObj.put();
 
       return appDataObj.numLikes;
     }
   }
-});
+}
+);

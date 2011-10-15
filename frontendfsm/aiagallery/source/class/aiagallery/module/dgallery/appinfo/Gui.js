@@ -54,7 +54,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             title;
       var             appIcon;
       var             createdBy;
-      var             viewsLikes;
       var             likeItButton;
       var             flagItButton;
       var             emptyObject;
@@ -176,28 +175,34 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
-        // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
-                                               ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
+        // save the number of views and likes
+        this.numViewed = result.numViewed;
+        this.numLikes = result.numLikes;
 
-        // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        // Create a label to display number of views and likes.
+        this.ViewsAndLikes = new qx.ui.basic.Label();
+        this.__updateViewsAndLikes();
+
+
+        // Set the ViewsAndLikes label to use rich formatting.
+        
+        this.ViewsAndLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.ViewsAndLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.ViewsAndLikes);
+        
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
-        likeItButton = new qx.ui.form.Button("Like it!");
+        likeItButton =new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -449,8 +454,36 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }   
         break;
 
+       case "likesPlusOne" :
+       // get the resulting data. it's an object with all of the app info
+       result = response.data.result;
+       
+       // set the number of likes according to the return value
+       this.numLikes = result;
+       
+       // update the display
+       this.__updateViewsAndLikes();
+
+        break;
+
       default:
         throw new Error("Unexpected request type: " + requestType);
+      }
+     },
+
+     // update number of views and likes based on the current value of the
+    //saved numViewed and numLikes values in the object
+    __updateViewsAndLikes : function()
+   {    
+        if (this.numViewed == -1){
+        this.viewsAndLikes.setEnabled(false); 
+        }
+        else {
+        this.ViewsAndLikes.setValue('<b>' +
+                                  this.numViewed +
+                                  ' views, ' +
+                                  this.numLikes +
+                                  ' likes </b> ');
       }
     },
 
