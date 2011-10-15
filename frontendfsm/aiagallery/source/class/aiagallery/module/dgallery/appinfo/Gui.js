@@ -180,22 +180,22 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         this.numLikes = result.numLikes;
 
         // Create a label to display number of views and likes.
-        this.viewsLikes = new qx.ui.basic.Label();
+        this.ViewsAndLikes = new qx.ui.basic.Label();
         this.__updateViewsAndLikes();
 
 
-        // Set the viewsLikes label to use rich formatting.
+        // Set the ViewsAndLikes label to use rich formatting.
         
-        this.viewsLikes.set(
+        this.ViewsAndLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        this.viewsLikes.setAlignX("center");
+        this.ViewsAndLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(this.viewsLikes);
+        vboxLeft.add(this.ViewsAndLikes);
         
 
         // Create a button to allow users to "like" things.
@@ -460,7 +460,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
        
        // set the number of likes according to the return value
        this.numLikes = result;
-
+       
        // update the display
        this.__updateViewsAndLikes();
         break;
@@ -474,8 +474,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     //saved numViewed and numLikes values in the object
     __updateViewsAndLikes : function()
    {
-        this.viewsLikes.setValue('<b>' +
-                                  this.nimViewed +
+        this.ViewsAndLikes.setValue('<b>' +
+                                  this.numViewed +
                                   ' views, ' +
                                   this.numLikes +
                                   ' likes </b> ');
