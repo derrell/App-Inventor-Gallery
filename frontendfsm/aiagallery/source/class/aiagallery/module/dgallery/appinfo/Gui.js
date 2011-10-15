@@ -463,6 +463,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
        
        // update the display
        this.__updateViewsAndLikes();
+
         break;
 
       default:
@@ -473,12 +474,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
      // update number of views and likes based on the current value of the
     //saved numViewed and numLikes values in the object
     __updateViewsAndLikes : function()
-   {
+   {    
+        if (this.numViewed == -1){
+        this.viewsAndLikes.setEnabled(false); 
+        }
+        else {
         this.ViewsAndLikes.setValue('<b>' +
                                   this.numViewed +
                                   ' views, ' +
                                   this.numLikes +
                                   ' likes </b> ');
+      }
     },
 
     /**
