@@ -54,7 +54,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             title;
       var             appIcon;
       var             createdBy;
-      //var             viewsLikes;
+      var             viewsLikes;
       var             likeItButton;
       var             flagItButton;
       var             emptyObject;
@@ -468,9 +468,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       }
     },
 
-    __updateViewsAndLike : function()
+    __updateViewsAndLikes : function()
     {
-        this.viewsLikes.setValue('<b>' + this.numViewd + ' views, ' + this.numLikes+ ' likes</b>');
+        this.viewsLikes.setValue('<b>' + this.numViewed + ' views, ' + this.numLikes+ ' likes</b>');
     },
 
     /**

@@ -74,7 +74,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             "submitCommentBtn" : 
               "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
             "likeItButton" :
-                "Transition_Idle_to_AwaitRpcResult_via_LikeItButton"
+                "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
           },
 
           "appearComments" :
