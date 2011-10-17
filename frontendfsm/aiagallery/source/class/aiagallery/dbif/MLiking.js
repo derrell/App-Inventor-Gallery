@@ -50,10 +50,42 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
         error.setMessage("App with that ID not found. Unable to like.");
         return error;
       }
-      
+
+      var criteria =
+      {
+	type :     "op",
+	method :   "and",
+	children : [
+	    {
+              type :  "element",
+	      field : "app",
+	      value : appId
+	    },
+	    {
+	      type :  "element",
+	      field : "visitor",
+	      value : this.whoAmI().email
+	    }]};
+
+      //execute search
+      var searchResponse = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes", criteria);
+
+      if(searchResponse.length == 1)
+      {
+        return appDataObj.numLikes;
+      }
+
       appDataObj.numLikes++;
-      
       appObj.put();
+
+      var data = 
+	    {
+		app : appId,
+		visitor : this.whoAmI().email
+	    };
+      var likeObj = new aiagallery.dbif.ObjLikes();
+      likeObj.setData(data);
+      likeObj.put();
 
       return appDataObj.numLikes;
     }
