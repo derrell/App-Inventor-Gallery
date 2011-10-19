@@ -76,7 +76,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
           "execute" :
           {
-            
             "submitCommentBtn" : 
 	    "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
 	    
@@ -100,8 +99,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       fsm.replaceState(state, true);
 
 
-      // The following transitions have a predicate, so must be listed first
-
       /*
        * Transition: Idle to AwaitRpcResult
        *
@@ -110,9 +107,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Start our timer
        */
+<<<<<<< HEAD
 
 	    this.info("RPCawaits........................");
 
+=======
+>>>>>>> upstream/swe
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_appear",
       {
@@ -164,7 +164,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Stop our timer
        */
-
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_Idle_via_disappear",
       {
@@ -187,7 +186,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Add a comment to the database and to the GUI
        */
-
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
       {

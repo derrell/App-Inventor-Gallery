@@ -67,7 +67,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
           // Click on a featured app
           "featuredAppClick" : "Transition_Idle_to_Idle_via_featuredAppClick",
           
-          // When we get an appear event, retrieve the visitor list
+          // When we get an appear event, retrieve featured apps
           "appear" :
           {
             "main.canvas" : "Transition_Idle_to_AwaitRpcResult_via_appear"
@@ -225,14 +225,6 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
 
         "ontransition" : function(fsm, event)
         {          
-          // Create criteria list for appQuery
-          var criteria =
-            {
-              type     : "op",
-              method   : "and",
-              children : []
-            };
-            
           // Create a criterion to grab only featured apps
           var criterion = 
             {
@@ -241,17 +233,14 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
               value : "*Featured*"
             };
             
-          // Add it to the criteria list
-          criteria.children.push(criterion);
-          
           // Issue the remote procedure call to execute the query
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
                          "appQuery",
                          [
-                           // Root of the criteria tree
-                           criteria,
+                           // Search criteria
+                           criterion,
                            
                            // Requested fields and the return field name
                            {

@@ -146,13 +146,26 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getBySearch : function(fields, error)
     {
-      var requiredParams = 1;
+      var results;
+      var requiredParams = 3;
       for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
       var keywordString = fields.shift();
+      var offset = fields.shift();
+      var count = fields.shift();
+      
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
+      
+      if (!offsetTypeCheck || !countTypeCheck)
+      {
+        error.setCode(5);
+        error.setMessage("Malformed mobile request: Incorrect parameter type.");
+        return error;
+      }
       
       // keyword is required.
       if (typeof keywordString !== "string")
@@ -183,8 +196,26 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       };
     
       // Use MSearch Mixin
-      return this.keywordSearch(keywordString, null, requestedFields, error);
-    
+      results = this.keywordSearch(keywordString, null, requestedFields, error);
+      
+      // If they have not specified a count nor an offset...
+      if (count === null && offset === null)
+      {
+        // ... then return the whole list
+        return results;
+      }
+      
+      // If there's no count, return the whole list beginning at offset
+      if (count === null)
+      {
+        offset = parseInt(offset, 10);
+        return results.slice(offset);
+      }
+      
+      // There's a count and an offset. Give that group.
+      offset = parseInt(offset, 10);
+      count = parseInt(count, 10);
+      return results.slice(offset, offset + count);
     },
     
     __getByTag : function(fields, error)
