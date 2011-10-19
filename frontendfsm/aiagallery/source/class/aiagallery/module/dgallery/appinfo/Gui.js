@@ -84,6 +84,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             newBox;
       var             len;
       var             i;
+      var             numViews;
 
       if (response.type == "failed")
       {
@@ -176,6 +177,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
+        //Store our number of views so we can reuse it when updating likes since the control is tied together
+        numLikes = result.numLikes
+
         // Create a label to display number of views and likes.
         viewsLikes = new qx.ui.basic.Label('<b>' +
                                                result.numViewed +
@@ -196,8 +200,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(viewsLikes);
 
         // Create a button to allow users to "like" things.
-        // FIXME: Implement this
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -447,6 +452,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           }
         }   
+        break;
+
+      case "likesPlusOne":
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+
+        // Create a label to display number of views and likes.
+        viewsLikes.setValue('<b>' + 5 +
+                                    ' views, ' +
+                                    5 +
+                                    ' likes</b>');
         break;
 
       default:
