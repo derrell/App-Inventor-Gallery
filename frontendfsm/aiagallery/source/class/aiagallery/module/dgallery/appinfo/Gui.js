@@ -54,7 +54,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             title;
       var             appIcon;
       var             createdBy;
-      var             viewsLikes;
       var             likeItButton;
       var             flagItButton;
       var             emptyObject;
@@ -176,28 +175,33 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
+        //Store our number of views so we can reuse it when updating likes since the control is tied together
+        this.numLikes = result.numLikes;
+        this.numViewed = result.numViewed;
+
         // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
+        this.viewsLikes = new qx.ui.basic.Label('<b>' +
+                                               this.numViewed +
                                                ' views, ' +
-                                               result.numLikes+
+                                               this.numLikes +
                                                ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        this.viewsLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.viewsLikes);
 
         // Create a button to allow users to "like" things.
-        // FIXME: Implement this
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -447,6 +451,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           }
         }   
+        break;
+
+      case "likesPlusOne":
+        // Get the result data. It's an object with all of the application info.
+        result = response.data.result;
+        this.numLikes = result;
+
+        // Create a label to display number of views and likes.
+        this.viewsLikes.setValue('<b>' + this.numViewed +
+                                    ' views, ' +
+                                    this.numLikes +
+                                    ' likes</b>');
         break;
 
       default:
