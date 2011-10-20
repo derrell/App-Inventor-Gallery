@@ -50,10 +50,42 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
         error.setMessage("App with that ID not found. Unable to like.");
         return error;
       }
-      
-      appDataObj.numLikes++;
-      
-      appObj.put();
+     
+	var visitorID = this.getWhoAmI();
+	var lookupResult = rpcjs.dbif.Entity.query ("aiagallery.dbif.ObjLikes",
+						    {
+							type     : "op",
+							method   : "and",
+							children : [
+						    {
+							type      : "element",
+							field     : "app",
+							value     : appId,
+							filterOp  : "="
+						    },
+						    {
+							type      : "element",
+							field     : "visitor",
+                       					value     : visitorID.email,
+							filterOp        : "="
+						    }
+							]
+						    },
+						    null);
+
+
+ 
+	if (lookupResult.length == 0){
+        // Create a new object, constructor fills in the timestamp, set the rest of the members
+        likesObj = new aiagallery.dbif.ObjLikes();
+        likesObjData = likesObj.getData();
+        likesObjData.app = appId;
+          likesObjData.visitor = visitorID.email; 
+        // Save data to the database
+        likesObj.put();
+        appDataObj.numLikes++;
+        appObj.put();
+      }
 
       return appDataObj.numLikes;
     }
