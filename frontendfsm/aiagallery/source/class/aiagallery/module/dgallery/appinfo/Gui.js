@@ -208,7 +208,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
              //call database to increment numOfLikes by 1. 
              fsm.eventListener(e);
              //User pressed button, can only do this once so disable it.
-             //likeItButton.setEnabled(false); 
+             likeItButton.setEnabled(false); 
          },
          fsm);
 
