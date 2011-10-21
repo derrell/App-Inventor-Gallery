@@ -107,12 +107,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Start our timer
        */
-<<<<<<< HEAD
+
 
 	    this.info("RPCawaits........................");
 
-=======
->>>>>>> upstream/swe
+
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_appear",
       {
