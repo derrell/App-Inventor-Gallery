@@ -181,7 +181,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a label to display number of views and likes.
         this.viewsLikes = new qx.ui.basic.Label();
-        this._updateViewsAndLikes();
+        this.__updateViewsAndLikes();
 
         // Set the viewsLikes label to use rich formatting.
         this.viewsLikes.set(
