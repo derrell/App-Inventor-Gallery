@@ -176,28 +176,31 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
-        // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
-                                               ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
+        // Save the number of views and likes
+        this.numViewed = result.numViewed;
+        this.numLikes = result.numLikes;
+
+        this.viewsLikes = new qx.ui.basic.Label();
+        this.__updateViewsAndLikes();
+
 
         // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        this.viewsLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.viewsLikes);
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+        likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -449,9 +452,25 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }   
         break;
 
+      case "likesPlusOne":
+          //Get the result
+          result = response.data.result;
+
+          //Set new number of likes
+          this.numLikes = result;
+
+          // Update the gui
+          this.__updateViewsAndLikes();
+          break;
+
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
+    },
+
+    __updateViewsAndLikes : function()
+    {
+        this.viewsLikes.setValue('<b>' + this.numViewed + ' views, ' + this.numLikes+ ' likes</b>');
     },
 
     /**
