@@ -1117,6 +1117,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     /**
      * Get the details about a particular application.
      *
+     * This function will also increment the number of views of the 
+     * requested app by 1. 
+     *
      * @param uid {Key}
      *   The unique identifier of an application.
      *
@@ -1193,6 +1196,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
+      //Increment the number of views by 1. 
+      app.numViewed++; 
 
       // Issue a query for this visitor
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
