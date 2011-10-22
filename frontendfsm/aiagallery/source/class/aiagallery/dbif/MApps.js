@@ -1199,6 +1199,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       //Increment the number of views by 1. 
       app.numViewed++; 
 
+      //Set the "lastViewedDate" to the time this function was called
+      app.lastViewedTime = (new Date()).toString(); 
+
       // Issue a query for this visitor
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
