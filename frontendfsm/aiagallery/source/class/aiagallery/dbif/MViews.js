@@ -8,7 +8,7 @@
  */
 
 qx.Mixin.define("aiagallery.dbif.MViews",
-
+{
   construct : function()
   {
 
@@ -36,7 +36,7 @@ qx.Mixin.define("aiagallery.dbif.MViews",
      *   the app was not found 
      * 
      */
-    likesPlusOne : function(appId, error)
+    viewsPlusOne : function(appId, error)
     {
       var            appObj;
       var            objLikes; 
