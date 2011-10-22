@@ -51,7 +51,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             requestType = rpcRequest.getUserData("requestType");
       var             result; 
       var             commentData = rpcRequest.getUserData("commentData");
-<<<<<<< HEAD
+
     
 
 
@@ -125,7 +125,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       }
 // ^^^^^^^ COMMENTS ^^^^^^^
       
-=======
+
       var             vboxLeft;
       var             vboxRight;
       var             hbox;
@@ -165,7 +165,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             newBox;
       var             len;
       var             i;
->>>>>>> upstream/swe
+
 
       if (response.type == "failed")
       {
@@ -264,11 +264,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 	this.__numViewed = result.numViewed;
 
         // Create a label to display number of views and likes.
-<<<<<<< HEAD
+
         this.viewsLikes = new qx.ui.basic.Label('<b>' +
-=======
+
         viewsLikes = new qx.ui.basic.Label('<b>' +
->>>>>>> upstream/swe
+
                                                result.numViewed +
                                                ' views, ' +
 					       result.numLikes+
@@ -291,7 +291,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
-<<<<<<< HEAD
+
         var likeItButton = new qx.ui.form.Button("Like it!");
 	likeItButton.setUserData("appId", appId);
 
@@ -320,9 +320,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
 
 
-=======
+
         likeItButton = new qx.ui.form.Button("Like it!");
->>>>>>> upstream/swe
+
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -544,13 +544,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
 
-<<<<<<< HEAD
+
         // This alert shows that addComments is reusing uids 
 //        alert("getComments result is: " +
 //              qx.lang.Json.stringify(result);
 
-=======
->>>>>>> upstream/swe
+
         // Gets back the objects passed from the GUI to the FSM
         guiInfo = rpcRequest.getUserData("guiInfo");
         vbox = guiInfo.getUserData("vbox");       
@@ -582,7 +581,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           }
         }   
         break;
-<<<<<<< HEAD
+
 // ^^^^^^^ COMMENTS ^^^^^^^
        case "likesPlusOne":
         // Get the result data. The new likes amount
@@ -592,14 +591,13 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 	this.addLikes(this.__labelLikes);
 
 	break;
-=======
->>>>>>> upstream/swe
+
 
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
     },
-<<<<<<< HEAD
+
 	   addLikes : function(result) {
 	     this.viewsLikes.setValue('<b>' +
                                                this.__numViewed +
@@ -611,7 +609,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 	    
 
 
-=======
+
 
     /**
      * Create a panel containing a single comment to the GUI
@@ -682,6 +680,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // Return the box we just created.
       return commentBox;
     }
->>>>>>> upstream/swe
+
   }
 });
