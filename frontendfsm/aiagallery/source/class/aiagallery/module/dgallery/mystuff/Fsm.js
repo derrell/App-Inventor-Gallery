@@ -705,6 +705,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           rowData.image3       = result.image3;
           rowData.prevAuthors  = result.prevAuthors;
           rowData.tags         = result.tags.join(", ");
+          rowData.sourceFileName = result.sourceFileName;
+          rowData.apkFileName = result.apkFileName;
           rowData.uploadTime   = result.uploadTime;
           rowData.numLikes     = result.numLikes;
           rowData.numDownloads = result.numDownloads;
