@@ -506,7 +506,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var             additionalTags;
           var             tags;
           var             source;
+          var             sourceFileName;
           var             apk;
+          var             apkFileName;
           var             selection;
           var             request;
 
@@ -533,7 +535,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
           // Retrieve any source and apk upload file data
           source = cellEditor.getUserData("source").getUserData("fileData");
+          sourceFileName = cellEditor.getUserData("source").getFileName();
           apk    = cellEditor.getUserData("apk").getUserData("fileData");
+          apkFileName = cellEditor.getUserData("apk").getFileName();
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
@@ -568,7 +572,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
               image3          : imageData[2],
               previousAuthors : prevAuthors,
               source          : source,
+              sourceFileName  : sourceFileName,
               apk             : apk,
+              apkFileName     : apkFileName,
               tags            : tags
             };
 
