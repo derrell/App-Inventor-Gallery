@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2011 Derrell Lipman
- * 
- * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html 
- *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
- */
+* Copyright (c) 2011 Derrell Lipman
+*
+* License:
+* LGPL: http://www.gnu.org/licenses/lgpl.html
+* EPL : http://www.eclipse.org/org/documents/epl-v10.php
+*/
 
 /**
- * Each individual application page's finite state machine
- */
+* Each individual application page's finite state machine
+*/
 qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 {
   type : "singleton",
@@ -27,11 +27,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       // ------------------------------------------------------------ //
 
       /*
-       * State: Idle
-       *
-       * Actions upon entry
-       *   - if returning from RPC, display the result
-       */
+* State: Idle
+*
+* Actions upon entry
+* - if returning from RPC, display the result
+*/
 
       state = new qx.util.fsm.State("State_Idle",
       {
@@ -39,10 +39,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "onentry" : function(fsm, event)
         {
-          // Did we just return from an RPC request?
+this.info("IDLE........................");
+
+
+// Did we just return from an RPC request?
           if (fsm.getPreviousState() == "State_AwaitRpcResult")
           {
-            // Yup.  Display the result.  We need to get the request object
+this.info("we just returned from an RPC request");
+            // Yup. Display the result. We need to get the request object
             var rpcRequest = this.popRpcRequest();
 
             // Otherwise, call the standard result handler
@@ -60,40 +64,55 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "events" :
         {
-          // When we get an appear event, retrieve the application info. We
+
+// When we get an appear event, retrieve the application info. We
           // only want to do it the first time, though, so we use a predicate
           // to determine if it's necessary.
-          "appear"    :
+          "appear" :
           {
-            "main.canvas" : 
+            "main.canvas" :
               qx.util.fsm.FiniteStateMachine.EventHandling.PREDICATE
           },
 
           "execute" :
           {
-            "submitCommentBtn" : 
-              "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
+            
+            "submitCommentBtn" :
+"Transition_Idle_to_AwaitRpcResult_via_submit_comment",
+
+"likeItButton" :
+"Transition_Idle_to_AwaitRpcResult_via_submit_likes"
+
           },
           "appearComments" :
           {
-            "ignoreMe" : 
+            "ignoreMe" :
               "Transition_Idle_to_AwaitRpcResult_via_getComments"
           }
+
+
+
         }
       });
+
 
       // Replace the initial Idle state with this one
       fsm.replaceState(state, true);
 
 
+      // The following transitions have a predicate, so must be listed first
+
       /*
-       * Transition: Idle to AwaitRpcResult
-       *
-       * Cause: "appear" on canvas
-       *
-       * Action:
-       *  Start our timer
-       */
+* Transition: Idle to AwaitRpcResult
+*
+* Cause: "appear" on canvas
+*
+* Action:
+* Start our timer
+*/
+
+this.info("RPCawaits........................");
+
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_appear",
       {
@@ -138,13 +157,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       state.addTransition(trans);
 
       /*
-       * Transition: Idle to Idle
-       *
-       * Cause: "disappear" on canvas
-       *
-       * Action:
-       *  Stop our timer
-       */
+* Transition: Idle to Idle
+*
+* Cause: "disappear" on canvas
+*
+* Action:
+* Stop our timer
+*/
+
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_Idle_via_disappear",
       {
@@ -160,13 +180,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       state.addTransition(trans);
 
       /*
-       * Transition: Idle to AwaitRpcResult
-       *
-       * Cause: submitCommentBtn has been pressed
-       *
-       * Action:
-       *  Add a comment to the database and to the GUI
-       */
+* Transition: Idle to AwaitRpcResult
+*
+* Cause: submitCommentBtn has been pressed
+*
+* Action:
+* Add a comment to the database and to the GUI
+*/
+
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
       {
@@ -177,27 +198,32 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
         "ontransition" : function(fsm, event)
         {
           // Get the event data
-          var             commentWrapper;
-          var             appId;
-          var             commentInput;
-          var             guiWrapper;
-          var             request;
+          var commentWrapper;
+          var appId;
+          var commentInput;
+          var guiWrapper;
+          var request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
           commentInput = commentWrapper.getUserData("commentInput");
           guiWrapper = fsm.getObject("guiWrapper");
 
+
+this.info("inside addComment....");
+
+
+
           // Issue the remote procedure call to execute the query
           request =
             this.callRpc(fsm,
                          "aiagallery.features",
                          "addComment",
-                         [ 
+                         [
                          //Application ID
                          appId,
-                         //The text of the comment 
-                         commentInput.getValue(), 
+                         //The text of the comment
+                         commentInput.getValue(),
                          //The parent thread's UID
                          null
                          ]);
@@ -214,14 +240,22 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       state.addTransition(trans);
 
 
+
+
+
+
+
+
+
+
       /*
-       * Transition: Idle to AwaitRpcResult
-       *
-       * Cause: 
-       *
-       * Action:
-       *  Gets comments from the database and adds them to the GUI
-       */
+* Transition: Idle to AwaitRpcResult
+*
+* Cause:
+*
+* Action:
+* Gets comments from the database and adds them to the GUI
+*/
 
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_getComments",
@@ -233,10 +267,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
         "ontransition" : function(fsm, event)
         {
           // Get the event data
-          var             commentWrapper;
-          var             appId;
-          var             guiWrapper;
-          var             request;
+          var commentWrapper;
+          var appId;
+          var guiWrapper;
+          var request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
@@ -247,7 +281,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "getComments",
-                         [ 
+                         [
                            appId,
                            null,
                            null
@@ -261,6 +295,67 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       });
 
       state.addTransition(trans);
+
+
+      //likeItButton Transition
+      
+
+      /*
+* Transition: Idle to AwaitRpcResult
+*
+* Cause: likeItButton has been pressed
+*
+* Action:
+* Update number of likes
+*/
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_submit_likes",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+          // Get the event data
+var buttoninfo;
+var appId;
+          var guiWrapper;
+          var request;
+this.info("LIKES TRANSITION");
+buttoninfo = fsm.getObject("likeItButton");
+appId = buttoninfo.getUserData("appId");
+
+guiWrapper = fsm.getObject("guiWrapper");
+
+
+this.info("inside likesItButton state...");
+
+
+
+          // Issue the remote procedure call to execute the query
+          request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "likesPlusOne",
+                         [
+                         //Application ID
+                         appId
+                         ]);
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "likesPlusOne");
+
+
+        }
+      });
+
+      state.addTransition(trans);
+
+
+      //likeItButton Transition end...
 
       
       // ------------------------------------------------------------ //
