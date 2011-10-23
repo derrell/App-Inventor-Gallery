@@ -42,8 +42,8 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
         return this.__getAll(fields, error);
         
       case "search":
-        // Search for applications based on some criteria. Parameters are
-        // keywordString, offset, count, and sort order.
+        // Search for applications based on some criteria. Lone parameter is
+        // keywordString.
         return this.__getBySearch(fields, error);
         
       case "tag":
@@ -90,7 +90,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getAll : function(fields, error)
     {
       var requiredParams = 4;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
@@ -99,7 +99,20 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var count = fields.shift();
       var order = fields.shift();
       var field = fields.shift();
-
+      
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
+      var orderTypeCheck = order === null || typeof order === "string";
+      var fieldTypeCheck = field === null || typeof field === "string";
+      
+      if (!offsetTypeCheck || !countTypeCheck || !orderTypeCheck ||
+          !fieldTypeCheck)
+      {
+        error.setCode(5);
+        error.setMessage("Malformed mobile request: Incorrect parameter type.");
+        return error;
+      }
+      
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         // We want everything, so null search criteria
@@ -133,8 +146,9 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     
     __getBySearch : function(fields, error)
     {
-      var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      var results;
+      var requiredParams = 3;
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
@@ -142,18 +156,72 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var keywordString = fields.shift();
       var offset = fields.shift();
       var count = fields.shift();
-      var order = fields.shift();
-      var field = fields.shift();
-
-      //FIXME: Waiting for back-end implementation
-      return [];
+      
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
+      
+      if (!offsetTypeCheck || !countTypeCheck)
+      {
+        error.setCode(5);
+        error.setMessage("Malformed mobile request: Incorrect parameter type.");
+        return error;
+      }
+      
+      // keyword is required.
+      if (typeof keywordString !== "string")
+      {
+        error.setCode(3);
+        error.setMessage("No search terms given");
+        return error;
+      }
+      
+      // Requesting all fields except data URLs (source, apk, image1-3)
+      var requestedFields = 
+      {
+        owner              : "owner",
+        title              : "title",
+        description        : "description",
+        //FIXME: Uncomment next line when previous authors are implemented
+        //previousAuthors    : "previousAuthors",
+        tags               : "tags",
+        uploadTime         : "uploadTime",
+        creationTime       : "creationTime",
+        numLikes           : "numLikes",
+        numDownloads       : "numDownloads",
+        numViewed          : "numViewed",
+        numRootComments    : "numRootComments",
+        numComments        : "numComments",
+        status             : "status",
+        uid                : "uid"
+      };
     
+      // Use MSearch Mixin
+      results = this.keywordSearch(keywordString, null, requestedFields, error);
+      
+      // If they have not specified a count nor an offset...
+      if (count === null && offset === null)
+      {
+        // ... then return the whole list
+        return results;
+      }
+      
+      // If there's no count, return the whole list beginning at offset
+      if (count === null)
+      {
+        offset = parseInt(offset, 10);
+        return results.slice(offset);
+      }
+      
+      // There's a count and an offset. Give that group.
+      offset = parseInt(offset, 10);
+      count = parseInt(count, 10);
+      return results.slice(offset, offset + count);
     },
     
     __getByTag : function(fields, error)
     {
       var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
@@ -163,7 +231,27 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var count = fields.shift();
       var order = fields.shift();
       var field = fields.shift();
-
+      
+      // tagName is required
+      if (typeof tagName !== "string")
+      {
+        error.setCode(3);
+        error.setMessage("No tag name given");
+        return error;
+      }
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset, 10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count, 10));
+      var orderTypeCheck = order === null || typeof order === "string";
+      var fieldTypeCheck = field === null || typeof field === "string";
+      
+      if (!offsetTypeCheck || !countTypeCheck || !orderTypeCheck ||
+          !fieldTypeCheck)
+      {
+        error.setCode(5);
+        error.setMessage("Malformed mobile request: Incorrect parameter type.");
+        return error;
+      }
+      
       var results = rpcjs.dbif.Entity.query(
         "aiagallery.dbif.ObjAppData",
         {
@@ -178,10 +266,14 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       {
         results.forEach(function(obj)
         {
-          obj["owner"] = aiagallery.dbif.MVisitors._getDisplayName(obj["owner"],
-                                                                  error);
+          // Replace this owner with his display name
+          obj["owner"] =
+            aiagallery.dbif.MVisitors._getDisplayName(obj["owner"], error);
+
+          // Did we fail to find this owner?
           if (obj["owner"] === error)
           {
+            // Yup. Abort the request.
             throw error;
           }
         });
@@ -207,7 +299,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getByOwner : function(fields, error)
     {
       var requiredParams = 5;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
@@ -217,6 +309,26 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       var count = fields.shift();
       var order = fields.shift();
       var field = fields.shift();
+      
+      // displayName is required
+      if (typeof displayName !== "string")
+      {
+        error.setCode(3);
+        error.setMessage("No developer's name given");
+        return error;
+      }
+      var offsetTypeCheck = offset === null || !isNaN(parseInt(offset,10));
+      var countTypeCheck = count === null || !isNaN(parseInt(count,10));
+      var orderTypeCheck = order === null || typeof order === "string";
+      var fieldTypeCheck = field === null || typeof field === "string";
+      
+      if (!offsetTypeCheck || !countTypeCheck || !orderTypeCheck ||
+          !fieldTypeCheck)
+      {
+        error.setCode(5);
+        error.setMessage("Malformed mobile request: Incorrect parameter type.");
+        return error;
+      }      
       
       // First I'm going to trade the displayName for the real owner Id
       var ownerId =
@@ -252,13 +364,21 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
     __getAppInfo : function(fields, error)
     {
       var requiredParams = 1;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
 
-      var appId = fields.shift();
-
+      var appId = parseInt(fields.shift(), 10);
+      
+      // appId is required
+      if (isNaN(appId))
+      {
+        error.setCode(3);
+        error.setMessage("No App UID given");
+        return error;
+      }
+      
       // Using the method included by mixin MApps
       
       // Requesting all fields except data URLs (source, apk, image1-3)
@@ -286,23 +406,32 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
       // so pass its error object.
       
       // The appId is passed in here as a string, but is a number in reality.
-      return this.getAppInfo(parseInt(appId,10), false, requestedFields, error);
+      return this.getAppInfo(appId, false, requestedFields, error);
     },
     
     __getComments : function(fields, error)
     {
       var requiredParams = 1;
-      for (var i = requiredParams - fields.length; i > 0; i--)
+      for (var i = requiredParams + 1 - fields.length; i > 0; i--)
       {
         qx.lang.Array.insertBefore(fields, null, error);
       }
+      
+      // Make sure appId is an integer
+      var appId = parseInt(fields.shift(), 10);
 
-      var appId = fields.shift();
-
+      // appId is required
+      if (isNaN(appId))
+      {
+        error.setCode(3);
+        error.setMessage("No App UID given");
+        return error;
+      }      
+      
       // FIXME: UNTESTED. At time of dev, no comments available to query on
       
       // The appId is passed in here as a string, but is a number in reality.
-      return this.getComments(parseInt(appId,10));
+      return this.getComments(appId, null, null, error);
     },
     
     __getCategories : function(fields, error)
@@ -334,7 +463,7 @@ qx.Mixin.define("aiagallery.dbif.MMobile",
           delete appObj["apk"];
         });
       
-      return appArr
+      return appArr;
     },
 
     

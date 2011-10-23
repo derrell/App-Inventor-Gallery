@@ -71,7 +71,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
           "execute" :
           {
-            
             "submitCommentBtn" : 
               "Transition_Idle_to_AwaitRpcResult_via_submit_comment"
           },
@@ -87,8 +86,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
       fsm.replaceState(state, true);
 
 
-      // The following transitions have a predicate, so must be listed first
-
       /*
        * Transition: Idle to AwaitRpcResult
        *
@@ -97,7 +94,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Start our timer
        */
-
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_appear",
       {
@@ -149,7 +145,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
        * Action:
        *  Stop our timer
        */
-
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_Idle_via_disappear",
       {
@@ -164,15 +159,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
-       * Transition: Idle to Idle
+      /*
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: submitCommentBtn has been pressed
        *
        * Action:
        *  Add a comment to the database and to the GUI
        */
-
       trans = new qx.util.fsm.Transition(
         "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
       {
@@ -219,8 +213,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
       state.addTransition(trans);
 
-  /*
-       * Transition: Idle to Idle
+
+      /*
+       * Transition: Idle to AwaitRpcResult
        *
        * Cause: 
        *
@@ -241,13 +236,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           var             commentWrapper;
           var             appId;
           var             guiWrapper;
-          var             vbox;
           var             request;
 
           commentWrapper = fsm.getObject("commentWrapper");
           appId = commentWrapper.getUserData("appId");
           guiWrapper = fsm.getObject("guiWrapper");
-          vbox = guiWrapper.getUserData("vbox");
          
           // Issue the remote procedure call to execute the query
           request =
@@ -264,7 +257,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // we made.
           request.setUserData("requestType", "getComments");
           request.setUserData("guiInfo", guiWrapper);
-
         }
       });
 

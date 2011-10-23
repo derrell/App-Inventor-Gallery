@@ -30,7 +30,7 @@ qx.Class.define("aiagallery.dbif.DbifSim",
           email     : "jarjar@binks.org",
           userId    : "obnoxious",
           isAdmin   : true,
-          logoutUrl : "javascript:alert(\"logout\")"
+          logoutUrl : "javascript:aiagallery.dbif.DbifSim.changeWhoAmI();"
         });
     }
     else
@@ -46,6 +46,93 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     }
   },
   
+  statics :
+  {
+    __userNumber : 0,
+
+    changeWhoAmI : function(context)
+    {
+      var formData =  
+      {
+        'username'   : 
+        {
+          'type'  : "ComboBox", 
+          'label' : "Login",
+          'value' : null,
+          'options' : [ ]
+        },
+        'isAdmin'   : 
+        {
+          'type'  : "SelectBox", 
+          'label' : "User type",
+          'value' : null,
+          'options' : 
+          [
+            { 'label' : "Normal",        'value' : false }, 
+            { 'label' : "Administrator", 'value' : true  }
+          ]
+        }
+      };
+      
+      // Retrieve all of the visitor records
+      rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors").forEach(
+        function(visitor, i)
+        {
+          // Add this visitor to the list
+          formData.username.options.push(
+            {
+              label : visitor.id,
+              value : visitor.id
+            });
+        });
+
+      dialog.Dialog.form(
+        "You have been logged out. Please log in.",
+        formData,
+        function( result )
+        {
+          var             visitor;
+          var             displayName;
+          var             guiWhoAmI;
+
+          // Try to get this user's display name. Does the visitor exist?
+          visitor = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            result.username);
+          if (visitor.length > 0)
+          {
+            // Yup, he exists.
+            displayName =
+              visitor[0].displayName ||
+              "User #" + aiagallery.dbif.DbifSim.__userNumber++;
+          }
+          else
+          {
+            // He doesn't exist. Just use the unique number.
+            displayName = "User #" + aiagallery.dbif.DbifSim.__userNumber++;
+          }
+
+          // Save the backend whoAmI information
+          aiagallery.dbif.DbifSim.getInstance().setWhoAmI(
+          {
+            email     : result.username,
+            userId    : displayName,
+            isAdmin   : true,
+            logoutUrl : "javascript:aiagallery.dbif.DbifSim.changeWhoAmI();"
+          });
+          
+          // Update the gui too
+          guiWhoAmI = aiagallery.main.Gui.getInstance().whoAmI;
+          guiWhoAmI.setIsAdmin(result.isAdmin);
+          guiWhoAmI.setEmail(result.username);
+          guiWhoAmI.setDisplayName(displayName);
+          guiWhoAmI.setPermissions("");
+          guiWhoAmI.setLogoutUrl(
+            "javascript:aiagallery.dbif.DbifSim.changeWhoAmI();");
+        }
+      );
+    }
+  },
+
   defer : function()
   {
     // Retrieve the database from Web Storage, if such exists.
@@ -86,6 +173,9 @@ qx.Class.define("aiagallery.dbif.DbifSim",
     rpcjs.dbif.Entity.registerDatabaseProvider(
       rpcjs.sim.Dbif.query,
       rpcjs.sim.Dbif.put,
-      rpcjs.sim.Dbif.remove);
+      rpcjs.sim.Dbif.remove,
+      rpcjs.sim.Dbif.getBlob,
+      rpcjs.sim.Dbif.putBlob,
+      rpcjs.sim.Dbif.removeBlob);
   }
 });

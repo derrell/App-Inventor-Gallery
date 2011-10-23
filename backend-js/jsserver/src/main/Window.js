@@ -24,6 +24,7 @@ function get()
             if (! this.qxvariants) this.qxvariants = {};
             if (! this.aiagallery) this.aiagallery = {};
             if (! this.rpcjs) this.rpcjs = {};
+            if (! this.JSON) this.JSON = JSON;
             
             return this;
           }).call(null);

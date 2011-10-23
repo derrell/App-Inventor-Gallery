@@ -75,6 +75,7 @@ function doPost(request, response)
  */
 function doGet(request, response)
 {
+  var             dbif;
   var             entry;
   var             entity;
   var             queryString = request.getQueryString();
@@ -100,10 +101,116 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
+  case "flushDB":               // flush the entire database
+    var             entities;
+    
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
+
+    // AppData
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjAppData(entity.uid);
+        obj.removeSelf();
+      });
+
+    // Comments
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjComments");
+    entities.forEach(
+      function(entity)
+      {
+        var obj = 
+          new aiagallery.dbif.ObjComments([ entity.app, entity.treeId ]);
+        obj.removeSelf();
+      });
+
+    // Search
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch");
+    entities.forEach(
+      function(entity)
+      {
+        var obj = 
+          new aiagallery.dbif.ObjSearch([ 
+                                          entity.word,
+                                          entity.appId,
+                                          entity.appField
+                                        ]);
+        obj.removeSelf();
+      });
+
+    // Tags
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjTags(entity.value);
+        obj.removeSelf();
+      });
+
+    // Visitors
+    entities = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors");
+    entities.forEach(
+      function(entity)
+      {
+        var obj =
+          new aiagallery.dbif.ObjVisitors(entity.id);
+        obj.removeSelf();
+      });
+
+    // Now add the category tags, required for uploading an application
+    qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
+    Db = aiagallery.dbif.MSimData.Db;
+
+    for (entry in Db.tags)
+    {
+      // Exclude normal tags. We want only special and category tags
+      if (Db.tags[entry].type == "normal")
+      {
+        continue;
+      }
+      
+      // Reset the count
+      Db.tags[entry].count = 0;
+      
+      // Create and save an entity
+      entity = new aiagallery.dbif.ObjTags(entry);
+      entity.setData(Db.tags[entry]);
+      entity.put();
+    }
+
+    break;
+
   case "addSimData":            // regenerate all simulation data (derrell only)
     //
     // Add the simulation data to the App Engine database
     //
+
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
     Db = aiagallery.dbif.MSimData.Db;
@@ -169,6 +276,19 @@ function doGet(request, response)
     //
     // Remove ALL data sitting in simulation database.
     //
+
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's loged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      return;
+    }
 
     qx.Class.include(aiagallery.dbif.DbifAppEngine, aiagallery.dbif.MSimData);
     Db = aiagallery.dbif.MSimData.Db;

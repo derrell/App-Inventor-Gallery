@@ -80,7 +80,7 @@ qx.Class.define("aiagallery.widget.radioview.RadioView",
         // Add the grid to the box
         box.add(control, { flex : 1 });
 
-        // We'll vertifcally center the buttons (or whatever) in the button bar
+        // We'll vertically center the buttons (or whatever) in the button bar
         var vBox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
         box.add(vBox);
 

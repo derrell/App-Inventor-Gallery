@@ -15,12 +15,17 @@ qx.Class.define("aiagallery.test.CommentsTest",
   {
   
     dbifSim : null,
+    error   : null,
       
     setUp : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
       // all RPCs.      
       this.dbifSim = aiagallery.dbif.DbifSim.getInstance();
+
+      // We need an error object
+      this.error = new rpcjs.rpc.error.Error("2.0");
+      
       
     },
     
@@ -34,6 +39,14 @@ qx.Class.define("aiagallery.test.CommentsTest",
       var             appNumRootComments = appObj.getData().numRootComments;
       var             secondCommentData;
       var             query = rpcjs.dbif.Entity.query;
+
+      this.dbifSim.setWhoAmI(
+        {
+          email     : "joe@blow.com",
+          userId    : "Joe Blow",
+          isAdmin   : false
+        });
+
       
       var getApp = qx.lang.Function.bind(function(appId)
       {
@@ -56,11 +69,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
       },
       this);
 
-      // Need an error object to call RPCs with
-      var error = new rpcjs.rpc.error.Error("2.0");
-
       // Add the first comment
-      myCommentData = this.dbifSim.addComment(appId, "Hellooo", null, error);
+      myCommentData = this.dbifSim.addComment(appId, "Hellooo", null, this.error);
       
       // Save this top-level comment's tree id for later retrieval.
       var topLevelCommentTreeId = myCommentData.treeId;
@@ -74,7 +84,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
       secondCommentData = this.dbifSim.addComment(appId,
                                                   "Hiiii",
                                                   myCommentData.treeId,
-                                                  error);
+                                                  this.error);
       
       // Did the parent app's numComments get incremented correctly?
       this.assertEquals(appNumComments + 2,
@@ -84,7 +94,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
       myCommentData = this.dbifSim.addComment(appId,
                                               "What's uuuuup",
                                               secondCommentData.treeId,
-                                              error);
+                                              this.error);
       
       // Did the parent app's numComments get incremented correctly?
       this.assertEquals(appNumComments + 3,
@@ -121,14 +131,19 @@ qx.Class.define("aiagallery.test.CommentsTest",
                         retrievedComment.getData().numChildren,
                         "comment numChildren incremented");
       
+      // Ensure that the userId, not display name is stored in this comment
+      this.assertEquals(retrievedComment.getData().visitor,
+                        "joe@blow.com",
+                       "comment.visitor is whoami.email, not whoami.userId");
+      
       // Call the getComments() RPC and save the length of the result.
-      var commentsArrLength = this.dbifSim.getComments(appId).length ;
+      var commentsArrLength = this.dbifSim.getComments(appId, null, null, this.error).length ;
       
       // We added 3, so there should be at least 3
       this.assert(commentsArrLength >= 3, "getComments() good input");
       
       // With an invalid appId, we should get no results
-      this.assert(this.dbifSim.getComments(-1).length == 0,
+      this.assert(this.dbifSim.getComments(-1, null, null, this.error).length == 0,
                   "getComments() bad input");
 
       // Retrieve the third comment
@@ -140,11 +155,11 @@ qx.Class.define("aiagallery.test.CommentsTest",
                        "third comment retrieved from db");
       
       // Delete the third comment
-      test = this.dbifSim.deleteComment(appId, myCommentData.treeId);
+      test = this.dbifSim.deleteComment(appId, myCommentData.treeId, this.error);
       this.assertTrue(test, "last comment deleted, supposedly");
       
       // Ensure that there is now one fewer comment
-      test = this.dbifSim.getComments(appId);
+      test = this.dbifSim.getComments(appId, null, null, this.error);
       this.assert(test.length == commentsArrLength - 1,
                   "last comment deleted successfully");
       
@@ -156,10 +171,10 @@ qx.Class.define("aiagallery.test.CommentsTest",
                  "numRootComments not affected on deletion");
 
       // May or may not have deleted something, don't care
-      var firstRandomDeletion = this.dbifSim.deleteComment(appId + 50, "0000");
+      var firstRandomDeletion = this.dbifSim.deleteComment(appId + 50, "0000", this.error);
 
       // Def. shouldn't delete anything
-      var secondDeletionSame = this.dbifSim.deleteComment(appId + 50, "0000");
+      var secondDeletionSame = this.dbifSim.deleteComment(appId + 50, "0000", this.error);
                                  
       this.assertFalse(secondDeletionSame,
                        "bad deleteComment() input, hopefully no deletion");
@@ -168,24 +183,24 @@ qx.Class.define("aiagallery.test.CommentsTest",
     "test: Retrieve comment with invalid appId" : function()
     {
       var             test;
-      var             validAppId = 101;
+      var             validAppId = 151;
       var             invalidAppId = "101";
-      
+    
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
 
       // Add a comment
       this.dbifSim.addComment(validAppId, "Hello world", null, error);
       
-      test = this.dbifSim.getComments(validAppId);
+      test = this.dbifSim.getComments(validAppId, null, null, error);
       this.assertEquals(1, 
                         test.length,
                         "Results received because appId was valid");
 
-      test = this.dbifSim.getComments(invalidAppId);
+      test = this.dbifSim.getComments(invalidAppId, null, null, error);
       this.assertEquals(0,
                         test.length,
                         "No results because appId was invalid");
-    }    
+    }
   }
 });

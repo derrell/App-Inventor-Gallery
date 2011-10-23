@@ -82,7 +82,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       whoami = this.getWhoAmI();
       
       // Is text empty or just whitespace?
-      if ( text === null || text === "" || text.match(/.*/gi) === null)
+      if ( text === null || text === "" || text.match(/\S/gi) === null)
       {
         // Yes, discard the trash and let the user know.
         error.setCode(3);
@@ -159,7 +159,7 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       if (!commentObj.getBrandNew())
       {
         // That's an error
-        error.setCode("comment with that key already in use");
+        error.setCode(3);
         error.setMessage("Attempted to overwrite existing comment");
         return error;
       }
@@ -168,12 +168,15 @@ qx.Mixin.define("aiagallery.dbif.MComments",
       commentObjData = commentObj.getData();
       
       // Set up all the rest of the data
-      commentObjData.visitor     = whoami.userId;
+      commentObjData.visitor     = whoami.email;
       commentObjData.text        = text;
 
       // Save this in the database
       commentObj.put();
 
+      // Replace the visitor id with his display name.
+      commentObjData.visitor     = whoami.userId;
+      
       // This includes newly-created key
       return commentObjData;  
     },
@@ -243,11 +246,19 @@ qx.Mixin.define("aiagallery.dbif.MComments",
      *   An integer value > 0 indicating the maximum number of records to return
      *   in the result set.
      * 
+     * @param error {rpcjs.rpc.error.Error}
+     *   All RPCs are passed, as their final argument, an error object. Most
+     *   don't use it, but this one does. If the application being requested
+     *   is not found (which, since the uid of the specific application is
+     *   provided as a parameter, likely means that it was just deleted), an
+     *   error is generated back to the client by setting the code and message
+     *   in this object.
+     * 
      * @return {Array}
      *   An array containing all of the comments related to this app
      *   
      */
-    getComments : function(appId, offset, limit)
+    getComments : function(appId, offset, limit, error)
     {
       var             commentList;
       var             resultCriteria = [];
@@ -276,6 +287,27 @@ qx.Mixin.define("aiagallery.dbif.MComments",
                                         },
                                         resultCriteria);
 
+      try
+      {
+        commentList.forEach(function(obj)
+          {
+            // Replace this owner with his display name
+            obj.visitor = 
+              aiagallery.dbif.MVisitors._getDisplayName(obj.visitor, error);
+            
+            // Did we fail to find this owner?
+            if (obj.visitor === error)
+            {
+              // Yup. Abort the request.
+              throw error;
+            }
+          });
+      }
+      catch(error)
+      {
+        return error;
+      }
+      
       return commentList;
     },
    

@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
  * Copyright (c) 2011 Reed Spool
+ * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
@@ -29,7 +30,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
+    
+    this.registerService("intersectKeywordAndQuery",
+                         this.intersectKeywordAndQuery,
+                         [ "queryArgs" ]);
 
+
+    this.registerService("getAppListByList",
+                         this.getAppListByList,
+                         [ "uidArr", "requestedFields" ]);
+
+    
     this.registerService("getAppInfo",
                          this.getAppInfo,
                          [ "uid", "bStringize", "requestedFields" ]);
@@ -111,6 +122,104 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           delete app[field];
         }
       }
+    },
+    
+    /**
+     * Add or confirm existence of each word in each field of given App Data
+     * 
+     *@param dataObj {Object}
+     *  The result of getData() on the app object. Contains all the info in the
+     *  database recorded for this App
+     * 
+     */
+    _populateSearch : function(dataObj)
+    {
+      var appDataField;
+      var wordsToAdd;
+      var searchObj;
+      var appId = dataObj["uid"];
+      
+      for (appDataField in dataObj)
+      {
+        // Go through each field in the App Data Object
+        switch (appDataField)
+        {
+        // If it's one of the text fields...
+        case "title":
+        case "description":
+          // Split up the words and...
+          wordsToAdd = dataObj[appDataField].split(" ");
+          wordsToAdd.forEach(function(word)
+              {
+                // Make sure to only add lower case words to the search
+                // database
+                var wordLC = word.toLowerCase();
+                
+                // If the word is a stop word, discard it
+                if (qx.lang.Array.contains(aiagallery.dbif.MSearch.stopWordArr,
+                                           word))
+                {
+                  return;
+                }
+
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch([wordLC,
+                                                          appId,
+                                                         appDataField]);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+
+        case "tags":
+          wordsToAdd = dataObj[appDataField];
+          wordsToAdd.forEach(function(word)
+              {
+                
+                // Make sure to only add lower case words to the search database
+                var wordLC = word.toLowerCase();
+                
+                // Add each one to the db                
+                searchObj = new aiagallery.dbif.ObjSearch([wordLC,
+                                                          appId,
+                                                         appDataField]);
+                // Save the record in the DB.
+                searchObj.put();
+              });
+          break;
+          
+        }
+      }
+    },
+    
+    /**
+     * Ensure that there are no Search records from App with this uid
+     * 
+     *@param uid {Integer}
+     * This is the app's uid whose Search records are to be wiped
+     */
+    _removeAppFromSearch : function(uid)
+    {
+      var results;
+      var resultObj;
+      var searchObj;
+      
+      // Get all Search Objects with this uid then...
+      results = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjSearch",
+                                        {
+                                          type : "element",
+                                          field: "appId",
+                                          value: uid
+                                        },
+                                       null);
+      // Remove every record found
+      results.forEach(function(obj)
+                      {
+                        searchObj = new aiagallery.dbif.ObjSearch([obj["word"],
+                                                      obj["appId"],
+                                                      obj["appField"]]);
+                        searchObj.removeSelf();
+                      });
     }
   },
   
@@ -118,11 +227,10 @@ qx.Mixin.define("aiagallery.dbif.MApps",
   {
     addOrEditApp : function(uid, attributes, error)
     {
+      var             i;
       var             title;
       var             description;
-      var             image1;
-      var             image2;
-      var             image3;
+      var             image;
       var             previousAuthors;
       var             source;
       var             apk;
@@ -130,6 +238,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             tagObj;
       var             tagData;
       var             oldTags;
+      var             bHasCategory;
+      var             categories;
       var             uploadTime;
       var             status;
       var             statusIndex;
@@ -138,6 +248,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             bNew;
       var             whoami;
       var             missing = [];
+      var             sourceData;
+      var             apkData;
+      var             key;
       var             allowableFields =
         [
           "uid",
@@ -166,7 +279,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "title",
           "description",
           "tags",
-          "source"
+          "source",
+          "image1"
         ];
       
       // Don't let the caller override the owner
@@ -211,6 +325,32 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Save the existing tags list
       oldTags = appData.tags;
 
+      // If there's no image1 value...
+      if (! attributes.image1)
+      {
+        // ... then move image3 or image2 to image1
+        if (attributes.image3)
+        {
+          attributes.image1 = attributes.image3;
+          attributes.image3 = null;
+        }
+        else
+        {
+          // image2 may not exist either, which will be caught in the
+          // code that detects missing fields.
+          attributes.image1 = attributes.image2;
+          attributes.image2 = null;
+        }
+      }
+      
+      // Similarly, if there's no image2 value...
+      if (! attributes.image2)
+      {
+        // ... then move image3 to image2. (Again, it may not exist.)
+        attributes.image2 = attributes.image3;
+        attributes.image3 = null;
+      }
+
       // Copy fields from the attributes parameter into this db record
       allowableFields.forEach(
         function(field)
@@ -218,8 +358,38 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           // Was this field provided in the parameter attributes?
           if (attributes[field])
           {
-            // Yup. Replace what's in the db entry
-            appData[field] = attributes[field];
+            // Handle source and apk fields specially
+            switch(field)
+            {
+            case "source":
+              // Save the field data
+              sourceData = attributes.source;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.source)
+              {
+                appData.source = [];
+              }
+              break;
+              
+            case "apk":
+              // Save the field data
+              apkData = attributes.apk;
+
+              // Ensure that we have an array of keys. The most recent key is
+              // kept at the top of the stack.
+              if (! appData.apk)
+              {
+                appData.apk = [];
+              }
+              break;
+
+            default:
+              // Replace what's in the db entry
+              appData[field] = attributes[field];
+              break;
+            }
           }
 
           // If this field is required and not available...
@@ -230,21 +400,64 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      // Issue a query for all category tags
+      categories = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjTags", 
+                                           {
+                                             type  : "element",
+                                             field : "type",
+                                             value : "category"
+                                           },
+                                           null);
+      
+      // We want to look at only the value field of each category
+      categories = categories.map(
+        function(o)
+        {
+          return o.value;
+        });
+
+      // Ensure that at least one of the specified tags is a category
+      bHasCategory = false;
+      tags = appData.tags;
+      for (i = 0; i < tags.length; i++)
+      {
+        // Is this tag a category?
+        if (qx.lang.Array.contains(categories, tags[i]))
+        {
+          // Yup. Mark it.
+          bHasCategory = true;
+          
+          // No need to look further.
+          break;
+        }
+      }
+      
+      // Did we find at least one category tag?
+      if (! bHasCategory)
+      {
+        // Nope. Let 'em know.
+        error.setCode(3);
+        error.setMessage("At least one category is required");
+        return error;
+      }
+
       // Were there any missing, required fields?
       if (missing.length > 0)
       {
         // Yup. Let 'em know.
-        error.setCode(3);
+        error.setCode(4);
         error.setMessage("Missing required attributes: " + missing.join(", "));
         return error;
       }
       
       // If a new source file was uploaded...
-      if (attributes.source)
+      if (sourceData)
       {
         // ... then update the upload time to now
         appData.uploadTime = String((new Date()).getTime());
       }
+
+      // FIXME: Begin a transaction here
 
       // Add new tags to the database, and update counts of formerly-existing
       // tags. Remove "normal" tags with a count of 0.
@@ -299,9 +512,40 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      try
+      {
+        // Save the new source data (if there is any)
+        if (sourceData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(sourceData);
+          appData.source.unshift(key);
+        }
+        
+        // Similarly for apk data
+        if (apkData)
+        {
+          // Save the data and prepend the blob id to the key list
+          key = rpcjs.dbif.Entity.putBlob(apkData);
+          appData.apk.unshift(key);
+        }
+      }
+      catch(e)
+      {
+        error.setCode(5);
+        error.setMessage(e.toString());
+        // FIXME: roll back transaction here
+        return error;
+      }
+
       // Save this record in the database
       appObj.put();
       
+      // Add all words in text fields to word Search record
+      aiagallery.dbif.MApps._populateSearch(appObj.getData());
+      
+      // FIXME: Commit the transaction here
+
       return appObj.getData();  // This includes newly-created key (if adding)
     },
     
@@ -364,8 +608,30 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           }
         });
 
+      // Remove any apk blobs associated with this app
+      if (appData.apk)
+      {
+        appData.apk.forEach(
+          function(apkBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(apkBlobId);
+          });
+      }
+
+      // Similarly for any source blobs
+      if (appData.source)
+      {
+        appData.source.forEach(
+          function(sourceBlobId)
+          {
+            rpcjs.dbif.Entity.removeBlob(sourceBlobId);
+          });
+      }
+
       // Delete the app
       appObj.removeSelf();
+      
+      aiagallery.dbif.MApps._removeAppFromSearch(uid);
       
       // We were successful
       return true;
@@ -660,6 +926,195 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       return { apps : appList, categories : categoryNames };
     },
+
+    /**
+     * Perform a keyword search on the given string, as well as an appQuery on
+     * the given criteria, and return the intersection of the results.
+     * 
+     * @param queryArgs {Map}
+     *   This is a map containing member names that are the 4 unique parameters
+     *   to MApps.appQuery(criteria, requestedFields) and 
+     *   keywordSearch(keywordString, queryFields, requestedFields)
+     *  
+     *   The value of each of those members is the argument to be passed upon
+     *   calling that RPC
+     *  
+     *   For example:
+     *  
+     *     {
+     *       criteria         : {....(see MApps.appQuery() docu....},
+     *       requestedFields  : {....(see MApps.appQuery() docu....},
+     *       keywordString    : "Some words to search on",
+     *       queryFields      : null // not implemented yet,
+     *                               // pass null for safety
+     *     }
+     * 
+     * @return {Map}
+     *   The return value is an array of maps, each providing information
+     *   about one application.
+     *
+     */
+    intersectKeywordAndQuery : function(queryArgs, error)
+    {      
+
+      var               keywordString;
+      var               appQueryResults;
+      var               appQueryResultArr = [];
+      var               bQueryUsed = true;
+      var               keywordSearchResultArr = [];
+      var               bKeywordUsed = true;
+      var               intersectionArr = [];
+      
+      // Going to perform keyword search first
+      keywordString = queryArgs["keywordString"];
+      
+      // If there was no keyword string provided
+      if (keywordString === null || typeof keywordString === "undefined" ||
+          keywordString === "")
+      {
+        // Then just use the results of appQuery
+        bKeywordUsed = false;
+      }
+      else
+      {
+        // Perform keyword search
+        keywordSearchResultArr = this.keywordSearch(keywordString,
+                                                queryArgs["queryFields"],
+                                                queryArgs["requestedFields"],
+                                                error);
+        // If there was a problem
+        if (keywordSearchResultArr === error)
+        {
+          // Propegate the failure
+          return error;
+        }
+      }
+      
+      // Was there any criteria given to perform appQuery on?
+      if (queryArgs["criteria"]["method"] === "and" &&
+          queryArgs["criteria"]["children"].length === 0)
+      {
+        // No, just use the keyword results
+        bQueryUsed = false;
+      }
+      else
+      {
+        // Yes, use it to perform appQuery
+        appQueryResults = this.appQuery(queryArgs["criteria"],
+                                      queryArgs["requestedFields"],
+                                      error);
+      
+        // If there was a problem
+        if (appQueryResults === error)
+        {
+          // Propegate the failure
+          return error; 
+        }
+
+        // Unwrap the appQuery results
+        appQueryResultArr = appQueryResults["apps"];
+      }
+      
+      // Was nothing given to search on?
+      if (!bKeywordUsed && !bQueryUsed)
+      {
+        // This is an error
+        error.setCode(1);
+        error.setMessage("No keyword or search criteria given");
+        return error;
+      }
+      
+      // Was just appQuery used?
+      if (!bKeywordUsed)
+      {
+        // Then just return its results
+        return appQueryResultArr;
+      }
+      
+      // Was just keyword search used?
+      if (!bQueryUsed)
+      {
+        // Then just return its results
+        return keywordSearchResultArr;
+      }
+      
+      // If we got here, then both keyword search and app query ran so...
+      
+      // Perform intersection operation            
+      keywordSearchResultArr.forEach(function(keywordAppObj)
+        {
+          appQueryResultArr.forEach(function(appQueryAppObj)
+            {
+              if (keywordAppObj["uid"] === appQueryAppObj["uid"])
+              {
+                intersectionArr.push(appQueryAppObj);
+              }              
+            });
+        });
+                                     
+      // Return the intersection between the two result sets
+      return intersectionArr;    
+      
+    },
+      
+    /**
+     * Get a list of Apps from a discrete list of App UIDs
+     * 
+     * @param uidArr {Array}
+     * An Array containing App UIDs which are to be exhanged for actual App Data
+     * 
+     * @param requestedFields {Map?}
+     *   If provided, this is a map containing, as the member names, the
+     *   fields which should be returned in the results. The value of each
+     *   entry in the map indicates what to name that field, in the
+     *   result. (This produces a mapping of the field names.) An example is
+     *   requestedFields map might look like this:
+     *
+     *     {
+     *       uid    : "uid",
+     *       title  : "label", // remap the title field to be called "label"
+     *       image1 : "icon",  // remap the image1 field to be called "icon"
+     *       tags   : "tags"
+     *     }
+     * 
+     * @return {Array}
+     *  An array of maps. Each map contains data about one of the Apps whose
+     *  UIDs were specified.
+     * 
+     */
+    getAppListByList : function( uidArr, requestedFields)
+    {
+      var             appList = [];
+      var             owners;
+      
+      uidArr.forEach(function(uid)
+          {
+            appList.push(rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                                 uid)[0]);
+          });
+      
+      // Manipulate each App individually
+      appList.forEach(
+        function(app)
+        {
+          // Issue a query for this visitor
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
+                                       app.owner);
+
+          // Replace the (private) owner id with his display name
+          app.owner = owners[0].displayName;
+          
+          // If there were requested fields specified...
+          if (requestedFields)
+          {
+            // Send to the requestedFields function for removal and remapping
+            aiagallery.dbif.MApps._requestedFields(app, requestedFields);
+          }
+          
+        });
+
+      return appList;
+    },
     
     /**
      * Get the details about a particular application.
@@ -730,7 +1185,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app = appList[0];
 
       // If the application status is not Active, only the owner can view it.
-      if (app.status != 2 && (! whoami || app.owner != whoami.email))
+      if (app.status != aiagallery.dbif.Constants.Status.Active &&
+          (! whoami || app.owner != whoami.email))
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
@@ -762,7 +1218,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           
           // Use function from Mixin MComments to add comments to app info
           // object
-          app.comments = this.getComments(uid);
+          app.comments = this.getComments(uid, null, null, error);
         }
         
         // Send it to the requestedFields function for stripping and remapping
