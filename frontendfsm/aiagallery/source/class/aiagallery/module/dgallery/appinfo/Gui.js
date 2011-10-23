@@ -16,6 +16,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
+      __labelLikes:null,
+      __numViewed:null,
+	    
     /**
      * Build the raw graphical user interface.
      *
@@ -25,7 +28,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     buildGui : function(module)
     {
     },
-
 
     /**
      * Handle the response to a remote procedure call
@@ -37,14 +39,93 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
      *   The request object used for issuing the remote procedure call. From
      *   this, we can retrieve the response and the request type.
      */
-    handleResponse : function(module, rpcRequest)
+  
+
+
+  handleResponse : function(module, rpcRequest)
     {
+
       var             fsm = module.fsm;
       var             canvas = module.canvas;
       var             response = rpcRequest.getUserData("rpc_response");
       var             requestType = rpcRequest.getUserData("requestType");
       var             result; 
       var             commentData = rpcRequest.getUserData("commentData");
+
+    
+
+
+
+// vvvvvvv COMMENTS vvvvvvv
+      // Add panel containing a single comment to the GUI
+      // comment: the comment object to be added
+      //
+      // Comment will be shown as a 2-element vbox:
+      // Top line: visitor: comment text
+      // 2nd line: time stamp (grey, small)
+  
+    
+
+      function addCommentPanel(comment)
+      {
+        // Comment info to be displayed
+        // These are the 3 fields of interest to a viewer
+        // (the rest is metadata -- app ID, tree ID, numChildren)
+        var commentText = comment["text"];
+        var commentAuthor = comment["visitor"];
+        var commentTime = comment["timestamp"];
+        // var treeId = comment["treeId"];
+
+        // Top line
+        var visitorAndComment =  '<b>' + commentAuthor + ': </b>' + commentText;
+        var visitorAndCommentLabel = new qx.ui.basic.Label(visitorAndComment);
+        visitorAndCommentLabel.set(
+          {
+            rich : true,
+            wrap : true,
+            selectable : true
+          });
+
+        // Timestamp, easier on the eye than the default.
+        // (which could use some additional tweaking, perhaps)
+        // FIXME: This needs to be internationalized. There are existing
+        // functions to do so.
+        var dateObj = new Date(commentTime);
+        var dateString = dateObj.toDateString();
+        var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+        var dateTimeString = dateString + " " + timeString + " ET"; 
+
+        // 2nd line
+        var postedStringStart = 
+          '<span style="color:grey;font-size:75%">Posted: ';
+        var postedString = postedStringStart + dateTimeString + '</span>';
+        var postedStringLabel = new qx.ui.basic.Label(postedString);
+        postedStringLabel.set(
+          {
+            rich : true,
+            wrap : true,
+            selectable : true
+          });
+
+        // Entire comment box
+        var commentLayout = new qx.ui.layout.VBox();
+        var commentBox = new qx.ui.container.Composite(commentLayout);
+        // Thin grey solid border
+        commentBox.setDecorator(new qx.ui.decoration.Single(1, 
+                                                            'solid',
+                                                            '#cccccc'));
+        // Add the pieces
+        commentBox.add(visitorAndCommentLabel);
+        commentBox.add(postedStringLabel);
+
+        // Insert the new comment at the top of the list
+        allCommentsBox.addAt(commentBox, 0, null);
+        // Following line confirmed to be needed--but why??
+        vbox.add(allCommentsBox);
+      }
+// ^^^^^^^ COMMENTS ^^^^^^^
+      
+
       var             vboxLeft;
       var             vboxRight;
       var             hbox;
@@ -85,6 +166,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             len;
       var             i;
 
+
       if (response.type == "failed")
       {
         // FIXME: Add the failure to someplace reasonable, instead of alert()
@@ -94,6 +176,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
       // Successful RPC request.
       // Dispatch to the appropriate handler, depending on the request type
+      
+
+
       switch(requestType)
       {
       case "getAppInfo":
@@ -176,28 +261,68 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
+	this.__numViewed = result.numViewed;
+
         // Create a label to display number of views and likes.
+
+        this.viewsLikes = new qx.ui.basic.Label('<b>' +
+
         viewsLikes = new qx.ui.basic.Label('<b>' +
+
                                                result.numViewed +
                                                ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
-
+					       result.numLikes+
+                                              
+					       ' likes</b>');
+	
         // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        this.viewsLikes.set(
           {
             rich:true 
           });
 
+	
+
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.viewsLikes);
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
+
+        var likeItButton = new qx.ui.form.Button("Like it!");
+	likeItButton.setUserData("appId", appId);
+
+	fsm.addObject("likeItButton", likeItButton);
+	     
+
+
+
+
+	//add the listener
+	//when person clicks on like it button
+       likeItButton.addListener(
+         "execute",
+	 fsm.eventListener,
+         fsm);
+
+
+
+
+       // Lets the user call "execute" by pressing the enter key rather
+       // than by pressing the likeItButton
+    
+
+
+
+
+
+
+
         likeItButton = new qx.ui.form.Button("Like it!");
+
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -242,7 +367,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               && ((comment.replace(/\s/g, '')) != ""))
            // No: submit it
            {
-             fsm.eventListener(e);
+	            fsm.eventListener(e);
            }
            //Yes: clear input box and do nothing
            else
@@ -395,6 +520,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         commentInput = guiInfo.getUserData("commentInput");
         allCommentsBox = guiInfo.getUserData("allCommentsBox");
 
+
+
         // Adds the new comment to the GUI
         // Currently, the 'reply' and 'flag as inappropiate' buttons 
         // do not do anything
@@ -416,6 +543,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       case "getComments":
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
+
+
+        // This alert shows that addComments is reusing uids 
+//        alert("getComments result is: " +
+//              qx.lang.Json.stringify(result);
+
 
         // Gets back the objects passed from the GUI to the FSM
         guiInfo = rpcRequest.getUserData("guiInfo");
@@ -449,10 +582,34 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }   
         break;
 
+// ^^^^^^^ COMMENTS ^^^^^^^
+       case "likesPlusOne":
+        // Get the result data. The new likes amount
+        result = response.data.result;
+	//modify the label
+	this.__labelLikes = result;
+	this.addLikes(this.__labelLikes);
+
+	break;
+
+
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
     },
+
+	   addLikes : function(result) {
+	     this.viewsLikes.setValue('<b>' +
+                                               this.__numViewed +
+                                               ' views, ' +
+					       result+
+					       ' likes</b>');
+	}
+
+	    
+
+
+
 
     /**
      * Create a panel containing a single comment to the GUI
@@ -523,5 +680,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // Return the box we just created.
       return commentBox;
     }
+
   }
 });
