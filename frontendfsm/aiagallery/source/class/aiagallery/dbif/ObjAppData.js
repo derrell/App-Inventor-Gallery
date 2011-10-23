@@ -59,8 +59,14 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         /** Blob ids of source ZIP file (base64-encoded), newest first */
         "source" : "StringArray",
 
+        /** File Name of Source File */
+        "sourceFileName" : "String",
+
         /** Blob ids of executable APK file (base64-encoded), newest first */
         "apk" : "StringArray",
+
+        /** File Name of APK File */
+        "apkFileName" : "String",
 
         /** Tags assigned to this application */
         "tags" : "StringArray",
