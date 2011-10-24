@@ -52,19 +52,35 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       var message = new qx.ui.basic.Label();
       text = 
         [
-          "<h2>Welcome to the App Inventor for Android Community Gallery!</h2>",
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ",
-          "quis arcu ut velit ullamcorper mattis in quis metus. Phasellus ",
-          "leo mi, dignissim non consectetur sed, eleifend ut lacus. ",
-          "Vestibulum ac ante sed diam blandit tempus commodo eu erat. ",
-          "Vestibulum malesuada molestie sodales. Vivamus gravida congue ",
-          "ultricies. Vivamus imperdiet dignissim viverra. Praesent eget ",
-          "leo vitae quam suscipit imperdiet quis eget turpis. Curabitur ",
-          "lorem quam, dapibus at vestibulum at, malesuada eu justo. Proin ",
-          "mi quam, sagittis sit amet ornare ac, tempus quis erat. Vestibulum ",
-          "non orci at orci ultricies consectetur. Cras est augue, ornare ",
-          "quis condimentum eu, fringilla elementum tortor. Nulla pharetra ",
-          "faucibus luctus."
+          "<h2>Welcome to the App Inventor Community Gallery!</h2>",
+
+	  "You can:",
+	  "<ul>",
+	  "<p><li>Browse and download App Inventor projects",
+
+	  "<p><li>Contribute your App Inventor project to share it with others",
+
+	  "<p><li>Discuss projects you like and encourage new ideas!",
+
+	  "</ul>",
+
+	  "<p>Get started by clicking on <b>Find Apps</b>, and go ahead ",
+	  "and add your own projects by clicking on <b>My Stuff</b>.",
+
+	  "<p>Also, you can browse and download projects directly to your ",
+	  "Android phone by using our companion ",
+	  '<a href="http://www.appinventor.org/mobile-gallery" target="new">',
+          "Mobile Community Gallery</a> ",
+	  "app!",
+
+
+	  "<p>&nbsp;</p>",
+
+	  "<p><em>App Inventor Community Gallery is a resource provided ",
+	  "to the App Inventor community.  We are supported by a ",
+	  "grant from Google Inc.  Our site is presently in a beta launch. ",
+	  "Please be nice!  Email us at aigallery@weblab.cs.uml.edu if you ",
+	  "have any questions or comments.</em>"
         ].join("");
       message.set(
         {
@@ -86,9 +102,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       // Add "Find Apps" box to link row
       text =
         [
-          "Lorem ipsum dolor sit amet, consectetur ",
-          "adipiscing elit. Integer quis arcu ut velit ullamcorper mattis ",
-          "in quis metus."
+	  "Use <b>Find Apps</b> to browse apps by tag, or search for them ",
+          "using a variety of parameters."
         ].join("");
       var findApps = new aiagallery.module.dgallery.home.LinkBox(
         "<b>Find Apps</b><br>" + text,
@@ -101,6 +116,11 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
       // Add "Learn" box to link row
+      text =
+        [
+	 "The <b>Learn</b> page will have for information about ",
+	 "the Community Gallery's features.  Nothing here yet."
+        ].join("");
       var learn = new aiagallery.module.dgallery.home.LinkBox(
         "<b>Learn</b><br>" + text,
         "aiagallery/learn.png");
@@ -112,6 +132,10 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
       
       // Add "My Stuff" box to link row
+      text =
+        [
+	 "Go to <b>My Stuff</b> to review and change your uploaded projects."
+        ].join("");
       var myStuff = new aiagallery.module.dgallery.home.LinkBox(
         "<b>My Stuff</b><br>" + text,
         "aiagallery/myStuff.png");

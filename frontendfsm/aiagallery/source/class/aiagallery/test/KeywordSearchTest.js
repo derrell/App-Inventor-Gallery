@@ -32,6 +32,9 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
           userId :  "Billy The Kid"
         });
 
+      // Ensure the database is properly initialized
+      rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
+
       // Handcrafting a bunch of Apps with various words in their text fields
       var myApps = 
         [
@@ -40,7 +43,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
             description : "This one's beautiful",
             title       : "The Shooting Game",
             tags        : ["shooter", "shooting", "game", "Games"],
-            source      : "somerandomstring"
+            source      : "somerandomstring",
+            image1      : "xxx"
           },
           
           {
@@ -48,7 +52,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
             owner       : "billy@thekid.edu",
             description : "This one's sexy and beautiful",
             title       : "Your Mother Jokes",
-            tags        : ["funny"]
+            tags        : ["funny", "Development"],
+            image1      : "xxx"
           },
 
           {
@@ -56,7 +61,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
             owner       : "billy@thekid.edu",
             description : "This one's sexy",
             title       : "Laughapalooza",
-            tags        : ["Educational"]
+            tags        : ["Educational"],
+            image1      : "xxx"
           },
             
           {
@@ -64,7 +70,8 @@ qx.Class.define("aiagallery.test.KeywordSearchTest",
             owner       : "billy@thekid.edu",
             description : "This one's not interesting in any way",
             title       : "Microsoft Windows for Android",
-            tags        : ["Development", "broken"]
+            tags        : ["Development", "broken"],
+            image1      : "xxx"
           }
         ];
 

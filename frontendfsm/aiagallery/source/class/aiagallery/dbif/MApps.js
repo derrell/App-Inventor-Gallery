@@ -1117,6 +1117,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     /**
      * Get the details about a particular application.
      *
+     * This function will also increment the number of views of the 
+     * requested app by 1. 
+     *
      * @param uid {Key}
      *   The unique identifier of an application.
      *
@@ -1158,7 +1161,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     getAppInfo : function(uid, bStringize, requestedFields, error)
     {
       var             app;
-      var             appList;
+      var             appObj;
       var             tagTable;
       var             whoami;
       var             criteria;
@@ -1166,10 +1169,13 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       whoami = this.getWhoAmI();
 
-      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
+      //Update the views and last viewed date
 
-      // See if this app exists. 
-      if (appList.length === 0)
+      //Get the actual object
+      appObj = new aiagallery.dbif.ObjAppData(uid);    
+
+      // See if this app exists.  
+      if (appObj.getBrandNew())
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
@@ -1178,10 +1184,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
+  
+      app = appObj.getData();
 
-      // Get the (one and only) application that was returned.
-      app = appList[0];
+      //Increment the number of views by 1. 
+      app.numViewed++; 
 
+      //Set the "lastViewedDate" to the time this function was called
+      app.lastViewedTime = (new Date()).toString(); 
+
+      //Put back on the database
+      appObj.put();
+ 
       // If the application status is not Active, only the owner can view it.
       if (app.status != aiagallery.dbif.Constants.Status.Active &&
           (! whoami || app.owner != whoami.email))
@@ -1193,7 +1207,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
-
+ 
       // Issue a query for this visitor
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
