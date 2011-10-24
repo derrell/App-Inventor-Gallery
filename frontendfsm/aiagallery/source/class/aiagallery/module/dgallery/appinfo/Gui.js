@@ -183,6 +183,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                                                result.numLikes+
                                                ' likes</b>');
 
+
         // Set the viewsLikes label to use rich formatting.
         viewsLikes.set(
           {
@@ -198,6 +199,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
         likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", likeItButton);
+
+        likeItButton.addListener(
+         "execute",
+         function(e)
+         {
+             //call database to increment numOfLikes by 1. 
+             fsm.eventListener(e);
+             //User pressed button, can only do this once so disable it.
+             likeItButton.setEnabled(false); 
+         },
+         fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -205,6 +218,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
         flagItButton = new qx.ui.form.Button("Flag it!");
+
 
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
@@ -375,6 +389,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         guiWrapper.setUserData("commentBox", commentBox);
         guiWrapper.setUserData("allCommentsBox", allCommentsBox);
         guiWrapper.setUserData("commentInput", commentInput);
+
+        //add friendly so label can be accessed 
+        guiWrapper.setUserData("viewsLikesLabel", viewsLikes);
+        //add number of Views so it can be used later 
+        guiWrapper.setUserData("numViewed", result.numViewed); 
+
         fsm.addObject("guiWrapper", guiWrapper);
 
         canvas.setLayout(new qx.ui.layout.HBox());
@@ -448,6 +468,27 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           }
         }   
         break;
+
+      case "likeItButton":
+	// Get the result data.  It's an object with all of the application info.
+        result = response.data.result;
+        guiInfo = rpcRequest.getUserData("guiInfo");
+        var viewsLikesLabel = guiInfo.getUserData("viewsLikesLabel"); 
+        var numViewed = guiInfo.getUserData("numViewed"); 
+
+        if (numViewed == -1){
+            //user has already tried liking this app, disable button
+            viewsLikesLabel.setEnabled(false); 
+        } else {
+	    //create new viewsLikesLabel with new number of likes, but same number of views. 
+            viewsLikesLabel.setValue('<b>' +
+		                                     numViewed +
+		                                     ' views, ' +
+		                                     result +
+		                                     ' likes</b>'); 
+       }
+       
+       break;      
 
       default:
         throw new Error("Unexpected request type: " + requestType);

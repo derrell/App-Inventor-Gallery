@@ -21,6 +21,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numViewed"       : 0,
         "numComments"     : 0,
         "creationTime"    : (new Date()).toString(),
+        "lastViewedTime"  : null, 
         "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active
       });
@@ -70,6 +71,9 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         
         /** The date and time this App was first created */
         "creationTime" : "String",
+
+        /** The date this App was last viewed */
+        "lastViewedTime" : "String", 
 
         /** Number of "likes" of this application */
         "numLikes" : "Integer",
