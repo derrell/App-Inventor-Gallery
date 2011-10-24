@@ -125,6 +125,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
           // Issue the remote procedure call to get the application
           // data. Request that the tags, previous authors, and status be
           // converted to strings for us.
+          // 
+          // By issuing this call you will update the number of views and
+          // the last viewed date.
           var request =
             this.callRpc(fsm,
                          "aiagallery.features",
