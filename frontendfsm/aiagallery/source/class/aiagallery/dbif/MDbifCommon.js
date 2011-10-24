@@ -67,6 +67,15 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
      *   true to allow the function to be called, or false to indicates
      *   permission denied.
      */
+  
+	  currentTimestamp : function()
+	  {
+	      //Date Standardization
+	      return new Date().getTime();
+
+
+
+	  },
     authenticate : function(fqMethod)
     {
       var             methodComponents;
