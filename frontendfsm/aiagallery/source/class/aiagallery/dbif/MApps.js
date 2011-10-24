@@ -1169,6 +1169,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       whoami = this.getWhoAmI();
 
+      //Update the views and last viewed date
+
+      //Get the actual object
+      appObj = new aiagallery.dbif.ObjAppData(uid);      
+      appDataObj = appObj.getData();
+
+      //Increment the number of views by 1. 
+      appDataObj.numViewed++; 
+
+      //Set the "lastViewedDate" to the time this function was called
+      appDataObj.lastViewedTime = (new Date()).toString(); 
+
+      //Put back on the database
+      appObj.put();
+
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
 
       // See if this app exists. 
@@ -1196,11 +1211,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
-      //Increment the number of views by 1. 
-      app.numViewed++; 
-
-      //Set the "lastViewedDate" to the time this function was called
-      app.lastViewedTime = (new Date()).toString(); 
 
       // Issue a query for this visitor
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
