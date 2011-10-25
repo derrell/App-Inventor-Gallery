@@ -1,4 +1,4 @@
-/**THIS CHANGE SHOULD NOT BE HEREaaaaaHHAHHAHHAHH
+/**
  * Copyright (c) 2011 Derrell Lipman
  * 
  * License:
