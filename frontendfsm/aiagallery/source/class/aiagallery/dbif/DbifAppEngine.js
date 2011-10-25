@@ -19,11 +19,50 @@ qx.Class.define("aiagallery.dbif.DbifAppEngine",
   construct : function()
   {
     // Call the superclass constructor
-    this.base(arguments, "aiagallery", "/rpc");
+    this.base(arguments);
+    
+    // Prepare for remote procedure calls to aiagallery.features.*
+    this.__rpc = new rpcjs.appengine.Rpc([ "aiagallery", "features" ], "/rpc");
   },
   
   members :
   {
+    /**
+     * Register a service name and function.
+     *
+     * @param serviceName {String}
+     *   The name of this service within the <[rpcKey]> namespace.
+     *
+     * @param fService {Function}
+     *   The function which implements the given service name.
+     * 
+     * @param paramNames {Array}
+     *   The names of the formal parameters, in order.
+     */
+    registerService : function(serviceName, fService, paramNames)
+    {
+      // Register with the RPC provider
+      this.__rpc.registerService(serviceName, fService, this, paramNames);
+    },
+
+    /**
+     * Process an incoming request which is presumably a JSON-RPC request.
+     * 
+     * @param jsonData {String}
+     *   The data provide in a POST request
+     * 
+     * @return {String}
+     *   Upon success, the JSON-encoded result of the RPC request is returned.
+     *   Otherwise, null is returned.
+     */
+    processRequest : function(jsonData)
+    {
+      return this.__rpc.processRequest(jsonData);
+    },
+
+    /**
+     * Identify the current user. Register him in the whoAmI property.
+     */
     identify : function()
     {
       var             UserServiceFactory;
