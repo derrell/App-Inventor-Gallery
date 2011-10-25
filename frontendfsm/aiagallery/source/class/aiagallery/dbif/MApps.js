@@ -151,7 +151,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           wordsToAdd = dataObj[appDataField].split(" ");
           wordsToAdd.forEach(function(word)
               {
-                // Make sure to only add lower case words to the search database
+                // Make sure to only add lower case words to the search
+                // database
                 var wordLC = word.toLowerCase();
                 
                 // If the word is a stop word, discard it
@@ -1116,6 +1117,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     /**
      * Get the details about a particular application.
      *
+     * This function will also increment the number of views of the 
+     * requested app by 1. 
+     *
      * @param uid {Key}
      *   The unique identifier of an application.
      *
@@ -1157,6 +1161,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     getAppInfo : function(uid, bStringize, requestedFields, error)
     {
       var             app;
+      var             appObj;
+      var             appDataObj;
       var             appList;
       var             tagTable;
       var             whoami;
@@ -1164,6 +1170,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             owners;
 
       whoami = this.getWhoAmI();
+
+      //Update the views and last viewed date
+
+      //Get the actual object
+      appObj = new aiagallery.dbif.ObjAppData(uid);      
+      appDataObj = appObj.getData();
+
+      //Increment the number of views by 1. 
+      appDataObj.numViewed++; 
+
+      //Set the "lastViewedDate" to the time this function was called
+      appDataObj.lastViewedTime = (new Date()).toString(); 
+
+      //Put back on the database
+      appObj.put();
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
 
