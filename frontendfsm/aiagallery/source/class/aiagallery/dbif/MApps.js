@@ -147,7 +147,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         // If it's one of the text fields...
         case "title":
         case "description":
-          // Split up the words and...
+           // Split up the words and...
           wordsToAdd = dataObj[appDataField].split(" ");
           wordsToAdd.forEach(function(word)
               {
@@ -176,7 +176,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           wordsToAdd.forEach(function(word)
               {
                 
-                // Make sure to only add lower case words to the search database
+                // Make sure to only add lower case words 
+		//to the search database
                 var wordLC = word.toLowerCase();
                 
                 // Add each one to the db                
