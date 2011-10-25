@@ -53,6 +53,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       text = 
         [
           "<h2>Welcome to the App Inventor for Android Community Gallery!</h2>",
+	  "Please contribute your project and to share it with others.",
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ",
           "quis arcu ut velit ullamcorper mattis in quis metus. Phasellus ",
           "leo mi, dignissim non consectetur sed, eleifend ut lacus. ",
