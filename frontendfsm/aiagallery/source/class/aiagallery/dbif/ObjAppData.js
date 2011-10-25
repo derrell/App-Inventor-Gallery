@@ -90,7 +90,34 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "status" : "Integer"
       };
 
+    var canonicalize =
+      {
+        "tags" :
+        {
+          // Property in which to store the canonical value. This will be a
+          // new string array.
+          prop : "tags_lc",
+          
+          // The canonical value will be a string array
+          type : "StringArray",
+
+          // Function to convert a value to lower case
+          func : function(value)
+          {
+            if (! value)
+            {
+              return value;
+            }
+            
+            return value.toLowerCase();
+          }
+        }
+      };
+
     // Register our property types
-    aiagallery.dbif.Entity.registerPropertyTypes("apps", databaseProperties);
+    aiagallery.dbif.Entity.registerPropertyTypes("apps", 
+                                                 databaseProperties,
+                                                 null,
+                                                 canonicalize);
   }
 });

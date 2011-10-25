@@ -22,8 +22,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
   
   construct : function()
   {
-    // Use our authentication function
-    rpcjs.AbstractRpcHandler.authenticationFunction =
+    // Use our authorization function
+    rpcjs.AbstractRpcHandler.authorizationFunction =
       aiagallery.dbif.MDbifCommon.authenticate;
   },
 
@@ -57,7 +57,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     __initialized : false,
 
     /**
-     * Function to be called for authentication to run a service
+     * Function to be called for authorization to run a service
      * method. 
      * 
      * @param fqMethod {String}
@@ -129,7 +129,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return true;
       }
 
-      // Do per-method authentication.
+      // Do per-method authorization.
       
       // Are they logged in, or anonymous?
       bAnonymous = (aiagallery.dbif.MDbifCommon.__whoami === null);

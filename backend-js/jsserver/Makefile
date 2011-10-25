@@ -82,7 +82,8 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/Json.class				\
 	qxoo_classes/qx/lang/Object.class			\
 	qxoo_classes/qx/io/remote/RpcError.class		\
-	qxoo_classes/qx/util/Base64.class
+	qxoo_classes/qx/util/Base64.class			\
+	qxoo_classes/qx/util/Serializer.class
 
 # not yet
 # 	qxoo_classes/qx/dev/DebugObject.class

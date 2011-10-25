@@ -20,8 +20,8 @@ qx.Class.define("aiagallery.dbif.ObjTags",
         "count" : 1
       });
 
-    // Use the "value" property as the entity key
-    this.setEntityKeyProperty("value");
+    // Use the canonicalized "value" property as the entity key
+    this.setEntityKeyProperty("value_lc");
     
     // Call the superclass constructor
     this.base(arguments, "tags", value);
@@ -43,9 +43,32 @@ qx.Class.define("aiagallery.dbif.ObjTags",
         "count" : "Integer"
       };
 
+    var canonicalize =
+      {
+        "value" :
+        {
+          // Property in which to store the canonical value. Since we are
+          // converting the value to lower case, we'll give the property a
+          // name that reflects that.
+          prop : "value_lc",
+          
+          // The canonical value will be a string
+          type : "String",
+
+          // Function to convert a value to lower case
+          func : function(value)
+          {
+            return (typeof value == "undefined" || value === null
+                    ? null
+                    : value.toLowerCase());
+          }
+        }
+      };
+
     // Register our property types
     aiagallery.dbif.Entity.registerPropertyTypes("tags",
                                                  databaseProperties,
-                                                 "value");
+                                                 "value_lc",
+                                                 canonicalize);
   }
 });
