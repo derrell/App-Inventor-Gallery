@@ -12,6 +12,9 @@ qx.Class.define("aiagallery.dbif.Constants",
 
   statics :
   {
+
+    MAX_FLAGGED : 5,
+
     /** Mapping of status names to values */
     Status      : 
     {
@@ -26,6 +29,20 @@ qx.Class.define("aiagallery.dbif.Constants",
       "Banned", 
       "Pending",
       "Active"
+    ],
+
+    /** Mapping of FlagType names to values */
+    FlagType      : 
+    {
+      App  : 0,
+      Comment : 1
+    },
+
+    /** Reverse mapping of FlagType values to names */
+    FlagTypeToName :
+    [
+      "App", 
+      "Comment"
     ],
 
     /** Mapping of permission names to descriptions */
