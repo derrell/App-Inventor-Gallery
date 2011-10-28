@@ -524,7 +524,9 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
                         // Select the new application page
                         mainTabs.setSelection([ page ]);
                       }
-                    ]);
+                    ],
+                    true     // Instantiate a new module for each app
+            );
             
             // Transmit the UID of this module */
             app.setUserData("app_uid", item.uid);

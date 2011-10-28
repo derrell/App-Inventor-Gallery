@@ -60,7 +60,16 @@ qx.Class.define("aiagallery.Application",
         for (moduleName in moduleList[menuItem])
         {
           // ... call the module's buildInitialFsm() function
-          module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+          if (moduleList[menuItem][moduleName].bNewInstance)
+          {
+            // We must instantiate a new instance of this module
+            module = new moduleList[menuItem][moduleName]["clazz"]();
+          }
+          else
+          {
+            // The module is a singleton, so get its one and only instance
+            module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+          }
           module.buildInitialFsm(moduleList[menuItem][moduleName]);
         }
       }
@@ -78,7 +87,16 @@ qx.Class.define("aiagallery.Application",
         for (moduleName in moduleList[menuItem])
         {
           // ... call the module's buildInitialGui() function
-          module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+          if (moduleList[menuItem][moduleName].bNewInstance)
+          {
+            // Type is "new" so create a new instance of this module
+            module = new moduleList[menuItem][moduleName]["clazz"]();
+          }
+          else
+          {
+            // Type is "singleton""
+            module = moduleList[menuItem][moduleName]["clazz"].getInstance();
+          }
           module.buildInitialGui(moduleList[menuItem][moduleName]);
         }
       }
