@@ -16,12 +16,29 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
+
+   /*
+    * Update the number of views and likes based on the current value of the 
+    * saved numViews and numLikes values in this object.
+    */
+
+
+    __updateViewsAndLikes: function()
+    {
+	this.viewsLikes.setValue('<b>' + 
+				 this.numViewed +
+				 ' views, ' +
+				 this.numLikes +
+				 ' likes</b>');
+    },
+
     /**
      * Build the raw graphical user interface.
      *
      * @param module {aiagallery.main.Module}
      *   The module descriptor for the module.
      */
+
     buildGui : function(module)
     {
     },
@@ -703,9 +720,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
-    },
-
-
+    }
   }
-
 });
