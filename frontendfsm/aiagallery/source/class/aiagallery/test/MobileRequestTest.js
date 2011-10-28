@@ -231,7 +231,8 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
             description : "This one's beautiful",
             title       : "The Shooting Game",
             tags        : ["shooter", "shooting", "game", "Games"],
-            source      : "somerandomstring"
+            source      : "somerandomstring",
+            image1      : "xxx"
           },
           
           {
@@ -239,7 +240,8 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
             owner       : "billy@thekid.edu",
             description : "This one's scoop and poop",
             title       : "Your Mother Jokes",
-            tags        : ["funny"]
+            tags        : ["funny", "Development"],
+            image1      : "xxx"
           },
 
           {
@@ -247,7 +249,8 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
             owner       : "billy@thekid.edu",
             description : "This one's sexy",
             title       : "Laughapalooza",
-            tags        : ["Educational"]
+            tags        : ["Educational"],
+            image1      : "xxx"
           },
             
           {
@@ -255,7 +258,8 @@ qx.Class.define("aiagallery.test.MobileRequestTest",
             owner       : "billy@thekid.edu",
             description : "This one's scoop interesting in any way",
             title       : "Microsoft Windows for Android",
-            tags        : ["Development", "broken"]
+            tags        : ["Development", "broken"],
+            image1      : "xxx"
           }
         ];
 
