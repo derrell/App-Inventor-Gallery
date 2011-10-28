@@ -227,28 +227,32 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(createdBy);
 
-        // Create a label to display number of views and likes.
-        var viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
-                                               ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
+	// Save the numbers of views and likes
+	this.numViewed = result.numViewed;
+	this.numLikes = result.numLikes;
+  
 
+        // Create a label to display number of views and likes.
+	this.viewsLikes = new qx.ui.basic.Label();
+	this.__updateViewsAndLikes();
+	
         // Set the viewsLikes label to use rich formatting.
-        viewsLikes.set(
+        this.viewsLikes.set(
           {
             rich:true 
           });
 
         // Center the viewLikes label. 
-        viewsLikes.setAlignX("center");
+        this.viewsLikes.setAlignX("center");
 
         // Add it to the left vbox.
-        vboxLeft.add(viewsLikes);
+        vboxLeft.add(this.viewsLikes);
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
         var likeItButton = new qx.ui.form.Button("Like it!");
+	  fsm.addObject("likeItButton", likeItButton);
+	  likeItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
@@ -612,6 +616,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 */
         break;
 
+
+
 // vvvvvvv COMMENTS vvvvvvv
       case "addComment":
         // Get the result data. It's an object with all of the application info.
@@ -679,11 +685,39 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           }
         }   
         break;
+
+      case "likesPlusOne":
+	  // Get the result data.  It's an object with all of the application
+	  // info.
+	  result = response.data.result;
+
+	  // Set the number of likes according to the return value
+	  this.numLikes = result;
+
+	  // Update the display
+	  this.__updateViewsAndLikes();
+	  break;
+
 // ^^^^^^^ COMMENTS ^^^^^^^
 
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
-    }
+    },
+
+    /*
+     * Update the number of views and likes based on the current value
+     * of the saved numViewed and numLikes values in this object.
+     */
+      __updateViewsAndLikes : function()
+      {
+	  this.viewsLikes.setValue('<b> + 
+                                   this.numViewed + 
+                                   ' views, ' +
+                                   this.numLikes+
+                                   ' likes</b>');
+      };
+
+
   }
 });
