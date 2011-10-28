@@ -705,19 +705,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       }
     },
 
-    /*
-     * Update the number of views and likes based on the current value
-     * of the saved numViewed and numLikes values in this object.
-     */
-      __updateViewsAndLikes : function()
-      {
-	  this.viewsLikes.setValue('<b> + 
-                                   this.numViewed + 
-                                   ' views, ' +
-                                   this.numLikes+
-                                   ' likes</b>');
-      };
-
 
   }
+
 });
