@@ -13,7 +13,11 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
     this.registerService("flagIt",
                          this.flagIt,
-                         [ "appId" ]);
+                         [ "flagType", 
+                           "explanationInput", 
+                           "appId", 
+                           "commentId" 
+                         ]);
   },
 
   statics :
