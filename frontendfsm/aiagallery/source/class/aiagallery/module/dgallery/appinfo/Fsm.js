@@ -11,7 +11,6 @@
  */
 qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 {
-  type : "singleton",
   extend : aiagallery.main.AbstractModuleFsm,
 
   members :

@@ -11,7 +11,6 @@
  */
 qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 {
-  type : "singleton",
   extend : qx.core.Object,
 
   construct : function()
