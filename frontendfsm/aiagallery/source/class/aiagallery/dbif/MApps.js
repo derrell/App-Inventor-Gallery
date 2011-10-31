@@ -1172,17 +1172,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       //Update the views and last viewed date
 
       //Get the actual object
-      appObj = new aiagallery.dbif.ObjAppData(uid);      
-      app = appObj.getData();
-
-      //Increment the number of views by 1. 
-      app.numViewed++; 
-
-      //Set the "lastViewedDate" to the time this function was called
-      app.lastViewedTime = (new Date()).toString(); 
-
-      //Put back on the database
-      appObj.put();
+      appObj = new aiagallery.dbif.ObjAppData(uid);    
 
       // See if this app exists.  
       if (appObj.getBrandNew())
@@ -1194,6 +1184,17 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
+  
+      app = appObj.getData();
+
+      //Increment the number of views by 1. 
+      app.numViewed++; 
+
+      //Set the "lastViewedDate" to the time this function was called
+      app.lastViewedTime = (new Date()).toString(); 
+
+      //Put back on the database
+      appObj.put();
  
       // If the application status is not Active, only the owner can view it.
       if (app.status != aiagallery.dbif.Constants.Status.Active &&
