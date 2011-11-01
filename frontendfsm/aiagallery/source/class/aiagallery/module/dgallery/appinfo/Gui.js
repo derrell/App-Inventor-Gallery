@@ -197,14 +197,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
-        likeItButton = new qx.ui.form.Button("Like it!");
+        likeItButton = new aiagallery.widget.Button("Like it!");
 
         // Add it to the left vbox.
         vboxLeft.add(likeItButton);
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
-        flagItButton = new qx.ui.form.Button("Flag it!");
+        flagItButton = new aiagallery.widget.Button("Flag it!");
 
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
