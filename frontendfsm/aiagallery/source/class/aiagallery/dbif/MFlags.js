@@ -39,7 +39,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
      *   the app was not found 
      * 
      */
-    flagIt : function(flagType, explanationInput, appId, commentId)
+    flagIt : function(flagType, explanationInput, appId, commentId, error)
     {
       var            appObj;
       var            appDataObj;
@@ -57,14 +57,15 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       statusVals = aiagallery.dbif.Constants.Status;
       flagTypeVal = aiagallery.dbif.Constants.FlagType;
 
-      appObj = new aiagallery.dbif.ObjAppData(appId);
-      appDataObj = appObj.getData();
       visitorId = this.whoAmI().email;
-      appNum = appDataObj.uid;
 
       switch (flagType)
       {
-        case flagTypeVal.app:
+        case flagTypeVal.App:
+
+          appObj = new aiagallery.dbif.ObjAppData(appId);
+          appDataObj = appObj.getData();
+          appNum = appDataObj.uid;
 
           if (appObj.getBrandNew())
           {
@@ -74,9 +75,9 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             return error;
           }
 
-          newFlag = new aiagallery.dbif.ObjFlags();
+          newFlag = new aiagallery.dbif.ObjFlags(appId);
 
-          var Data = {
+          var data = {
             type        : flagType,
             app         : appNum,
             comment     : null,
@@ -84,7 +85,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             explanation : explanationInput
           }
 
-	  newFlag.setData(Data);
+	  newFlag.setData(data);
           appDataObj.numCurFlags++;      
 
           if(appDataObj.numCurFlags >= maxFlags)
@@ -95,13 +96,15 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
           appObj.put();
           newFlag.put();
-          break;
 
-        case flagTypeVal.comment:
+          return appDataObj.status;
+
+        case flagTypeVal.Comment:
 
           break;
-        case default:
       } 
+
+      // Eventually will be changed to return error if code gets to this point
       return appDataObj.status;
     }
   }

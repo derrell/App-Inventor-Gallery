@@ -24,7 +24,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "lastViewedTime"  : null, 
         "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active,
-        "numCurrFlags"    : 0
+        "numCurFlags"     : 0
       });
 
     // Call the superclass constructor
@@ -95,7 +95,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "status" : "Integer",
 
         /** Total number of flags on this application */
-        "numCurrFlags" : "Integer"
+        "numCurFlags" : "Integer"
       };
 
     var canonicalize =

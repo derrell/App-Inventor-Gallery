@@ -43,7 +43,7 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
       appObj = new aiagallery.dbif.ObjAppData(appId);
       
       appDataObj = appObj.getData();
-      
+
       if (appObj.getBrandNew())
       {
         error.setCode(1);

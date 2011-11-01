@@ -23,7 +23,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "app"             : keyArr[0],
         "treeId"          : keyArr[1],
       	"status"          : aiagallery.dbif.Constants.Status.Active,
-        "numCurrFlags"    : 0
+        "numCurFlags"     : 0
       });
     
     // Use appId and treeId are a composite key
@@ -70,7 +70,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "status" : "Integer",
 
         /** Total number of flags on this application */
-        "numCurrFlags" : "Integer"
+        "numCurFlags" : "Integer"
       };
 
     // Register our property types
