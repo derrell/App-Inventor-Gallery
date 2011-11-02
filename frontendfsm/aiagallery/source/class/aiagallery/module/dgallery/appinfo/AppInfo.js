@@ -52,15 +52,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.AppInfo",
       // If we didn't find an existing tab, create a new one.
       if (! page)
       {
-        // Get the backtrack data
-        //backtrack = app.getUserdata("backtrack");
         
         // Set the new modules information to backtrack
-        //backtrack[label] = mainTabs.getSelection()[0];
         backtrack = mainTabs.getSelection()[0];
-        
-        // Push backtrack into the userdata
-        //app.setUserData("backtrack", backtrack);
           
         // Create a new module (tab) for this application
         app = new aiagallery.main.Module(
