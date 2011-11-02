@@ -75,6 +75,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             return error;
           }
 
+
           newFlag = new aiagallery.dbif.ObjFlags(appId);
 
           var data = {
@@ -86,6 +87,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           }
 
 	  newFlag.setData(data);
+
           appDataObj.numCurFlags++;      
 
           if(appDataObj.numCurFlags >= maxFlags)
