@@ -71,12 +71,12 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           {
             error.setCode(1);
             error.setMessage(
-              "Comment with that ID not found. Unable to flag.");
+              "Application with that ID not found. Unable to flag.");
             return error;
           }
 
 
-          newFlag = new aiagallery.dbif.ObjFlags(appId);
+          newFlag = new aiagallery.dbif.ObjFlags();
 
           var data = {
             type        : flagType,
@@ -103,6 +103,43 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
         case flagTypeVal.Comment:
 
+          commentObj = new aiagallery.dbif.ObjComments(commentId);
+          commentDataObj = commentObj.getData();
+          commentNum = commentDataObj.treeId;
+          var testVal = commentObj.getBrandNew()
+          if (testVal)
+          {
+            error.setCode(1);
+            error.setMessage(
+              "Comment with that ID not found. Unable to flag.");
+            return error;
+          }
+
+
+          newFlag = new aiagallery.dbif.ObjFlags();
+
+          var data = {
+            type        : flagType,
+            app         : null,
+            comment     : commentNum,
+            visitor     : visitorId,
+            explanation : explanationInput
+          }
+
+	  newFlag.setData(data);
+
+          commentDataObj.numCurFlags++;      
+
+          if(commentDataObj.numCurFlags >= maxFlags)
+          {
+            commentDataObj.status = statusVals.Pending;       
+            alert("email to be sent");
+          }
+
+          commentObj.put();
+          newFlag.put();
+
+          return commentDataObj.status;
           break;
       } 
 
