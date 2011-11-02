@@ -75,7 +75,6 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             return error;
           }
 
-
           newFlag = new aiagallery.dbif.ObjFlags();
 
           var data = {
@@ -92,8 +91,18 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
           if(appDataObj.numCurFlags >= maxFlags)
           {
-            appDataObj.status = statusVals.Pending;       
-            alert("email to be sent");
+            /**
+             * If the app is already pending do not touch the status or 
+             * send an email 
+             */
+            if(appDataObj.status == statusVals.Pending)
+              {}else
+                {
+                  appDataObj.status = statusVals.Pending;    
+
+                  // placeholder code   
+                  alert("email to be sent");
+                }
           }
 
           appObj.put();
@@ -129,10 +138,21 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
           commentDataObj.numCurFlags++;      
 
+
           if(commentDataObj.numCurFlags >= maxFlags)
           {
-            commentDataObj.status = statusVals.Pending;       
-            alert("email to be sent");
+            /**
+             * If the comment is already pending do not touch the status or 
+             * send an email 
+             */
+            if(commentDataObj.status == statusVals.Pending)
+              {}else
+                {
+                  commentDataObj.status = statusVals.Pending;    
+
+                  // placeholder code
+                  alert("email to be sent");
+                }
           }
 
           commentObj.put();
@@ -142,8 +162,11 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           break;
       } 
 
-      // Eventually will be changed to return error if code gets to this point
-      return appDataObj.status;
+      // Error message should be redone
+      error.setCode(1);
+      error.setMessage(
+        "Reached an un-reachable point in the flagging rpc.");
+      return error;
     }
   }
 });
