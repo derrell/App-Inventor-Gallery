@@ -103,24 +103,23 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
         case flagTypeVal.Comment:
 
-          commentObj = new aiagallery.dbif.ObjComments(commentId);
+          commentObj = new aiagallery.dbif.ObjComments([appId, commentId]);
           commentDataObj = commentObj.getData();
           commentNum = commentDataObj.treeId;
-          var testVal = commentObj.getBrandNew()
-          if (testVal)
+
+          if (commentObj.getBrandNew())
           {
             error.setCode(1);
             error.setMessage(
-              "Comment with that ID not found. Unable to flag.");
+              "Comment not found. Unable to flag.");
             return error;
           }
-
 
           newFlag = new aiagallery.dbif.ObjFlags();
 
           var data = {
             type        : flagType,
-            app         : null,
+            app         : appId,
             comment     : commentNum,
             visitor     : visitorId,
             explanation : explanationInput
