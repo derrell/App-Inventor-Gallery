@@ -149,10 +149,12 @@ qx.Theme.define("aiagallery.theme.Appearance",
 
     "likeIt/flagIt-button" :
     {
-	setIcon : " ", 
-	setBackgroundColor : "#2fcc1a", 
-	setWidth : 10,     
-	setHeight : 5    
+	style : function(states) {
+        return {
+          icon : "aiagallery/test.png", 
+          backgroundColor : "#2fcc1a" 
+        };
+      }
     }
 
   }

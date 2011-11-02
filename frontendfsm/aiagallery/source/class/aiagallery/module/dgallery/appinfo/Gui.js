@@ -63,6 +63,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             commentWrapper;
       var             submitCommentBtn;
       var             scrollContainer;
+      var             hboxViewsLikes;
       var             vbox;
       var             downloadLabel;
       var             download;
@@ -195,19 +196,25 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(viewsLikes);
 
+        // Create a horizontal box for the next two buttons
+        hboxViewsLikes =
+          new qx.ui.container.Composite(new qx.ui.layout.HBox(20));
+
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
-        likeItButton = new aiagallery.widget.Button("Like it!");
+        likeItButton = new aiagallery.widget.Button("Like it!", "aiagallery/test.png");
 
         // Add it to the left vbox.
-        vboxLeft.add(likeItButton);
+          hboxViewsLikes.add(likeItButton, { flex : 1 });
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
         flagItButton = new aiagallery.widget.Button("Flag it!");
 
         // Add it to the left vbox.
-        vboxLeft.add(flagItButton);
+          hboxViewsLikes.add(flagItButton, { flex : 1 });
+
+          vboxLeft.add(hboxViewsLikes);
 
        // Creates an object on which to call the getComments event, in order
        // to add them to the GUI
