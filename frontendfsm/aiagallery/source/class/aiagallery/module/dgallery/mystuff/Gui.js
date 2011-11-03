@@ -45,7 +45,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       edit.set(
         {
           maxHeight : 24,
-          width     : 100,
+          minWidth  : 120,
           enabled   : false
         });
       hBox.add(edit);
@@ -56,7 +56,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       addApp.set(
         {
           maxHeight : 24,
-          width     : 100
+          minWidth  : 120
         });
       hBox.add(addApp);
       addApp.addListener("execute", fsm.eventListener, fsm);
