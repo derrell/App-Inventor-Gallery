@@ -9,6 +9,7 @@
 /**
  * The graphical user interface for the individual application pages
  */
+
 qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 {
   type : "singleton",
@@ -25,7 +26,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     buildGui : function(module)
     {
     },
-
 
     /**
      * Handle the response to a remote procedure call
