@@ -1054,6 +1054,61 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return intersectionArr;    
       
     },
+
+    /**
+     * Performs three queries to retrive the Featured, Most Liked, and Newest. 
+     * This is for the front page ribbon.
+     * 
+     * @return {Map}
+     *   The return value is a map with arrays in it. Each array in the map 
+     *   corresponds to one of the three search queries.  
+     *
+     */
+    getHomeRibbonData : function()
+    { 
+
+      // Create and execute query for "Featured" apps.
+      var criterion = 
+        {
+          type  : "element",
+          field : "tags",
+          value : "*Featured*"
+        };
+
+
+      var searchResponseFeatured = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+
+      //Create and execute query for "Most Liked" apps. 
+      var criterion = 
+        {
+          type  : "element",
+          field : "tags",
+          value : "*Most Liked*"
+        };
+
+
+      var searchResponseLiked= rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+
+      //Create and execute query for "Newest" apps.
+      var criterion = 
+        {
+          type  : "element",
+          field : "tags",
+          value : "*Newest*"
+        };
+
+
+      var searchResponseNewest = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+
+      //Construct map of data
+      data = {
+          "Featured"     :    searchResponseFeatured,   
+          "Most Liked"   :    searchResponseLiked,
+          "Newest"       :    searchResponseNewest
+
+      };
+   
+    },
       
     /**
      * Get a list of Apps from a discrete list of App UIDs
