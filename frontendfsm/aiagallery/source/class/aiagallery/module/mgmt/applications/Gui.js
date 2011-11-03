@@ -154,6 +154,15 @@ qx.Class.define("aiagallery.module.mgmt.applications.Gui",
       tcm.setCellEditorFactory(2, editor);
       tcm.setCellEditorFactory(3, editor);
 
+      // Set the image columns to use the image cell renderer
+      [ 6, 7, 8 ].forEach(
+        function(column)
+        {
+          var o = new qx.ui.table.cellrenderer.Image();
+          o.setRepeat("scale");
+          tcm.setDataCellRenderer(column, o);
+        });
+
       // Listen for changeSelection events so we can enable/disable buttons
       var selectionModel = table.getSelectionModel();
       selectionModel.addListener(
