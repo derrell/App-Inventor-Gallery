@@ -148,8 +148,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "getAppListAll":
-          return true;          // TEMPORARY
-// FIXME: return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
+        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
 
       case "appQuery":
       case "intersectKeywordAndQuery":
@@ -221,7 +220,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       // MLiking
       //
       case "likesPlusOne":
-          return ! bAnonymous;   // Access allowed if logged in         
+        return ! bAnonymous;   // Access allowed if logged in         
 
       default:
         // Do not allow access to unrecognized method names
@@ -244,7 +243,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       }
 
       var email = whoami.email;
-      var myObjData = new aiagallery.dbif.ObjVisitors(email).getData();;
+      var myObjData = new aiagallery.dbif.ObjVisitors(email).getData();
       var permissionArr = myObjData["permissions"];
       var permissionGroupArr = myObjData["permissionGroups"];
       var permission;
@@ -267,7 +266,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         if (permissionGroupArr != null)
         {
           // For every permission group of which I am a member...
-          permissionGroupArr.forEach(function (group) 
+          permissionGroupArr.forEach(
+            function (group) 
             {
         
               // Retrieve the list of permissions it gives me
@@ -276,11 +276,13 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
           
               // Same as standard check: does this group contain this method?
               if (permissionArr != null &&
-              qx.lang.Array.contains(permissionArr, methodName))
+                  qx.lang.Array.contains(permissionArr, methodName))
               {
                 // Yes, allow me.
                 return true;
               }
+              
+              return false;
             });
         }
       }
