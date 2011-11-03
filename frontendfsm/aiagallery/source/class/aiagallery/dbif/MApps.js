@@ -1107,6 +1107,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "Newest"       :    searchResponseNewest
 
       };
+
+      //Return the map containing the arrays containing the apps. 
+      return data;
    
     },
       
