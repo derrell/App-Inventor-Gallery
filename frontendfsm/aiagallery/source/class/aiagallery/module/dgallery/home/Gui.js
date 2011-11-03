@@ -192,7 +192,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "appQuery":
+      case "getHomeRibbonData":
         // Get the gallery object
         var featuredApps = fsm.getObject("Featured Apps");
         

@@ -27,6 +27,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          this.getAppListAll,
                          [ "bStringize", "sortCriteria", "offset", "limit" ]);
 
+    this.registerService("getHomeRibbonData",
+                         this.getHomeRibbonData); 
+
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
@@ -1085,7 +1088,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
 
       var searchResponseFeatured = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
 
       //Create and execute query for "Most Liked" apps. 
       var criterion = 
@@ -1097,7 +1100,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
 
       var searchResponseLiked = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
 
       //Create and execute query for "Newest" apps.
       var criterion = 
@@ -1109,10 +1112,10 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
 
       var searchResponseNewest = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
 
       //Construct map of data
-      data = {
+      var data = {
           "Featured"     :    searchResponseFeatured,   
           "Most Liked"   :    searchResponseLiked,
           "Newest"       :    searchResponseNewest

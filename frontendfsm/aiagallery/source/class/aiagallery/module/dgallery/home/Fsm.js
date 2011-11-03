@@ -226,15 +226,15 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
         "ontransition" : function(fsm, event)
         {          
             
-          // Issue the remote procedure call to execute the query
+          // Issue the remote procedure call to execute the query get the front page ribbons
           var request =
-            this.callRpc(fsm,
+              this.callRpc(fsm,
                          "aiagallery.features",
-                         "getHomeRibbonData");
+                         "getHomeRibbonData", [null]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "appQuery");
+          request.setUserData("requestType", "getHomeRibbonData");
         }
       });
 
