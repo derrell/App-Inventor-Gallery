@@ -141,6 +141,21 @@ qx.Theme.define("aiagallery.theme.Appearance",
       {
         return { padding : [0, 5] };
       }
+    },
+    
+    //
+    //Buttons
+    //
+
+    "likeIt/flagIt-button" :
+    {
+	style : function(states) {
+        return {
+          icon : "aiagallery/test.png", 
+          backgroundColor : "#2fcc1a" 
+        };
+      }
     }
+
   }
 });
