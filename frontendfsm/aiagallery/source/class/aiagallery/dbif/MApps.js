@@ -736,10 +736,19 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           {
             // Replace the owner name with the owner's display name
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                            app["owner"]);
+                                              app["owner"]);
 
-            // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
+            // If it's not an "all" request (administrator)...
+            if (! bAll)
+            {
+              // ... then replace his visitor id with his display name
+              app["owner"] = owners[0].displayName;
+            }
+            else
+            {
+              // Otherwise add the display name
+              app["displayName"] = owners[0].displayName;
+            }
            
             // If we were asked to stringize the values...
             if (bStringize)
