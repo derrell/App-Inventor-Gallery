@@ -1066,6 +1066,14 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      */
     getHomeRibbonData : function()
     { 
+      //Create map to specify specific return data from the query
+      var requestedData = {
+        uid    : "uid",
+        title  : "label", // remap name for Gallery
+        image1 : "icon",  // remap name for Gallery
+        owner  : "owner"
+      }; 
+
 
       // Create and execute query for "Featured" apps.
       var criterion = 
@@ -1076,7 +1084,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
 
 
-      var searchResponseFeatured = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+      var searchResponseFeatured = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
       //Create and execute query for "Most Liked" apps. 
       var criterion = 
@@ -1087,7 +1096,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
 
 
-      var searchResponseLiked= rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+      var searchResponseLiked = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
       //Create and execute query for "Newest" apps.
       var criterion = 
@@ -1098,7 +1108,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
 
 
-      var searchResponseNewest = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+      var searchResponseNewest = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
       //Construct map of data
       data = {
