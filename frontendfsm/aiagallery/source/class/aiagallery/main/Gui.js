@@ -154,6 +154,7 @@ qx.Class.define("aiagallery.main.Gui",
                 var             bAllowed;
                 var             moduleList;
                 var             module;
+                var             bAddModules;
                 
                 // Create a global function accessible via <a href=
                 window.editProfile = function()
@@ -170,6 +171,10 @@ qx.Class.define("aiagallery.main.Gui",
                 
                 qx.core.Init.getApplication().setUserData(
                   "permissions", e.permissions);
+
+                // Prepare to add management modules if permissions allow it.
+                moduleList = {};
+                bAddModules = false;
 
                 // Determine whether they have access to the user management
                 // page.
@@ -193,15 +198,64 @@ qx.Class.define("aiagallery.main.Gui",
                 {
                   // ... then create it
                   module = new aiagallery.main.Module(
-                    "User Management",
+                    "Management",
                     "aiagallery/test.png",
                     "User Management",
                     aiagallery.module.mgmt.users.Users);
 
                   // Start up the new module
-                  moduleList = {};
-                  moduleList["User Management"] = {};
-                  moduleList["User Management"]["User Management"] = module;
+                  if (! moduleList["Management"])
+                  {
+                    moduleList["Management"] = {};
+                  }
+                  moduleList["Management"]["User Management"] = module;
+                  
+                  // We've instantiated a new module which needs to be added
+                  bAddModules = true;
+                }
+
+                // Determine whether they have access to the application
+                // management page.
+                bAllowed = false;
+                [ 
+                  // These permissions allow access to the page
+                  "addOrEditApp",
+                  "deleteApp",
+                  "getAppListAll"
+                ].forEach(
+                  function(rpcFunc)
+                  {
+                    if (qx.lang.Array.contains(e.permissions, rpcFunc))
+                    {
+                      bAllowed = true;
+                    }
+                  });
+
+                // If they're allowed access to the page...
+                if (e.isAdmin || bAllowed)
+                {
+                  // ... then create it
+                  module = new aiagallery.main.Module(
+                    "Management",
+                    "aiagallery/test.png",
+                    "Application Management",
+                    aiagallery.module.mgmt.applications.Applications);
+
+                  // Start up the new module
+                  if (! moduleList["Management"])
+                  {
+                    moduleList["Management"] = {};
+                  }
+                  moduleList["Management"]["Application Management"] = module;
+                  
+                  // We've instantiated a new module which needs to be added
+                  bAddModules = true;
+                }
+
+                // If we instantiated at least one of the management modules...
+                if (bAddModules)
+                {
+                  // ... then add them.
                   aiagallery.Application.addModules(moduleList);
                 }
               },
