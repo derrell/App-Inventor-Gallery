@@ -12,7 +12,10 @@ qx.Class.define("aiagallery.dbif.Constants",
 
   statics :
   {
-
+    /** 
+     *  Value of the maximum amount of times an app or comment 
+     *  can be flagged 
+     */
     MAX_FLAGGED : 5,
 
     /** Mapping of status names to values */
