@@ -53,7 +53,7 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
 
       var result = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes",
 					   {
-					       type: "element",
+					       type: "op",
 					       method: "and",
 					       children: 
 					       [
@@ -66,13 +66,13 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
 						    type: "element",
 						    field: "app",
 						    value: appId
-						}]};
+						}]});
       if( result.length >= 1)
 	  return appDataObj.numLikes;
 
       var newData = {
 	  app: appId,
-	  visitor: this.whoAmI().emal
+	  visitor: this.whoAmI().email
       };  
 
       var newObj = new aiagallery.dbif.ObjLikes();
