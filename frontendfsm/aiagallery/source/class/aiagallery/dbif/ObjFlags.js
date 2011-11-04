@@ -40,7 +40,7 @@ qx.Class.define("aiagallery.dbif.ObjFlags",
         "app" : "Key",
 
         /** Tree ID of the Comment object which was flagged */
-        "commentTreeId" : "String",
+        "comment" : "String",
 
         /** Id of the Visitor who flagged the application or comment */
         "visitor" : "String",

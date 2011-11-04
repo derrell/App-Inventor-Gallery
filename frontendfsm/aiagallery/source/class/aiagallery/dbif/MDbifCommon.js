@@ -17,7 +17,8 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     aiagallery.dbif.MComments,
     aiagallery.dbif.MWhoAmI,
     aiagallery.dbif.MSearch,
-    aiagallery.dbif.MLiking
+    aiagallery.dbif.MLiking,
+    aiagallery.dbif.MFlags
   ],
   
   construct : function()
