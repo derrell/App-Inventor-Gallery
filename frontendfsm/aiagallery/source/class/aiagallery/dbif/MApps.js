@@ -452,7 +452,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (sourceData)
       {
         // ... then update the upload time to now
-	  appData.uploadTime = this.currentTimestamp;
+	  appData.uploadTime = String(aiagallery.dbif.MDbifCommon.currentTimestamp());
+	  
+
 	  // appData.uploadTime = String((new Date()).getTime());
       }
 
@@ -1192,7 +1194,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app.numViewed++; 
 
       //Set the "lastViewedDate" to the time this function was called
-      app.lastViewedTime = (new Date()).toString(); 
+      app.lastViewedTime = (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(); 
 
       //Put back on the database
       appObj.put();
