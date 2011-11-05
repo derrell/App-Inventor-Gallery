@@ -17,7 +17,7 @@ qx.Class.define("aiagallery.dbif.ObjDownloads",
       {
         "app"       : null,
         "visitor"   : null,
-	    "timestamp" : String(aiagallery.dbif.MDbifCommon.currentTimestamp())
+	"timestamp" : aiagallery.dbif.MDbifCommon.currentTimestamp()
       });
 
     // Call the superclass constructor
@@ -37,7 +37,7 @@ qx.Class.define("aiagallery.dbif.ObjDownloads",
         "visitor" : "String",
 
         /** Time the download was initiated */
-        "timestamp" : "String"
+        "timestamp" : "Date"
       };
 
     // Register our property types

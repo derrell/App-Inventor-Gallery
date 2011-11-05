@@ -18,19 +18,12 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     // Pre-initialize the data
     this.setData(
       {
-<<<<<<< HEAD
-        "timestamp"  : (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(),
-        "numChildren": 0,
-        "app"        : keyArr[0],
-        "treeId"     : keyArr[1]
-=======
-        "timestamp"       : (new Date()).toString(),
+        "timestamp"       : aiagallery.dbif.MDbifCommon.currentTimestamp(),
         "numChildren"     : 0,
         "app"             : keyArr[0],
         "treeId"          : keyArr[1],
       	"status"          : aiagallery.dbif.Constants.Status.Active,
         "numCurFlags"     : 0
->>>>>>> a48ca9b1ee137bdc6aa113fbb567819b95a1172b
       });
     
     // Use appId and treeId are a composite key
@@ -68,7 +61,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "visitor" : "String",
 
         /** Time the comment was made */
-        "timestamp" : "String",
+        "timestamp" : "Date",
 
         /** Text of this comment */
         "text" : "String",

@@ -58,6 +58,17 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     __initialized : false,
 
     /**
+     * Standardized time stamp for all Date fields
+     *
+     * @return {Integer}
+     *   The number of milliseconds since midnight, 1 Jan 1970
+     */
+    currentTimestamp : function()
+    {
+      return new Date().getTime();
+    },
+
+    /**
      * Function to be called for authorization to run a service
      * method. 
      * 
@@ -68,15 +79,6 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
      *   true to allow the function to be called, or false to indicates
      *   permission denied.
      */
-  
-	  currentTimestamp : function()
-	  {
-	      //Date Standardization
-	      return new Date().getTime();
-
-
-
-	  },
     authenticate : function(fqMethod)
     {
       var             methodComponents;

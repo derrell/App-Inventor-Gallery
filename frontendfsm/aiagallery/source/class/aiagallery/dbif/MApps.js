@@ -454,10 +454,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (sourceData)
       {
         // ... then update the upload time to now
-	  appData.uploadTime = String(aiagallery.dbif.MDbifCommon.currentTimestamp());
-	  
-
-	  // appData.uploadTime = String((new Date()).getTime());
+        appData.uploadTime = aiagallery.dbif.MDbifCommon.currentTimestamp();
       }
 
       // FIXME: Begin a transaction here
@@ -1205,7 +1202,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       app.numViewed++; 
 
       //Set the "lastViewedDate" to the time this function was called
-      app.lastViewedTime = (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(); 
+      app.lastViewedTime = aiagallery.dbif.MDbifCommon.currentTimestamp(); 
 
       //Put back on the database
       appObj.put();

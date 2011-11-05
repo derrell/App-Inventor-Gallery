@@ -20,18 +20,10 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-<<<<<<< HEAD
-        "creationTime"    : (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(),
+        "creationTime"    : aiagallery.dbif.MDbifCommon.currentTimestamp(),
 	"lastViewedTime"  : null,  
 	"numRootComments" : 0,
-        "status"          : aiagallery.dbif.Constants.Status.Active
-=======
-        "creationTime"    : (new Date()).toString(),
-        "lastViewedTime"  : null, 
-        "numRootComments" : 0,
-        "status"          : aiagallery.dbif.Constants.Status.Active,
         "numCurFlags"     : 0
->>>>>>> a48ca9b1ee137bdc6aa113fbb567819b95a1172b
       });
 
     // Call the superclass constructor
@@ -84,13 +76,13 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "tags" : "StringArray",
 
         /** Time the most recent Source ZIP file was uploaded */
-        "uploadTime" : "String",
+        "uploadTime" : "Date",
         
         /** The date and time this App was first created */
-        "creationTime" : "String",
+        "creationTime" : "Date",
 
         /** The date this App was last viewed */
-        "lastViewedTime" : "String", 
+        "lastViewedTime" : "Date", 
 
         /** Number of "likes" of this application */
         "numLikes" : "Integer",
