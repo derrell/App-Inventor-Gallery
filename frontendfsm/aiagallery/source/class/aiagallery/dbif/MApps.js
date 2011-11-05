@@ -452,7 +452,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (sourceData)
       {
         // ... then update the upload time to now
-        appData.uploadTime = String((new Date()).getTime());
+	  appData.uploadTime = this.currentTimestamp;
+	  // appData.uploadTime = String((new Date()).getTime());
       }
 
       // FIXME: Begin a transaction here
