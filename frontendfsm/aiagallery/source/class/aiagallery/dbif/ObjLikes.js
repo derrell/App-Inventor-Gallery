@@ -17,7 +17,7 @@ qx.Class.define("aiagallery.dbif.ObjLikes",
       {
         "app"       : null,
         "visitor"   : null,
-        "timestamp" : String((new Date()).getTime())
+        "timestamp" : String(aiagallery.dbif.MDbifCommon.currentTimestamp())
       });
 
     // Call the superclass constructor
