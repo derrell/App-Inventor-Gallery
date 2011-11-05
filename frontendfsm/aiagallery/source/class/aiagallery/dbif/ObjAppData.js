@@ -20,7 +20,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-        "creationTime"    : (new Date()).toString(),
+        "creationTime"    : (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(),
         "lastViewedTime"  : null, 
         "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active
