@@ -89,7 +89,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
                          this.tr("Title"),
                          this.tr("Description"),
                          this.tr("Owner"),
-                         this.tr("Image 1"),
+                         this.tr(""),
                          this.tr("Image 2"),
                          this.tr("Image 3"),
                          this.tr("Author Chain"),
@@ -160,7 +160,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       // Set the Permissions and Status fields to nearly fixed widths, and then
       // let the Name and Email fields take up the remaining space.
-//      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
+      //resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
 
       resizeBehavior.set(0,  { width:100 });                // Title
       resizeBehavior.set(1,  { width:150 });                // Description
