@@ -543,7 +543,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // (which could use some additional tweaking, perhaps)
       // FIXME: This needs to be internationalized. There are existing
       // functions to do so.
-      var dateObj = new Date(commentTime);
+      var dateObj = new Date(commentTime); //not sure what to do here..
       var dateString = dateObj.toDateString();
       var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
       var dateTimeString = dateString + " " + timeString + " ET"; 
