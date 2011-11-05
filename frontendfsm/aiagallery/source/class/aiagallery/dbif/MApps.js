@@ -1177,6 +1177,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             whoami;
       var             criteria;
       var             owners;
+      var             likesList;
 
       whoami = this.getWhoAmI();
 
@@ -1225,6 +1226,36 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       // Replace the (private) owner id with his display name
       app.owner = owners[0].displayName;
+
+      // Determine if the current user has already liked this application
+      // Construct query criteria for "likes of this app by current visitor"
+      criteria = 
+        {
+          type : "op",
+          method : "and",
+          children : 
+          [
+            {
+              type: "element",
+              field: "app",
+              value: uid
+            },
+            {
+              type: "element",
+              field: "visitor",
+              value: whoami.email
+            }
+          ]
+        };
+
+      // Query for the likes of this app by the current visitor
+      // (an array, which should have length zero or one).
+      likesList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes",
+                                          criteria,
+                                          null);
+
+      // If there were any results, this user has already liked it.
+      app.bAlreadyLiked = likesList.length > 0;
 
       // If we were asked to stringize the values...
       if (bStringize)

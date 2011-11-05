@@ -61,7 +61,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             appIcon;
       var             createdBy;
       var             viewsLikes;
-      var             likeItButton;
       var             flagItButton;
       var             emptyObject;
       var             commentInput;
@@ -229,12 +228,19 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         */
 
         // Create a button to allow users to "like" things.
-        likeItButton = new qx.ui.form.Button("Like it!");
-        fsm.addObject("likeItButton", likeItButton);
-        likeItButton.addListener("execute", fsm.eventListener, fsm);
+        this.likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", this.likeItButton);
+        this.likeItButton.addListener("execute", fsm.eventListener, fsm);
+
+        // If this user has already liked this app...
+        if (result.bAlreadyLiked)
+        {
+          // ... then disable the Like It! button
+          this.likeItButton.setEnabled(false);
+        }
 
         // Add it to the left vbox.
-        vboxLeft.add(likeItButton);
+        vboxLeft.add(this.likeItButton);
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
@@ -498,6 +504,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         viewsLikes.setValue('<b>' + this.__views + ' views, ' +
                             this.__likes + ' likes</b>');
    
+        
+        // Disable the Like It! button now since they can only like once
+        this.likeItButton.setEnabled(false);
+
         break;
 
       default:
