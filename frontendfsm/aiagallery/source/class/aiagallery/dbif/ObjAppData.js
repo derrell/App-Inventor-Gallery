@@ -21,8 +21,8 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numViewed"       : 0,
         "numComments"     : 0,
         "creationTime"    : (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(),
-        "lastViewedTime"  : null, 
-        "numRootComments" : 0,
+	"lastViewedTime"  : null,  
+	"numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active
       });
 
