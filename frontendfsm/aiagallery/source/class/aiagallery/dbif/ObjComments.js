@@ -18,7 +18,7 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     // Pre-initialize the data
     this.setData(
       {
-        "timestamp"  : (new Date()).toString(),
+        "timestamp"  : (aiagallery.dbif.MDbifCommon.currentTimestamp()).toString(),
         "numChildren": 0,
         "app"        : keyArr[0],
         "treeId"     : keyArr[1]
