@@ -1091,7 +1091,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       //Create map to specify specific return data from the upload time query
       var requestedData = [
-         { type : "limit",  value : 10  },
+         { type : "limit",  value : 8  },
          { type : "sort",   field : "numLikes"  , order : "asc" }
       ]; 
 
@@ -1108,7 +1108,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       //Create map to specify specific return data from the upload time query
       requestedData = [
-         { type : "limit",  value : 10  },
+         { type : "limit",  value : 8  },
          { type : "sort",   field : "uploadTime", order : "desc" }
       ]; 
 
@@ -1118,7 +1118,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       //Construct map of data
       var data = {
           "Featured"     :    searchResponseFeatured,   
-          "Most Liked"   :    searchResponseLiked,
+          "MostLiked"   :    searchResponseLiked,
           "Newest"       :    searchResponseNewest
 
       };
