@@ -386,10 +386,8 @@ function doGet(request, response)
       // decodeResult is a map with a "mime" member and a "content" member.
       // Just pass them where they're needed and we're done.
       response.setContentType(decodeResult.mime);
-/* Once we have the filename, we need to use it like this:
       response.setHeader("Content-disposition",
                          "attachment; filename=\"" + decodeResult.name + "\"");
-*/
       out = response.getWriter();
       out.print(decodeResult.content);
     }
