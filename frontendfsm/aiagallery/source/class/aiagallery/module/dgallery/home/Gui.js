@@ -163,6 +163,58 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       
       // add Featured Apps section to the page
       canvas.add(featuredApps);
+
+      // Newest Apps section
+      var newestAppsLayout = new qx.ui.layout.VBox();
+      var newestApps = new qx.ui.container.Composite(newestAppsLayout);
+
+      // Newest Apps heading
+      var newestAppsHeader = new qx.ui.basic.Label();
+      newestAppsHeader.set(
+        {
+          value      : "<h3>Newest Apps</h3>",
+          rich       : true
+        });
+      newestApps.add(newestAppsHeader);
+      
+      // slide bar of Newest Apps
+      var newestAppsSlideBar = new qx.ui.container.SlideBar();
+      newestAppsSlideBar.set(
+        {
+          height : 180
+        });
+      
+      fsm.addObject("Newest Apps", newestAppsSlideBar);
+      newestApps.add(newestAppsSlideBar);
+      
+      // add Newest Apps section to the page
+      canvas.add(newestApps);
+
+      // Most Liked Apps section
+      var likedAppsLayout = new qx.ui.layout.VBox();
+      var likedApps = new qx.ui.container.Composite(likedAppsLayout);
+
+      // Liked Apps heading
+      var likedAppsHeader = new qx.ui.basic.Label();
+      likedAppsHeader.set(
+        {
+          value      : "<h3>Most Liked Apps</h3>",
+          rich       : true
+        });
+      likedApps.add(likedAppsHeader);
+      
+      // slide bar of liked Apps
+      var likedAppsSlideBar = new qx.ui.container.SlideBar();
+      likedAppsSlideBar.set(
+        {
+          height : 180
+        });
+      
+      fsm.addObject("Most Liked Apps", likedAppsSlideBar);
+      likedApps.add(likedAppsSlideBar);
+      
+      // add Newest Apps section to the page
+      canvas.add(likedApps);
     },
 
 
@@ -197,7 +249,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
         var featuredApps = fsm.getObject("Featured Apps");
         
         // Retrieve the app list
-        var apps = response.data.result.apps;
+        var apps = response.data.result.Featured;
 
         // FIXME: KLUDGE: should be able to update without remove/add!!!
         var parent = featuredApps.getLayoutParent();
