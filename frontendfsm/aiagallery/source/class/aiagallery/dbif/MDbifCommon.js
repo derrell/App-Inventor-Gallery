@@ -166,6 +166,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       case "intersectKeywordAndQuery":
       case "getAppInfo":
       case "getAppListByList":
+      case "getHomeRibbonData":
           return true;            // Anonymous access
       
       //

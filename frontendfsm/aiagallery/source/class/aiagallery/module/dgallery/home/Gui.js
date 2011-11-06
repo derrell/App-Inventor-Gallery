@@ -171,6 +171,58 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       
       // add Featured Apps section to the page
       canvas.add(featuredApps);
+
+      // Newest Apps section
+      var newestAppsLayout = new qx.ui.layout.VBox();
+      var newestApps = new qx.ui.container.Composite(newestAppsLayout);
+
+      // Newest Apps heading
+      var newestAppsHeader = new qx.ui.basic.Label();
+      newestAppsHeader.set(
+        {
+          value      : "<h3>Newest Apps</h3>",
+          rich       : true
+        });
+      newestApps.add(newestAppsHeader);
+      
+      // slide bar of Newest Apps
+      var newestAppsSlideBar = new qx.ui.container.SlideBar();
+      newestAppsSlideBar.set(
+        {
+          height : 180
+        });
+      
+      fsm.addObject("Newest Apps", newestAppsSlideBar);
+      newestApps.add(newestAppsSlideBar);
+      
+      // add Newest Apps section to the page
+      canvas.add(newestApps);
+
+      // Most Liked Apps section
+      var likedAppsLayout = new qx.ui.layout.VBox();
+      var likedApps = new qx.ui.container.Composite(likedAppsLayout);
+
+      // Liked Apps heading
+      var likedAppsHeader = new qx.ui.basic.Label();
+      likedAppsHeader.set(
+        {
+          value      : "<h3>Most Liked Apps</h3>",
+          rich       : true
+        });
+      likedApps.add(likedAppsHeader);
+      
+      // slide bar of liked Apps
+      var likedAppsSlideBar = new qx.ui.container.SlideBar();
+      likedAppsSlideBar.set(
+        {
+          height : 180
+        });
+      
+      fsm.addObject("Most Liked Apps", likedAppsSlideBar);
+      likedApps.add(likedAppsSlideBar);
+      
+      // add Newest Apps section to the page
+      canvas.add(likedApps);
     },
 
 
@@ -200,12 +252,16 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       // Dispatch to the appropriate handler, depending on the request type
       switch(requestType)
       {
-      case "appQuery":
-        // Get the gallery object
+      case "getHomeRibbonData":
+        // Get the gallery objects
         var featuredApps = fsm.getObject("Featured Apps");
+        var newestApps = fsm.getObject("Newest Apps");
+        var likedApps = fsm.getObject("Most Liked Apps");  
         
-        // Retrieve the app list
-        var apps = response.data.result.apps;
+        // Retrieve the app lists
+        var featuredAppsList = response.data.result.Featured;
+        var newestAppsList = response.data.result.Newest;
+        var likedAppsList = response.data.result.MostLiked;
 
         // FIXME: KLUDGE: should be able to update without remove/add!!!
         var parent = featuredApps.getLayoutParent();
@@ -217,22 +273,82 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
           });
         fsm.addObject("Featured Apps", featuredApps);
         parent.add(featuredApps);
+
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        parent = newestApps.getLayoutParent();
+        parent.remove(newestApps);
+        newestApps = new qx.ui.container.SlideBar();
+        newestApps.set(
+          {
+            height : 180
+          });
+        fsm.addObject("Newest Apps", newestApps);
+        parent.add(newestApps);
+
+        // FIXME: KLUDGE: should be able to update without remove/add!!!
+        parent = likedApps.getLayoutParent();
+        parent.remove(likedApps);
+        likedApps = new qx.ui.container.SlideBar();
+        likedApps.set(
+          {
+            height : 180
+          });
+        fsm.addObject("Most Liked Apps", likedApps);
+        parent.add(likedApps);
         
-        for (var i = 0; i < apps.length; i++)
+        //This will fill the ribbons with data. 
+        //Each list contains 8 apps so use the size of one list.
+        for (var i = 0; i < featuredAppsList.length; i++)
         {
-          var app = apps[i];
+          var appFeatured = featuredAppsList[i];
+          var appNewest = newestAppsList[i];
+          var appLiked = likedAppsList[i];
           
           // FIXME: Need to fetch visitor's displayName to show instead of id
-          var appThumb = 
-            new aiagallery.widget.AppThumb(app.label, app.owner, app.icon);
-          featuredApps.add(appThumb);
+          var appThumbFeatured = 
+            new aiagallery.widget.AppThumb(appFeatured.title, appFeatured.owner, appFeatured.image1);
+          featuredApps.add(appThumbFeatured);
           
           // Associate the app data with the UI widget so it can be passed
           // in the click event callback
-          appThumb.setUserData("App Data", app);
+          appThumbFeatured.setUserData("App Data", appFeatured);
           
           // Fire an event specific to this application, sans a friendly name.
-          appThumb.addListener(
+          appThumbFeatured.addListener(
+            "click", 
+            function(e)
+            {
+              fsm.fireImmediateEvent("featuredAppClick", this, 
+                e.getCurrentTarget().getUserData("App Data"));
+            });
+
+          var appThumbNewest = 
+            new aiagallery.widget.AppThumb(appNewest.title, appNewest.owner, appNewest.image1);
+          newestApps.add(appThumbNewest);
+
+          // Associate the app data with the UI widget so it can be passed
+          // in the click event callback
+          appThumbNewest.setUserData("App Data", appNewest);
+          
+          // Fire an event specific to this application, sans a friendly name.
+          appThumbNewest.addListener(
+            "click", 
+            function(e)
+            {
+              fsm.fireImmediateEvent("featuredAppClick", this, 
+                e.getCurrentTarget().getUserData("App Data"));
+            });
+
+          var appThumbLiked = 
+            new aiagallery.widget.AppThumb(appLiked.title, appLiked.owner, appLiked.image1);
+          likedApps.add(appThumbLiked);
+
+          // Associate the app data with the UI widget so it can be passed
+          // in the click event callback
+          appThumbLiked.setUserData("App Data", appLiked);
+          
+          // Fire an event specific to this application, sans a friendly name.
+          appThumbLiked.addListener(
             "click", 
             function(e)
             {
