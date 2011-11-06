@@ -288,13 +288,10 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
         fsm.addObject("Most Liked Apps", likedApps);
         parent.add(likedApps);
         
-        //This will fill the ribbons with data. 
-        //Each list contains 8 apps so use the size of one list.
+        //Fill the featured apps ribbon with data
         for (var i = 0; i < featuredAppsList.length; i++)
         {
           var appFeatured = featuredAppsList[i];
-          var appNewest = newestAppsList[i];
-          var appLiked = likedAppsList[i];
           
           // FIXME: Need to fetch visitor's displayName to show instead of id
           var appThumbFeatured = 
@@ -313,7 +310,12 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
               fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
+        }
 
+        //Fill the newest apps ribbon with data
+        for (var i = 0; i < newestAppsList.length; i++)
+        {
+          var appNewest = newestAppsList[i];
           var appThumbNewest = 
             new aiagallery.widget.AppThumb(appNewest.title, appNewest.owner, appNewest.image1);
           newestApps.add(appThumbNewest);
@@ -330,6 +332,12 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
               fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
+        }
+
+        //Fill the most liked apps ribbon with data
+        for (var i = 0; i < likedAppsList.length; i++)
+        {
+          var appLiked = likedAppsList[i];
 
           var appThumbLiked = 
             new aiagallery.widget.AppThumb(appLiked.title, appLiked.owner, appLiked.image1);
@@ -347,7 +355,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
               fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
-        }       
+        }
+       
         break;
         
       default:
