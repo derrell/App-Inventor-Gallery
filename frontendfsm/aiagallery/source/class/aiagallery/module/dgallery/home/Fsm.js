@@ -175,9 +175,9 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
           {
             // Create a new module (tab) for this application
             app = new aiagallery.main.Module(
-                    item.label,
+                    item.title,
                     null,
-                    item.label,
+                    item.title,
                     aiagallery.module.dgallery.appinfo.AppInfo,
                     [
                       function(menuItem, page, subTabs)
@@ -198,8 +198,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
             
             // Start up the new module
             moduleList = {};
-            moduleList[item.label] = {};
-            moduleList[item.label][item.label] = app;
+            moduleList[item.title] = {};
+            moduleList[item.title][item.title] = app;
             aiagallery.Application.addModules(moduleList);
           }
         }
@@ -226,7 +226,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
         "ontransition" : function(fsm, event)
         {          
             
-          // Issue the remote procedure call to execute the query get the front page ribbons
+          // Issue the remote procedure call to execute the query.
+          // In essence get the front page ribbons.
           var request =
               this.callRpc(fsm,
                          "aiagallery.features",
