@@ -1092,8 +1092,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var searchResponseFeatured = 
           rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
 
+      // Manipulate each App individually, before returning
+      searchResponseFeatured.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
       //Create and execute query for "Most Liked" apps. 
-      var criterion = 
+      criterion = 
         {
           type  : "element",
           field : "status",
@@ -1109,8 +1122,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var searchResponseLiked = 
           rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
+      // Manipulate each App individually, before returning
+      searchResponseLiked.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
       //Create and execute query for "Newest" apps.
-      var criterion = 
+      criterion = 
         {
           type  : "element",
           field : "status",
@@ -1125,6 +1151,19 @@ qx.Mixin.define("aiagallery.dbif.MApps",
 
       var searchResponseNewest = 
           rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+
+      // Manipulate each App individually, before returning
+      searchResponseNewest.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
 
       //Construct map of data
       var data = {
