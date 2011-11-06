@@ -102,9 +102,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       // Add "Find Apps" box to link row
       text =
         [
-          "Lorem ipsum dolor sit amet, consectetur ",
-          "adipiscing elit. Integer quis arcu ut velit ullamcorper mattis ",
-          "in quis metus."
+	  "Use <b>Find Apps</b> to browse apps by tag, or search for them ",
+          "using a variety of parameters."
         ].join("");
       var findApps = new aiagallery.module.dgallery.home.LinkBox(
         "<b>Find Apps</b><br>" + text,
@@ -117,6 +116,11 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
             
       // Add "Learn" box to link row
+      text =
+        [
+	 "The <b>Learn</b> page will have for information about ",
+	 "the Community Gallery's features.  Nothing here yet."
+        ].join("");
       var learn = new aiagallery.module.dgallery.home.LinkBox(
         "<b>Learn</b><br>" + text,
         "aiagallery/learn.png");
@@ -128,6 +132,10 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
       
       // Add "My Stuff" box to link row
+      text =
+        [
+	 "Go to <b>My Stuff</b> to review and change your uploaded projects."
+        ].join("");
       var myStuff = new aiagallery.module.dgallery.home.LinkBox(
         "<b>My Stuff</b><br>" + text,
         "aiagallery/myStuff.png");

@@ -13,64 +13,90 @@ qx.Class.define("aiagallery.test.VisitorsTest",
 
   members :
   {
+    // Instantiate this to aiagalelry.dbif.DbifSim.getInstance()
+    dbifSim : null,
+    
 
-    "test: Owner Id and Display Name exchange" : function()
+    setUp : function()
     {
       // Get access to the RPC implementations. This includes the mixins for
-      // all RPCs.
-      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
-      
-      dbifSim.setWhoAmI(
+      // all RPCs.      
+      this.dbifSim = aiagallery.dbif.DbifSim.getInstance();
+
+      // We need an error object
+      this.error = new rpcjs.rpc.error.Error("2.0");
+    },
+    
+    "test: Owner Id and Display Name exchange" : function()
+    {
+      var db =
+      {
+        visitors:
+        {
+          "joe@blow.com" :
+          {
+            displayName  : "Joe Blow",
+            id           : "joe@blow.com",
+            permissions  : [],
+            status       : aiagallery.dbif.Constants.Status.Active
+          }
+        },
+        tags:     {},
+        search:   {},
+        likes:    {},
+        flags:    {},
+        downloads:{},
+        comments: {},
+        apps:     {}
+      };
+
+      // Use our test-specific database
+      rpcjs.sim.Dbif.setDb(db);
+
+      this.dbifSim.setWhoAmI(
         {
           email     : "joe@blow.com",
           userId    : "Joe Blow",
           isAdmin   : false
         });
       
-      var whoAmI = dbifSim.whoAmI();
+      var whoAmI = this.dbifSim.whoAmI();
 
-      // We need an error object
-      var error = new rpcjs.rpc.error.Error("2.0");
-      
       var requestEmail = aiagallery.dbif.MVisitors._getVisitorId(whoAmI.userId,
-                                                                error);
+                                                                 this.error);
 
       var requestDisplayName = aiagallery.dbif.MVisitors._getDisplayName(
-        whoAmI.email, error);
+        whoAmI.email, 
+        this.error);
 
       this.assertEquals(whoAmI.email, requestEmail, "Proper email returned");
 
       this.assertEquals(whoAmI.userId, requestDisplayName, "display name");
 
+      // Reset the db for other tests
+      rpcjs.sim.Dbif.setDb(aiagallery.dbif.MSimData.Db);
     },
 
     
     "test: edit profile with displayName" : function()
     {
-      // Get access to the RPC implementations. This includes the mixins for
-      // all RPCs.
-      var dbifSim = aiagallery.dbif.DbifSim.getInstance();
-      
       // Log in as a known existing user
-      dbifSim.setWhoAmI(
+      this.dbifSim.setWhoAmI(
         {
           email     : "joe@blow.com",
           userId    : "Joe Blow",
           isAdmin   : false
         });
       
-      // We need an error object
-      var error = new rpcjs.rpc.error.Error("2.0");
-
-      var result = dbifSim.editProfile(
+      var result = this.dbifSim.editProfile(
         {
           "displayName" : "Cokehead"
         },
-        error);
+        this.error);
       
       // Retrieve the visitor object for Joe
       var joe = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                        dbifSim.getWhoAmI().email)[0];
+                                        this.dbifSim.getWhoAmI().email)[0];
       
       // Ensure that his display name is what it should be
       this.assertEquals("Cokehead", joe.displayName);

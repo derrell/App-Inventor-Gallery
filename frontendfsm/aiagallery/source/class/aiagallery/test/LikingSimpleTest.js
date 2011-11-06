@@ -28,8 +28,14 @@ qx.Class.define("aiagallery.test.LikingSimpleTest",
                                              owner    : "me",
                                              description: "hello",
                                              title : "a title",
-                                             tags : ["tag", "anotherTag"],
-                                             source : "sources"
+                                             tags :
+                                             [
+                                               "tag", 
+                                               "anotherTag",
+                                               "Development"
+                                             ],
+                                             source : "sources",
+                                             image1 : "xxx"
                                            },
                                            error);
 

@@ -202,6 +202,10 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
             moduleList[item.title][item.title] = app;
             aiagallery.Application.addModules(moduleList);
           }
+
+          // Add a module for the specified app
+          aiagallery.module.dgallery.appinfo.AppInfo.addAppView(item.uid, 
+                                                                item.label);
         }
       });
       

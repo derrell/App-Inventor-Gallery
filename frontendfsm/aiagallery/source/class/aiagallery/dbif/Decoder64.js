@@ -20,6 +20,8 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       var           contents;
       var           decodedContents;
       var           blobIds;
+      var           name = null;
+      var           ret;
       
       // Get an instance of the object whose field is requested
       myObj = new aiagallery.dbif.ObjAppData(parseInt(appId,10));
@@ -41,6 +43,9 @@ qx.Class.define("aiagallery.dbif.Decoder64",
         // Retrieve the blob data, which is the base64-encoded data. We want
         // the most recent entry, so use index 0.
         fieldContent = rpcjs.dbif.Entity.getBlob(blobIds[0]);
+        
+        // Also specify the file name
+        name = myObj.getData()[base64field + "FileName"];
         break;
         
       default:
@@ -64,11 +69,24 @@ qx.Class.define("aiagallery.dbif.Decoder64",
       contents = fieldContent.substring(fieldContent.indexOf(",") + 1);
       
       // Send the url to the decoder function
-//      decodedContents = qx.util.Base64.decode(contents, true);
       decodedContents = aiagallery.dbif.Decoder64.__decode(contents);
       
       // Give 'em what they want
-      return { mime: mimeType, content: decodedContents };
+      ret =
+        {
+          mime    : mimeType,
+          content : decodedContents
+        };
+      
+      // If there's a file name...
+      if (name)
+      {
+        // ... then add it too
+        ret.name = name;
+      }
+      
+      // Give 'em what they came for
+      return ret;
     },
 
     /**
