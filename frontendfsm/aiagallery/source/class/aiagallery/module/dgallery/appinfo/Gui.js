@@ -476,7 +476,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
                    this.viewsLikes.setValue('<b>' + 
                                    this.numViewed +
                                    ' views, ' +
-                                   this.numLikes+
+                                   this.numLikes +
                                    ' likes</b>');
       },
 

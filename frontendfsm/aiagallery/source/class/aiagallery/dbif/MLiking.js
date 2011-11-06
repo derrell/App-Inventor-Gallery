@@ -51,11 +51,44 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
         return error;
       }
       
-      appDataObj.numLikes++;
-      
-      appObj.put();
+      var critieria =
+          {
+              type : "op",
+              method : "and",
+              children : [
+                  {
+                      type : "element",
+                      field : "app",
+                      value : appId
+                  },
+                  {
+                      type : "element",
+                      field : "visitor",
+                      value : this.whoAmI().email
+                  }
+              ]
+          };
 
-      return appDataObj.numLikes;
+      // execute search
+      var searchResponse = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes", critieria);
+      
+      if (searchResponse.length == 0){          
+          var likeObj = new aiagallery.dbif.ObjLikes();
+          
+          var data =
+              {
+                  app : appId,
+                  visitor : this.whoAmI().email
+              };
+          
+          likeObj.setData(data);
+          likeObj.put();
+
+          appDataObj.numLikes++
+          appObj.put();
+      }
+
+        return appDataObj.numLikes;
     }
   }
 });

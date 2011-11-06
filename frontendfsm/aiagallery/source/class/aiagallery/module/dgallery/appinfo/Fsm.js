@@ -77,6 +77,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
               "likeItButton" :
               "Transition_Idle_to_AwaitRpcResult_via_likeItButton"  
           },
+
           "appearComments" :
           {
             "ignoreMe" : 
