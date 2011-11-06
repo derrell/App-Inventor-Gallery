@@ -285,7 +285,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
           {
             height : 180
           });
-        fsm.addObject("Most Liked Apps", featuredApps);
+        fsm.addObject("Most Liked Apps", likedApps);
         parent.add(likedApps);
         
         //This will fill the ribbons with data. 
@@ -297,16 +297,16 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
           var appLiked = likedAppsList[i];
           
           // FIXME: Need to fetch visitor's displayName to show instead of id
-          var appThumb = 
-            new aiagallery.widget.AppThumb(appFeatured.label, appFeatured.owner, appFeatured.icon);
-          featuredApps.add(appThumb);
+          var appThumbFeatured = 
+            new aiagallery.widget.AppThumb(appFeatured.title, appFeatured.owner, appFeatured.image1);
+          featuredApps.add(appThumbFeatured);
           
           // Associate the app data with the UI widget so it can be passed
           // in the click event callback
-          appThumb.setUserData("App Data", appFeatured);
+          appThumbFeatured.setUserData("App Data", appFeatured);
           
           // Fire an event specific to this application, sans a friendly name.
-          appThumb.addListener(
+          appThumbFeatured.addListener(
             "click", 
             function(e)
             {
@@ -314,16 +314,16 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
                 e.getCurrentTarget().getUserData("App Data"));
             });
 
-          appThumb = 
-            new aiagallery.widget.AppThumb(appNewest.label, appNewest.owner, appNewest.icon);
-          newestApps.add(appThumb);
+          var appThumbNewest = 
+            new aiagallery.widget.AppThumb(appNewest.title, appNewest.owner, appNewest.image1);
+          newestApps.add(appThumbNewest);
 
           // Associate the app data with the UI widget so it can be passed
           // in the click event callback
-          appThumb.setUserData("App Data", appNewest);
+          appThumbNewest.setUserData("App Data", appNewest);
           
           // Fire an event specific to this application, sans a friendly name.
-          appThumb.addListener(
+          appThumbNewest.addListener(
             "click", 
             function(e)
             {
@@ -331,16 +331,16 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
                 e.getCurrentTarget().getUserData("App Data"));
             });
 
-          appThumb = 
-            new aiagallery.widget.AppThumb(appLiked.label, appLiked.owner, appLiked.icon);
-          likedApps.add(appThumb);
+          var appThumbLiked = 
+            new aiagallery.widget.AppThumb(appLiked.title, appLiked.owner, appLiked.image1);
+          likedApps.add(appThumbLiked);
 
           // Associate the app data with the UI widget so it can be passed
           // in the click event callback
-          appThumb.setUserData("App Data", appLiked);
+          appThumbLiked.setUserData("App Data", appLiked);
           
           // Fire an event specific to this application, sans a friendly name.
-          appThumb.addListener(
+          appThumbLiked.addListener(
             "click", 
             function(e)
             {
