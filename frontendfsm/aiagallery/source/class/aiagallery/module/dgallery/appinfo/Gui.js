@@ -16,6 +16,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   members :
   {
+    // Private member variables.
+    // Wouldn't it simplify things if there were more of these,
+    // rather than passing lots of objects through the FSM?
+    __views : null,
+    __likes : null,
+
     /**
      * Build the raw graphical user interface.
      *
@@ -55,7 +61,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             appIcon;
       var             createdBy;
       var             viewsLikes;
-      var             likeItButton;
       var             flagItButton;
       var             emptyObject;
       var             commentInput;
@@ -100,8 +105,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Get the result data. It's an object with all of the application info.
         result = response.data.result;
  
-        // Sets the app's uid as a variable which can be passed to the FSM.
+        // Get some app data
         appId = result.uid;
+        this.__likes = result.numLikes;
+        this.__views = result.numViewed;
 
         // Create a horizontal box layout to store two vboxes in.
         hboxLayout = new qx.ui.layout.HBox();
@@ -177,11 +184,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(createdBy);
 
         // Create a label to display number of views and likes.
-        viewsLikes = new qx.ui.basic.Label('<b>' +
-                                               result.numViewed +
-                                               ' views, ' +
-                                               result.numLikes+
-                                               ' likes</b>');
+        viewsLikes = new qx.ui.basic.Label('<b>' + this.__views +
+                                           ' views, ' +
+                                           this.__likes + ' likes</b>');
 
         // Set the viewsLikes label to use rich formatting.
         viewsLikes.set(
@@ -195,12 +200,47 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the left vbox.
         vboxLeft.add(viewsLikes);
 
+        // Send views and likes label to FSM to then pass
+        // back to handleResponse()
+        fsm.addObject("viewsLikes", viewsLikes);
+
+        /*
+
+        // I'm not deleting this section yet, because it
+        // illustrates my question about using member variables versus
+        // passing objects through the fsm, which seems convoluted.
+
+        // I was going to do it this way until Derrell mentioned
+        // using member variables for views and likes.  Why not do that
+        // more generally, avoiding the need to pass things through
+        // the fsm using the complicated "friendly name" trick?
+
+
+        // Wrap views and likes into one object to send to FSM
+        // Only need views now, since we get likes from the RPC call,
+        // but might need likes in the future.
+        // FIXME:  Just make one big object to carry data to FSM?
+        
+        viewsLikesWrapper = new qx.core.Object();
+        viewsLikesWrapper.setUserData("views", views);
+        viewsLikesWrapper.setUserData("likes", likes);
+        fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
+        */
+
         // Create a button to allow users to "like" things.
-        // FIXME: Implement this
-        likeItButton = new qx.ui.form.Button("Like it!");
+        this.likeItButton = new qx.ui.form.Button("Like it!");
+        fsm.addObject("likeItButton", this.likeItButton);
+        this.likeItButton.addListener("execute", fsm.eventListener, fsm);
+
+        // If this user has already liked this app...
+        if (result.bAlreadyLiked)
+        {
+          // ... then disable the Like It! button
+          this.likeItButton.setEnabled(false);
+        }
 
         // Add it to the left vbox.
-        vboxLeft.add(likeItButton);
+        vboxLeft.add(this.likeItButton);
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
@@ -449,6 +489,27 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }   
         break;
 
+
+      case "likesPlusOne":
+        // Update like count from RPC (not just incrementing, which 
+        // might be wrong)
+        this.__likes = response.data.result;
+
+        // Retrieve viewsLikes label from the FSM
+        viewsLikes = rpcRequest.getUserData("viewsLikes");
+
+        // Rewrite label to reflect new # of likes
+        // maybeFIXMEbutprobablynot:  Duplicated code snippet
+        // between here and initial creation of this label.
+        viewsLikes.setValue('<b>' + this.__views + ' views, ' +
+                            this.__likes + ' likes</b>');
+   
+        
+        // Disable the Like It! button now since they can only like once
+        this.likeItButton.setEnabled(false);
+
+        break;
+
       default:
         throw new Error("Unexpected request type: " + requestType);
       }
@@ -492,7 +553,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // (which could use some additional tweaking, perhaps)
       // FIXME: This needs to be internationalized. There are existing
       // functions to do so.
-      var dateObj = new Date(commentTime);
+      var dateObj = new Date(commentTime); //not sure what to do here..
       var dateString = dateObj.toDateString();
       var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
       var dateTimeString = dateString + " " + timeString + " ET"; 

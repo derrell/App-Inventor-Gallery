@@ -30,7 +30,12 @@ qx.Class.define("aiagallery.test.AppsTest",
                                              description: 
                                              "A bunch of Totally Awesome words",
                                              title : "some title",
-                                             tags  : ["some tag"],
+                                             tags  : 
+                                             [
+                                               "Development", 
+                                               "some tag"
+                                             ],
+                                             image1 : "xxx",
                                              source : "somesource"
                                            },
                                           error);

@@ -43,12 +43,25 @@
  *   Module object as a parameter, and creates the finite state machine for
  *   the module (if applicable) and builds the graphical user interface for
  *   the module.
+ *
+ * @param functionList {Array}
+ *   An array of functions to call when creating the module. These might do
+ *   such things as adding buttons to a button bar, etc.
+ *
+ * @param bNewInstance {Boolean?false}
+ *   If true, must instantiate a new instance of the module; otherwise, the
+ *   module is a singleton, so its one instance is retrieved
  */
 qx.Class.define("aiagallery.main.Module",
 {
   extend : qx.core.Object,
 
-  construct : function(menuItem, menuIcon, moduleName, clazz, functionList)
+  construct : function(menuItem,
+                       menuIcon,
+                       moduleName,
+                       clazz,
+                       functionList,
+                       bNewInstance)
   {
     this.base(arguments);
 
@@ -78,6 +91,9 @@ qx.Class.define("aiagallery.main.Module",
 
     // Add this new module to the module list.
     aiagallery.main.Module._list[menuItem][moduleName] = this;
+    
+    // Specify whether this is to be a new instantiation or a singleton
+    this.bNewInstance = !!bNewInstance;
   },
 
   statics :

@@ -479,62 +479,12 @@ qx.Class.define("aiagallery.module.dgallery.findapps.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-          // Get the event data
           var             eventData = event.getData();
           var             item = eventData.item;
-          var             app;
-          var             moduleList;
-
-          // Get the main tab view
-          var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
           
-          // See if there's already a tab for this application
-          var page = null;
-          mainTabs.getChildren().forEach(
-            function(thisPage)
-            {
-              var uid = thisPage.getUserData("app_uid");
-              if (uid == item.uid)
-              {
-                page = thisPage;
-          
-                // Select the existing application page
-                mainTabs.setSelection([ page ]);
-              }
-            });
-          
-          // If we didn't find an existing tab, create a new one.
-          if (! page)
-          {
-            // Create a new module (tab) for this application
-            app = new aiagallery.main.Module(
-                    item.label,
-                    null,
-                    item.label,
-                    aiagallery.module.dgallery.appinfo.AppInfo,
-                    [
-                      function(menuItem, page, subTabs)
-                      {
-                        // Keep track of which UID this tab applies to
-                        page.setUserData("app_uid", item.uid);
-
-                        // Allow the user to close this tab
-                        page.setShowCloseButton(true);
-
-                        // Select the new application page
-                        mainTabs.setSelection([ page ]);
-                      }
-                    ]);
-            
-            // Transmit the UID of this module */
-            app.setUserData("app_uid", item.uid);
-            
-            // Start up the new module
-            moduleList = {};
-            moduleList[item.label] = {};
-            moduleList[item.label][item.label] = app;
-            aiagallery.Application.addModules(moduleList);
-          }
+          // Add a module for the specified app
+          aiagallery.module.dgallery.appinfo.AppInfo.addAppView(item.uid, 
+                                                                item.label);
         }
       });
 

@@ -18,10 +18,12 @@ qx.Class.define("aiagallery.dbif.ObjComments",
     // Pre-initialize the data
     this.setData(
       {
-        "timestamp"  : (new Date()).toString(),
-        "numChildren": 0,
-        "app"        : keyArr[0],
-        "treeId"     : keyArr[1]
+        "timestamp"       : aiagallery.dbif.MDbifCommon.currentTimestamp(),
+        "numChildren"     : 0,
+        "app"             : keyArr[0],
+        "treeId"          : keyArr[1],
+      	"status"          : aiagallery.dbif.Constants.Status.Active,
+        "numCurFlags"     : 0
       });
     
     // Use appId and treeId are a composite key
@@ -59,10 +61,16 @@ qx.Class.define("aiagallery.dbif.ObjComments",
         "visitor" : "String",
 
         /** Time the comment was made */
-        "timestamp" : "String",
+        "timestamp" : "Date",
 
         /** Text of this comment */
-        "text" : "String"
+        "text" : "String",
+
+        /** Status of this application (active, pending, banned) */
+        "status" : "Integer",
+
+        /** Total number of flags on this application */
+        "numCurFlags" : "Integer"
       };
 
     // Register our property types
