@@ -310,7 +310,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
             "click", 
             function(e)
             {
-              fsm.fireImmediateEvent("featuredAppClick", this, 
+              fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
 
@@ -327,7 +327,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
             "click", 
             function(e)
             {
-              fsm.fireImmediateEvent("featuredAppClick", this, 
+              fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
 
@@ -344,7 +344,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
             "click", 
             function(e)
             {
-              fsm.fireImmediateEvent("featuredAppClick", this, 
+              fsm.fireImmediateEvent("homeRibbonAppClick", this, 
                 e.getCurrentTarget().getUserData("App Data"));
             });
         }       
