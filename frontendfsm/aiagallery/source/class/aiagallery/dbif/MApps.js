@@ -1069,14 +1069,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      */
     getHomeRibbonData : function()
     { 
-      //Create map to specify specific return data from the query
-      var requestedData = {
-        uid    : "uid",
-        title  : "label", // remap name for Gallery
-        image1 : "icon",  // remap name for Gallery
-        owner  : "owner"
-      }; 
-
 
       // Create and execute query for "Featured" apps.
       var criterion = 
@@ -1086,7 +1078,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           value : "*Featured*"
         };
 
-
       var searchResponseFeatured = 
           rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
 
@@ -1094,25 +1085,35 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var criterion = 
         {
           type  : "element",
-          field : "tags",
-          value : "*Most Liked*"
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
         };
 
+      //Create map to specify specific return data from the upload time query
+      var requestedData = [
+         { type : "limit",  value : 10  },
+         { type : "sort",   field : "numLikes"  , order : "asc" }
+      ]; 
 
       var searchResponseLiked = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
       //Create and execute query for "Newest" apps.
       var criterion = 
         {
           type  : "element",
-          field : "tags",
-          value : "*Newest*"
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
         };
 
+      //Create map to specify specific return data from the upload time query
+      requestedData = [
+         { type : "limit",  value : 10  },
+         { type : "sort",   field : "uploadTime", order : "desc" }
+      ]; 
 
       var searchResponseNewest = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
 
       //Construct map of data
       var data = {
