@@ -1080,6 +1080,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
      */
     getHomeRibbonData : function()
     { 
+      var             owners;
 
       // Create and execute query for "Featured" apps.
       var criterion = 
@@ -1114,13 +1115,23 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
 
       //Create map to specify specific return data from the upload time query
-      var requestedData = [
-         { type : "limit",  value : 8  },
-         { type : "sort",   field : "numLikes"  , order : "asc" }
-      ]; 
+      var requestedData = 
+        [
+          {
+            type  : "limit",
+            value : aiagallery.dbif.Constants.RIBBON_NUM_MOST_LIKED  
+          },
+          { 
+            type  : "sort",   
+            field : "numLikes",
+            order : "desc" 
+          }
+        ]; 
 
       var searchResponseLiked = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                criterion,
+                                requestedData);
 
       // Manipulate each App individually, before returning
       searchResponseLiked.forEach(
@@ -1144,38 +1155,45 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         };
 
       //Create map to specify specific return data from the upload time query
-      requestedData = [
-         { type : "limit",  value : 8  },
-         { type : "sort",   field : "uploadTime", order : "desc" }
-      ]; 
+      requestedData = 
+        [
+          {
+            type : "limit",
+            value : aiagallery.dbif.Constants.RIBBON_NUM_NEWEST
+          },
+          {
+            type  : "sort",
+            field : "uploadTime",
+            order : "desc" }
+        ]; 
 
       var searchResponseNewest = 
-          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                criterion,
+                                requestedData);
 
       // Manipulate each App individually, before returning
       searchResponseNewest.forEach(
-          function(app)
-          {
-            // Replace the owner name with the owner's display name
-            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                            app["owner"]);
+        function(app)
+        {
+          // Replace the owner name with the owner's display name
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                           app["owner"]);
 
-            // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
-                      
-          });
+          // Replace his visitor id with his display name
+          app["owner"] = owners[0].displayName;
+        });
 
       //Construct map of data
-      var data = {
+      var data = 
+        {
           "Featured"     :    searchResponseFeatured,   
-          "MostLiked"   :    searchResponseLiked,
+          "MostLiked"    :    searchResponseLiked,
           "Newest"       :    searchResponseNewest
-
-      };
+        };
 
       //Return the map containing the arrays containing the apps. 
       return data;
-   
     },
       
     /**
