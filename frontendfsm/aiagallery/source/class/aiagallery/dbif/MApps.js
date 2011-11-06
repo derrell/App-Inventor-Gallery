@@ -27,6 +27,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          this.getAppListAll,
                          [ "bStringize", "sortCriteria", "offset", "limit" ]);
 
+    this.registerService("getHomeRibbonData",
+                         this.getHomeRibbonData); 
+
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
@@ -1064,6 +1067,115 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       // Return the intersection between the two result sets
       return intersectionArr;    
       
+    },
+
+    /**
+     * Performs three queries to retrive the Featured, Most Liked, and Newest. 
+     * This is for the front page ribbon.
+     * 
+     * @return {Map}
+     *   The return value is a map with arrays in it. Each array in the map 
+     *   corresponds to one of the three search queries.  
+     *
+     */
+    getHomeRibbonData : function()
+    { 
+
+      // Create and execute query for "Featured" apps.
+      var criterion = 
+        {
+          type  : "element",
+          field : "tags",
+          value : "*Featured*"
+        };
+
+      var searchResponseFeatured = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+
+      // Manipulate each App individually, before returning
+      searchResponseFeatured.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
+      //Create and execute query for "Most Liked" apps. 
+      criterion = 
+        {
+          type  : "element",
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
+        };
+
+      //Create map to specify specific return data from the upload time query
+      var requestedData = [
+         { type : "limit",  value : 8  },
+         { type : "sort",   field : "numLikes"  , order : "asc" }
+      ]; 
+
+      var searchResponseLiked = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+
+      // Manipulate each App individually, before returning
+      searchResponseLiked.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
+      //Create and execute query for "Newest" apps.
+      criterion = 
+        {
+          type  : "element",
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
+        };
+
+      //Create map to specify specific return data from the upload time query
+      requestedData = [
+         { type : "limit",  value : 8  },
+         { type : "sort",   field : "uploadTime", order : "desc" }
+      ]; 
+
+      var searchResponseNewest = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion, requestedData);
+
+      // Manipulate each App individually, before returning
+      searchResponseNewest.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
+      //Construct map of data
+      var data = {
+          "Featured"     :    searchResponseFeatured,   
+          "MostLiked"   :    searchResponseLiked,
+          "Newest"       :    searchResponseNewest
+
+      };
+
+      //Return the map containing the arrays containing the apps. 
+      return data;
+   
     },
       
     /**
