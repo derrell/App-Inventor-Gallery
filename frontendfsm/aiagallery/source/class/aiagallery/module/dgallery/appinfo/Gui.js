@@ -9,8 +9,17 @@
 /**
  * The graphical user interface for the individual application pages
  */
+
 qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 {
+
+  // Declares resources to be used for icons
+  /**
+  #asset(qx/icon/Oxygen/16/status/dialog-warning.png)
+  #asset(qx/icon/Oxygen/16/status/dialog-error.png)
+  #asset(qx/icon/Oxygen/16/emotes/face-smile.png)
+  */
+
   type : "singleton",
   extend : qx.core.Object,
 
@@ -68,6 +77,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             commentWrapper;
       var             submitCommentBtn;
       var             scrollContainer;
+      var             hboxFlagLike;
       var             vbox;
       var             downloadLabel;
       var             download;
@@ -227,8 +237,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
         */
 
+        // Create a horizontal box for the next two buttons
+        hboxFlagLike =
+          new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+
         // Create a button to allow users to "like" things.
-        this.likeItButton = new qx.ui.form.Button("Like it!");
+        this.likeItButton = 
+          new qx.ui.form.Button("Like it!",
+                                "qx/icon/Oxygen/16/emotes/face-smile.png");
         fsm.addObject("likeItButton", this.likeItButton);
         this.likeItButton.addListener("execute", fsm.eventListener, fsm);
 
@@ -244,10 +260,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
-        flagItButton = new qx.ui.form.Button("Flag it!");
+        flagItButton = new aiagallery.widget.Button("Flag it!", 
+                         "qx/icon/Oxygen/16/status/dialog-error.png");
 
-        // Add it to the left vbox.
-        vboxLeft.add(flagItButton);
+        // Add likeItButton to the hbox.
+        hboxFlagLike.add(this.likeItButton, { flex : 1 });
+
+        // Add flagItButton to the hbox.
+        hboxFlagLike.add(flagItButton, { flex : 1 });
+
+	// Add hboxFlagLike to left vbox
+        vboxLeft.add(hboxFlagLike);
 
        // Creates an object on which to call the getComments event, in order
        // to add them to the GUI
