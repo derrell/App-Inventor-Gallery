@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 Derrell Lipman
+ * Copyright (c) 2011 Joseph Bet-Eivazi
  * 
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
@@ -15,7 +15,7 @@ qx.Class.define("aiagallery.widget.Button",
       apperance :
       {
         refine : true,
-	  init : "likeIt/flagIt-button"
+	init : "likeIt/flagIt-button"
       }
     }
 });

@@ -15,7 +15,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
   // Declares resources to be used for icons
   /**
-  #asset(qx/icon/Oxygen/16/apps/utilities-dictionary.png)
+  #asset(qx/icon/Oxygen/16/status/dialog-warning.png)
+  #asset(qx/icon/Oxygen/16/status/dialog-error.png)
+  #asset(qx/icon/Oxygen/16/emotes/face-smile.png)
   */
 
   type : "singleton",
@@ -210,12 +212,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a button to allow users to "like" things.
         // FIXME: Implement this
         likeItButton = new aiagallery.widget.Button("Like it!", 
-                         "qx/icon/Oxygen/16/apps/utilities-dictionary.png");
+                         "qx/icon/Oxygen/16/emotes/face-smile.png");
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
         flagItButton = new aiagallery.widget.Button("Flag it!", 
-                         "qx/icon/Oxygen/16/apps/utilities-dictionary.png");
+                         "qx/icon/Oxygen/16/status/dialog-error.png");
 
         // Add likeItButton to the hbox.
         hboxFlagLike.add(likeItButton, { flex : 1 });
