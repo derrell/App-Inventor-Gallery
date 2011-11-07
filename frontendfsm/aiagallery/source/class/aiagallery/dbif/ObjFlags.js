@@ -19,7 +19,7 @@ qx.Class.define("aiagallery.dbif.ObjFlags",
         "app"         : null,
         "comment"     : null,
         "visitor"     : null,
-        "timestamp"   : String((new Date()).getTime()),
+        "timestamp"   : aiagallery.dbif.MDbifCommon.currentTimestamp(),
         "explanation" : null
       });
 
@@ -40,13 +40,13 @@ qx.Class.define("aiagallery.dbif.ObjFlags",
         "app" : "Key",
 
         /** Tree ID of the Comment object which was flagged */
-        "commentTreeId" : "String",
+        "comment" : "String",
 
         /** Id of the Visitor who flagged the application or comment */
         "visitor" : "String",
 
         /** Time the like occurred */
-        "timestamp" : "String",
+        "timestamp" : "Date",
 
         /** Explanation for why the application or comment was flagged */
         "explanation" : "String"

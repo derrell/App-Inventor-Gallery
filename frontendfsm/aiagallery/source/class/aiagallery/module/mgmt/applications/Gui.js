@@ -25,6 +25,7 @@ qx.Class.define("aiagallery.module.mgmt.applications.Gui",
     buildGui : function(module)
     {
       var             o;
+      var             col;
       var             fsm = module.fsm;
       var             canvas = module.canvas;
       var             rowData;
@@ -84,30 +85,68 @@ qx.Class.define("aiagallery.module.mgmt.applications.Gui",
       // Generate a simple table model
       var model = new qx.ui.table.model.Simple();
 
-      // Define the table columns
-      model.setColumns([ 
-                         this.tr("Owner"),
-                         this.tr("Title"),
-                         this.tr("Description"),
-                         this.tr("Tags"),
-                         this.tr("Status"),
-                         this.tr("apk"),
-                         this.tr("image1"),
-                         this.tr("image2"),
-                         this.tr("image3")
+      var columns =
+        [
+          { 
+            heading : this.tr("Owner"),
+            id      : "owner",
+            colSet  : { width : 90 }
+          },
 
-                       ],
-                       [
-                         "owner",
-                         "title",
-                         "description",
-                         "tags",
-                         "status",
-                         "apk",
-                         "image1",
-                         "image2",
-                         "image3"
-                       ]);
+          { 
+            heading : this.tr("Display Name"),
+            id      : "displayName",
+            colSet  : { width : 90 }
+          },
+          { 
+            heading : this.tr("Title"),
+            id      : "title",
+            colSet  : { width : "1*" }
+          },
+          { 
+            heading : this.tr("Description"),
+            id      : "description",
+            colSet  : { width : "2*" }
+          },
+          { 
+            heading : this.tr("Tags"),
+            id      : "tags",
+            colSet  : { width : 120 }
+          },
+          { 
+            heading : this.tr("Status"),
+            id      : "status",
+            colSet  : { width : 50 }
+          },
+          { 
+            heading : this.tr("Image 1"),
+            id      : "image1",
+            colSet  : { width : 24 },
+            type    : "image"
+          },
+          { 
+            heading : this.tr("Image 2"),
+            id      : "image2",
+            colSet  : { width : 24 },
+            type    : "image"
+          },
+          { 
+            heading : this.tr("Image 3"),
+            id      : "image3",
+            colSet  : { width : 24 },
+            type    : "image"
+          }
+        ];
+
+      // Define the table columns
+      model.setColumns(columns.map(function(elem)
+                                   {
+                                     return elem.heading; 
+                                   }),
+                       columns.map(function(elem)
+                                   {
+                                     return elem.id;
+                                   }));
 
       // Set all columns editable
       model.setEditable(true);
@@ -141,18 +180,33 @@ qx.Class.define("aiagallery.module.mgmt.applications.Gui",
       // Specify the resize behavior. Obtain the behavior object to manipulate
       var resizeBehavior = tcm.getBehavior();
 
-      // Set the Permissions and Status fields to nearly fixed widths, and then
-      // let the Name and Email fields take up the remaining space.
-      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Display Name
-      resizeBehavior.set(1, { width:"1*", minWidth:200 }); // Email
-      resizeBehavior.set(2, { width:200                }); // Permissions
-      resizeBehavior.set(3, { width:60                 }); // Status
-
+      // We'll use our cell editor factory for getting editor of for any column
       var editor = new aiagallery.module.mgmt.applications.CellEditorFactory();
-      tcm.setCellEditorFactory(0, editor);
-      tcm.setCellEditorFactory(1, editor);
-      tcm.setCellEditorFactory(2, editor);
-      tcm.setCellEditorFactory(3, editor);
+
+      // Set cell editor factory and behavior for each column
+      columns.forEach(
+        function(elem, col)
+        {
+          // Set the same cell editor factory for all columns
+          tcm.setCellEditorFactory(col, editor);
+          
+          // Apply the column-specific settings
+          resizeBehavior.set(col, elem.colSet);
+          
+          // If this is an image column...
+          if (elem.type && elem.type == "image")
+          {
+            // Instantiate an image cell renderer
+            var o = new qx.ui.table.cellrenderer.Image();
+
+            // Ensure that images are scaled to the limited space available
+            o.setRepeat("scale");
+
+            // Use this cell renderer for the specified column
+            tcm.setDataCellRenderer(col, o);
+          }
+        },
+        this);
 
       // Listen for changeSelection events so we can enable/disable buttons
       var selectionModel = table.getSelectionModel();
