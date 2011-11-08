@@ -75,7 +75,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             "Transition_Idle_to_AwaitRpcResult_via_submit_comment",
 
             "likeItButton" : 
-              "Transition_Idle_to_AwaitRpcResult_via_likeItButton"
+              "Transition_Idle_to_AwaitRpcResult_via_likeItButton",
+
+	    "flagItButton" :
+	      "Transition_Idle_to_AwaitRpcResult_via_flag",
           },
           "appearComments" :
           {
@@ -307,6 +310,40 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
         }
       });
 
+      state.addTransition(trans);
+
+
+      state.addTransition(trans);
+
+      trans = new qx.util.fsm.Transition(
+        "Transition_Idle_to_AwaitRpcResult_via_flag",
+      {
+        "nextState" : "State_AwaitRpcResult",
+
+        "context" : this,
+
+        "ontransition" : function(fsm, event)
+        {
+
+ /*
+         var request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "flagIt",
+                         [ 1,"it is obscene",101,"0001"]);
+*/
+          var request =
+            this.callRpc(fsm,
+                         "aiagallery.features",
+                         "flagIt",
+                         [ 0,"it is obscene", 101, null]);
+
+
+          // When we get the result, we'll need to know what type of request
+          // we made.
+          request.setUserData("requestType", "flagIt");
+        }
+      });
       state.addTransition(trans);
 
 

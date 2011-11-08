@@ -237,8 +237,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(likeItButton);
 
         // Create a button to allow users to "flag" things.
-        // FIXME: Implement this
         flagItButton = new qx.ui.form.Button("Flag it!");
+        fsm.addObject("flagItButton", flagItButton);
+        flagItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add it to the left vbox.
         vboxLeft.add(flagItButton);
@@ -498,6 +499,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         viewsLikes.setValue('<b>' + this.__views + ' views, ' +
                             this.__likes + ' likes</b>');
    
+        break;
+
+      case "flagIt":
+
+        console.log(response.data.result );
         break;
 
       default:

@@ -55,6 +55,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       var            criteria;
       var            newFlag;
       var            Data;
+      var            flagsList;
 
 
       var            visitorId= this.whoAmI().email;
@@ -83,43 +84,74 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             return error;
           }
 
-          // initialize the new flag to be put on the database
-          newFlag = new aiagallery.dbif.ObjFlags();
+          // Construct query criteria for "flags of this app by current visitor"
+          criteria = 
+            {
+              type : "op",
+              method : "and",
+              children : 
+              [
+                {
+                  type: "element",
+                  field: "app",
+                  value: appId
+                },
+                {
+                  type: "element",
+                  field: "visitor",
+                  value: visitorId
+                }
+              ]
+            };
+          // Query for the likes of this app by the current visitor
+          // (an array, which should have length zero or one).
+          flagsList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjFlags",
+                                          criteria,
+                                          null);
 
-          // store the new flags data
-          var data = {
-            type        : flagType,
-            app         : appNum,
-            comment     : null,
-            visitor     : visitorId,
-            explanation : explanationInput
-          }
-
-	  newFlag.setData(data);
-
-          // increments the apps number of flags
-          appDataObj.numCurFlags++;      
-
-          // check if the number of flags is greater than or 
-          // equal to the maximum allowed
-          if(appDataObj.numCurFlags >= maxFlags)
+          // Only change things if the visitor hasn't already flagged this app
+          if (flagsList.length === 0)
           {
-           // If the app is already pending do not touch the status or 
-           // send an email  
-            if(appDataObj.status != statusVals.Pending)
-              {
-                // otherwise set the app to pending and send an email
-                appDataObj.status = statusVals.Pending;    
 
-                // placeholder code   
-                alert("email to be sent");
-              }
+            // initialize the new flag to be put on the database
+            newFlag = new aiagallery.dbif.ObjFlags();
+
+            // store the new flags data
+            var data = {
+              type        : flagType,
+              app         : appNum,
+              comment     : null,
+              visitor     : visitorId,
+              explanation : explanationInput
+            }
+
+	    newFlag.setData(data);
+
+            // increments the apps number of flags
+            appDataObj.numCurFlags++;      
+
+            // check if the number of flags is greater than or 
+            // equal to the maximum allowed
+            if(appDataObj.numCurFlags >= maxFlags)
+            {
+             // If the app is already pending do not touch the status or 
+             // send an email  
+              if(appDataObj.status != statusVals.Pending)
+                {
+                  // otherwise set the app to pending and send an email
+                  appDataObj.status = statusVals.Pending;    
+
+                  // placeholder code   
+                  alert("email to be sent");
+                }
+            }
+            // put the apps new data and the new flag on the database
+            appObj.put();
+            newFlag.put();
           }
-          // put the apps new data and the new flag on the database
-          appObj.put();
-          newFlag.put();
-
           return appDataObj.status;
+          
+          break;
 
         // if a comment was flagged
         case flagTypeVal.Comment:
@@ -139,41 +171,74 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             return error;
           }
 
-          // initialize the new flag to be put on the database
-          newFlag = new aiagallery.dbif.ObjFlags();
 
-          // store the flags data 
-          var data = {
-            type        : flagType,
-            app         : appId,
-            comment     : commentNum,
-            visitor     : visitorId,
-            explanation : explanationInput
-          }
+          // Construct query criteria for 
+          //"flags of this comment by current visitor"
+          criteria = 
+            {
+              type : "op",
+              method : "and",
+              children : 
+              [
+                {
+                  type: "element",
+                  field: "comment",
+                  value: commentNum
+                },
+                {
+                  type: "element",
+                  field: "visitor",
+                  value: visitorId
+                }
+              ]
+            };
+          // Query for the likes of this app by the current visitor
+          // (an array, which should have length zero or one).
+          flagsList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjFlags",
+                                          criteria,
+                                          null);
 
-	  newFlag.setData(data);
-
-          // increment the number of flags on the comment
-          commentDataObj.numCurFlags++;      
-
-          // check if the number of flags is greater than or 
-          // equal to the maximum allowed
-          if(commentDataObj.numCurFlags >= maxFlags)
+          // Only change things if the visitor hasn't 
+          //already flagged this comment
+          if (flagsList.length === 0)
           {
-           // If the comment is already pending do not touch the status or 
-           // send an email 
-            if(commentDataObj.status != statusVals.Pending)
-              {
-                // otherwise set the comment to pending and send an email
-                commentDataObj.status = statusVals.Pending;    
 
-                // placeholder code
-                alert("email to be sent");
-              }
+            // initialize the new flag to be put on the database
+            newFlag = new aiagallery.dbif.ObjFlags();
+
+            // store the flags data 
+            var data = {
+              type        : flagType,
+              app         : appId,
+              comment     : commentNum,
+              visitor     : visitorId,
+              explanation : explanationInput
+            }
+
+            newFlag.setData(data);
+
+            // increment the number of flags on the comment
+            commentDataObj.numCurFlags++;      
+
+            // check if the number of flags is greater than or 
+            // equal to the maximum allowed
+            if(commentDataObj.numCurFlags >= maxFlags)
+            {
+             // If the comment is already pending do not touch the status or 
+             // send an email 
+              if(commentDataObj.status != statusVals.Pending)
+                {
+                  // otherwise set the comment to pending and send an email
+                  commentDataObj.status = statusVals.Pending;    
+
+                  // placeholder code
+                  alert("email to be sent");
+                }
+            }
+            // put the comments new data and the new flag on the database
+            commentObj.put();
+            newFlag.put();
           }
-          // put the comments new data and the new flag on the database
-          commentObj.put();
-          newFlag.put();
 
           return commentDataObj.status;
 
