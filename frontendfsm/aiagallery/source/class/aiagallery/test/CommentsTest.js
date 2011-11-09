@@ -70,7 +70,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
       this);
 
       // Add the first comment
-      myCommentData = this.dbifSim.addComment(appId, "Hellooo", null, this.error);
+      myCommentData = 
+        this.dbifSim.addComment(appId, "Hellooo", null, this.error);
       
       // Save this top-level comment's tree id for later retrieval.
       var topLevelCommentTreeId = myCommentData.treeId;
@@ -137,14 +138,16 @@ qx.Class.define("aiagallery.test.CommentsTest",
                        "comment.visitor is whoami.email, not whoami.userId");
       
       // Call the getComments() RPC and save the length of the result.
-      var commentsArrLength = this.dbifSim.getComments(appId, null, null, this.error).length ;
+      var commentsArrLength =
+        this.dbifSim.getComments(appId, null, null, this.error).length ;
       
       // We added 3, so there should be at least 3
       this.assert(commentsArrLength >= 3, "getComments() good input");
       
       // With an invalid appId, we should get no results
-      this.assert(this.dbifSim.getComments(-1, null, null, this.error).length == 0,
-                  "getComments() bad input");
+      this.assert(
+        this.dbifSim.getComments(-1, null, null, this.error).length == 0,
+        "getComments() bad input");
 
       // Retrieve the third comment
       var third = new aiagallery.dbif.ObjComments([appId,
@@ -155,7 +158,8 @@ qx.Class.define("aiagallery.test.CommentsTest",
                        "third comment retrieved from db");
       
       // Delete the third comment
-      test = this.dbifSim.deleteComment(appId, myCommentData.treeId, this.error);
+      test = 
+        this.dbifSim.deleteComment(appId, myCommentData.treeId, this.error);
       this.assertTrue(test, "last comment deleted, supposedly");
       
       // Ensure that there is now one fewer comment
@@ -171,10 +175,12 @@ qx.Class.define("aiagallery.test.CommentsTest",
                  "numRootComments not affected on deletion");
 
       // May or may not have deleted something, don't care
-      var firstRandomDeletion = this.dbifSim.deleteComment(appId + 50, "0000", this.error);
+      var firstRandomDeletion =
+        this.dbifSim.deleteComment(appId + 50, "0000", this.error);
 
       // Def. shouldn't delete anything
-      var secondDeletionSame = this.dbifSim.deleteComment(appId + 50, "0000", this.error);
+      var secondDeletionSame =
+        this.dbifSim.deleteComment(appId + 50, "0000", this.error);
                                  
       this.assertFalse(secondDeletionSame,
                        "bad deleteComment() input, hopefully no deletion");
