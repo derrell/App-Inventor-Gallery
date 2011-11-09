@@ -25,8 +25,6 @@ qx.Class.define("aiagallery.test.CommentsTest",
 
       // We need an error object
       this.error = new rpcjs.rpc.error.Error("2.0");
-      
-      
     },
     
     "test: Addition, retrieval, and deletion of comment" : function()
@@ -190,7 +188,7 @@ qx.Class.define("aiagallery.test.CommentsTest",
     {
       var             test;
       var             validAppId = 151;
-      var             invalidAppId = "101";
+      var             invalidAppId = 23;
     
       // Need an error object to call RPCs with
       var error = new rpcjs.rpc.error.Error("2.0");
@@ -201,12 +199,12 @@ qx.Class.define("aiagallery.test.CommentsTest",
       test = this.dbifSim.getComments(validAppId, null, null, error);
       this.assertEquals(1, 
                         test.length,
-                        "Results received because appId was valid");
+                        "Ensure single result for valid appId");
 
       test = this.dbifSim.getComments(invalidAppId, null, null, error);
       this.assertEquals(0,
                         test.length,
-                        "No results because appId was invalid");
+                        "Ensure no results for invalid appId");
     }
   }
 });
