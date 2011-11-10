@@ -117,7 +117,8 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             newFlag = new aiagallery.dbif.ObjFlags();
 
             // store the new flags data
-            var data = {
+            var data = 
+            {
               type        : flagType,
               app         : appNum,
               comment     : null,
@@ -137,13 +138,16 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
              // If the app is already pending do not touch the status or 
              // send an email  
               if(appDataObj.status != statusVals.Pending)
-                {
-                  // otherwise set the app to pending and send an email
-                  appDataObj.status = statusVals.Pending;    
+              {
+                // otherwise set the app to pending and send an email
+                appDataObj.status = statusVals.Pending;    
 
-                  // placeholder code   
+                // placeholder code   
+                if (qx.core.Environment.get("qx.debug"))
+                {
                   alert("email to be sent");
                 }
+              }
             }
             // put the apps new data and the new flag on the database
             appObj.put();
@@ -175,23 +179,23 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           // Construct query criteria for 
           //"flags of this comment by current visitor"
           criteria = 
-            {
-              type : "op",
-              method : "and",
-              children : 
-              [
-                {
-                  type: "element",
-                  field: "comment",
-                  value: commentNum
-                },
-                {
-                  type: "element",
-                  field: "visitor",
-                  value: visitorId
-                }
-              ]
-            };
+          {
+            type : "op",
+            method : "and",
+            children : 
+            [
+              {
+                type: "element",
+                field: "comment",
+                value: commentNum
+              },
+              {
+                type: "element",
+                field: "visitor",
+                value: visitorId
+              }
+            ]
+          };
           // Query for the likes of this app by the current visitor
           // (an array, which should have length zero or one).
           flagsList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjFlags",
@@ -207,7 +211,8 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             newFlag = new aiagallery.dbif.ObjFlags();
 
             // store the flags data 
-            var data = {
+            var data = 
+            {
               type        : flagType,
               app         : appId,
               comment     : commentNum,
@@ -224,16 +229,19 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             // equal to the maximum allowed
             if(commentDataObj.numCurFlags >= maxFlags)
             {
-             // If the comment is already pending do not touch the status or 
-             // send an email 
+              // If the comment is already pending do not touch the status or 
+              // send an email 
               if(commentDataObj.status != statusVals.Pending)
-                {
-                  // otherwise set the comment to pending and send an email
-                  commentDataObj.status = statusVals.Pending;    
+              {
+                // otherwise set the comment to pending and send an email
+                commentDataObj.status = statusVals.Pending;    
 
-                  // placeholder code
+                // placeholder code   
+                if (qx.core.Environment.get("qx.debug"))
+                {
                   alert("email to be sent");
                 }
+              }
             }
             // put the comments new data and the new flag on the database
             commentObj.put();
