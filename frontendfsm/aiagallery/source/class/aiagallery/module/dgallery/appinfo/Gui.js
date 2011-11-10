@@ -18,19 +18,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     // The following non-primitive instance variables must be initialized
     // in the constructor so that different instances don't
     // point to the same object.
-    // Before this was done, when multiple app modules were open,
-    // commenting and liking in one app changed the corresponding
-    // fields in another!
     // See the "Primitive Types vs. Reference Types" section of
     // http://manual.qooxdoo.org/1.5.x/pages/core/classes.html
 
     // Label to display number of views and likes.
     this.__viewsLikesLabel = new qx.ui.basic.Label();
 
-    // FIXME: Clean up the GUI elements related to comments.  The
+    // FIXME: Clean up GUI elements related to comments.  The
     // relationship between such elements as this.__allCommentsBox,
-    // this.__vbox, scrollContainer, etc. is obscure, possibly redundant,
-    //  and may contain errors.
+    // this.__vbox, scrollContainer, etc. is obscure, and there may
+    // be redundant elements.
 
     // Vbox container for comments, inside scrollContainer, outside
     // this.__allCommentsBox
@@ -330,7 +327,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Placeholder text
         this.__commentInputField.setPlaceholder("Type your comment here:");
 
-        // Wrapping everything relevant to a comment in one object,
+        // Wrap everything relevant to a comment in one object,
         // to be passed to the FSM
         commentWrapper = new qx.core.Object();
         commentWrapper.setUserData("appId", appId);
@@ -360,13 +357,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
               this.__commentInputField.setValue(null);
             }
           },
-          // Following was fsm, erroneously and incorrectly.
-          // This caused problems when the comment input field
-          // was turned into an instance variable.
           this);
 
-        // Lets the user call "execute" by pressing the enter key rather
-        // than by pressing the submitCommentButton
+        // Allow comment to be entered using enter key instead of button.
+        // If multi-line comments are allowed in the future, we might not
+        // want to do this.
         this.__commentInputField.addListener(
           "keypress",
           function(e)
@@ -377,8 +372,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           });
 
-        // The textfield, all the existing comments, and the submit button
-        // get added to the UI.
+        // Add the textfield, all existing comments, and the submit button
+        // to the UI.
         vboxLeft.add(this.__commentInputField);
         vboxLeft.add(submitCommentButton);
         vboxLeft.add(this.__allCommentsBox);
@@ -490,7 +485,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Get result data--in this case, the comment that was added.
         comment = response.data.result;
 
-        // Adds the new comment to the GUI
+        // Add the new comment to the GUI, if nonempty.
         if (comment["text"] != null)
         {
           newBox = this.__createCommentPanel(comment);
