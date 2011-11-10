@@ -20,10 +20,10 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-        "creationTime"    : (new Date()).toString(),
-        "lastViewedTime"  : null, 
-        "numRootComments" : 0,
         "status"          : aiagallery.dbif.Constants.Status.Active,
+        "creationTime"    : aiagallery.dbif.MDbifCommon.currentTimestamp(),
+	"lastViewedTime"  : null,  
+	"numRootComments" : 0,
         "numCurFlags"     : 0
       });
 
@@ -77,13 +77,13 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "tags" : "StringArray",
 
         /** Time the most recent Source ZIP file was uploaded */
-        "uploadTime" : "String",
+        "uploadTime" : "Date",
         
         /** The date and time this App was first created */
-        "creationTime" : "String",
+        "creationTime" : "Date",
 
         /** The date this App was last viewed */
-        "lastViewedTime" : "String", 
+        "lastViewedTime" : "Date", 
 
         /** Number of "likes" of this application */
         "numLikes" : "Integer",

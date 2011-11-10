@@ -17,7 +17,7 @@ qx.Class.define("aiagallery.dbif.ObjLikes",
       {
         "app"       : null,
         "visitor"   : null,
-        "timestamp" : String((new Date()).getTime())
+        "timestamp" : aiagallery.dbif.MDbifCommon.currentTimestamp()
       });
 
     // Call the superclass constructor
@@ -37,7 +37,7 @@ qx.Class.define("aiagallery.dbif.ObjLikes",
         "visitor" : "String",
 
         /** Time the like occurred */
-        "timestamp" : "String"
+        "timestamp" : "Date"
       };
 
     // Register our property types

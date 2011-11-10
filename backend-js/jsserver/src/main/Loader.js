@@ -225,6 +225,9 @@ try
   $debugLoad("aiagallery.dbif.MTags");
   new Packages.aiagallery.dbif.MTags();
   
+  $debugLoad("aiagallery.dbif.MFlags");
+  new Packages.aiagallery.dbif.MFlags();
+  
   $debugLoad("aiagallery.dbif.MMobile");
   new Packages.aiagallery.dbif.MMobile();
   

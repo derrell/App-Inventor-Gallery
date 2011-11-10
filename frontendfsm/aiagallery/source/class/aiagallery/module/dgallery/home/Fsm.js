@@ -65,7 +65,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
           "click" : "Transition_Idle_to_Idle_via_linkBoxClick",
 
           // Click on a featured app
-          "featuredAppClick" : "Transition_Idle_to_Idle_via_featuredAppClick",
+          "homeRibbonAppClick" : "Transition_Idle_to_Idle_via_homeRibbonAppClick",
           
           // When we get an appear event, retrieve featured apps
           "appear" :
@@ -133,7 +133,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
        */
       
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_Idle_via_featuredAppClick",
+        "Transition_Idle_to_Idle_via_homeRibbonAppClick",
       {
         "nextState" : "State_Idle",
       
@@ -146,7 +146,8 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
 
           // Add a module for the specified app
           aiagallery.module.dgallery.appinfo.AppInfo.addAppView(item.uid, 
-                                                                item.label);
+                                                               item.title);
+
         }
       });
       
@@ -170,35 +171,17 @@ qx.Class.define("aiagallery.module.dgallery.home.Fsm",
 
         "ontransition" : function(fsm, event)
         {          
-          // Create a criterion to grab only featured apps
-          var criterion = 
-            {
-              type  : "element",
-              field : "tags",
-              value : "*Featured*"
-            };
             
-          // Issue the remote procedure call to execute the query
+          // Issue the remote procedure call to execute the query.
+          // In essence get the front page ribbons.
           var request =
-            this.callRpc(fsm,
+              this.callRpc(fsm,
                          "aiagallery.features",
-                         "appQuery",
-                         [
-                           // Search criteria
-                           criterion,
-                           
-                           // Requested fields and the return field name
-                           {
-                             uid    : "uid",
-                             title  : "label", // remap name for Gallery
-                             image1 : "icon",  // remap name for Gallery
-                             owner  : "owner"
-                           }
-                         ]);
+                         "getHomeRibbonData", [null]);
 
           // When we get the result, we'll need to know what type of request
           // we made.
-          request.setUserData("requestType", "appQuery");
+          request.setUserData("requestType", "getHomeRibbonData");
         }
       });
 
