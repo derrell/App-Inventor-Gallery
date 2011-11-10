@@ -45,7 +45,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             var rpcRequest = this.popRpcRequest();
 
             // Otherwise, call the standard result handler
-            var gui = aiagallery.module.dgallery.appinfo.Gui.getInstance();
+            var gui = module.getUserData("gui");
             gui.handleResponse(module, rpcRequest);
 
             // Dispose of the request
