@@ -105,19 +105,27 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // editor closes.
       bEditing && cellEditor.setUserData("cellInfo", cellInfo);
 
+      // Creates red asterik label, currently not in use 
+      asterik = new qx.ui.basic.Label('*');
+      asterik.set(
+        {
+          TextColor : "#FF0000"
+	});
+      //************************************************
+
       // Add the form field labels
       row = 0;
 
       [
-        this.tr("Title"),
-        this.tr("Description"),
-        this.tr("Image 1"),
+        this.tr("*" + "Title"),
+        this.tr("*" + "Description"),
+        this.tr("*" + "Image 1"),
         this.tr("Image 2"),
         this.tr("Image 3"),
         this.tr("Previous Authors"),
-        this.tr("Categories"),
+        this.tr("*" + "Categories"),
         
-        this.tr("Uploads")
+        this.tr("*" + "Uploads")
       ].forEach(function(label)
         {
           o = new qx.ui.basic.Label(label);
@@ -265,6 +273,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Create an input field and button to add a new tag
       var newTag = new qx.ui.form.TextField();
       newTag.setFilter(/[- a-zA-Z0-9]/); // only allow these characters in tags
+      
+      // Text placeholder for tags field
+      newTag.setPlaceholder("add tags");
+
       grid.add(newTag, { row : 1, column : 1, colSpan : 2});
       var tagAdd = new qx.ui.form.Button(this.tr("Add tag"));
       grid.add(tagAdd, { row : 1, column : 0 });
@@ -380,6 +392,19 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       fsm.addObject("cancel", cancelButton);
       cancelButton.addListener("execute", fsm.eventListener, fsm);
       buttonPane.add(cancelButton);
+      
+      // Create lable for required field
+      requiredField = new qx.ui.basic.Label('* = required field');
+      
+      // Makes lable red
+      requiredField.set(
+        {
+          rich : true,
+	  TextColor : "#FF0000"
+	});
+      
+      // Adds lable in bottom right corner
+      cellEditor.add(requiredField, {row : 9, column : 3});
 
       // We'll need the table object in getCellEditorValue()
       cellEditor.setUserData("table", cellInfo.table);
