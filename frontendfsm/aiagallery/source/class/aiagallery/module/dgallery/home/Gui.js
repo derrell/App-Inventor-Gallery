@@ -79,10 +79,14 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
 	  "<p><em>App Inventor Community Gallery is a resource provided ",
 	  "to the App Inventor community.  We are supported by a ",
 	  "grant from Google Inc.  Our site is presently in a beta launch. ",
-	  'Please be nice!  Email us at ',
+	  'Please be nice!  Please see more info ',
+	  '<a href="http://www.cs.uml.edu/ecg/index.php/Projects/AICG" ',
+	  'target="new">',
+	  'here',
+	  '</a> and email us at ',
 	  '<a href="mailto:aigallery@weblab.cs.uml.edu">',
 	  'aigallery@weblab.cs.uml.edu</a> if you ',
-	  "have any questions or comments.</em>"
+	  "have any questions or comments.  Thanks.</em>"
         ].join("");
       message.set(
         {
