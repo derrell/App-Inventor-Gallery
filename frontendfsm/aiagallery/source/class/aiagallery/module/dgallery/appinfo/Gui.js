@@ -443,6 +443,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           var hboxShortURL = new qx.ui.container.Composite(new qx.ui.layout.HBox());
           var shortURL = "/rpc?getdata=" + appId + ":apk"
 
+          //Create a space and a download label.
+          var space = new qx.ui.basic.Label('');
+          var downloadLabel = new qx.ui.basic.Label('<b> Download! </b>');
+          downloadLabel.set(
+          {
+            rich:true 
+          });
+          
+          vboxRight.add(space);
+          vboxRight.add(downloadLabel);
+
           hboxShortURL.add(new qx.ui.basic.Label(shortURL).set({
                 rich : true,
                 alignX: "center",
@@ -514,6 +525,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
           },
           this);
+
+          // Add some space before the qr code image
+          var space = new qx.ui.basic.Label('');
+          vboxRight.add(space);
 
           // Create a horizontal box layout for the QR Code and a spacer
           hboxQRCode = new qx.ui.container.Composite(new qx.ui.layout.HBox());
