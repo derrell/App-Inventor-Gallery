@@ -8,6 +8,7 @@
 
 /*
 #require(aiagallery.module.dgallery.appinfo.Jsqr)
+#ignore(JSQR)
 */
 
 /**
@@ -85,6 +86,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             vbox;
       var             downloadLabel;
       var             download;
+      var             space;
       var             spacer;
       var             descriptionHeader;
       var             description;
@@ -440,12 +442,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         //If canvas is not supported by browser
         if (!qx.core.Environment.get("html.canvas"))
         {
-          var hboxShortURL = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-          var shortURL = "/rpc?getdata=" + appId + ":apk"
+          var hboxShortURL =
+            new qx.ui.container.Composite(new qx.ui.layout.HBox());
+          var shortURL =
+            "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
+            appId +
+            ":apk";
 
           //Create a space and a download label.
-          var space = new qx.ui.basic.Label('');
-          var downloadLabel = new qx.ui.basic.Label('<b> Download! </b>');
+          space = new qx.ui.basic.Label('');
+          downloadLabel = new qx.ui.basic.Label('<b> Download! </b>');
           downloadLabel.set(
           {
             rich:true 
@@ -484,7 +490,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           input.dataType = input.DATA_TYPE.TEXT;
 
           //The url of the download link to encode into a qr code.
-          input.data = "/rpc?getdata=" + appId + ":apk" ;
+          input.data =
+            "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
+            appId +
+            ":apk";
 
           //This generates the qr code matrix.
           var matrix = new qr.Matrix(input, code);
