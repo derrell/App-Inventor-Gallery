@@ -20,10 +20,11 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numDownloads"    : 0,
         "numViewed"       : 0,
         "numComments"     : 0,
-        "creationTime"    : (new Date()).toString(),
-        "lastViewedTime"  : null, 
-        "numRootComments" : 0,
-        "status"          : aiagallery.dbif.Constants.Status.Active
+        "status"          : aiagallery.dbif.Constants.Status.Active,
+        "creationTime"    : aiagallery.dbif.MDbifCommon.currentTimestamp(),
+	"lastViewedTime"  : null,  
+	"numRootComments" : 0,
+        "numCurFlags"     : 0
       });
 
     // Call the superclass constructor
@@ -62,18 +63,27 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
 
         /** Blob ids of executable APK file (base64-encoded), newest first */
         "apk" : "StringArray",
+        
+        /** File Name of Source File */
+        "sourceFileName" : "String",
+
+        /** Blob ids of executable APK file (base64-encoded), newest first */
+        "apk" : "StringArray",
+
+        /** File Name of APK File */
+        "apkFileName" : "String",
 
         /** Tags assigned to this application */
         "tags" : "StringArray",
 
         /** Time the most recent Source ZIP file was uploaded */
-        "uploadTime" : "String",
+        "uploadTime" : "Date",
         
         /** The date and time this App was first created */
-        "creationTime" : "String",
+        "creationTime" : "Date",
 
         /** The date this App was last viewed */
-        "lastViewedTime" : "String", 
+        "lastViewedTime" : "Date", 
 
         /** Number of "likes" of this application */
         "numLikes" : "Integer",
@@ -91,7 +101,10 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         "numComments" : "Integer",
 
         /** Status of this application (active, pending, banned) */
-        "status" : "Integer"
+        "status" : "Integer",
+
+        /** Total number of flags on this application */
+        "numCurFlags" : "Integer"
       };
 
     var canonicalize =

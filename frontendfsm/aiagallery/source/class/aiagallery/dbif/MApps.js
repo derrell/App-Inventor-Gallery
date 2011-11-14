@@ -27,6 +27,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          this.getAppListAll,
                          [ "bStringize", "sortCriteria", "offset", "limit" ]);
 
+    this.registerService("getHomeRibbonData",
+                         this.getHomeRibbonData); 
+
     this.registerService("appQuery",
                          this.appQuery,
                          [ "criteria", "requestedFields" ]);
@@ -262,7 +265,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "image3",
           "previousAuthors",
           "source",
+          "sourceFileName",
           "apk",
+          "apkFileName",
           "tags",
           "uploadTime",
           "numLikes",
@@ -452,7 +457,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       if (sourceData)
       {
         // ... then update the upload time to now
-        appData.uploadTime = String((new Date()).getTime());
+        appData.uploadTime = aiagallery.dbif.MDbifCommon.currentTimestamp();
       }
 
       // FIXME: Begin a transaction here
@@ -734,10 +739,19 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           {
             // Replace the owner name with the owner's display name
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
-                                            app["owner"]);
+                                              app["owner"]);
 
-            // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
+            // If it's not an "all" request (administrator)...
+            if (! bAll)
+            {
+              // ... then replace his visitor id with his display name
+              app["owner"] = owners[0].displayName;
+            }
+            else
+            {
+              // Otherwise add the display name
+              app["displayName"] = owners[0].displayName;
+            }
            
             // If we were asked to stringize the values...
             if (bStringize)
@@ -1054,6 +1068,133 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       return intersectionArr;    
       
     },
+
+    /**
+     * Performs three queries to retrive the Featured, Most Liked, and Newest. 
+     * This is for the front page ribbon.
+     * 
+     * @return {Map}
+     *   The return value is a map with arrays in it. Each array in the map 
+     *   corresponds to one of the three search queries.  
+     *
+     */
+    getHomeRibbonData : function()
+    { 
+      var             owners;
+
+      // Create and execute query for "Featured" apps.
+      var criterion = 
+        {
+          type  : "element",
+          field : "tags",
+          value : "*Featured*"
+        };
+
+      var searchResponseFeatured = 
+          rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",criterion);
+
+      // Manipulate each App individually, before returning
+      searchResponseFeatured.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
+      //Create and execute query for "Most Liked" apps. 
+      criterion = 
+        {
+          type  : "element",
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
+        };
+
+      //Create map to specify specific return data from the upload time query
+      var requestedData = 
+        [
+          {
+            type  : "limit",
+            value : aiagallery.dbif.Constants.RIBBON_NUM_MOST_LIKED  
+          },
+          { 
+            type  : "sort",   
+            field : "numLikes",
+            order : "desc" 
+          }
+        ]; 
+
+      var searchResponseLiked = 
+        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                criterion,
+                                requestedData);
+
+      // Manipulate each App individually, before returning
+      searchResponseLiked.forEach(
+          function(app)
+          {
+            // Replace the owner name with the owner's display name
+            owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                            app["owner"]);
+
+            // Replace his visitor id with his display name
+            app["owner"] = owners[0].displayName;
+                      
+          });
+
+      //Create and execute query for "Newest" apps.
+      criterion = 
+        {
+          type  : "element",
+          field : "status",
+          value : aiagallery.dbif.Constants.Status.Active
+        };
+
+      //Create map to specify specific return data from the upload time query
+      requestedData = 
+        [
+          {
+            type : "limit",
+            value : aiagallery.dbif.Constants.RIBBON_NUM_NEWEST
+          },
+          {
+            type  : "sort",
+            field : "uploadTime",
+            order : "desc" }
+        ]; 
+
+      var searchResponseNewest = 
+        rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData",
+                                criterion,
+                                requestedData);
+
+      // Manipulate each App individually, before returning
+      searchResponseNewest.forEach(
+        function(app)
+        {
+          // Replace the owner name with the owner's display name
+          owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
+                                           app["owner"]);
+
+          // Replace his visitor id with his display name
+          app["owner"] = owners[0].displayName;
+        });
+
+      //Construct map of data
+      var data = 
+        {
+          "Featured"     :    searchResponseFeatured,   
+          "MostLiked"    :    searchResponseLiked,
+          "Newest"       :    searchResponseNewest
+        };
+
+      //Return the map containing the arrays containing the apps. 
+      return data;
+    },
       
     /**
      * Get a list of Apps from a discrete list of App UIDs
@@ -1162,34 +1303,21 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     {
       var             app;
       var             appObj;
-      var             appDataObj;
-      var             appList;
       var             tagTable;
       var             whoami;
       var             criteria;
       var             owners;
+      var             likesList;
 
       whoami = this.getWhoAmI();
 
       //Update the views and last viewed date
 
       //Get the actual object
-      appObj = new aiagallery.dbif.ObjAppData(uid);      
-      appDataObj = appObj.getData();
+      appObj = new aiagallery.dbif.ObjAppData(uid);    
 
-      //Increment the number of views by 1. 
-      appDataObj.numViewed++; 
-
-      //Set the "lastViewedDate" to the time this function was called
-      appDataObj.lastViewedTime = (new Date()).toString(); 
-
-      //Put back on the database
-      appObj.put();
-
-      appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", uid);
-
-      // See if this app exists. 
-      if (appList.length === 0)
+      // See if this app exists.  
+      if (appObj.getBrandNew())
       {
         // It doesn't. Let 'em know that the application has just been removed
         // (or there's a programmer error)
@@ -1198,10 +1326,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
+  
+      app = appObj.getData();
 
-      // Get the (one and only) application that was returned.
-      app = appList[0];
+      //Increment the number of views by 1. 
+      app.numViewed++; 
 
+      //Set the "lastViewedDate" to the time this function was called
+      app.lastViewedTime = aiagallery.dbif.MDbifCommon.currentTimestamp(); 
+
+      //Put back on the database
+      appObj.put();
+ 
       // If the application status is not Active, only the owner can view it.
       if (app.status != aiagallery.dbif.Constants.Status.Active &&
           (! whoami || app.owner != whoami.email))
@@ -1213,13 +1349,47 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                          "It may have been removed recently.");
         return error;
       }
-
+ 
       // Issue a query for this visitor
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
 
       // Replace the (private) owner id with his display name
       app.owner = owners[0].displayName;
+
+      // If there's a user signed in...
+      if (whoami && whoami.email)
+      {
+        // Determine if the current user has already liked this application
+        // Construct query criteria for "likes of this app by current visitor"
+        criteria = 
+          {
+            type : "op",
+            method : "and",
+            children : 
+            [
+              {
+                type: "element",
+                field: "app",
+                value: uid
+              },
+              {
+                type: "element",
+                field: "visitor",
+                value: whoami.email
+              }
+            ]
+          };
+
+        // Query for the likes of this app by the current visitor
+        // (an array, which should have length zero or one).
+        likesList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjLikes",
+                                            criteria,
+                                            null);
+
+        // If there were any results, this user has already liked it.
+        app.bAlreadyLiked = likesList.length > 0;
+      }
 
       // If we were asked to stringize the values...
       if (bStringize)

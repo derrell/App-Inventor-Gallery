@@ -29,6 +29,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.AppInfo",
       var             app;
       var             page;
       var             moduleList;
+      var             backtrack = {};
 
       // Get the main tab view
       var mainTabs = qx.core.Init.getApplication().getUserData("mainTabs");
@@ -51,6 +52,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.AppInfo",
       // If we didn't find an existing tab, create a new one.
       if (! page)
       {
+        
+        // Set the new modules information to backtrack
+        backtrack = mainTabs.getSelection()[0];
+          
         // Create a new module (tab) for this application
         app = new aiagallery.main.Module(
                 label,
@@ -68,7 +73,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.AppInfo",
 
                     // Select the new application page
                     mainTabs.setSelection([ page ]);
-                  }
+                    
+                    // Addlistener for on close event
+                    page.addListener("close", function() 
+                                              {
+                                                mainTabs.setSelection([ backtrack ]);
+                                              }
+                                    );
+                 }
                 ],
                 true     // Instantiate a new module for each app
         );

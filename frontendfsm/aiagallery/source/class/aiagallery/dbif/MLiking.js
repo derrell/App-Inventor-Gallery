@@ -46,9 +46,6 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
       var            likesDataObj;
 
       appObj = new aiagallery.dbif.ObjAppData(appId);
-      appDataObj = appObj.getData();
-
-      myEmail = this.getWhoAmI().email;
 
       // If there's no such app, return error
       if (appObj.getBrandNew())
@@ -58,21 +55,31 @@ qx.Mixin.define("aiagallery.dbif.MLiking",
         return error;
       }
 
+      // Get the application data
+      appDataObj = appObj.getData();
+      
+      // Retrieve my email address (my visitor id)
+      myEmail = this.getWhoAmI().email;
+
       // Construct query criteria for "likes of this app by current visitor"
-      criteria = {
-        type : "op",
-        method : "and",
-        children : [
-          {
-            type: "element",
-            field: "app",
-            value: appId
-          },
-          {
-            type: "element",
-            field: "visitor",
-            value: myEmail
-      }]};
+      criteria = 
+        {
+          type : "op",
+          method : "and",
+          children : 
+          [
+            {
+              type: "element",
+              field: "app",
+              value: appId
+            },
+            {
+              type: "element",
+              field: "visitor",
+              value: myEmail
+            }
+          ]
+        };
 
       // Query for the likes of this app by the current visitor
       // (an array, which should have length zero or one).

@@ -45,7 +45,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       edit.set(
         {
           maxHeight : 24,
-          width     : 100,
+          minWidth  : 120,
           enabled   : false
         });
       hBox.add(edit);
@@ -56,7 +56,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
       addApp.set(
         {
           maxHeight : 24,
-          width     : 100
+          minWidth  : 120
         });
       hBox.add(addApp);
       addApp.addListener("execute", fsm.eventListener, fsm);
@@ -89,11 +89,13 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
                          this.tr("Title"),
                          this.tr("Description"),
                          this.tr("Owner"),
-                         this.tr("Image 1"),
+                         this.tr(""),
                          this.tr("Image 2"),
                          this.tr("Image 3"),
                          this.tr("Author Chain"),
                          this.tr("Tags"),
+                         this.tr("Source"),
+                         this.tr("APK"),
                          this.tr("Upload Time"),
                          this.tr("Likes"),
                          this.tr("Downloads"),
@@ -109,6 +111,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
                          "image3",
                          "prevAuthors",
                          "tags",
+                         "sourceFileName",
+                         "apkFileName",
                          "uploadTime",
                          "numLikes",
                          "numDownloads",
@@ -160,7 +164,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Gui",
 
       // Set the Permissions and Status fields to nearly fixed widths, and then
       // let the Name and Email fields take up the remaining space.
-//      resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
+      //resizeBehavior.set(0, { width:"1*", minWidth:200 }); // Name
 
       resizeBehavior.set(0,  { width:100 });                // Title
       resizeBehavior.set(1,  { width:150 });                // Description

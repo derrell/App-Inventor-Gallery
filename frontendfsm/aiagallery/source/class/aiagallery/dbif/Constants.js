@@ -12,6 +12,19 @@ qx.Class.define("aiagallery.dbif.Constants",
 
   statics :
   {
+    /** 
+     *  Value of the maximum amount of times an app or comment 
+     *  can be flagged 
+     */
+    MAX_FLAGGED           : 5,
+
+    /** Number of "newest" apps to return by the getHomeRibbonData() RPC */
+    RIBBON_NUM_NEWEST     : 20,
+    
+    /** Number of "most liked" apps to return by the getHomeRibbonData() RPC */
+    RIBBON_NUM_MOST_LIKED : 20,
+    
+
     /** Mapping of status names to values */
     Status      : 
     {
@@ -26,6 +39,20 @@ qx.Class.define("aiagallery.dbif.Constants",
       "Banned", 
       "Pending",
       "Active"
+    ],
+
+    /** Mapping of FlagType names to values */
+    FlagType      : 
+    {
+      App  : 0,
+      Comment : 1
+    },
+
+    /** Reverse mapping of FlagType values to names */
+    FlagTypeToName :
+    [
+      "App", 
+      "Comment"
     ],
 
     /** Mapping of permission names to descriptions */
