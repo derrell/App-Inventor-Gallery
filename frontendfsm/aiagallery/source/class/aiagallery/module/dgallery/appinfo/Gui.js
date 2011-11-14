@@ -69,6 +69,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             submitCommentBtn;
       var             scrollContainer;
       var             vbox;
+      var             downloadBtn;
       var             downloadLabel;
       var             download;
       var             spacer;
@@ -226,6 +227,23 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         viewsLikesWrapper.setUserData("likes", likes);
         fsm.addObject("viewsLikesWrapper", viewsLikesWrapper);
         */
+
+        // Create a download button to allow to user to download the application
+        downloadBtn = new qx.ui.form.Button("Download");
+        fsm.addObject("downloadBtn", downloadBtn);
+        downloadBtn.addListener(
+          "execute",
+          function(e) {
+            var downloadReq = new qx.io.remote.Request('http://app-inventor-gallery.appspot.com/rpc?getdata=16001:source','GET', 'text/plain');
+            downloadReq.crossDomain = true;
+            downloadReq.addListener("completed", function(e) {alert('downloaded')});
+            downloadReq.send();
+          },
+          fsm);
+          
+        // Add it to the left vbox
+        vboxLeft.add(downloadBtn);
+
 
         // Create a button to allow users to "like" things.
         this.likeItButton = new qx.ui.form.Button("Like it!");
