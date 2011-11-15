@@ -23,6 +23,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
   #asset(qx/icon/Oxygen/16/status/dialog-warning.png)
   #asset(qx/icon/Oxygen/16/status/dialog-error.png)
   #asset(qx/icon/Oxygen/16/emotes/face-smile.png)
+  #asset(qx/icon/Tango/16/apps/internet-download-manager.png)
   */
 
   extend : qx.core.Object,
@@ -193,6 +194,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       var             commentWrapper;
       var             submitCommentButton;
       var             scrollContainer;
+      var             downloadBtn;
       var             hboxFlagLike;
       var             downloadLabel;
       var             download;
@@ -324,6 +326,20 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Create a horizontal box for the next two buttons
         hboxFlagLike =
           new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
+
+        // Create a download button to allow to user to download the application
+        downloadBtn = new qx.ui.form.Button("Download", "qx/icon/Tango/16/apps/internet-download-manager.png");
+        fsm.addObject("downloadBtn", downloadBtn);
+        downloadBtn.addListener(
+          "execute",
+          function(e) {
+            location.href = 'rpc?getdata=' + appId + ':source';
+          },
+          null);
+          
+        // Add it to the left vbox
+        vboxLeft.add(downloadBtn);
+
 
         // Create a button to allow users to "like" things.
         this.likeItButton =
