@@ -538,6 +538,17 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           sourceFileName = cellEditor.getUserData("source").getFileName();
           apk    = cellEditor.getUserData("apk").getUserData("fileData");
           apkFileName = cellEditor.getUserData("apk").getFileName();
+          
+          //Strip paths out from filenames if not null or empty
+          if (sourceFileName) {
+            sourceFileName = sourceFileName.substring(
+                sourceFileName.lastIndexOf("/")+1, sourceFileName.length);
+            }
+            
+          if (apkFileName) {
+            apkFileName = apkFileName.substring(
+                apkFileName.lastIndexOf("/")+1, apkFileName.length);
+            }  
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
