@@ -23,6 +23,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
   #asset(qx/icon/Oxygen/16/status/dialog-warning.png)
   #asset(qx/icon/Oxygen/16/status/dialog-error.png)
   #asset(qx/icon/Oxygen/16/emotes/face-smile.png)
+  #asset(qx/icon/Tango/16/apps/internet-download-manager.png)
   */
 
   extend : qx.core.Object,
@@ -327,17 +328,14 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
         // Create a download button to allow to user to download the application
-        downloadBtn = new qx.ui.form.Button("Download");
+        downloadBtn = new qx.ui.form.Button("Download", "qx/icon/Tango/16/apps/internet-download-manager.png");
         fsm.addObject("downloadBtn", downloadBtn);
         downloadBtn.addListener(
           "execute",
           function(e) {
-            var downloadReq = new qx.io.remote.Request('http://app-inventor-gallery.appspot.com/rpc?getdata=16001:source','GET', 'text/plain');
-            downloadReq.crossDomain = true;
-            downloadReq.addListener("completed", function(e) {alert('downloaded')});
-            downloadReq.send();
+            location.href = 'rpc?getdata=' + appId + ':source';
           },
-          fsm);
+          null);
           
         // Add it to the left vbox
         vboxLeft.add(downloadBtn);
