@@ -513,73 +513,76 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add it to the right vbox.
         vboxRight.add(tags);
 
-
-        //If canvas is not supported by browser
-        if (!qx.core.Environment.get("html.canvas"))
+        //If the apk of the app exists, generate and display the qr code of 
+        //the apk download link.
+        if( result.apk != null && result.apk.length > 0 )
         {
-          var hboxShortURL =
-            new qx.ui.container.Composite(new qx.ui.layout.HBox());
-          var shortURL =
-            "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
-            appId +
-            ":apk";
-
-          //Create a space and a download label.
-          space = new qx.ui.basic.Label('');
-          downloadLabel = new qx.ui.basic.Label('<b> Download! </b>');
-          downloadLabel.set(
+          //If canvas is not supported by browser
+          if (!qx.core.Environment.get("html.canvas"))
           {
-            rich:true
-          });
+            var hboxShortURL =
+              new qx.ui.container.Composite(new qx.ui.layout.HBox());
+            var shortURL =
+              "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
+              appId +
+              ":apk";
 
-          vboxRight.add(space);
-          vboxRight.add(downloadLabel);
+            //Create a space and a download label.
+            space = new qx.ui.basic.Label('');
+            downloadLabel = new qx.ui.basic.Label('<b> Download! </b>');
+            downloadLabel.set(
+-            {
+              rich:true
+            });
 
-          hboxShortURL.add(new qx.ui.basic.Label(shortURL).set({
+            vboxRight.add(space);
+            vboxRight.add(downloadLabel);
+
+            hboxShortURL.add(new qx.ui.basic.Label(shortURL).set({
                 rich : true,
                 alignX: "center",
                 alignY: "middle"
             }));
 
-          vboxRight.add(hboxShortURL);
-        }
-        else
-        {
-          // Create a new jsqr and code object to genereate the qr code.
-          qr = new JSQR();
-          var code = new qr.Code();
+            vboxRight.add(hboxShortURL);
+          }
+          else
+          {
+            // Create a new jsqr and code object to genereate the qr code.
+            qr = new JSQR();
+            var code = new qr.Code();
 
-          // Set the code datatype.
-          code.encodeMode = code.ENCODE_MODE.BYTE;
+            // Set the code datatype.
+            code.encodeMode = code.ENCODE_MODE.BYTE;
 
-          //Set the code version.
-          //DEFAULT = use the smallest possible version.
-          code.version = code.DEFAULT;
+            //Set the code version.
+            //DEFAULT = use the smallest possible version.
+            code.version = code.DEFAULT;
 
-          // Set the error correction level (H = High).
-          code.errorCorrection = code.ERROR_CORRECTION.H;
+            // Set the error correction level (H = High).
+            code.errorCorrection = code.ERROR_CORRECTION.H;
 
-          var input = new qr.Input();
+            var input = new qr.Input();
+  
+            // Specify the data type of 'data'. Encoding a URL, which is text.
+            input.dataType = input.DATA_TYPE.TEXT;
 
-          // Specify the data type of 'data'. Encoding a URL, which is text.
-          input.dataType = input.DATA_TYPE.TEXT;
+            //The url of the download link to encode into a qr code.
+            input.data =
+              "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
+              appId +
+              ":apk";
 
-          //The url of the download link to encode into a qr code.
-          input.data =
-            "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
-            appId +
-            ":apk";
-
-          //This generates the qr code matrix.
-          var matrix = new qr.Matrix(input, code);
-          matrix.scale = 4;
-          matrix.margin = 2;
+            //This generates the qr code matrix.
+            var matrix = new qr.Matrix(input, code);
+            matrix.scale = 4;
+            matrix.margin = 2;
 
 
-          //Create a new canvas element in which to draw the qr code
-          qrCode = new qx.ui.embed.Canvas();
+            //Create a new canvas element in which to draw the qr code
+            qrCode = new qx.ui.embed.Canvas();
 
-          qrCode.set(
+            qrCode.set(
             {
               canvasWidth: matrix.pixelWidth,
               canvasHeight: matrix.pixelWidth,
@@ -588,43 +591,44 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             });
 
 
-          // When the Canvas element is available or when screen is refreshed
-          qrCode.addListener(
-          "redraw",
-          function(e)
-          {
+            // When the Canvas element is available or when screen is refreshed
+            qrCode.addListener(
+            "redraw",
+            function(e)
+            {
+              // Get the canvas content.
+              var data = e.getData();
+              var ctx = data.context;
 
-            // Get the canvas content.
-            var data = e.getData();
-            var ctx = data.context;
+              // Set the foreground color of the canvas to black.
+              ctx.fillStyle = "rgb(0,0,0)";
 
-            // Set the foreground color of the canvas to black.
-            ctx.fillStyle = "rgb(0,0,0)";
+              // Get the content part of the widget, which is the canvas
+              // DOM object.
+              var domCanvas = qrCode.getContentElement().getCanvas();
 
-            // Get the content part of the widget, which is the canvas DOM object.
-            var domCanvas = qrCode.getContentElement().getCanvas();
+              // Draw the qr code matrix on the canvas at point (0,0).
+              matrix.draw( domCanvas, 0, 0);
 
-            // Draw the qr code matrix on the canvas at point (0,0).
-            matrix.draw( domCanvas, 0, 0);
+            },
+            this);
 
-          },
-          this);
+            // Add some space before the qr code image
+            var space = new qx.ui.basic.Label('');
+            vboxRight.add(space);
 
-          // Add some space before the qr code image
-          var space = new qx.ui.basic.Label('');
-          vboxRight.add(space);
+            // Create a horizontal box layout for the QR Code and a spacer
+            hboxQRCode = new qx.ui.container.Composite(new qx.ui.layout.HBox());
+            hboxQRCode.setHeight(matrix.pixelWidth);
+            hboxQRCode.add(qrCode);
 
-          // Create a horizontal box layout for the QR Code and a spacer
-          hboxQRCode = new qx.ui.container.Composite(new qx.ui.layout.HBox());
-          hboxQRCode.setHeight(matrix.pixelWidth);
-          hboxQRCode.add(qrCode);
+            // Add a spacer to take up the remaining space not used by qrCode
+            hboxQRCode.add(new qx.ui.core.Widget(), { flex : 1 });
 
-          // Add a spacer to take up the remaining space not used by qrCode
-          hboxQRCode.add(new qx.ui.core.Widget(), { flex : 1 });
-
-          vboxRight.add(hboxQRCode);
+            vboxRight.add(hboxQRCode);
+          }
         }
-
+        
         canvas.setLayout(new qx.ui.layout.HBox());
 
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
