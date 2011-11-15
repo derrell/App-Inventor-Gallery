@@ -161,19 +161,19 @@ if (false)
 {
   new aiagallery.main.Module(
     "Gallery",
-    "aiagallery/test.png",
+    "aiagallery/module/go-home.png",
     "Home",
     aiagallery.module.dgallery.home.Home);
 
   new aiagallery.main.Module(
     "Gallery",
-    null,
+    "aiagallery/module/system-search.png",
     "Find Apps",
     aiagallery.module.dgallery.findapps.FindApps);
 
   new aiagallery.main.Module(
     "Gallery",
-    null,
+    "aiagallery/module/emblem-favorite.png",
     "My Stuff",
     aiagallery.module.dgallery.mystuff.MyStuff);
 
@@ -187,19 +187,19 @@ else
 {
   new aiagallery.main.Module(
     "Home",
-    "aiagallery/test.png",
+    "aiagallery/module/go-home.png",
     "Home",
     aiagallery.module.dgallery.home.Home);
 
   new aiagallery.main.Module(
     "Find Apps",
-    "aiagallery/test.png",
+    "aiagallery/module/system-search.png",
     "Find Apps",
     aiagallery.module.dgallery.findapps.FindApps);
 
   new aiagallery.main.Module(
     "My Stuff",
-    "aiagallery/test.png",
+    "aiagallery/module/emblem-favorite.png",
     "My Stuff",
     aiagallery.module.dgallery.mystuff.MyStuff);
 }

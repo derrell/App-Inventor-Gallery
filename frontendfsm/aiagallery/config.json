@@ -166,6 +166,7 @@
         [
           "rm -rf ../../war/resource",
           "rm -rf ../../war/script",
+          "cp ./source/favicon.ico ./build/",
           "rsync -av ./build/ ../../backend-js/jsserver/war/"
         ]
       }

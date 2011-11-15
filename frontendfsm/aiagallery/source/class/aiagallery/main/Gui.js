@@ -69,7 +69,12 @@ qx.Class.define("aiagallery.main.Gui",
         });
 
         // Add the logo to the header
-        o = new qx.ui.basic.Image("aiagallery/test.png");
+        o = new qx.ui.basic.Image("aiagallery/aicg.png");
+        o.set(
+          {
+            height : 57,
+            width  : 183
+          });
         header.add(o);
 
         // Create a small spacer after the logo
@@ -77,7 +82,7 @@ qx.Class.define("aiagallery.main.Gui",
         header.add(o);
 
         // Add a label to the header
-        o = new qx.ui.basic.Label(this.tr("App Inventor Gallery"));
+        o = new qx.ui.basic.Label(this.tr("App Inventor Community Gallery"));
         o.setFont(new qx.bom.Font(22, [ "sans-serif" ]));
         header.add(o);
 
@@ -199,7 +204,7 @@ qx.Class.define("aiagallery.main.Gui",
                   // ... then create it
                   module = new aiagallery.main.Module(
                     "Management",
-                    "aiagallery/test.png",
+                    "aiagallery/module/configure.png",
                     "User Management",
                     aiagallery.module.mgmt.users.Users);
 
