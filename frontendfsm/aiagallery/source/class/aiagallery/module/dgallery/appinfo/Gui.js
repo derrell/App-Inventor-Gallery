@@ -703,6 +703,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Update views and likes label
         this.__updateViewsLikesLabel();
+
+        // Disable the likeItButton since a user cannot
+        // like more than once.
+        this.likeItButton.setEnabled(false); 
+
         break;
 
       default:
