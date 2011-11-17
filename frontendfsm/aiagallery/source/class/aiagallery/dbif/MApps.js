@@ -283,7 +283,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           "description",
           "tags",
           "source",
-	  "apk",
+          "apk",
           "image1"
         ];
       
