@@ -39,16 +39,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
     // Label to display number of views and likes.
     this.__viewsLikesLabel = new qx.ui.basic.Label();
 
-    // FIXME: Clean up GUI elements related to comments.  The
-    // relationship between such elements as this.__allCommentsBox,
-    // this.__vbox, scrollContainer, etc. is obscure, and there may
-    // be redundant elements.
-
-    // Vbox container for comments, inside scrollContainer, outside
-    // this.__allCommentsBox
-    this.__vbox = new qx.ui.container.Composite(new qx.ui.layout.VBox());
-
-    // Yet another container that holds comments
+    // Vbox container for comments, inside scrollContainer
     this.__allCommentsBox = new qx.ui.container.Composite(
       new qx.ui.layout.VBox());
 
@@ -336,7 +327,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             location.href = 'rpc?getdata=' + appId + ':source';
           },
           null);
-          
+
         // Add it to the left vbox
         vboxLeft.add(downloadBtn);
 
@@ -354,9 +345,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           // ... then disable the Like It! button
           this.likeItButton.setEnabled(false);
         }
-
-        // Add it to the left vbox.
-        vboxLeft.add(this.likeItButton);
 
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
@@ -427,18 +415,18 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             }
           });
 
-        // Add the textfield, all existing comments, and the submit button
-        // to the UI.
+        // Add the textfield and submit button to the UI.
         vboxLeft.add(this.__commentInputField);
         vboxLeft.add(submitCommentButton);
-        vboxLeft.add(this.__allCommentsBox);
 
-        // We'll put all of the collapsable panels in a scroll container
+        // Add a scroll container containing the comment list.
+        // Make it stretch to the bottom of vBoxLeft.
         scrollContainer = new qx.ui.container.Scroll();
-        vboxLeft.add(scrollContainer);
+        scrollContainer.add(this.__allCommentsBox);
+        vboxLeft.add(scrollContainer, {flex : 1});
 
-        // Put the vbox container in the scroll container
-        scrollContainer.add(this.__vbox);
+
+        // Right Vbox
 
         // Create a label to represent a link to download the app.
         // FIXME: Add a link here
@@ -627,7 +615,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           this);
 
           // Add some space before the qr code image
-          var space = new qx.ui.basic.Label('');
+          space = new qx.ui.basic.Label('');
           vboxRight.add(space);
 
           // Create a horizontal box layout for the QR Code and a spacer
@@ -641,6 +629,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           vboxRight.add(hboxQRCode);
         }
 
+        // Lay out entire page: fixed width, horizontally centered.
         canvas.setLayout(new qx.ui.layout.HBox());
 
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
@@ -659,9 +648,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
           // Insert the new comment at the top of the list
           this.__allCommentsBox.addAt(newBox, 0, null);
-
-          // Following line confirmed to be needed--but why??
-          this.__vbox.add(this.__allCommentsBox);
         }
 
         this.__commentInputField.setValue(null);
@@ -687,9 +673,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
                 // Insert the new comment at the top of the list
                 this.__allCommentsBox.addAt(newBox, 0, null);
-
-                // Following line confirmed to be needed--but why??
-                this.__vbox.add(this.__allCommentsBox);
               }
             }
           }
@@ -706,7 +689,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
         // Disable the likeItButton since a user cannot
         // like more than once.
-        this.likeItButton.setEnabled(false); 
+        this.likeItButton.setEnabled(false);
 
         break;
 
