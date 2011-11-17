@@ -346,9 +346,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           this.likeItButton.setEnabled(false);
         }
 
-        // Add it to the left vbox.
-        vboxLeft.add(this.likeItButton);
-
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
         flagItButton = new aiagallery.widget.Button("Flag it!",
