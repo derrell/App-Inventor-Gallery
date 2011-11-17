@@ -420,6 +420,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(submitCommentButton);
 
         // Add a scroll container containing the comment list.
+        // Make it stretch to the bottom of vBoxLeft.
         scrollContainer = new qx.ui.container.Scroll();
         scrollContainer.add(this.__allCommentsBox);
         vboxLeft.add(scrollContainer, {flex : 1});
@@ -614,7 +615,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           this);
 
           // Add some space before the qr code image
-          var space = new qx.ui.basic.Label('');
+          space = new qx.ui.basic.Label('');
           vboxRight.add(space);
 
           // Create a horizontal box layout for the QR Code and a spacer
@@ -628,6 +629,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           vboxRight.add(hboxQRCode);
         }
 
+        // Lay out entire page: fixed width, horizontally centered.
         canvas.setLayout(new qx.ui.layout.HBox());
 
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
