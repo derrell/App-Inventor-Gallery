@@ -425,7 +425,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Add a scroll container containing the comment list.
         scrollContainer = new qx.ui.container.Scroll();
         scrollContainer.add(this.__allCommentsBox);
-        vboxLeft.add(scrollContainer);
+        vboxLeft.add(scrollContainer, {flex : 1});
 
 
         // Right Vbox
