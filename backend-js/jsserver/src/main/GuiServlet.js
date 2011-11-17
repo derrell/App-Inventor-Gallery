@@ -31,13 +31,17 @@ function doGet(request, response)
     {
       scriptToLoad = "    <title>RpcConsole</title>"
         + "    <script type=\"text/javascript\" "
-        + "            src=\"script/rpcconsole.demo.js\">";
+        + "            src=\"script/rpcconsole.demo.js\">"
+        + "    </script>";
     }
     else
     {
-      scriptToLoad = "    <title>aiagallery</title>"
+      scriptToLoad =
+        "    <link type=\"image/ico\" href=\"/favicon.ico\" rel=\"icon\">"
+        + "    <title>App Inventor Gallery</title>"
         + "    <script type=\"text/javascript\" "
-        + "              src=\"script/aiagallery.js\">";
+        + "              src=\"script/aiagallery.js\">"
+        + "    </script>";
     }
 
     out.println(
@@ -48,9 +52,9 @@ function doGet(request, response)
         + "  <head>"
         + "    <meta http-equiv=\"Content-Type\" "
         + "          content=\"text/html; charset=utf-8\" />"
-        + scriptToLoad +
-        "    </script>" + "  </head>" + "  <body>"
-            + "  </body>" + "</html>");
+        + scriptToLoad
+        + "  </head>" + "  <body>"
+        + "  </body>" + "</html>");
   }
   else
   {
