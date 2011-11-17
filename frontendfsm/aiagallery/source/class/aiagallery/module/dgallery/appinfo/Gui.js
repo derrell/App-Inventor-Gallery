@@ -346,9 +346,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           this.likeItButton.setEnabled(false);
         }
 
-        // Add it to the left vbox.
-        vboxLeft.add(this.likeItButton);
-
         // Create a button to allow users to "flag" things.
         // FIXME: Implement this
         flagItButton = new aiagallery.widget.Button("Flag it!",
@@ -423,6 +420,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         vboxLeft.add(submitCommentButton);
 
         // Add a scroll container containing the comment list.
+        // Make it stretch to the bottom of vBoxLeft.
         scrollContainer = new qx.ui.container.Scroll();
         scrollContainer.add(this.__allCommentsBox);
         vboxLeft.add(scrollContainer, {flex : 1});
@@ -634,7 +632,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             vboxRight.add(hboxQRCode);
           }
         }
-        
+
+        // Lay out entire page: fixed width, horizontally centered.
         canvas.setLayout(new qx.ui.layout.HBox());
 
         canvas.add(new qx.ui.core.Widget(), { flex : 1 });
