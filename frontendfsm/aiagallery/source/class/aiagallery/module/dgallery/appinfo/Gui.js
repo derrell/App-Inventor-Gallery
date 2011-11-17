@@ -630,7 +630,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             this);
 
             // Add some space before the qr code image
-            var space = new qx.ui.basic.Label('');
+            space = new qx.ui.basic.Label('');
             vboxRight.add(space);
 
             // Create a horizontal box layout for the QR Code and a spacer
