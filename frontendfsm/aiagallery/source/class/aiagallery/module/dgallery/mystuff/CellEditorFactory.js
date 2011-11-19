@@ -105,9 +105,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // editor closes.
       bEditing && cellEditor.setUserData("cellInfo", cellInfo);
 
-      // Creates red asterik label, currently not in use 
-      asterik = new qx.ui.basic.Label('*');
-      asterik.set(
+      // Creates red asterisk label, currently not in use 
+      var asterisk = new qx.ui.basic.Label('*');
+      asterisk.set(
         {
           TextColor : "#FF0000"
 	});
@@ -115,25 +115,25 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
 
       // Add the form field labels
       row = 0;
-
       [
-        this.tr("*" + "Title"),
-        this.tr("*" + "Description"),
-        this.tr("*" + "Image 1"),
-        this.tr("Image 2"),
-        this.tr("Image 3"),
-        this.tr("Previous Authors"),
-        this.tr("*" + "Categories"),
+        {str : this.tr("Title"), mandatory : true},
+        {str : this.tr("Description"), mandatory : true},
+        {str : this.tr("Image 1"), mandatory : true},
+        {str : this.tr("Image 2"), mandatory : false},
+        {str : this.tr("Image 3"), mandatory : false},
+        {str : this.tr("Previous Authors"), mandatory : false},
+        {str : this.tr("Categories"), mandatory : true},
         
-        this.tr("*" + "Uploads")
-      ].forEach(function(label)
+        {str : this.tr("Uploads"), mandatory : true}
+      ].forEach(function(str)
         {
-          o = new qx.ui.basic.Label(label);
+          o = new qx.ui.basic.Label(str.str);
           o.set(
             {
               allowShrinkX: false,
               paddingTop: 3
             });
+	 
           cellEditor.add(o, {row: row++, column : 0});
         });
 
@@ -394,7 +394,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       buttonPane.add(cancelButton);
       
       // Create lable for required field
-      requiredField = new qx.ui.basic.Label('* = required field');
+      var requiredField = new qx.ui.basic.Label('* = required field');
       
       // Makes lable red
       requiredField.set(
