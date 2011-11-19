@@ -123,22 +123,34 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         {str : this.tr("Image 3"), mandatory : false},
         {str : this.tr("Previous Authors"), mandatory : false},
         {str : this.tr("Categories"), mandatory : true},
-        
         {str : this.tr("Uploads"), mandatory : true}
       ].forEach(function(str)
         {
-          o = new qx.ui.basic.Label(str.str);
-          o.set(
-            {
-              allowShrinkX: false,
-              paddingTop: 3
-            });
-	 
-          cellEditor.add(o, {row: row++, column : 0});
+          if(str.mandatory == false)
+          {
+            o = new qx.ui.basic.Label(str.str);
+            o.set(
+              {
+                allowShrinkX: false,
+                paddingTop: 3
+              });
+	    cellEditor.add(o, {row: row++, column : 0});
+	  }
+
+	  if(str.mandatory == true)
+	  {
+            o = new qx.ui.basic.Label("*" + str.str);
+            o.set(
+              {
+                allowShrinkX: false,
+                paddingTop: 3
+              });
+	    cellEditor.add(o, {row: row++, column : 0});
+	  }
         });
 
-     // remove from list to put Categories and tags side by side
-     this.tr("Tags");
+      // remove from list to put Categories and tags side by side
+      this.tr("Tags");
 
       // Reset the row number
       row = 0;
