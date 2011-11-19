@@ -79,8 +79,14 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
 	  "<p><em>App Inventor Community Gallery is a resource provided ",
 	  "to the App Inventor community.  We are supported by a ",
 	  "grant from Google Inc.  Our site is presently in a beta launch. ",
-	  "Please be nice!  Email us at aigallery@weblab.cs.uml.edu if you ",
-	  "have any questions or comments.</em>"
+	  'Please be nice!  Please see more info ',
+	  '<a href="http://www.cs.uml.edu/ecg/index.php/Projects/AICG" ',
+	  'target="new">',
+	  'here',
+	  '</a> and email us at ',
+	  '<a href="mailto:aigallery@weblab.cs.uml.edu">',
+	  'aigallery@weblab.cs.uml.edu</a> if you ',
+	  "have any questions or comments.  Thanks.</em>"
         ].join("");
       message.set(
         {
@@ -98,6 +104,9 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       var linkRowLayout = new qx.ui.layout.HBox();
       linkRowLayout.setSpacing(20);
       var linkRow = new qx.ui.container.Composite(linkRowLayout);
+
+      // Add spacer
+      linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
       
       // Add "Find Apps" box to link row
       text =
@@ -114,23 +123,7 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       
       // Add spacer
       linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
-            
-      // Add "Learn" box to link row
-      text =
-        [
-	 "The <b>Learn</b> page will have for information about ",
-	 "the Community Gallery's features.  Nothing here yet."
-        ].join("");
-      var learn = new aiagallery.module.dgallery.home.LinkBox(
-        "<b>Learn</b><br>" + text,
-        "aiagallery/learn.png");
-      learn.addListener("click", fsm.eventListener, fsm);
-      linkRow.add(learn);
-      fsm.addObject("Learn", learn);
-      
-      // Add spacer
-      linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
-      
+
       // Add "My Stuff" box to link row
       text =
         [
@@ -142,6 +135,9 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
       myStuff.addListener("click", fsm.eventListener, fsm);
       linkRow.add(myStuff);
       fsm.addObject("My Stuff", myStuff);
+
+      // Add spacer
+      linkRow.add(new qx.ui.core.Widget(), { flex : 1 });
 
       // Add the link row to the page
       canvas.add(linkRow);

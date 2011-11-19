@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
- * 
+ *
  * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html 
+ *   LGPL: http://www.gnu.org/licenses/lgpl.html
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
@@ -112,10 +112,15 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.AppInfo",
     initialAppear : function(module)
     {
       // Replace existing (temporary) finite state machine with the real one.
-      aiagallery.module.dgallery.appinfo.Fsm.getInstance().buildFsm(module);
+
+      var fsm = new aiagallery.module.dgallery.appinfo.Fsm();
+      fsm.buildFsm(module);
 
       // Create the real gui.
-      aiagallery.module.dgallery.appinfo.Gui.getInstance().buildGui(module);
+      var gui = new aiagallery.module.dgallery.appinfo.Gui();
+      gui.buildGui(module);
+      // Stash a reference to it in the module so fsm can refer to it
+      module.setUserData("gui",gui);
     }
   }
 });

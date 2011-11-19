@@ -1,4 +1,5 @@
 script
 build
+test
 cache
 config.json
