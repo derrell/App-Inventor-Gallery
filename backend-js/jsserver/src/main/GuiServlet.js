@@ -61,7 +61,7 @@ function doGet(request, response)
     // Make 'em sign in.
     // Pass our URL so they're redirected back to here.
     out.println(
-      "<p>Please sign in to App Inventor Gallery using your <a href=\""
+      "<p>Please sign in to App Inventor Community Gallery using your <a href=\""
         + userService.createLoginURL(request.getRequestURI()) 
         + "\">Google account</a>.</p>");
   }
