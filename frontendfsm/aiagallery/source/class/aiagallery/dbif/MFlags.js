@@ -10,7 +10,6 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 {
   construct : function()
   {
-
     this.registerService("flagIt",
                          this.flagIt,
                          [ "flagType", 
@@ -23,7 +22,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
   members :
   {
     /**
-     *  Add one to the number of times this app has been liked
+     *  Add one to the number of times this app has been flagged 
      * 
      * @param flagType{Integer}
      *   This is the value of the type of flag that got submitted
@@ -48,6 +47,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
      */
     flagIt : function(flagType, explanationInput, appId, commentId, error)
     {
+
       var            appObj;
       var            appDataObj;
       var            appNum;
@@ -110,7 +110,10 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
                                           null);
 
           // Only change things if the visitor hasn't already flagged this app
-          if (flagsList.length === 0)
+
+          // temp 
+          //if (flagsList.length === 0)
+          if (true)
           {
 
             // initialize the new flag to be put on the database
@@ -146,6 +149,20 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
                 if (qx.core.Environment.get("qx.debug"))
                 {
                   alert("email to be sent");
+
+                  var props = new Packages.java.util.Properties();
+                  var session = Packages.javax.mail.Session.getDefaultInstance(props, null);
+
+                  var msgBody = "...";
+
+                  var msg = new Packages.javax.mail.internet.MimeMessage(session);
+                  msg.setFrom( new Packages.javax.mail.internet.InternetAddress(
+                             "admin@example.com", "Example.com Admin"));
+                  msg.addRecipient(Packages.javax.mail.Message.RecipientType.TO,
+                             new Packages.javax.mail.internet.InternetAddress("cadler42@gmail.com", "Mr. User"));
+                  msg.setSubject("An app was flagged");
+                  msg.setText(msgBody);
+                  Packages.javax.mail.Transport.send(msg);
                 }
               }
             }
