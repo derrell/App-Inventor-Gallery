@@ -105,14 +105,6 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // editor closes.
       bEditing && cellEditor.setUserData("cellInfo", cellInfo);
 
-      // Creates red asterisk label, currently not in use 
-      var asterisk = new qx.ui.basic.Label('*');
-      asterisk.set(
-        {
-          TextColor : "#FF0000"
-	});
-      //************************************************
-
       // Add the form field labels
       row = 0;
       [
@@ -139,9 +131,11 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
 
 	  if(str.mandatory == true)
 	  {
-            o = new qx.ui.basic.Label("*" + str.str);
+            o = new qx.ui.basic.Label('<font color=red>' + "*" + 
+                                      '</font>' + str.str);
             o.set(
               {
+                rich : true,
                 allowShrinkX: false,
                 paddingTop: 3
               });
