@@ -312,7 +312,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
 
         "ontransition" : function(fsm, event)
         {
-
+          var commentWrapper = fsm.getObject("commentWrapper");
+          var appId = commentWrapper.getUserData("appId");
  /*
          var request =
             this.callRpc(fsm,
@@ -324,7 +325,16 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Fsm",
             this.callRpc(fsm,
                          "aiagallery.features",
                          "flagIt",
-                         [ 0,"it is obscene", 101, null]);
+                         [ 
+                           // flag type: 0 = app, 1 = comment
+                           0,
+                           // reason for flagging, needs to be implemented
+                           "needs interface",
+                           // ID of application being banned
+                           appId,
+                           // null field for comment ID 
+                           null
+                         ]);
 
 
           // When we get the result, we'll need to know what type of request

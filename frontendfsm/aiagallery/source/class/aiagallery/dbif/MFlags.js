@@ -68,7 +68,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       {
         // If an app was flagged:
         case flagTypeVal.App:
-
+Packages.java.lang.System.out.println("in app switch statement");
           // store the applications data
           appObj = new aiagallery.dbif.ObjAppData(appId);
           appDataObj = appObj.getData();
@@ -112,19 +112,26 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           // Only change things if the visitor hasn't already flagged this app
 
           // temp 
-          //if (flagsList.length === 0)
           if (true)
+          //if (flagsList.length === 0)
           {
 
             // initialize the new flag to be put on the database
             newFlag = new aiagallery.dbif.ObjFlags();
 
             // store the new flags data
+            // commentID needs a non null value, maybe not
+
+Packages.java.lang.System.out.println("type: " + flagType);
+Packages.java.lang.System.out.println("app: " + appNum);
+Packages.java.lang.System.out.println("comment: " + "0000");
+Packages.java.lang.System.out.println("visitor: " + visitorId);
+Packages.java.lang.System.out.println("explanation: " + explanationInput);
             var data = 
             {
               type        : flagType,
               app         : appNum,
-              comment     : null,
+              comment     : "0000",
               visitor     : visitorId,
               explanation : explanationInput
             }
@@ -134,42 +141,66 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             // increments the apps number of flags
             appDataObj.numCurFlags++;      
 
+Packages.java.lang.System.out.println("current flags: " + appDataObj.numCurFlags);
+Packages.java.lang.System.out.println("status: " + appDataObj.status);
             // check if the number of flags is greater than or 
             // equal to the maximum allowed
             if(appDataObj.numCurFlags >= maxFlags)
             {
              // If the app is already pending do not touch the status or 
              // send an email  
-              if(appDataObj.status != statusVals.Pending)
+
+
+/*
+
+testing code revert back to :
+
+               if(appDataObj.status != statusVals.Pending)
+              {
+
+*/
+
+              if(true)
               {
                 // otherwise set the app to pending and send an email
                 appDataObj.status = statusVals.Pending;    
 
                 // placeholder code   
-                if (qx.core.Environment.get("qx.debug"))
+/*              if (qx.core.Environment.get("qx.debug"))
                 {
                   alert("email to be sent");
-
+                }else{
+*/
+Packages.java.lang.System.out.println("sending email");
                   var props = new Packages.java.util.Properties();
-                  var session = Packages.javax.mail.Session.getDefaultInstance(props, null);
 
+                  var session = Packages.javax.mail.Session.getDefaultInstance(props, null);
+Packages.java.lang.System.out.println("session declared");
                   var msgBody = "...";
 
                   var msg = new Packages.javax.mail.internet.MimeMessage(session);
                   msg.setFrom( new Packages.javax.mail.internet.InternetAddress(
                              "admin@example.com", "Example.com Admin"));
                   msg.addRecipient(Packages.javax.mail.Message.RecipientType.TO,
-                             new Packages.javax.mail.internet.InternetAddress("cadler42@gmail.com", "Mr. User"));
+                             new Packages.javax.mail.internet.InternetAddress(
+                               "cadler42@gmail.com", "Mr. User"));
                   msg.setSubject("An app was flagged");
                   msg.setText(msgBody);
+Packages.java.lang.System.out.println("message about to be sent");
                   Packages.javax.mail.Transport.send(msg);
-                }
+Packages.java.lang.System.out.println("message sent");
+  //              }
               }
             }
             // put the apps new data and the new flag on the database
+Packages.java.lang.System.out.println("updating DB app info");
             appObj.put();
+Packages.java.lang.System.out.println("updating DB flag info");
             newFlag.put();
+Packages.java.lang.System.out.println("updated flag info successfully");
           }
+
+Packages.java.lang.System.out.println("returning status");
           return appDataObj.status;
           
           break;
@@ -240,7 +271,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
             newFlag.setData(data);
 
             // increment the number of flags on the comment
-            commentDataObj.numCurFlags++;      
+            commentDataObj.numCurFlags++;
 
             // check if the number of flags is greater than or 
             // equal to the maximum allowed
