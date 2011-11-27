@@ -61,9 +61,19 @@ qx.Class.define("aiagallery.dbif.Decoder64",
         return null;
       }
 
-      // Parse out the mimeType. This always starts at index 5 and ends with a 
-      // semicolon
-      mimeType = fieldContent.substring(5, fieldContent.indexOf(";"));
+      if (base64field == "apk")
+      {
+        // Disregard the MIME type of the uploaded APK file and use one that
+        // the phone knows how to translate into a request ot open the Install
+        // Application app.
+        mimeType = "application/vnd.android.package-archive";
+      }
+      else
+      {
+        // Parse out the mimeType. This always starts at index 5 and ends with
+        // a semicolon
+        mimeType = fieldContent.substring(5, fieldContent.indexOf(";"));
+      }
       
       // Parse out the actual url
       contents = fieldContent.substring(fieldContent.indexOf(",") + 1);

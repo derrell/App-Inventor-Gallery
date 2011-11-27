@@ -58,11 +58,19 @@ function doGet(request, response)
   }
   else
   {
-    // Make 'em sign in.
-    // Pass our URL so they're redirected back to here.
-    out.println(
-      "<p>Please <a href=\""
-        + userService.createLoginURL(request.getRequestURI()) 
-        + "\">sign in</a>.</p>");
+    if (false)             // the old way
+    {
+      // Make 'em sign in.
+      // Pass our URL so they're redirected back to here.
+      out.println(
+        "<p>Please <a href=\""
+          + userService.createLoginURL(request.getRequestURI()) 
+          + "\">sign in</a>.</p>");
+    }
+    else
+    {
+      response.sendRedirect(
+        userService.createLoginURL(request.getRequestURI()));
+    }
   }
 }
