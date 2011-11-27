@@ -573,9 +573,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
 
             //The url of the download link to encode into a qr code.
             input.data =
-              "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
-              appId +
-              ":apk";
+              location.href.substring(0, location.href.lastIndexOf("/")) +
+              "/rpc?getdata=" + appId + ":apk";
 
             //This generates the qr code matrix.
             var matrix = new qr.Matrix(input, code);
