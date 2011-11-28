@@ -68,7 +68,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       {
         // If an app was flagged:
         case flagTypeVal.App:
-Packages.java.lang.System.out.println("in app switch statement");
+Packages.java.lang.System.out.println("\nin app switch statement");
           // store the applications data
           appObj = new aiagallery.dbif.ObjAppData(appId);
           appDataObj = appObj.getData();
