@@ -68,7 +68,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       {
         // If an app was flagged:
         case flagTypeVal.App:
-Packages.java.lang.System.out.println("\nin app switch statement");
+java.lang.System.out.println("\nin app switch statement");
           // store the applications data
           appObj = new aiagallery.dbif.ObjAppData(appId);
           appDataObj = appObj.getData();
@@ -111,7 +111,7 @@ Packages.java.lang.System.out.println("\nin app switch statement");
 
           // Only change things if the visitor hasn't already flagged this app
 
-          // temp 
+// temp 
           if (true)
           //if (flagsList.length === 0)
           {
@@ -120,29 +120,19 @@ Packages.java.lang.System.out.println("\nin app switch statement");
             newFlag = new aiagallery.dbif.ObjFlags();
 
             // store the new flags data
-            // commentID needs a non null value, maybe not
+            var data = newFlag.getData();
 
-Packages.java.lang.System.out.println("type: " + flagType);
-Packages.java.lang.System.out.println("app: " + appNum);
-Packages.java.lang.System.out.println("comment: " + "0000");
-Packages.java.lang.System.out.println("visitor: " + visitorId);
-Packages.java.lang.System.out.println("explanation: " + explanationInput);
-            var data = 
-            {
-              type        : flagType,
-              app         : appNum,
-              comment     : "0000",
-              visitor     : visitorId,
-              explanation : explanationInput
-            }
-
-	    newFlag.setData(data);
+            data.type = flagType;
+            data.app = appNum;
+            data.comment = null;
+            data.visitor = visitorId;
+            data.explanation = explanationInput;
 
             // increments the apps number of flags
             appDataObj.numCurFlags++;      
 
-Packages.java.lang.System.out.println("current flags: " + appDataObj.numCurFlags);
-Packages.java.lang.System.out.println("status: " + appDataObj.status);
+java.lang.System.out.println("current flags: " + appDataObj.numCurFlags);
+java.lang.System.out.println("status: " + appDataObj.status);
             // check if the number of flags is greater than or 
             // equal to the maximum allowed
             if(appDataObj.numCurFlags >= maxFlags)
@@ -159,7 +149,6 @@ testing code revert back to :
               {
 
 */
-
               if(true)
               {
                 // otherwise set the app to pending and send an email
@@ -171,36 +160,37 @@ testing code revert back to :
                   alert("email to be sent");
                 }else{
 */
-Packages.java.lang.System.out.println("sending email");
-                  var props = new Packages.java.util.Properties();
-
-                  var session = Packages.javax.mail.Session.getDefaultInstance(props, null);
-Packages.java.lang.System.out.println("session declared");
+java.lang.System.out.println("sending email");
+                  var props = new java.util.Properties();
+java.lang.System.out.println("props: " + props);
+                  var session = javax.mail.Session.getDefaultInstance(props, null);
+java.lang.System.out.println("session: "+session);
                   var msgBody = "...";
 
-                  var msg = new Packages.javax.mail.internet.MimeMessage(session);
-                  msg.setFrom( new Packages.javax.mail.internet.InternetAddress(
+                  var msg = new javax.mail.internet.MimeMessage(session);
+java.lang.System.out.println("msg: " + msg);
+                  msg.setFrom( new javax.mail.internet.InternetAddress(
                              "admin@example.com", "Example.com Admin"));
-                  msg.addRecipient(Packages.javax.mail.Message.RecipientType.TO,
-                             new Packages.javax.mail.internet.InternetAddress(
+                  msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                             new javax.mail.internet.InternetAddress(
                                "cadler42@gmail.com", "Mr. User"));
                   msg.setSubject("An app was flagged");
                   msg.setText(msgBody);
-Packages.java.lang.System.out.println("message about to be sent");
-                  Packages.javax.mail.Transport.send(msg);
-Packages.java.lang.System.out.println("message sent");
+
+                  javax.mail.Transport.send(msg);
+
   //              }
               }
             }
             // put the apps new data and the new flag on the database
-Packages.java.lang.System.out.println("updating DB app info");
+java.lang.System.out.println("updating DB app info");
             appObj.put();
-Packages.java.lang.System.out.println("updating DB flag info");
+java.lang.System.out.println("updating DB flag info");
             newFlag.put();
-Packages.java.lang.System.out.println("updated flag info successfully");
+java.lang.System.out.println("updated flag info successfully");
           }
 
-Packages.java.lang.System.out.println("returning status");
+java.lang.System.out.println("returning status");
           return appDataObj.status;
           
           break;
@@ -259,16 +249,13 @@ Packages.java.lang.System.out.println("returning status");
             newFlag = new aiagallery.dbif.ObjFlags();
 
             // store the flags data 
-            var data = 
-            {
-              type        : flagType,
-              app         : appId,
-              comment     : commentNum,
-              visitor     : visitorId,
-              explanation : explanationInput
-            }
+            var data = newFlag.getData();
 
-            newFlag.setData(data);
+            data.type = flagType;
+            data.app = appNum;
+            data.comment = commentId;
+            data.visitor = visitorId;
+            data.explanation = explanationInput;
 
             // increment the number of flags on the comment
             commentDataObj.numCurFlags++;
