@@ -572,9 +572,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             input.dataType = input.DATA_TYPE.TEXT;
 
             //The url of the download link to encode into a qr code.
-            input.data =
-              location.href.substring(0, location.href.lastIndexOf("/")) +
-              "/rpc?getdata=" + appId + ":apk";
+            input.data = location.host + "/rpc?getdata=" + appId + ":apk";
 
             //This generates the qr code matrix.
             var matrix = new qr.Matrix(input, code);

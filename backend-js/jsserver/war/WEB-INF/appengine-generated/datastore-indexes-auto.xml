@@ -1,23 +1,17 @@
-<!-- Indices written at Sun, 27 Nov 2011 23:06:51 UTC -->
+<!-- Indices written at Mon, 28 Nov 2011 01:37:02 UTC -->
 
 <datastore-indexes>
 
-    <!-- Used 3 times in query history -->
+    <!-- Used 1 time in query history -->
     <datastore-index kind="apps" ancestor="false" source="auto">
         <property name="status" direction="asc"/>
         <property name="numLikes" direction="desc"/>
     </datastore-index>
 
-    <!-- Used 3 times in query history -->
+    <!-- Used 1 time in query history -->
     <datastore-index kind="apps" ancestor="false" source="auto">
         <property name="status" direction="asc"/>
         <property name="uploadTime" direction="desc"/>
-    </datastore-index>
-
-    <!-- Used 3 times in query history -->
-    <datastore-index kind="tags" ancestor="false" source="auto">
-        <property name="type" direction="asc"/>
-        <property name="value" direction="asc"/>
     </datastore-index>
 
 </datastore-indexes>
