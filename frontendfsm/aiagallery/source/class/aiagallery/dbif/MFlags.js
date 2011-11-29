@@ -147,7 +147,6 @@ testing code revert back to :
 
                if(appDataObj.status != statusVals.Pending)
               {
-
 */
               if(true)
               {
@@ -160,15 +159,13 @@ testing code revert back to :
                   alert("email to be sent");
                 }else{
 */
-java.lang.System.out.println("sending email");
-                  var props = new java.util.Properties();
-java.lang.System.out.println("props: " + props);
-                  var session = javax.mail.Session.getDefaultInstance(props, null);
-java.lang.System.out.println("session: "+session);
-                  var msgBody = "...";
+java.lang.System.out.println("mail code started");
 
+                  var props = new java.util.Properties();
+                  var session = javax.mail.Session.getDefaultInstance(props, null);
+                  var msgBody = "...";
                   var msg = new javax.mail.internet.MimeMessage(session);
-java.lang.System.out.println("msg: " + msg);
+
                   msg.setFrom( new javax.mail.internet.InternetAddress(
                              "admin@example.com", "Example.com Admin"));
                   msg.addRecipient(javax.mail.Message.RecipientType.TO,
@@ -179,18 +176,14 @@ java.lang.System.out.println("msg: " + msg);
 
                   javax.mail.Transport.send(msg);
 
+java.lang.System.out.println("mail code ended");
   //              }
               }
             }
             // put the apps new data and the new flag on the database
-java.lang.System.out.println("updating DB app info");
             appObj.put();
-java.lang.System.out.println("updating DB flag info");
             newFlag.put();
-java.lang.System.out.println("updated flag info successfully");
           }
-
-java.lang.System.out.println("returning status");
           return appDataObj.status;
           
           break;
