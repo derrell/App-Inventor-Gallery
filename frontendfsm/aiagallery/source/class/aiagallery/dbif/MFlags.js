@@ -58,7 +58,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       var            flagsList;
 
 
-      var            visitorId= this.whoAmI().email;
+      var            visitorId= this.getWhoAmI().email;
       var            maxFlags = aiagallery.dbif.Constants.MAX_FLAGGED;
       var            statusVals = aiagallery.dbif.Constants.Status;
       var            flagTypeVal = aiagallery.dbif.Constants.FlagType;
@@ -68,7 +68,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       {
         // If an app was flagged:
         case flagTypeVal.App:
-java.lang.System.out.println("\nin app switch statement");
+
           // store the applications data
           appObj = new aiagallery.dbif.ObjAppData(appId);
           appDataObj = appObj.getData();
@@ -110,12 +110,8 @@ java.lang.System.out.println("\nin app switch statement");
                                           null);
 
           // Only change things if the visitor hasn't already flagged this app
-
-// temp 
-          if (true)
-          //if (flagsList.length === 0)
+          if (flagsList.length === 0)
           {
-
             // initialize the new flag to be put on the database
             newFlag = new aiagallery.dbif.ObjFlags();
 
@@ -131,53 +127,32 @@ java.lang.System.out.println("\nin app switch statement");
             // increments the apps number of flags
             appDataObj.numCurFlags++;      
 
-java.lang.System.out.println("current flags: " + appDataObj.numCurFlags);
-java.lang.System.out.println("status: " + appDataObj.status);
             // check if the number of flags is greater than or 
             // equal to the maximum allowed
             if(appDataObj.numCurFlags >= maxFlags)
             {
+
              // If the app is already pending do not touch the status or 
              // send an email  
-
-
-/*
-
-testing code revert back to :
-
-               if(appDataObj.status != statusVals.Pending)
-              {
-*/
-              if(true)
+              if(appDataObj.status != statusVals.Pending)
               {
                 // otherwise set the app to pending and send an email
                 appDataObj.status = statusVals.Pending;    
 
-                // placeholder code   
-/*              if (qx.core.Environment.get("qx.debug"))
-                {
-                  alert("email to be sent");
-                }else{
-*/
-java.lang.System.out.println("mail code started");
+                var props = new java.util.Properties();
+                var session = javax.mail.Session.getDefaultInstance(props, null);
+                var msgBody = "...";
+                var msg = new javax.mail.internet.MimeMessage(session);
 
-                  var props = new java.util.Properties();
-                  var session = javax.mail.Session.getDefaultInstance(props, null);
-                  var msgBody = "...";
-                  var msg = new javax.mail.internet.MimeMessage(session);
+                msg.setFrom( new javax.mail.internet.InternetAddress(
+                           "admin@example.com", "Example.com Admin"));
+                msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                           new javax.mail.internet.InternetAddress(
+                             "user@example.com", "Mr. User"));
+                msg.setSubject("An app was flagged");
+                msg.setText(msgBody);
 
-                  msg.setFrom( new javax.mail.internet.InternetAddress(
-                             "admin@example.com", "Example.com Admin"));
-                  msg.addRecipient(javax.mail.Message.RecipientType.TO,
-                             new javax.mail.internet.InternetAddress(
-                               "cadler42@gmail.com", "Mr. User"));
-                  msg.setSubject("An app was flagged");
-                  msg.setText(msgBody);
-
-                  javax.mail.Transport.send(msg);
-
-java.lang.System.out.println("mail code ended");
-  //              }
+                javax.mail.Transport.send(msg);
               }
             }
             // put the apps new data and the new flag on the database
@@ -205,7 +180,6 @@ java.lang.System.out.println("mail code ended");
               "Comment not found. Unable to flag.");
             return error;
           }
-
 
           // Construct query criteria for 
           //"flags of this comment by current visitor"
@@ -237,7 +211,6 @@ java.lang.System.out.println("mail code ended");
           //already flagged this comment
           if (flagsList.length === 0)
           {
-
             // initialize the new flag to be put on the database
             newFlag = new aiagallery.dbif.ObjFlags();
 
@@ -264,11 +237,21 @@ java.lang.System.out.println("mail code ended");
                 // otherwise set the comment to pending and send an email
                 commentDataObj.status = statusVals.Pending;    
 
-                // placeholder code   
-                if (qx.core.Environment.get("qx.debug"))
-                {
-                  alert("email to be sent");
-                }
+
+                var props = new java.util.Properties();
+                var session = javax.mail.Session.getDefaultInstance(props, null);
+                var msgBody = "...";
+                var msg = new javax.mail.internet.MimeMessage(session);
+
+                msg.setFrom( new javax.mail.internet.InternetAddress(
+                           "admin@example.com", "Example.com Admin"));
+                msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                           new javax.mail.internet.InternetAddress(
+                             "user@example.com", "Mr. User"));
+                msg.setSubject("An app was flagged");
+                msg.setText(msgBody);
+
+                javax.mail.Transport.send(msg);
               }
             }
             // put the comments new data and the new flag on the database
