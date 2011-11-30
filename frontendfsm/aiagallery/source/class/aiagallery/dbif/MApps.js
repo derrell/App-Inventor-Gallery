@@ -680,7 +680,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             criteria;
       var             resultCriteria = [];
       var             owners;
-  
+      var             displayName;
+
       // Get the current user
       whoami = this.getWhoAmI();
 
@@ -742,16 +743,26 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                               app["owner"]);
 
+            // FIXME: should never occur (but does)
+            if (true)
+            {
+              displayName = null;
+              if (owners.length == 0)
+              {
+                displayName = "<>";
+              }
+            }
+
             // If it's not an "all" request (administrator)...
             if (! bAll)
             {
               // ... then replace his visitor id with his display name
-              app["owner"] = owners[0].displayName;
+              app["owner"] = displayName || owners[0].displayName || "<>";
             }
             else
             {
               // Otherwise add the display name
-              app["displayName"] = owners[0].displayName;
+              app["displayName"] = displayName || owners[0].displayName || "<>";
             }
            
             // If we were asked to stringize the values...
@@ -889,6 +900,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             categories;
       var             categoryNames;
       var             owners;
+      var             displayName;
 
       appList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjAppData", criteria);
 
@@ -900,8 +912,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
 
+          // FIXME: should never occur (but does)
+          if (true)
+          {
+            displayName = null;
+            if (owners.length == 0)
+            {
+              displayName = "<>";
+            }
+          }
+
           // Replace the (private) owner id with his display name
-          app.owner = owners[0].displayName;
+          app.owner = displayName || owners[0].displayName || "<>";
           
           // If there were requested fields specified...
           if (requestedFields)
@@ -1082,6 +1104,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     getHomeRibbonData : function()
     { 
       var             owners;
+      var             displayName;
 
       // Create and execute query for "Featured" apps.
       var criterion = 
@@ -1102,8 +1125,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                             app["owner"]);
 
+            // FIXME: should never occur (but does)
+            if (true)
+            {
+              displayName = null;
+              if (owners.length == 0)
+              {
+                displayName = "<>";
+              }
+            }
+
             // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
+            app["owner"] = displayName || owners[0].displayName || "<>";
                       
           });
 
@@ -1142,8 +1175,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
             owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                             app["owner"]);
 
+            // FIXME: should never occur (but does)
+            if (true)
+            {
+              displayName = null;
+              if (owners.length == 0)
+              {
+                displayName = "<>";
+              }
+            }
+
             // Replace his visitor id with his display name
-            app["owner"] = owners[0].displayName;
+            app["owner"] = displayName || owners[0].displayName || "<>";
                       
           });
 
@@ -1181,8 +1224,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors",
                                            app["owner"]);
 
+          // FIXME: should never occur (but does)
+          if (true)
+          {
+            displayName = null;
+            if (owners.length == 0)
+            {
+              displayName = "<>";
+            }
+          }
+
           // Replace his visitor id with his display name
-          app["owner"] = owners[0].displayName;
+          app["owner"] = displayName || owners[0].displayName || "<>";
         });
 
       //Construct map of data
@@ -1226,6 +1279,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
     {
       var             appList = [];
       var             owners;
+      var             displayName;
       
       uidArr.forEach(function(uid)
           {
@@ -1241,8 +1295,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
           owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
 
+          // FIXME: should never occur (but does)
+          if (true)
+          {
+            displayName = null;
+            if (owners.length == 0)
+            {
+              displayName = "<>";
+            }
+          }
+
           // Replace the (private) owner id with his display name
-          app.owner = owners[0].displayName;
+          app.owner = displayName || owners[0].displayName || "<>";
           
           // If there were requested fields specified...
           if (requestedFields)
@@ -1309,6 +1373,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             criteria;
       var             owners;
       var             likesList;
+      var             displayName;
 
       whoami = this.getWhoAmI();
 
@@ -1355,8 +1420,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       owners = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjVisitors", 
                                        app.owner);
 
+      // FIXME: should never occur (but does)
+      if (true)
+      {
+        displayName = null;
+        if (owners.length == 0)
+        {
+          displayName = "<>";
+        }
+      }
+
       // Replace the (private) owner id with his display name
-      app.owner = owners[0].displayName;
+      app.owner = displayName || owners[0].displayName || "<>";
 
       // If there's a user signed in...
       if (whoami && whoami.email)
