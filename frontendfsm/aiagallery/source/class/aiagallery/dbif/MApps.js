@@ -436,6 +436,15 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         }
       }
       
+      // Were there any missing, required fields?
+      if (missing.length > 0)
+      {
+        // Yup. Let 'em know.
+        error.setCode(4);
+        error.setMessage("Please make sure to provide: " + missing.join(", "));
+        return error;
+      }
+      
       // Did we find at least one category tag?
       if (! bHasCategory)
       {
@@ -445,15 +454,6 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         return error;
       }
 
-      // Were there any missing, required fields?
-      if (missing.length > 0)
-      {
-        // Yup. Let 'em know.
-        error.setCode(4);
-        error.setMessage("Missing required attributes: " + missing.join(", "));
-        return error;
-      }
-      
       // If a new source file was uploaded...
       if (sourceData)
       {
