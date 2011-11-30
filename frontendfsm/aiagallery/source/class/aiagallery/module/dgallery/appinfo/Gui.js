@@ -347,8 +347,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }
 
         // Create a button to allow users to "flag" things.
-
-        // FIXME: Implement this
         flagItButton = new aiagallery.widget.Button("Flag it!",
                          "qx/icon/Oxygen/16/status/dialog-error.png");
         fsm.addObject("flagItButton", flagItButton);
