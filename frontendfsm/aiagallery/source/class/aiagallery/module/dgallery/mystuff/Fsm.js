@@ -431,8 +431,6 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
             uploadReader.dispose();
             uploadReader = null;
             
-            // It is. Accept this transition.
-            return true;
           }
           catch(e)
           {
@@ -441,6 +439,30 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
                   "Please use a recent version of Chrome, Firefox, or Safari.");
             return null;
           }
+
+          //Test for size of the file
+          uploadReader = new qx.bom.FileReader();
+
+          //Get the image
+          uploadButton = event.getTarget();
+
+          //Size check
+          var fileSize = uploadButton.getFileSize()
+
+          if(fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE)
+          {
+             alert("The image you attempted to upload was larger than allowed. " +
+                   "Please upload an image under one megabyte.");
+
+             //Clean up
+             uploadReader.dispose();
+             uploadReader = null;
+         
+             return null;
+          }
+
+          //FileReader available and image under size. Accept this transition.
+          return true; 
         },
 
         "ontransition" : function(fsm, event)
@@ -819,18 +841,39 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
           // Get the currently-in-use upload button
           var uploadButton = fsm.getObject("uploadButton");
-
+ 
           // Retrieve the data URL from the upload button, and save it.
           var content = event.getData().content;
-          uploadButton.setUserData("fileData", content);
-          
-          // Update the image too (if this was an image upload)
-          var image = uploadButton.getUserData("image");
-          if (image) 
+
+          //If this is true the image is a valid file
+          var bool = false; 
+
+          //Test for image types
+          if(qx.lang.Array.contains(aiagallery.main.Constant.VALID_IMAGE_ARRAY, 
+              content.substring(5, content.indexOf(";")))) 
           {
-            image.setSource(content);
+              //change variable true since it is a valid image
+              bool = true;
+ 
+              //Do work updating image on "Add Application" dialog
+              uploadButton.setUserData("fileData", content);
+   
+              // Update the image too (if this was an image upload)
+              var image = uploadButton.getUserData("image");
+              if (image) 
+              {
+                image.setSource(content);
+              }
+
           }
-          
+
+          //Pop message about invalid image if nessesary. 
+          if (bool == false)
+          {
+              alert("You have not selected a valid image file." +
+                    " Please select a .gif, .jpeg, or .png");
+          }
+
           // We no longer have a currently-in-use upload button or reader
           fsm.removeObject("uploadButton");
           fsm.removeObject("uploadReader");
