@@ -347,9 +347,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }
 
         // Create a button to allow users to "flag" things.
-        // FIXME: Implement this
-        flagItButton = new aiagallery.widget.Button("Flag it!",
-                         "qx/icon/Oxygen/16/status/dialog-error.png");
+        flagItButton = new qx.ui.form.Button("Flag it!");
+        flagItButton.setAppearance("flagIt-button");
 
         // Add likeItButton to the hbox.
         hboxFlagLike.add(this.likeItButton, { flex : 1 });
