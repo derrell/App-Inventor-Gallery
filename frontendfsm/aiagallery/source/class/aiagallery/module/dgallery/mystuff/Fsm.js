@@ -449,7 +449,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           //Size check
           var fileSize = uploadButton.getFileSize()
 
-          if(fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE){
+          if(fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE)
+          {
              alert("The image you attempted to upload was larger than allowed. " +
                    "Please upload an image under one megabyte.");
 
@@ -847,34 +848,28 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           //If this is true the image is a valid file
           var bool = false; 
 
-          //Test for image types here
-          for (var item in aiagallery.main.Constant.VALID_IMAGE_ARRAY) {
-
-              if (aiagallery.main.Constant.VALID_IMAGE_ARRAY[item]  
-		== content.substring(11, 14)) 
-	      {
-
-                  //change variable true since it is a valid image
-                  bool = true;
+          //Test for image types
+          if(qx.lang.Array.contains(aiagallery.main.Constant.VALID_IMAGE_ARRAY, 
+              content.substring(5, content.indexOf(";")))) 
+          {
+              //change variable true since it is a valid image
+              bool = true;
  
-                  //Do work updating image on "Add Application" dialog
-                  uploadButton.setUserData("fileData", content);
-
-                  // Update the image too (if this was an image upload)
-                  var image = uploadButton.getUserData("image");
-                  if (image) 
-                  {
-                    image.setSource(content);
-                  }
-
-                  break; //break out of for loop
-
+              //Do work updating image on "Add Application" dialog
+              uploadButton.setUserData("fileData", content);
+   
+              // Update the image too (if this was an image upload)
+              var image = uploadButton.getUserData("image");
+              if (image) 
+              {
+                image.setSource(content);
               }
+
           }
 
           //Pop message about invalid image if nessesary. 
-          if (bool == false) 
-	  {
+          if (bool == false)
+          {
               alert("You have not selected a valid image file." +
                     " Please select a .gif, .jpeg, or .png");
           }
