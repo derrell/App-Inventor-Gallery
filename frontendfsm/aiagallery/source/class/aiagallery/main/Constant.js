@@ -14,6 +14,7 @@ qx.Class.define("aiagallery.main.Constant",
   statics :
   {
     SERVICES_URL : "/rpc",
-    MAX_IMAGE_FILE_SIZE : 2097152 //2 megabytes
+    MAX_IMAGE_FILE_SIZE : 2097152, //2 megabytes
+    VALID_IMAGE_ARRAY : ["gif", "jpe", "png"] //valid image uploads
   }
 });

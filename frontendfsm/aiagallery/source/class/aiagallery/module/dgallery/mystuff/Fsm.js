@@ -844,16 +844,37 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           // Retrieve the data URL from the upload button, and save it.
           var content = event.getData().content;
 
+          //If this is true the image is a valid file
+          var bool = false; 
+
+          var testString = content.substring(11, 14); 
+
           //Test for image types here
-          uploadButton.setUserData("fileData", content);
+          for (var item in aiagallery.main.Constant.VALID_IMAGE_ARRAY) {
+              if (aiagallery.main.Constant.VALID_IMAGE_ARRAY[item] == content.substring(11, 14)){
+                  bool = true;
+              }
+          }
           
+          if(bool) {
+
+          uploadButton.setUserData("fileData", content);
+
           // Update the image too (if this was an image upload)
           var image = uploadButton.getUserData("image");
           if (image) 
           {
             image.setSource(content);
           }
-          
+
+          }
+
+          //Pop message about invalid image
+          if(bool == false){
+              alert("You have not selected a valid image file." +
+                    " Please select a .gif, .jpeg, or .png");
+          }
+
           // We no longer have a currently-in-use upload button or reader
           fsm.removeObject("uploadButton");
           fsm.removeObject("uploadReader");
