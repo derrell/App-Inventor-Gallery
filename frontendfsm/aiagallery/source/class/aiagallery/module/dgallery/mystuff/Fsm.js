@@ -424,10 +424,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "predicate" : function(fsm, event)
         {
+          var             uploadReader;
+          var             uploadButton;
+          var             fileSize;
+
           // Determine if an upload reader is available
           try
           {
-            var uploadReader = new qx.bom.FileReader();
+            uploadReader = new qx.bom.FileReader();
             uploadReader.dispose();
             uploadReader = null;
             
@@ -447,12 +451,14 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           uploadButton = event.getTarget();
 
           //Size check
-          var fileSize = uploadButton.getFileSize()
-
-          if(fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE)
+          fileSize = uploadButton.getFileSize();
+          if (fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE)
           {
-             alert("The image you attempted to upload was larger than allowed. " +
-                   "Please upload an image under one megabyte.");
+            alert("The image you attempted to upload was " +
+                  fileSize +
+                  " bytes, which is larger than the limit of " + 
+                  aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE +
+                  " bytes.");
 
              //Clean up
              uploadReader.dispose();
@@ -845,16 +851,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           // Retrieve the data URL from the upload button, and save it.
           var content = event.getData().content;
 
-          //If this is true the image is a valid file
-          var bool = false; 
-
           //Test for image types
           if(qx.lang.Array.contains(aiagallery.main.Constant.VALID_IMAGE_ARRAY, 
               content.substring(5, content.indexOf(";")))) 
           {
-              //change variable true since it is a valid image
-              bool = true;
- 
               //Do work updating image on "Add Application" dialog
               uploadButton.setUserData("fileData", content);
    
@@ -864,14 +864,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
               {
                 image.setSource(content);
               }
-
           }
-
-          //Pop message about invalid image if nessesary. 
-          if (bool == false)
+          else
           {
-              alert("You have not selected a valid image file." +
-                    " Please select a .gif, .jpeg, or .png");
+            alert("You have selected an invalid image file. " +
+                  "Valid file types are:\n" +
+                  aiagallery.main.Constant.VALID_IMAGE_ARRAY.join(", "));
           }
 
           // We no longer have a currently-in-use upload button or reader
