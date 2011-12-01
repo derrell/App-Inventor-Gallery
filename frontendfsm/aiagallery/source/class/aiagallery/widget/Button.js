@@ -12,7 +12,7 @@ qx.Class.define("aiagallery.widget.Button",
     
     properties : 
     {
-      apperance :
+      appearance :
       {
         refine : true,
 	init : "likeIt/flagIt-button"
