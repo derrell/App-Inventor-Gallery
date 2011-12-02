@@ -407,7 +407,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
 
       /*
-       * Transition: Idle to ReadyingUpload
+       * Transition: AddOrEditApp to ReadyingUpload
        *
        * Cause: "changeFileName" on one of the upload buttons
        *
@@ -416,7 +416,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_ReadyingUpload_via_changeFileName",
+        "Transition_AddOrEditApp_to_ReadyingUpload_via_changeFileName",
       {
         "nextState" : "State_ReadyingUpload",
 
@@ -427,6 +427,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var             uploadReader;
           var             uploadButton;
           var             fileSize;
+          var             maxSize;
+          var             message;
+          var             purpose;
 
           // Determine if an upload reader is available
           try
@@ -449,25 +452,71 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
           //Get the image
           uploadButton = event.getTarget();
+          
+          // Find out which purpose (button) this upload is for
+          purpose = fsm.getFriendlyName(uploadButton);
 
-          //Size check
+          // Determine the size of the file requested for upload
           fileSize = uploadButton.getFileSize();
-          if (fileSize > aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE)
-          {
-            alert("The image you attempted to upload was " +
-                  fileSize +
-                  " bytes, which is larger than the limit of " + 
-                  aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE +
-                  " bytes.");
 
-             //Clean up
-             uploadReader.dispose();
-             uploadReader = null;
-         
-             return null;
+          // Do button-specific processing
+          switch(purpose)
+          {
+          case "image1":
+          case "image2":
+          case "image3":
+            // Specify the maximum image size
+            maxSize = aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE;
+            
+            // Generate a message for image too large
+            message = 
+              "The image you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE +
+              " bytes.";              
+            break;
+            
+          case "source":
+            // Specify the maximum source file size
+            maxSize = aiagallery.main.Constant.MAX_SOURCE_FILE_SIZE;
+            
+            // Generate a message for file too large
+            message = 
+              "The file you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_SOURCE_FILE_SIZE +
+              " bytes.";              
+            break;
+            
+          case "apk":
+            // Specify the maximum apk file size
+            maxSize = aiagallery.main.Constant.MAX_APK_FILE_SIZE;
+            
+            // Generate a message for file too large
+            message = 
+              "The file you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_APK_FILE_SIZE +
+              " bytes.";              
+            break;
           }
 
-          //FileReader available and image under size. Accept this transition.
+          // Size check
+          if (fileSize > maxSize)
+          {
+            alert(message);
+
+            // Clean up
+            uploadReader.dispose();
+            uploadReader = null;
+         
+            return null;
+          }
+
+          // FileReader available and file under size. Accept this transition.
           return true; 
         },
 
@@ -490,7 +539,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           uploadButton = event.getTarget();
 
           // Save the upload in progress, for use upon "load" or "error"
-          fsm.addObject("uploadButton", uploadButton);
+          fsm.setUserData("uploadButton", uploadButton);
 
           // Get the selected File object
           uploadElement = uploadButton.getInputElement().getDomElement();
@@ -842,18 +891,63 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "ontransition" : function(fsm, event)
         {
+          var             validTypes;
+          var             message;
+          var             purpose;
+
           // Get the UploadReader object
           var uploadReader = fsm.getObject("uploadReader");
 
           // Get the currently-in-use upload button
-          var uploadButton = fsm.getObject("uploadButton");
- 
+          var uploadButton = fsm.getUserData("uploadButton");
+          
+          // Find out the purpose of this button
+          purpose = fsm.getFriendlyName(uploadButton);
+          
           // Retrieve the data URL from the upload button, and save it.
           var content = event.getData().content;
+          
+          // Extract the MIME type
+          var mimeType = content.substring(5, content.indexOf(";"));
+
+console.log("uploadButton: " + purpose);
+          switch(purpose)
+          {
+          case "image1":
+          case "image2":
+          case "image3":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_IMAGE_TYPES;
+            
+            // Generate an error message for invalid type
+            message = 
+              "You have selected an invalid image file. " +
+              "Valid file types are:\n" +
+              aiagallery.main.Constant.VALID_IMAGE_TYPES.join(", ");
+            break;
+            
+          case "source":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_SOURCE_TYPES;
+            
+            // Generate an error message for invalid type
+            message =
+              "The file you selected is not a valid '.zip' source file " +
+              "(found " + mimeType + ")";
+            break;
+            
+          case "apk":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_APK_TYPES;
+            
+            // Generate an error message for invalid type
+            message = "The file you selected is not a valid '.apk' file" +
+              "(found " + mimeType + ")";
+            break;
+          }
 
           //Test for image types
-          if(qx.lang.Array.contains(aiagallery.main.Constant.VALID_IMAGE_ARRAY, 
-              content.substring(5, content.indexOf(";")))) 
+          if(qx.lang.Array.contains(validTypes, mimeType)) 
           {
               //Do work updating image on "Add Application" dialog
               uploadButton.setUserData("fileData", content);
@@ -867,9 +961,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           }
           else
           {
-            alert("You have selected an invalid image file. " +
-                  "Valid file types are:\n" +
-                  aiagallery.main.Constant.VALID_IMAGE_ARRAY.join(", "));
+            alert(message);
+            return;
           }
 
           // We no longer have a currently-in-use upload button or reader

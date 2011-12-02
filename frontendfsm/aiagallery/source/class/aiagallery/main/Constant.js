@@ -14,9 +14,15 @@ qx.Class.define("aiagallery.main.Constant",
   statics :
   {
     SERVICES_URL : "/rpc",
-    MAX_IMAGE_FILE_SIZE : 2097152, //2 megabytes
     
-    // valid image upload MIME types
-    VALID_IMAGE_ARRAY : ["image/gif", "image/jpeg", "image/png"]
+    // Maximum upload file sizes
+    MAX_IMAGE_FILE_SIZE  : (1 * 1024 * 1024),
+    MAX_SOURCE_FILE_SIZE : (8 * 1024 * 1024),
+    MAX_APK_FILE_SIZE    : (16 * 1024 * 1024),
+    
+    // valid upload MIME types
+    VALID_IMAGE_TYPES  : ["image/gif", "image/jpeg", "image/png"],
+    VALID_SOURCE_TYPES : [ "application/zip" ],
+    VALID_APK_TYPES    : [ "application/vnd.android.package-archive" ]
   }
 });
