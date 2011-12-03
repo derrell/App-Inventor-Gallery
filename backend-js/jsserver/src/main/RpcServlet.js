@@ -11,7 +11,12 @@
 */
 
 // Load each of the JavaScript classes
-new Packages.main.Loader();
+if (typeof aiagallery == "undefined" || 
+    typeof aiagallery.dbif == "undefined" ||
+    typeof aiagallery.dbif.DbifAppEngine == "undefined")
+{
+  new Packages.main.Loader();
+}
 
 /**
  * Process a POST request. These are the standard GUI-initiated remote
