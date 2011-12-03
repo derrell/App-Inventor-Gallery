@@ -443,7 +443,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           {
             // There's no upload reader. Tell 'em they're screwed.
             alert("Your browser does not support the required functionality. " +
-                  "Please use a recent version of Chrome, Firefox, or Safari.");
+                  "Please use a recent version of Chrome or Firefox.");
             return null;
           }
 
