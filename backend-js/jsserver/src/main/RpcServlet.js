@@ -101,6 +101,43 @@ function doGet(request, response)
   // See what was requested.
   switch(querySplit[0])
   {
+  case "ls":               // File listing
+    var             entities;
+    
+    // Get the database interface instance
+    dbif = aiagallery.dbif.DbifAppEngine.getInstance();
+
+    // Identify ourself (find out who's logged in)
+    dbif.identify();
+
+    // Only an administrator can do this
+    if (! aiagallery.dbif.MDbifCommon.__whoami ||
+        ! aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
+    {
+      java.lang.System.out.println("not administrator");    
+      return;
+    }
+    
+    // Gain easy access to our output writer
+    out = response.getWriter();
+
+    var target = querySplit[1] || ".";
+    var dir = new java.io.File(target);
+    var children = dir.list();
+    if (children == null)
+    {
+      out.println("Not found");
+      return;
+    }
+    
+    out.println("Children of " + target + ":");
+    for (var i = 0; i < children.length; i++)
+    {
+      out.println("  " + i + ": " + children[i]);
+    }
+
+    break;
+
   case "flushDB":               // flush the entire database
     var             entities;
     
