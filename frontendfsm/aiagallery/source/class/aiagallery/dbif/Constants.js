@@ -30,7 +30,7 @@ qx.Class.define("aiagallery.dbif.Constants",
     {
       Banned  : 0,
       Pending : 1,
-      Active  : 2
+      Active  : 2,
       Deleted : 3
     },
     
