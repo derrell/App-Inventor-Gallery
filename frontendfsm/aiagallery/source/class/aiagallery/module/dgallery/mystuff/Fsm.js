@@ -963,8 +963,7 @@ console.log("uploadButton: " + purpose);
           }
           else if (purpose == "apk" && mimeType == "")
           {
-            alert("Browser does not recognize APK file type. " +
-                  "Allowing upload anyway.");
+            // Browser does not recognize APK file type. Allow upload anyway.
             uploadButton.setUserData("fileData", content);
           }
           else
