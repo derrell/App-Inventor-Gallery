@@ -78,9 +78,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       
       var layout = new qx.ui.layout.Grid(10, 2);
       layout.setColumnAlign(0, "right", "top");
-      layout.setColumnWidth(0, 200);
-      layout.setColumnWidth(1, 200);
-      layout.setSpacing(10);
+      layout.setColumnWidth(0, 220);
+      layout.setColumnWidth(1, 230);
+      layout.setSpacing(5);
 
       // Create the cell editor window, since we need to return it immediately
       cellEditor = new qx.ui.window.Window(title);
@@ -105,32 +105,52 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // editor closes.
       bEditing && cellEditor.setUserData("cellInfo", cellInfo);
 
-      // Add the form field labels
-      row = 0;
+      // Add the form field labels with red asterisk if
+      // field is mandatory
 
+      // Make a map for each label with the label-text and
+      // a boolean mandatory value 
+      row = 0;
       [
-        this.tr("Title"),
-        this.tr("Description"),
-        this.tr("Image 1"),
-        this.tr("Image 2"),
-        this.tr("Image 3"),
-        this.tr("Previous Authors"),
-        this.tr("Categories"),
-        
-        this.tr("Uploads")
-      ].forEach(function(label)
+        {str : this.tr("Title"), mandatory : true},
+        {str : this.tr("Description"), mandatory : true},
+        {str : this.tr("Image 1"), mandatory : true},
+        {str : this.tr("Image 2"), mandatory : false},
+        {str : this.tr("Image 3"), mandatory : false},
+        {str : this.tr("Previous Authors"), mandatory : false},
+        {str : this.tr("Categories"), mandatory : true},
+        {str : this.tr("Uploads"), mandatory : true}
+      ].forEach(function(str)
         {
-          o = new qx.ui.basic.Label(label);
-          o.set(
-            {
-              allowShrinkX: false,
-              paddingTop: 3
-            });
-          cellEditor.add(o, {row: row++, column : 0});
+          // if field not required, just add label
+          if(!str.mandatory)
+          {
+            o = new qx.ui.basic.Label(str.str);
+            o.set(
+              {
+                allowShrinkX: false,
+                paddingTop: 3
+              });
+            cellEditor.add(o, {row: row++, column : 0});
+          }
+          
+          // if field required, add label and red asterisk using html
+          if(str.mandatory)
+          {
+            o = new qx.ui.basic.Label('<font color=red>' + "*" + 
+                                      '</font>' + str.str);
+            o.set(
+              {
+                rich : true,
+                allowShrinkX: false,
+                paddingTop: 3
+              });
+            cellEditor.add(o, {row: row++, column : 0});
+          }
         });
 
-     // remove from list to put Categories and tags side by side
-     this.tr("Tags");
+      // remove from list to put Categories and tags side by side
+      this.tr("Tags");
 
       // Reset the row number
       row = 0;
@@ -237,9 +257,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Create a grid layout for it
       layout = new qx.ui.layout.Grid(4, 4);
       layout.setColumnWidth(0, 60);
-      layout.setColumnWidth(1, 40);
+      layout.setColumnWidth(1, 55);
       layout.setColumnWidth(2, 50);
-      layout.setColumnWidth(3, 50);
+      layout.setColumnWidth(3, 65);
       var grid = new qx.ui.container.Composite(layout);
       cellEditor.add(grid, { row : 6, column : 2, colSpan : 1 });
 
@@ -265,6 +285,10 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Create an input field and button to add a new tag
       var newTag = new qx.ui.form.TextField();
       newTag.setFilter(/[- a-zA-Z0-9]/); // only allow these characters in tags
+      
+      // Text placeholder for tags field
+      newTag.setPlaceholder("add tags");
+
       grid.add(newTag, { row : 1, column : 1, colSpan : 2});
       var tagAdd = new qx.ui.form.Button(this.tr("Add tag"));
       grid.add(tagAdd, { row : 1, column : 0 });
@@ -380,6 +404,19 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       fsm.addObject("cancel", cancelButton);
       cancelButton.addListener("execute", fsm.eventListener, fsm);
       buttonPane.add(cancelButton);
+      
+      // Create lable for required field
+      var requiredField = new qx.ui.basic.Label('* = required field');
+      
+      // Makes lable red
+      requiredField.set(
+        {
+          rich : true,
+          TextColor : "#FF0000"
+        });
+      
+      // Adds lable in bottom right corner
+      cellEditor.add(requiredField, {row : 9, column : 3});
 
       // We'll need the table object in getCellEditorValue()
       cellEditor.setUserData("table", cellInfo.table);

@@ -28,7 +28,7 @@ qx.Mixin.define("aiagallery.dbif.MWhoAmI",
       var             whoami;
       
       // Get the object indicating who we're logged in as
-      whoami = aiagallery.dbif.MDbifCommon.__whoami;
+      whoami = this.getWhoAmI();
       
       // Are they logged in?
       if (! whoami)

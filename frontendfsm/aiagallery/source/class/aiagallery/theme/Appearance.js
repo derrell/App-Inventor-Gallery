@@ -147,13 +147,15 @@ qx.Theme.define("aiagallery.theme.Appearance",
     //Buttons
     //
 
-    "likeIt/flagIt-button" :
+    "flagIt-button" :
     {
+      alias : "button",
+      include : "button",
+
       style : function(states)
       {
         return {
-          icon : "aiagallery/test.png", 
-          backgroundColor : "#2fcc1a" 
+          icon : "qx/icon/Oxygen/16/status/dialog-error.png"
         };
       }
     }
