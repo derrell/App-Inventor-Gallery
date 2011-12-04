@@ -1,4 +1,4 @@
-<!-- Indices written at Sat, 3 Dec 2011 15:51:28 UTC -->
+<!-- Indices written at Sun, 4 Dec 2011 03:18:52 UTC -->
 
 <datastore-indexes>
 
@@ -9,15 +9,15 @@
     </datastore-index>
 
     <!-- Used 1 time in query history -->
-    <datastore-index kind="apps" ancestor="false" source="auto">
-        <property name="status" direction="asc"/>
-        <property name="uploadTime" direction="desc"/>
-    </datastore-index>
-
-    <!-- Used 1 time in query history -->
     <datastore-index kind="tags" ancestor="false" source="auto">
         <property name="type" direction="asc"/>
         <property name="value" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="apps" ancestor="false" source="auto">
+        <property name="status" direction="asc"/>
+        <property name="uploadTime" direction="desc"/>
     </datastore-index>
 
 </datastore-indexes>

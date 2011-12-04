@@ -908,7 +908,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var content = event.getData().content;
           
           // Extract the MIME type
-          var mimeType = content.substring(5, content.indexOf(";"));
+          var semiPos = content.indexOf(";");
+          var mimeType = semiPos > 5 ? content.substring(5, semiPos) : "";
+          var debugStr = content.substring(0, 30);
 
 console.log("uploadButton: " + purpose);
           switch(purpose)
@@ -933,7 +935,7 @@ console.log("uploadButton: " + purpose);
             // Generate an error message for invalid type
             message =
               "The file you selected is not a valid '.zip' source file " +
-              "(found " + mimeType + ")";
+              "(found " + debugStr + ")";
             break;
             
           case "apk":
@@ -942,14 +944,14 @@ console.log("uploadButton: " + purpose);
             
             // Generate an error message for invalid type
             message = "The file you selected is not a valid '.apk' file" +
-              "(found " + mimeType + ")";
+              "(found " + debugStr + ")";
             break;
           }
 
-          //Test for image types
+          // Test for image types
           if(qx.lang.Array.contains(validTypes, mimeType)) 
           {
-              //Do work updating image on "Add Application" dialog
+              // Do work updating image on "Add Application" dialog
               uploadButton.setUserData("fileData", content);
    
               // Update the image too (if this was an image upload)
@@ -958,6 +960,12 @@ console.log("uploadButton: " + purpose);
               {
                 image.setSource(content);
               }
+          }
+          else if (purpose == "apk" && mimeType == "")
+          {
+            alert("Browser does not recognize APK file type. " +
+                  "Allowing upload anyway.");
+            uploadButton.setUserData("fileData", content);
           }
           else
           {
