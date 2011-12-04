@@ -105,7 +105,11 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // editor closes.
       bEditing && cellEditor.setUserData("cellInfo", cellInfo);
 
-      // Add the form field labels
+      // Add the form field labels with red asterisk if
+      // field is mandatory
+
+      // Make a map for each label with the label-text and
+      // a boolean mandatory value 
       row = 0;
       [
         {str : this.tr("Title"), mandatory : true},
@@ -118,7 +122,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
         {str : this.tr("Uploads"), mandatory : true}
       ].forEach(function(str)
         {
-          if(str.mandatory == false)
+          // if field not required, just add label
+          if(!str.mandatory)
           {
             o = new qx.ui.basic.Label(str.str);
             o.set(
@@ -126,11 +131,12 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
                 allowShrinkX: false,
                 paddingTop: 3
               });
-	    cellEditor.add(o, {row: row++, column : 0});
-	  }
-
-	  if(str.mandatory == true)
-	  {
+            cellEditor.add(o, {row: row++, column : 0});
+          }
+          
+          // if field required, add label and red asterisk using html
+          if(str.mandatory)
+          {
             o = new qx.ui.basic.Label('<font color=red>' + "*" + 
                                       '</font>' + str.str);
             o.set(
@@ -139,8 +145,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
                 allowShrinkX: false,
                 paddingTop: 3
               });
-	    cellEditor.add(o, {row: row++, column : 0});
-	  }
+            cellEditor.add(o, {row: row++, column : 0});
+          }
         });
 
       // remove from list to put Categories and tags side by side
@@ -406,8 +412,8 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       requiredField.set(
         {
           rich : true,
-	  TextColor : "#FF0000"
-	});
+          TextColor : "#FF0000"
+        });
       
       // Adds lable in bottom right corner
       cellEditor.add(requiredField, {row : 9, column : 3});

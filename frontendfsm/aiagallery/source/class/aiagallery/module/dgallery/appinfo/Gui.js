@@ -319,7 +319,17 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
         // Create a download button to allow to user to download the application
-        downloadBtn = new qx.ui.form.Button("Download", "qx/icon/Tango/16/apps/internet-download-manager.png");
+        downloadBtn = 
+          new qx.ui.form.Button("Download",
+                          "qx/icon/Tango/16/apps/internet-download-manager.png");
+        
+        // Makes download button smaller and centers it
+        downloadBtn.set(
+          {
+            maxWidth : 200,
+            alignX : "center"
+          });
+
         fsm.addObject("downloadBtn", downloadBtn);
         downloadBtn.addListener(
           "execute",
