@@ -31,6 +31,7 @@ qx.Class.define("aiagallery.dbif.Constants",
       Banned  : 0,
       Pending : 1,
       Active  : 2
+      Deleted : 3
     },
     
     /** Reverse mapping of status: values to names */
@@ -38,7 +39,8 @@ qx.Class.define("aiagallery.dbif.Constants",
     [
       "Banned", 
       "Pending",
-      "Active"
+      "Active",
+      "Deleted"
     ],
 
     /** Mapping of FlagType names to values */

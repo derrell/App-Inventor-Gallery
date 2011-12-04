@@ -100,7 +100,7 @@ qx.Class.define("aiagallery.dbif.ObjAppData",
         /** Total number of comments on this application */
         "numComments" : "Integer",
 
-        /** Status of this application (active, pending, banned) */
+        /** Status of this application (active, pending, banned, deleted) */
         "status" : "Integer",
 
         /** Total number of flags on this application */
