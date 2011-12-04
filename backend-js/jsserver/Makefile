@@ -40,6 +40,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/Interface.class				\
 	qxoo_classes/qx/lang/Core.class				\
 	qxoo_classes/qx/core/Property.class			\
+	qxoo_classes/qx/util/OOUtil.class			\
 	qxoo_classes/qx/Class.class				\
 	qxoo_classes/qx/dev/StackTrace.class			\
 	qxoo_classes/qx/lang/Array.class			\
@@ -81,6 +82,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/lang/JsonImpl.class			\
 	qxoo_classes/qx/lang/Json.class				\
 	qxoo_classes/qx/lang/Object.class			\
+	qxoo_classes/qx/lang/Generics.class			\
 	qxoo_classes/qx/io/remote/RpcError.class		\
 	qxoo_classes/qx/util/Base64.class			\
 	qxoo_classes/qx/util/Serializer.class

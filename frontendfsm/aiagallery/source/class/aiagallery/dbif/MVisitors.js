@@ -56,10 +56,18 @@ qx.Mixin.define("aiagallery.dbif.MVisitors",
           visitor === null ||
           visitor.getBrandNew())
       {
-        // Yes, report the error
-        error.setCode(1);
-        error.setMessage("Unrecognized user ID in MVisitors");
-        return error;
+        // FIXME:
+        if (false)
+        {
+          // Yes, report the error
+          error.setCode(1);
+          error.setMessage("Unrecognized user ID in MVisitors");
+          return error;
+        }
+        else
+        {
+          return "<>";
+        }
       }
       
       // No problems, give them the display name

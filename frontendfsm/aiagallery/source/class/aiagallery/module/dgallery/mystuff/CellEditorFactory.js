@@ -78,9 +78,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       
       var layout = new qx.ui.layout.Grid(10, 2);
       layout.setColumnAlign(0, "right", "top");
-      layout.setColumnWidth(0, 200);
-      layout.setColumnWidth(1, 200);
-      layout.setSpacing(10);
+      layout.setColumnWidth(0, 220);
+      layout.setColumnWidth(1, 230);
+      layout.setSpacing(5);
 
       // Create the cell editor window, since we need to return it immediately
       cellEditor = new qx.ui.window.Window(title);
@@ -257,9 +257,9 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
       // Create a grid layout for it
       layout = new qx.ui.layout.Grid(4, 4);
       layout.setColumnWidth(0, 60);
-      layout.setColumnWidth(1, 40);
+      layout.setColumnWidth(1, 55);
       layout.setColumnWidth(2, 50);
-      layout.setColumnWidth(3, 50);
+      layout.setColumnWidth(3, 65);
       var grid = new qx.ui.container.Composite(layout);
       cellEditor.add(grid, { row : 6, column : 2, colSpan : 1 });
 
