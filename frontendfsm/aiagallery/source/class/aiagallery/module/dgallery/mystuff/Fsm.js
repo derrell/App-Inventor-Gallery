@@ -616,16 +616,16 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           apk    = cellEditor.getUserData("apk").getUserData("fileData");
           apkFileName = cellEditor.getUserData("apk").getFileName();
           
-          //Strip paths out from filenames if not null or empty
-          if (sourceFileName) {
-            sourceFileName = sourceFileName.substring(
-                sourceFileName.lastIndexOf("/")+1, sourceFileName.length);
-            }
+          // Strip paths out from filenames if not null or empty
+          if (sourceFileName) 
+          {
+            sourceFileName = sourceFileName.replace(/^.*[\/\\]/, "");
+          }
             
-          if (apkFileName) {
-            apkFileName = apkFileName.substring(
-                apkFileName.lastIndexOf("/")+1, apkFileName.length);
-            }  
+          if (apkFileName) 
+          {
+            apkFileName = apkFileName.replace(/^.*[\/\\]/, "");
+          }  
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
@@ -912,7 +912,6 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           var mimeType = semiPos > 5 ? content.substring(5, semiPos) : "";
           var debugStr = content.substring(0, 30);
 
-console.log("uploadButton: " + purpose);
           switch(purpose)
           {
           case "image1":
