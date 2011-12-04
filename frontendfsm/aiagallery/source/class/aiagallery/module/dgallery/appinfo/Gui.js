@@ -347,9 +347,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }
 
         // Create a button to allow users to "flag" things.
-        // FIXME: Implement this
-        flagItButton = new aiagallery.widget.Button("Flag it!",
-                         "qx/icon/Oxygen/16/status/dialog-error.png");
+        flagItButton = new qx.ui.form.Button("Flag it!");
+        flagItButton.setAppearance("flagIt-button");
 
         // Add likeItButton to the hbox.
         hboxFlagLike.add(this.likeItButton, { flex : 1 });
@@ -572,10 +571,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             input.dataType = input.DATA_TYPE.TEXT;
 
             //The url of the download link to encode into a qr code.
-            input.data =
-              "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
-              appId +
-              ":apk";
+            input.data = location.host + "/rpc?getdata=" + appId + ":apk";
 
             //This generates the qr code matrix.
             var matrix = new qr.Matrix(input, code);

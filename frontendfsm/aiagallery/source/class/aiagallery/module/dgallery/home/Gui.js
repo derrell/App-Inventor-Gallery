@@ -292,14 +292,16 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
         fsm.addObject("Most Liked Apps", likedApps);
         parent.add(likedApps);
         
-        //Fill the featured apps ribbon with data
+        // Fill the featured apps ribbon with data
         for (var i = 0; i < featuredAppsList.length; i++)
         {
           var appFeatured = featuredAppsList[i];
           
           // FIXME: Need to fetch visitor's displayName to show instead of id
           var appThumbFeatured = 
-            new aiagallery.widget.AppThumb(appFeatured.title, appFeatured.owner, appFeatured.image1);
+            new aiagallery.widget.AppThumb(appFeatured.title,
+                                           appFeatured.owner,
+                                           appFeatured.image1);
           featuredApps.add(appThumbFeatured);
           
           // Associate the app data with the UI widget so it can be passed
@@ -316,12 +318,14 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
             });
         }
 
-        //Fill the newest apps ribbon with data
+        // Fill the newest apps ribbon with data
         for (var i = 0; i < newestAppsList.length; i++)
         {
           var appNewest = newestAppsList[i];
           var appThumbNewest = 
-            new aiagallery.widget.AppThumb(appNewest.title, appNewest.owner, appNewest.image1);
+            new aiagallery.widget.AppThumb(appNewest.title, 
+                                           appNewest.owner,
+                                           appNewest.image1);
           newestApps.add(appThumbNewest);
 
           // Associate the app data with the UI widget so it can be passed
@@ -338,13 +342,15 @@ qx.Class.define("aiagallery.module.dgallery.home.Gui",
             });
         }
 
-        //Fill the most liked apps ribbon with data
+        // Fill the most liked apps ribbon with data
         for (var i = 0; i < likedAppsList.length; i++)
         {
           var appLiked = likedAppsList[i];
 
           var appThumbLiked = 
-            new aiagallery.widget.AppThumb(appLiked.title, appLiked.owner, appLiked.image1);
+            new aiagallery.widget.AppThumb(appLiked.title,
+                                           appLiked.owner,
+                                           appLiked.image1);
           likedApps.add(appThumbLiked);
 
           // Associate the app data with the UI widget so it can be passed

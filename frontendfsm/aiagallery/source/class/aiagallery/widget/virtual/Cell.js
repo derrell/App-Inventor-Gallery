@@ -34,7 +34,12 @@ qx.Class.define("aiagallery.widget.virtual.Cell",
       
       widget.getChildControl("icon").set(
         {
-          padding : 4
+          padding : 4,
+          scale : true,
+          minHeight : 110,
+          minWidth  : 110,
+          maxHeight : 110,
+          maxWidth  : 110
         });
       
       return widget;
