@@ -40,6 +40,7 @@ qxoo_classes :=							\
 	qxoo_classes/qx/Interface.class				\
 	qxoo_classes/qx/lang/Core.class				\
 	qxoo_classes/qx/core/Property.class			\
+	qxoo_classes/qx/util/OOUtil.class			\
 	qxoo_classes/qx/Class.class				\
 	qxoo_classes/qx/dev/StackTrace.class			\
 	qxoo_classes/qx/lang/Array.class			\
