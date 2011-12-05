@@ -74,8 +74,8 @@ try
   $debugLoad("qx.core.Property");
   new Packages.qx.core.Property();
 
-  $debugLoad("qx.util.OOUtil");
-  new Packages.qx.util.OOUtil();
+ // $debugLoad("qx.util.OOUtil");
+ // new Packages.qx.util.OOUtil();
 
   $debugLoad("qx.Class");
   new Packages.qx.Class();
