@@ -327,17 +327,7 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
           new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
 
         // Create a download button to allow to user to download the application
-        downloadBtn = 
-          new qx.ui.form.Button("Download",
-                          "qx/icon/Tango/16/apps/internet-download-manager.png");
-        
-        // Makes download button smaller and centers it
-        downloadBtn.set(
-          {
-            maxWidth : 200,
-            alignX : "center"
-          });
-
+        downloadBtn = new qx.ui.form.Button("Download", "qx/icon/Tango/16/apps/internet-download-manager.png");
         fsm.addObject("downloadBtn", downloadBtn);
         downloadBtn.addListener(
           "execute",
@@ -365,11 +355,9 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }
 
         // Create a button to allow users to "flag" things.
-        flagItButton = new qx.ui.form.Button("Flag it!",
+        // FIXME: Implement this
+        flagItButton = new aiagallery.widget.Button("Flag it!",
                          "qx/icon/Oxygen/16/status/dialog-error.png");
-        flagItButton.setAppearance("flagIt-button");
-        fsm.addObject("flagItButton", flagItButton);
-        flagItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add likeItButton to the hbox.
         hboxFlagLike.add(this.likeItButton, { flex : 1 });
@@ -592,7 +580,10 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
             input.dataType = input.DATA_TYPE.TEXT;
 
             //The url of the download link to encode into a qr code.
-            input.data = location.host + "/rpc?getdata=" + appId + ":apk";
+            input.data =
+              "http://app-inventor-gallery.appspot.com/rpc?getdata=" +
+              appId +
+              ":apk";
 
             //This generates the qr code matrix.
             var matrix = new qr.Matrix(input, code);
@@ -713,12 +704,6 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Disable the likeItButton since a user cannot
         // like more than once.
         this.likeItButton.setEnabled(false);
-
-        break;
-
-      case "flagIt":
-
-        console.log(response.data.result );
 
         break;
 
