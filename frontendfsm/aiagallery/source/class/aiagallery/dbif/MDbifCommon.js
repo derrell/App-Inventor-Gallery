@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2011 Derrell Lipman
- * 
+ *
  * License:
- *   LGPL: http://www.gnu.org/licenses/lgpl.html 
+ *   LGPL: http://www.gnu.org/licenses/lgpl.html
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
 qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 {
-  include : 
+  include :
   [
     aiagallery.dbif.MVisitors,
     aiagallery.dbif.MApps,
@@ -20,7 +20,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     aiagallery.dbif.MLiking,
     aiagallery.dbif.MFlags
   ],
-  
+
   construct : function()
   {
     // Use our authorization function
@@ -70,11 +70,11 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
 
     /**
      * Function to be called for authorization to run a service
-     * method. 
-     * 
+     * method.
+     *
      * @param fqMethod {String}
      *   The fully-qualified name of the method to be called
-     * 
+     *
      * @return {Boolean}
      *   true to allow the function to be called, or false to indicates
      *   permission denied.
@@ -97,7 +97,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         // Nope. Retrieve our visitor object
         me = new aiagallery.dbif.ObjVisitors(
           aiagallery.dbif.MDbifCommon.__whoami.email);
-        
+
         // Is it brand new, or does not contain a display name yet?
         meData = me.getData();
         if (me.getBrandNew() || meData.displayName === null)
@@ -107,23 +107,23 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
           {
             meData.displayName = aiagallery.dbif.MDbifCommon.__whoami.userId;
           }
-          
+
           me.put();
         }
-        
+
         // We're now initialized
         aiagallery.dbif.MDbifCommon.__initialized = true;
       }
 
       // Split the fully-qualified method name into its constituent parts
       methodComponents = fqMethod.split(".");
-      
+
       // The final component is the actual method name
       methodName = methodComponents.pop();
-      
+
       // The remainder is the service path. Join it back together.
       serviceName = methodComponents.join(".");
-      
+
       // Ensure that the service name is what's expected. (This should never
       // occur, since the RPC server has already validated that the method
       // exists.)
@@ -132,7 +132,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         // It's not. Do not allow access.
         return false;
       }
-      
+
       // If the user is an adminstrator, ...
       if (aiagallery.dbif.MDbifCommon.__whoami &&
           aiagallery.dbif.MDbifCommon.__whoami.isAdmin)
@@ -142,13 +142,13 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       }
 
       // Do per-method authorization.
-      
+
       // Are they logged in, or anonymous?
       bAnonymous = (aiagallery.dbif.MDbifCommon.__whoami === null);
-      
+
       switch(methodName)
       {
-        
+
       //
       // MApps
       //
@@ -157,7 +157,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "deleteApp":
-        return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
+        return ! bAnonymous;    // Access is allowed if they're logged in
 
       case "getAppListAll":
         return aiagallery.dbif.MDbifCommon._deepPermissionCheck(methodName);
@@ -168,7 +168,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       case "getAppListByList":
       case "getHomeRibbonData":
           return true;            // Anonymous access
-      
+
       //
       // MComments
       //
@@ -212,7 +212,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
           // At present, do not allow access to visitor list on App Engine
           return false;
         }
-        
+
       case "editProfile":
         return ! bAnonymous;    // Access is allowed if they're logged in
 
@@ -221,19 +221,19 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
       //
       case "whoAmI":
         return true;            // Anonymous access
-        
+
       //
       // MSearch
       //
       case "keywordSearch":
         return true;          // Anonymous access
-        
+
 
       //
       // MLiking
       //
       case "likesPlusOne":
-        return ! bAnonymous;   // Access allowed if logged in         
+        return ! bAnonymous;   // Access allowed if logged in
 
       default:
         // Do not allow access to unrecognized method names
@@ -247,7 +247,7 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
     {
       // Find out who we are.
       var whoami = aiagallery.dbif.MDbifCommon.__whoami;
-      
+
       // If no one is logged in...
       if (! whoami)
       {
@@ -280,13 +280,13 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         {
           // For every permission group of which I am a member...
           permissionGroupArr.forEach(
-            function (group) 
+            function (group)
             {
-        
+
               // Retrieve the list of permissions it gives me
               data = new aiagallery.dbif.ObjPermissonGriou(group).getData();
               permissionArr = data["permissions"];
-          
+
               // Same as standard check: does this group contain this method?
               if (permissionArr != null &&
                   qx.lang.Array.contains(permissionArr, methodName))
@@ -294,12 +294,12 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
                 // Yes, allow me.
                 return true;
               }
-              
+
               return false;
             });
         }
       }
-      
+
       // Did not find this permission, dissalow.
       return false;
     }
