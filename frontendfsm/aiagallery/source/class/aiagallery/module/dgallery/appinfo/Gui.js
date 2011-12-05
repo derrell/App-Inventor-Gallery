@@ -108,16 +108,24 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       // (which could use some additional tweaking, perhaps)
       // FIXME: This needs to be internationalized. There are existing
       // functions to do so.
-      var dateObj = new Date(commentTime); //not sure what to do here..
-      var dateString = dateObj.toDateString();
-      var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
-      var dateTimeString = dateString + " " + timeString + " ET";
+      //// HOURS
+      var dateObjNew = aiagallery.dbif.MDbifCommon.currentTimestamp();
+      // var dateObj = new Date(commentTime); //not sure what to do here..
+      //var dateString = dateObj.toDateString();
+      //var timeString = dateObj.getHours() + ":" + dateObj.getMinutes();
+      //var dateTimeString = dateString + " " + timeString + " ET";
+      var dateTimeString = dateObjNew;
+
 
       // 2nd line
       var postedStringStart =
         '<span style="color:grey;font-size:75%">Posted: ';
       var postedString = postedStringStart + dateTimeString + '</span>';
       var postedStringLabel = new qx.ui.basic.Label(postedString);
+      
+
+
+
       postedStringLabel.set(
         {
           rich : true,
@@ -644,6 +652,8 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
       case "addComment":
         // Get result data--in this case, the comment that was added.
         comment = response.data.result;
+
+	
 
         // Add the new comment to the GUI, if nonempty.
         if (comment["text"] != null)

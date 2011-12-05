@@ -65,9 +65,27 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
      */
     currentTimestamp : function()
     {
-      return new Date().getTime();
+	return new Date();
     },
-
+	  /**
+	   * Function to convert linux-time to a standard date 
+	   * according to the current locale settings.
+	   *
+	   *@param myDate {Date}
+	   * The time in seconds since beginning of epoch: Jan 1 1970
+	   *@return newDate {String}
+	   * The date in String form
+	   *
+	   *
+	   */
+   formatDate : function(myDate)
+	  {
+	      var myFormat = new DateFormat("E MMM dd y HH:m (z)");
+	      //Mon Dec 05 2011 02:46 (GMT-05:00)
+	      //E   MMM dd y    HH:m (z)
+	      return(myFormat.format(myDate));
+	  },
+ 
     /**
      * Function to be called for authorization to run a service
      * method. 
