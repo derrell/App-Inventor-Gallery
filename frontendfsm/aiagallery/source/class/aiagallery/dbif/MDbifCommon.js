@@ -182,6 +182,12 @@ qx.Mixin.define("aiagallery.dbif.MDbifCommon",
         return true;            // Anonymous access
 
       //
+      // MFlags
+      //
+      case "flagIt":
+        return ! bAnonymous;    // Access is allowed if they're logged in
+
+      //
       // MMobile
       //
       case "mobileRequest":

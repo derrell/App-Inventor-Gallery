@@ -357,8 +357,11 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         }
 
         // Create a button to allow users to "flag" things.
-        flagItButton = new qx.ui.form.Button("Flag it!");
+        flagItButton = new qx.ui.form.Button("Flag it!",
+                         "qx/icon/Oxygen/16/status/dialog-error.png");
         flagItButton.setAppearance("flagIt-button");
+        fsm.addObject("flagItButton", flagItButton);
+        flagItButton.addListener("execute", fsm.eventListener, fsm);
 
         // Add likeItButton to the hbox.
         hboxFlagLike.add(this.likeItButton, { flex : 1 });
@@ -700,6 +703,12 @@ qx.Class.define("aiagallery.module.dgallery.appinfo.Gui",
         // Disable the likeItButton since a user cannot
         // like more than once.
         this.likeItButton.setEnabled(false);
+
+        break;
+
+      case "flagIt":
+
+        console.log(response.data.result );
 
         break;
 
