@@ -401,7 +401,18 @@ function doGet(request, response)
     break;
  
   
-  case "getdata":            // Request for a base 64 encoded URL
+  case "getdata":            // Request for an encoded URL
+  
+  
+    var           myObj;
+    var           fieldContent;
+    var           mimeType;
+    var           contents;
+    var           blobIds;
+    var           name = null;
+    var           appId;
+    var           field;
+    
     
     /* 
      * The call here looked like this to begin with:
@@ -413,26 +424,70 @@ function doGet(request, response)
      * parameters. 
      */
     argSplit = querySplit[1].split(":");
+    appid = argSplit[0];
+    field = argSplit[1];
     
-    // Call the (static) decoder method, which takes an appId and a field
-    decodeResult = 
-      aiagallery.dbif.Decoder64.getDecodedURL(argSplit[0], argSplit[1]);
+    // Get an instance of the object whose field is requested
+    myObj = new aiagallery.dbif.ObjAppData(parseInt(appId,10));
     
-    if (decodeResult === null)
+    switch(field)
     {
+      case "source":
+      case "apk":
+      // Get the contents of that field, which, if it exists, is a blob id
+      blobIds = myObj.getData()[field];
+        
+      // Was there any data in the field?
+      if (!blobIds)
+      {
+        response.sendError(404, "No data found. Field may be empty, or App " +
+                                  "may not exist.");
+      }
+        
+      // Retrieve the blob data, which is the base64-encoded data. We want
+      // the most recent entry, so use index 0.
+      fieldContent = rpcjs.dbif.Entity.getBlob(blobIds[0]);
+        
+      // Also specify the file name
+      name = myObj.getData()[field + "FileName"];
+      break;
+        
+      default:
+      // Retrieve the field data, which is the base64-encoded data
+      fieldContent = myObj.getData()[field];
+      break;
+    }
+    
+    // Was there any blob data?
+    if (! fieldContent)
+    {
+      // No, return null and let the caller decide how to handle that.
       response.sendError(404, "No data found. Field may be empty, or App " +
-                              "may not exist.");
+                                  "may not exist.");
+    }
+    
+    if (field == "apk")
+    {
+      // Disregard the MIME type of the uploaded APK file and use one that
+      // the phone knows how to translate into a request ot open the Install
+      // Application app.
+      mimeType = "application/vnd.android.package-archive";
     }
     else
-    { 
-      // decodeResult is a map with a "mime" member and a "content" member.
-      // Just pass them where they're needed and we're done.
-      response.setContentType(decodeResult.mime);
-      response.setHeader("Content-disposition",
-                         "attachment; filename=\"" + decodeResult.name + "\"");
-      out = response.getWriter();
-      out.print(decodeResult.content);
+    {
+      // Parse out the mimeType. This always starts at index 5 and ends with
+      // a semicolon
+      mimeType = fieldContent.substring(5, fieldContent.indexOf(";"));
     }
+    
+    // Parse out the content data
+    contents = fieldContent.substring(fieldContent.indexOf(",") + 1);
+
+    // Send the response
+    response.setContentType(mimeType);
+    response.setHeader("Content-disposition",
+                       "attachment; filename=\"" + name + "\"");
+      
     break;
   }
 };
