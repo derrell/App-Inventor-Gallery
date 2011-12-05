@@ -57,7 +57,6 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       var            Data;
       var            flagsList;
 
-
       var            visitorId= this.getWhoAmI().email;
       var            maxFlags = aiagallery.dbif.Constants.MAX_FLAGGED;
       var            statusVals = aiagallery.dbif.Constants.Status;
@@ -110,6 +109,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
                                           null);
 
           // Only change things if the visitor hasn't already flagged this app
+      
           if (flagsList.length === 0)
           {
             // initialize the new flag to be put on the database
@@ -134,21 +134,24 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
              // If the app is already pending do not touch the status or 
              // send an email  
-              if(appDataObj.status != statusVals.Pending)
-              {
+                if(appDataObj.status != statusVals.Pending)
+                {
                 // otherwise set the app to pending and send an email
                 appDataObj.status = statusVals.Pending;    
+                var appName = appDataObj.title;
+                var visitorName = this.getWhoAmI().userId;
 
                 var props = new java.util.Properties();
                 var session = javax.mail.Session.getDefaultInstance(props, null);
-                var msgBody = "...";
+                var msgBody = "The application " + appName + ", " + appNum +
+                              " was flagged by " + visitorName +", " + visitorId;
                 var msg = new javax.mail.internet.MimeMessage(session);
 
                 msg.setFrom( new javax.mail.internet.InternetAddress(
-                           "admin@example.com", "Example.com Admin"));
+                           "derrell.lipman@gmail.com", "App Inventor Gallery Admin"));
                 msg.addRecipient(javax.mail.Message.RecipientType.TO,
                            new javax.mail.internet.InternetAddress(
-                             "user@example.com", "Mr. User"));
+                             "derrell.lipman@gmail.com", "App Inventor Gallery Admin"));
                 msg.setSubject("An app was flagged");
                 msg.setText(msgBody);
 
@@ -239,15 +242,21 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
 
 
                 var props = new java.util.Properties();
-                var session = javax.mail.Session.getDefaultInstance(props, null);
+                var session = javax.mail.Session.getDefaultInstance(props, 
+                                                                    null);
+ 
+                var visitorName = this.getWhoAmI().userId;
                 var msgBody = "...";
+
+                var msgBody = "The comment " + commentNum + " was flagged by " 
+                               + visitorName +", " + visitorId;
                 var msg = new javax.mail.internet.MimeMessage(session);
 
                 msg.setFrom( new javax.mail.internet.InternetAddress(
-                           "admin@example.com", "Example.com Admin"));
+                           "derrell.lipman@gmail.com", "App Inventor Gallery Admin"));
                 msg.addRecipient(javax.mail.Message.RecipientType.TO,
                            new javax.mail.internet.InternetAddress(
-                             "user@example.com", "Mr. User"));
+                             "derrell.lipman@gmail.com", "App Inventor Gallery Admin"));
                 msg.setSubject("An app was flagged");
                 msg.setText(msgBody);
 
