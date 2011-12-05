@@ -407,7 +407,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
 
       /*
-       * Transition: Idle to ReadyingUpload
+       * Transition: AddOrEditApp to ReadyingUpload
        *
        * Cause: "changeFileName" on one of the upload buttons
        *
@@ -416,7 +416,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
        */
 
       trans = new qx.util.fsm.Transition(
-        "Transition_Idle_to_ReadyingUpload_via_changeFileName",
+        "Transition_AddOrEditApp_to_ReadyingUpload_via_changeFileName",
       {
         "nextState" : "State_ReadyingUpload",
 
@@ -424,23 +424,100 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "predicate" : function(fsm, event)
         {
+          var             uploadReader;
+          var             uploadButton;
+          var             fileSize;
+          var             maxSize;
+          var             message;
+          var             purpose;
+
           // Determine if an upload reader is available
           try
           {
-            var uploadReader = new qx.bom.FileReader();
+            uploadReader = new qx.bom.FileReader();
             uploadReader.dispose();
             uploadReader = null;
             
-            // It is. Accept this transition.
-            return true;
           }
           catch(e)
           {
             // There's no upload reader. Tell 'em they're screwed.
             alert("Your browser does not support the required functionality. " +
-                  "Please use a recent version of Chrome, Firefox, or Safari.");
+                  "Please use a recent version of Chrome or Firefox.");
             return null;
           }
+
+          //Test for size of the file
+          uploadReader = new qx.bom.FileReader();
+
+          //Get the image
+          uploadButton = event.getTarget();
+          
+          // Find out which purpose (button) this upload is for
+          purpose = fsm.getFriendlyName(uploadButton);
+
+          // Determine the size of the file requested for upload
+          fileSize = uploadButton.getFileSize();
+
+          // Do button-specific processing
+          switch(purpose)
+          {
+          case "image1":
+          case "image2":
+          case "image3":
+            // Specify the maximum image size
+            maxSize = aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE;
+            
+            // Generate a message for image too large
+            message = 
+              "The image you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_IMAGE_FILE_SIZE +
+              " bytes.";              
+            break;
+            
+          case "source":
+            // Specify the maximum source file size
+            maxSize = aiagallery.main.Constant.MAX_SOURCE_FILE_SIZE;
+            
+            // Generate a message for file too large
+            message = 
+              "The file you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_SOURCE_FILE_SIZE +
+              " bytes.";              
+            break;
+            
+          case "apk":
+            // Specify the maximum apk file size
+            maxSize = aiagallery.main.Constant.MAX_APK_FILE_SIZE;
+            
+            // Generate a message for file too large
+            message = 
+              "The file you attempted to upload was " +
+              fileSize +
+              " bytes, which is larger than the limit of " + 
+              aiagallery.main.Constant.MAX_APK_FILE_SIZE +
+              " bytes.";              
+            break;
+          }
+
+          // Size check
+          if (fileSize > maxSize)
+          {
+            alert(message);
+
+            // Clean up
+            uploadReader.dispose();
+            uploadReader = null;
+         
+            return null;
+          }
+
+          // FileReader available and file under size. Accept this transition.
+          return true; 
         },
 
         "ontransition" : function(fsm, event)
@@ -462,7 +539,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           uploadButton = event.getTarget();
 
           // Save the upload in progress, for use upon "load" or "error"
-          fsm.addObject("uploadButton", uploadButton);
+          fsm.setUserData("uploadButton", uploadButton);
 
           // Get the selected File object
           uploadElement = uploadButton.getInputElement().getDomElement();
@@ -539,16 +616,16 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
           apk    = cellEditor.getUserData("apk").getUserData("fileData");
           apkFileName = cellEditor.getUserData("apk").getFileName();
           
-          //Strip paths out from filenames if not null or empty
-          if (sourceFileName) {
-            sourceFileName = sourceFileName.substring(
-                sourceFileName.lastIndexOf("/")+1, sourceFileName.length);
-            }
+          // Strip paths out from filenames if not null or empty
+          if (sourceFileName) 
+          {
+            sourceFileName = sourceFileName.replace(/^.*[\/\\]/, "");
+          }
             
-          if (apkFileName) {
-            apkFileName = apkFileName.substring(
-                apkFileName.lastIndexOf("/")+1, apkFileName.length);
-            }  
+          if (apkFileName) 
+          {
+            apkFileName = apkFileName.replace(/^.*[\/\\]/, "");
+          }  
 
           // Create the tags list out of a combination of the categories and
           // additionalTags lists.
@@ -814,23 +891,86 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.Fsm",
 
         "ontransition" : function(fsm, event)
         {
+          var             validTypes;
+          var             message;
+          var             purpose;
+
           // Get the UploadReader object
           var uploadReader = fsm.getObject("uploadReader");
 
           // Get the currently-in-use upload button
-          var uploadButton = fsm.getObject("uploadButton");
-
+          var uploadButton = fsm.getUserData("uploadButton");
+          
+          // Find out the purpose of this button
+          purpose = fsm.getFriendlyName(uploadButton);
+          
           // Retrieve the data URL from the upload button, and save it.
           var content = event.getData().content;
-          uploadButton.setUserData("fileData", content);
           
-          // Update the image too (if this was an image upload)
-          var image = uploadButton.getUserData("image");
-          if (image) 
+          // Extract the MIME type
+          var semiPos = content.indexOf(";");
+          var mimeType = semiPos > 5 ? content.substring(5, semiPos) : "";
+          var debugStr = content.substring(0, 30);
+
+          switch(purpose)
           {
-            image.setSource(content);
+          case "image1":
+          case "image2":
+          case "image3":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_IMAGE_TYPES;
+            
+            // Generate an error message for invalid type
+            message = 
+              "You have selected an invalid image file. " +
+              "Valid file types are:\n" +
+              aiagallery.main.Constant.VALID_IMAGE_TYPES.join(", ");
+            break;
+            
+          case "source":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_SOURCE_TYPES;
+            
+            // Generate an error message for invalid type
+            message =
+              "The file you selected is not a valid '.zip' source file " +
+              "(found " + debugStr + ")";
+            break;
+            
+          case "apk":
+            // Specify the valid MIME types
+            validTypes = aiagallery.main.Constant.VALID_APK_TYPES;
+            
+            // Generate an error message for invalid type
+            message = "The file you selected is not a valid '.apk' file" +
+              "(found " + debugStr + ")";
+            break;
           }
-          
+
+          // Test for image types
+          if(qx.lang.Array.contains(validTypes, mimeType)) 
+          {
+              // Do work updating image on "Add Application" dialog
+              uploadButton.setUserData("fileData", content);
+   
+              // Update the image too (if this was an image upload)
+              var image = uploadButton.getUserData("image");
+              if (image) 
+              {
+                image.setSource(content);
+              }
+          }
+          else if (purpose == "apk" && mimeType == "")
+          {
+            // Browser does not recognize APK file type. Allow upload anyway.
+            uploadButton.setUserData("fileData", content);
+          }
+          else
+          {
+            alert(message);
+            return;
+          }
+
           // We no longer have a currently-in-use upload button or reader
           fsm.removeObject("uploadButton");
           fsm.removeObject("uploadReader");

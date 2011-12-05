@@ -84,6 +84,11 @@ qx.Class.define("aiagallery.dbif.Constants",
       ... */
       
       //
+      // MFlags
+      //
+      "flagIt"       : "Flag an app or comment",
+      
+      //
       // MMobile
       //
       /* Anonymous access...

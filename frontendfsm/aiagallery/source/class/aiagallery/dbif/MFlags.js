@@ -6,11 +6,14 @@
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
  */
 
+/*
+#ignore(javax.*)
+ */
+
 qx.Mixin.define("aiagallery.dbif.MFlags",
 {
   construct : function()
   {
-
     this.registerService("flagIt",
                          this.flagIt,
                          [ "flagType", 
@@ -23,7 +26,7 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
   members :
   {
     /**
-     *  Add one to the number of times this app has been liked
+     *  Add one to the number of times this app has been flagged 
      * 
      * @param flagType{Integer}
      *   This is the value of the type of flag that got submitted
@@ -44,10 +47,10 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
      * @return {Integer || Status}
      *   This is the value of the status of the application 
      *   (Banned  : 0, Pending : 1, Active  : 2)
-     * 
      */
     flagIt : function(flagType, explanationInput, appId, commentId, error)
     {
+
       var            appObj;
       var            appDataObj;
       var            appNum;
@@ -55,9 +58,9 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       var            criteria;
       var            newFlag;
       var            Data;
+      var            flagsList;
 
-
-      var            visitorId= this.whoAmI().email;
+      var            visitorId= this.getWhoAmI().email;
       var            maxFlags = aiagallery.dbif.Constants.MAX_FLAGGED;
       var            statusVals = aiagallery.dbif.Constants.Status;
       var            flagTypeVal = aiagallery.dbif.Constants.FlagType;
@@ -65,37 +68,62 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
       // Check what type of element has been flagged.
       switch (flagType)
       {
-        // If an app was flagged:
-        case flagTypeVal.App:
+      case flagTypeVal.App:     // An app was flagged
+        // store the applications data
+        appObj = new aiagallery.dbif.ObjAppData(appId);
+        appDataObj = appObj.getData();
+        appNum = appDataObj.uid;
 
-          // store the applications data
-          appObj = new aiagallery.dbif.ObjAppData(appId);
-          appDataObj = appObj.getData();
-          appNum = appDataObj.uid;
+        // check to ensure an already existing app was found 
+        if (appObj.getBrandNew())
+        {
+          // If not return an error
+          error.setCode(1);
+          error.setMessage(
+            "Application with that ID not found. Unable to flag.");
+          return error;
+        }
 
-          // check to ensure an already existing app was found 
-          if (appObj.getBrandNew())
+        // Construct query criteria for "flags of this app by current visitor"
+        criteria = 
           {
-            // If not return an error
-            error.setCode(1);
-            error.setMessage(
-              "Application with that ID not found. Unable to flag.");
-            return error;
-          }
+            type : "op",
+            method : "and",
+            children : 
+            [
+              {
+                type: "element",
+                field: "app",
+                value: appId
+              },
+              {
+                type: "element",
+                field: "visitor",
+                value: visitorId
+              }
+            ]
+          };
 
+        // Query for the likes of this app by the current visitor
+        // (an array, which should have length zero or one).
+        flagsList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjFlags",
+                                            criteria,
+                                            null);
+
+        // Only change things if the visitor hasn't already flagged this app
+        if (flagsList.length === 0)
+        {
           // initialize the new flag to be put on the database
           newFlag = new aiagallery.dbif.ObjFlags();
 
           // store the new flags data
-          var data = {
-            type        : flagType,
-            app         : appNum,
-            comment     : null,
-            visitor     : visitorId,
-            explanation : explanationInput
-          }
+          var data = newFlag.getData();
 
-	  newFlag.setData(data);
+          data.type = flagType;
+          data.app = appNum;
+          data.comment = null;
+          data.visitor = visitorId;
+          data.explanation = explanationInput;
 
           // increments the apps number of flags
           appDataObj.numCurFlags++;      
@@ -104,95 +132,154 @@ qx.Mixin.define("aiagallery.dbif.MFlags",
           // equal to the maximum allowed
           if(appDataObj.numCurFlags >= maxFlags)
           {
-           // If the app is already pending do not touch the status or 
-           // send an email  
+            // If the app is already pending do not touch the status or 
+            // send an email  
             if(appDataObj.status != statusVals.Pending)
-              {
-                // otherwise set the app to pending and send an email
-                appDataObj.status = statusVals.Pending;    
+            {
+              // otherwise set the app to pending and send an email
+              appDataObj.status = statusVals.Pending;    
+              var appName = appDataObj.title;
+              var visitorName = this.getWhoAmI().userId;
 
-                // placeholder code   
-                alert("email to be sent");
-              }
+              var props = new java.util.Properties();
+              var session = javax.mail.Session.getDefaultInstance(props, null);
+              var msgBody = "The application " + appName + ", " + appNum +
+                            " was flagged by " + visitorName + ", " + visitorId;
+              var msg = new javax.mail.internet.MimeMessage(session);
+
+              msg.setFrom(new javax.mail.internet.InternetAddress(
+                            "derrell.lipman@gmail.com",
+                            "App Inventor Gallery Admin"));
+              msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                               new javax.mail.internet.InternetAddress(
+                                 "derrell.lipman@gmail.com",
+                                 "App Inventor Gallery Admin"));
+              msg.setSubject("An app was flagged");
+              msg.setText(msgBody);
+
+              javax.mail.Transport.send(msg);
+            }
           }
           // put the apps new data and the new flag on the database
           appObj.put();
           newFlag.put();
+        }
 
-          return appDataObj.status;
+        return appDataObj.status;
 
-        // if a comment was flagged
-        case flagTypeVal.Comment:
+      case flagTypeVal.Comment: // A comment was flagged
+        // store the comments data
+        var commentObj = new aiagallery.dbif.ObjComments([appId, commentId]);
+        var commentDataObj = commentObj.getData();
+        var commentNum = commentDataObj.treeId;
 
-          // store the comments data
-          var commentObj = new aiagallery.dbif.ObjComments([appId, commentId]);
-          var commentDataObj = commentObj.getData();
-          var commentNum = commentDataObj.treeId;
+        // check to ensure an already existing comment was found 
+        if (commentObj.getBrandNew())
+        {
+          // if not return an error
+          error.setCode(2);
+          error.setMessage("Comment not found. Unable to flag.");
+          return error;
+        }
 
-          // check to ensure an already existing comment was found 
-          if (commentObj.getBrandNew())
-          {
-            // if not return an error
-            error.setCode(1);
-            error.setMessage(
-              "Comment not found. Unable to flag.");
-            return error;
-          }
+        // Construct query criteria for 
+        //"flags of this comment by current visitor"
+        criteria = 
+        {
+          type : "op",
+          method : "and",
+          children : 
+          [
+            {
+              type: "element",
+              field: "comment",
+              value: commentNum
+            },
+            {
+              type: "element",
+              field: "visitor",
+              value: visitorId
+            }
+          ]
+        };
 
+        // Query for the likes of this app by the current visitor
+        // (an array, which should have length zero or one).
+        flagsList = rpcjs.dbif.Entity.query("aiagallery.dbif.ObjFlags",
+                                            criteria,
+                                            null);
+
+        // Only change things if the visitor hasn't 
+        // already flagged this comment
+        if (flagsList.length === 0)
+        {
           // initialize the new flag to be put on the database
           newFlag = new aiagallery.dbif.ObjFlags();
 
           // store the flags data 
-          var data = {
-            type        : flagType,
-            app         : appId,
-            comment     : commentNum,
-            visitor     : visitorId,
-            explanation : explanationInput
-          }
+          var data = newFlag.getData();
 
-	  newFlag.setData(data);
+          data.type = flagType;
+          data.app = appNum;
+          data.comment = commentId;
+          data.visitor = visitorId;
+          data.explanation = explanationInput;
 
           // increment the number of flags on the comment
-          commentDataObj.numCurFlags++;      
+          commentDataObj.numCurFlags++;
 
           // check if the number of flags is greater than or 
           // equal to the maximum allowed
           if(commentDataObj.numCurFlags >= maxFlags)
           {
-           // If the comment is already pending do not touch the status or 
-           // send an email 
+            // If the comment is already pending do not touch the status or 
+            // send an email 
             if(commentDataObj.status != statusVals.Pending)
-              {
-                // otherwise set the comment to pending and send an email
-                commentDataObj.status = statusVals.Pending;    
+            {
+              // otherwise set the comment to pending and send an email
+              commentDataObj.status = statusVals.Pending;    
 
-                // placeholder code
-                alert("email to be sent");
-              }
+
+              var props = new java.util.Properties();
+              var session = javax.mail.Session.getDefaultInstance(props, 
+                                                                  null);
+
+              var visitorName = this.getWhoAmI().userId;
+              var msgBody =
+                "The comment " + commentNum + " was flagged by " +
+                visitorName +", " + visitorId;
+              var msg = new javax.mail.internet.MimeMessage(session);
+
+              msg.setFrom(new javax.mail.internet.InternetAddress(
+                            "derrell.lipman@gmail.com",
+                            "App Inventor Gallery Admin"));
+              msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                               new javax.mail.internet.InternetAddress(
+                                 "derrell.lipman@gmail.com",
+                                 "App Inventor Gallery Admin"));
+              msg.setSubject("An app was flagged");
+              msg.setText(msgBody);
+
+              javax.mail.Transport.send(msg);
+            }
           }
           // put the comments new data and the new flag on the database
           commentObj.put();
           newFlag.put();
+        }
 
-          return commentDataObj.status;
+        return commentDataObj.status;
 
       default:
-      error.setCode(1);
-      error.setMessage(
-        "unknown flag type.");
-      return error;
+        error.setCode(3);
+        error.setMessage("unknown flag type.");
+        return error;
       } 
 
       // Error message should be redone
-      error.setCode(1);
-      error.setMessage(
-        "Reached an un-reachable section in the flagIt rpc.");
+      error.setCode(4);
+      error.setMessage("Reached an un-reachable section in the flagIt rpc.");
       return error;
     }
   }
 });
-
-
-
-
