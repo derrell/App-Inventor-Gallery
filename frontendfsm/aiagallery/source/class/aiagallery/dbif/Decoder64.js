@@ -4,6 +4,12 @@
  * License:
  *   LGPL: http://www.gnu.org/licenses/lgpl.html 
  *   EPL : http://www.eclipse.org/org/documents/epl-v10.php
+ *
+ * Edit Log:
+ *   12/4/11 - The getDecodedURL function is deprecated. I moved and reused most
+ *             of the code in the RpcServlet.js file. Data is no longer decoded
+ *             on download, rather decoded on upload. Leaving this here incase
+ *             we ever need to decode on download files other then source, apk.
  */
 
 qx.Class.define("aiagallery.dbif.Decoder64",

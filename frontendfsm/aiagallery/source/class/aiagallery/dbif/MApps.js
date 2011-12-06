@@ -254,6 +254,8 @@ qx.Mixin.define("aiagallery.dbif.MApps",
       var             sourceData;
       var             apkData;
       var             key;
+      var             mimeType;
+      var             content;
       var             allowableFields =
         [
           "uid",
@@ -521,6 +523,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         // Save the new source data (if there is any)
         if (sourceData)
         {
+          // This is our new mime type header for binary
+          mimeType = 'data:application/zip;binary,';
+          
+          // Parse out the actual data content
+          content = sourceData.substring(sourceData.indexOf(",") + 1);
+      
+          // Convert content from Base64 to Binary
+          content = aiagallery.dbif.Decoder64.__decode(content);
+          
+          // Reconstruct the source data
+          sourceData = mimeType + content;
+          
           // Save the data and prepend the blob id to the key list
           key = rpcjs.dbif.Entity.putBlob(sourceData);
           appData.source.unshift(key);
@@ -529,6 +543,18 @@ qx.Mixin.define("aiagallery.dbif.MApps",
         // Similarly for apk data
         if (apkData)
         {
+          // This is our new mime type header for binary
+          mimeType = 'data:application/octet-stream;binary,';
+          
+          // Parse out the actual data content
+          content = apkData.substring(apkData.indexOf(",") + 1);
+      
+          // Convert content from Base64 to Binary
+          content = aiagallery.dbif.Decoder64.__decode(content);
+          
+          // Reconstruct the source data
+          apkData = mimeType + content;
+                  
           // Save the data and prepend the blob id to the key list
           key = rpcjs.dbif.Entity.putBlob(apkData);
           appData.apk.unshift(key);
