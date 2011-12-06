@@ -291,6 +291,7 @@ qx.Class.define("aiagallery.module.dgallery.mystuff.CellEditorFactory",
 
       grid.add(newTag, { row : 1, column : 1, colSpan : 2});
       var tagAdd = new qx.ui.form.Button(this.tr("Add tag"));
+      tagAdd.setEnabled(false);
       grid.add(tagAdd, { row : 1, column : 0 });
 
       // When the selection changes, determine whether to enable the delete.
