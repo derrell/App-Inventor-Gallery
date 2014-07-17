@@ -74,9 +74,9 @@ qx.Mixin.define("aiagallery.dbif.MApps",
               });
 
             // Convert from numeric to string status
-            app.status = [ "Banned", "Pending", "Active" ][app.status];
-            
-      
+           app.status = [ "Banned", "Pending", "Active","Deleted" ] 
+           [app.status];
+              
     },
     
     /**
@@ -221,7 +221,7 @@ qx.Mixin.define("aiagallery.dbif.MApps",
                         searchObj = new aiagallery.dbif.ObjSearch([obj["word"],
                                                       obj["appId"],
                                                       obj["appField"]]);
-                        searchObj.removeSelf();
+                        searchObj.deleteApp();
                       });
     }
   },
